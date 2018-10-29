@@ -57,7 +57,7 @@
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
-      "default"
+      "templates/neo-template"
     ],
     "postProcessors": [],
     "markdownEngineName": "markdig",
