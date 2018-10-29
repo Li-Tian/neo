@@ -99,8 +99,8 @@ namespace Neo
         }
 
         /// <summary>
-        /// Operator > returns true if left UInt256 is bigger than right UInt256
-        /// Example: UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) > UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
+        /// Operator &gt; returns true if left UInt256 is bigger than right UInt256
+        /// Example: UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) &gt; UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
         /// </summary>
         public static bool operator >(UInt256 left, UInt256 right)
         {
@@ -108,8 +108,8 @@ namespace Neo
         }
 
         /// <summary>
-        /// Operator >= returns true if left UInt256 is bigger or equals to right UInt256
-        /// Example: UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) >= UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
+        /// Operator &gt;= returns true if left UInt256 is bigger or equals to right UInt256
+        /// Example: UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) &gt;= UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) is true
         /// </summary>
         public static bool operator >=(UInt256 left, UInt256 right)
         {
@@ -117,8 +117,8 @@ namespace Neo
         }
 
         /// <summary>
-        /// Operator < returns true if left UInt256 is less than right UInt256
-        /// Example: UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) < UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) is true
+        /// Operator &lt; returns true if left UInt256 is less than right UInt256
+        /// Example: UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) &lt; UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) is true
         /// </summary>
         public static bool operator <(UInt256 left, UInt256 right)
         {
@@ -126,8 +126,8 @@ namespace Neo
         }
 
         /// <summary>
-        /// Operator <= returns true if left UInt256 is less or equals to right UInt256
-        /// Example: UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) <= UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) is true
+        /// Operator &lt;= returns true if left UInt256 is less or equals to right UInt256
+        /// Example: UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) &lt;= UInt256(02ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
         /// </summary>
         public static bool operator <=(UInt256 left, UInt256 right)
         {
