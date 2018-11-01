@@ -6,6 +6,8 @@
 然后新的区块再次经过节点网络传播到每一个节点。最后这笔交易被保存到各个节点
 的数据库。
 
+（需要描述一下 Blockchain 对象所需要提供的功能及接口级别的细节。但是不需要写LevelDB级别的实现细节）
+
 描述不同交易类型(Transaction Type)的执行过程中的不同。
 
 描述不同交易类型的 TransactionAttribute / Usage 的设置。
