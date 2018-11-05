@@ -12,8 +12,15 @@
   href: tx_execution.md
 - name: Network Protocol
   href: network_protocol.md
-- name: Consensus Algorithm
-  href: consensus_algorithm.md
+- name: Consensus
+  href: consensus/readme.md
+  items:
+    - name: Consensus Algorithm
+      href: consensus/consensus_algorithm.md
+    - name: Consensus Protocol
+      href: consensus/consensus_protocol.md
+    - name: Vote, Validator, Delegates, Speaker
+      href: consensus/vote_validator.md
 - name: Neo Virtual Machine
   href: neo_vm.md
 - name: Smart Contract
