@@ -30,7 +30,10 @@ namespace Neo
         {
             this.value = data;
         }
-
+        /// <summary>
+        /// 返回这个数的绝对值,如果这个数是正数或0，直接返回原值。如果是负数，返回它的负数.
+        /// </summary>
+        /// <returns>返回绝对值</returns>
         public Fixed8 Abs()
         {
             if (value >= 0) return this;
@@ -40,6 +43,22 @@ namespace Neo
             };
         }
 
+        /// <summary>
+        /// 返回等于这个数或者比这个数大的最小单位的fixed8.先将该数对D(100000000)取余后，
+        /// 
+        /// <list type="bullet">
+        /// <item>
+        /// <description>如果余数等于0， 直接返回该数本身</description>
+        /// </item>
+        /// <item>
+        /// <description>如果余数大于0，将数值减去余数并加上基数D，得到比这个数大的最小单位的Fixed8</description>
+        /// </item>
+        /// <item>
+        /// <description>如果余数小于0，将数值减去余数D，得到比这个数大的最小单位的Fixed8</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <returns>返回等于或者大于这个数的最小单位的fixed8值，并且用fixed8对象返回</returns>
         public Fixed8 Ceiling()
         {
             long remainder = value % D;
@@ -55,7 +74,11 @@ namespace Neo
                     value = value - remainder
                 };
         }
-
+        /// <summary>
+        /// 比较两个Fixed8对象的数值
+        /// </summary>
+        /// <param name="other">另一个被比较的Fixed8格式的数</param>
+        /// <returns>返回0如果两个数相等.返回一个负数如果这个Fixed8小于参数other. 返回一个正数如果这个Fixed8大于参数other</returns>
         public int CompareTo(Fixed8 other)
         {
             return value.CompareTo(other.value);
