@@ -4,7 +4,7 @@ using System.Numerics;
 namespace Neo
 {
     /// <summary>
-    /// 不可改变的, 任意精度的, 有符号的小数. 一个BigDecimal对象由一个BigInteger所表示的有效数和一个8位小数位构成.
+    /// 不可改变的, 任意精度的, 有符号的小数. 一个BigDecimal对象由一个BigInteger所表示的有效数和一个由byte表示的，对于一个任意长度整数小数点向左移的偏移量，其中小数点后最多255位.
     /// </summary>
     public struct BigDecimal
     {
@@ -115,7 +115,7 @@ namespace Neo
         /// <param name="s">被解析的字符串</param>
         /// <param name="decimals">小数位</param>
         /// <param name="result">转换后的BigDecimal对象</param>
-        /// <returns>如果成功解析则返回true, 如果不能够解析则反回false</returns>
+        /// <returns>如果成功解析则返回<c>true</c>, 如果不能够解析则反回<c>false</c></returns>
         public static bool TryParse(string s, byte decimals, out BigDecimal result)
         {
             int e = 0;
