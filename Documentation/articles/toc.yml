@@ -8,6 +8,8 @@
   href: blockchain_paradigm.md
 - name: Blocks, State and Transactions
   href: block_state_tx.md
+- name: Wallets
+  href: wallets.md
 - name: Transaction Excution
   href: tx_execution.md
 - name: Network Protocol
