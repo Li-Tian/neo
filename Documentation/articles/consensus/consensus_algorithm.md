@@ -7,8 +7,8 @@
 
 * 共识节点： 具有发起新块提案，和提案投票权限的节点。
 * 普通节点： 具有转账，交易，全网账本，但不具有记录权限，不能发起区块提案与投票。
-* 议员：参与共识出块的节点，负责对新块提案进行投票，当票数不少于2𝑓+1时，则提案通过。
 * 议长：负责向其他节点，广播新块提案。
+* 议员：参与共识出块的节点，负责对新块提案进行投票，当票数不少于2𝑓+1时，则提案通过。
 * 验证人： 被投票选举参与共识的节点
 * 视图： 一轮共识从开始到结束所使用的数据集。视图编号 𝑣，从 0 开始，并逐渐递增，直到新的提案通过后清零。
 
@@ -20,10 +20,10 @@
 
 - N: 本轮共识节点总个数
 - f：最大容错节点个数， 不超过 └(N-1)/3┘。
-- v: 视图编号，等于在查询本轮共识列表中的序号。
+- v: 视图编号，从0开始。
 - ℎ： 当前共识的区块高度
 - p: 议长编号，`p = (h - v) mod N`
-- i：议员节点编号
+- i：议员节点编号，等于本轮共识列表中的序号。
 - t: 出块时间。配置在文件`protocol.json`中的`SecondsPerBlock`值，默认15秒钟。
 - 𝑏𝑙𝑜𝑐𝑘： 本轮正在进行共识的区块
 - 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: 第i个共识节点对𝑏𝑙𝑜𝑐𝑘的签名。
@@ -36,11 +36,11 @@
 
 1. 用户通过钱包发起一笔交易，如转账，发布智能合约，智能合约调用等。
 
-2. 钱包会将改交易进行签名，并发给节点进行P2P广播；
+2. 钱包会对交易进行签名，并发给节点进行P2P广播；
 
 3. 共识节点也收到该笔交易，存放到内存池；
 
-4. 在某一轮共识，其议长将内存池交易，全部打包到新𝑏𝑙𝑜𝑐𝑘中，并广播 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡,ℎ,𝑣,𝑝,𝑏𝑙𝑜𝑐𝑘,
+4. 在某一轮共识，其议长将内存池交易，进过排序和插件过滤后，打包到新𝑏𝑙𝑜𝑐𝑘中，并广播 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡,ℎ,𝑣,𝑝,𝑏𝑙𝑜𝑐𝑘,
 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑝</sub>〉  新块提案；
 
 5. 其他议员，在收到该提案与验证后，广播 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>〉 投票消息
@@ -93,6 +93,5 @@
 
 [1] [一种用于区块链的拜占庭容错算法](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
 [2] [共识机制图解](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
-[3] [A Byzantine Fault Tolerance Algorithm for Blockchain](whitepaper.md)<br/>
-[4] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
-[5] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
+[3] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
+[4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
