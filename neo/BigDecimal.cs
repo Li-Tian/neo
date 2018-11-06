@@ -4,27 +4,36 @@ using System.Numerics;
 namespace Neo
 {
     /// <summary>
-    /// 用科学计数法来表示的不可改变的, 任意精度的, 有符号的十进制数. 一个BigDecimal对象由一个BigInteger所表示的有效数和一个8位无符号整数(幂)构成.
-    /// <example>
-    /// 假设有效数为a, 幂为x
-    /// 如果是0或者正数, 那么这个值为有效数a乘以10的x次幂
-    /// 如果是负数，那么这个值为有效数a乘以10的负x次幂
-    /// </example>
+    /// 不可改变的, 任意精度的, 有符号的小数. 一个BigDecimal对象由一个BigInteger所表示的有效数和一个8位小数位构成.
     /// </summary>
     public struct BigDecimal
     {
         private readonly BigInteger value;
         private readonly byte decimals;
 
+        /// <summary>
+        /// Value属性代表了这个BigDecimal的有效数
+        /// </summary>
+        /// <value>Value属性的值由value字段获取</value>
         public BigInteger Value => value;
+
+        /// <summary>
+        /// Decimals属性代表了这个BigDecimal的小数位
+        /// </summary>
+        /// <value>Decimals属性的值由decimals字段获取</value>
         public byte Decimals => decimals;
+
+        /// <summary>
+        ///代表有效数的符号.如果为正则值1, 如果为负则值为-1, 如果是0则值为0. 
+        /// </summary>
+        /// <value>Sign属性的值等于value字段的Sign属性</value>
         public int Sign => value.Sign;
 
         /// <summary>
-        /// 将一个有效数 value 和幂级数 decimals 传入这个BigDecimal对象, 其数值为 value × 10<sup>deciaml</sup>
+        /// 将一个有效数 value 和小数位数 decimals 传入这个BigDecimal对象, 其数值为 value × 10<sup>-deciaml</sup>
         /// </summary>
         /// <param name="value">BigDecimal的有效数部分</param>
-        /// <param name="decimals">BigDecimal的幂级数</param>
+        /// <param name="decimals">BigDecimal的小数位数</param>
         public BigDecimal(BigInteger value, byte decimals)
         {
             this.value = value;
@@ -32,10 +41,11 @@ namespace Neo
         }
 
         /// <summary>
-        /// 
+        /// 传入一个小数位数，返回以这个小数位数表述的新的BigDecimal对象
         /// </summary>
-        /// <param name="decimals">幂</param>
-        /// <returns></returns>
+        /// <param name="decimals">小数位数</param>
+        /// <exception cref="ArgumentException">由于转换可能引起的精度丢失</exception>
+        /// <returns>一个以新的小数位表示的BigDecimal对象</returns>
         public BigDecimal ChangeDecimals(byte decimals)
         {
             if (this.decimals == decimals) return this;
@@ -55,11 +65,11 @@ namespace Neo
         }
 
         /// <summary>
-        /// 将传入的字符串解析为以指定幂为表示的BigDecimal对象.
+        /// 将传入的字符串解析为以指定小数位数为表示的BigDecimal对象.
         /// </summary>
         /// <param name="s">被解析的字符串</param>
-        /// <param name="decimals">幂</param>
-        /// <exception cref="FormatException">如果这个字符串无法转换为BigDecimal对象</exception>
+        /// <param name="decimals">小数位数</param>
+        /// <exception cref="FormatException">如果这个字符串无法转换为以指定小数位所表示的BigDecimal对象</exception>
         /// <returns>字符串解析后的BigDecimal对象</returns>
         public static BigDecimal Parse(string s, byte decimals)
         {
@@ -86,10 +96,10 @@ namespace Neo
         }
 
         /// <summary>
-        /// 用科学记数法来表达这个BigDecimal，以字符串形式来返回其中记数法表达式前面的有效数部分
+        /// 将BigDecimal转化成字符串并返回
         /// </summary>
         /// <returns>
-        /// 返回字符串形式的BigDecimal有效数部分
+        /// 字符串形式的BigDecimal
         /// </returns>
         public override string ToString()
         {
@@ -100,12 +110,12 @@ namespace Neo
         }
 
         /// <summary>
-        /// 
+        /// 将传入的字符串解析为以指定小数位数为表示的BigDecimal对象
         /// </summary>
-        /// <param name="s"></param>
-        /// <param name="decimals"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
+        /// <param name="s">被解析的字符串</param>
+        /// <param name="decimals">小数位</param>
+        /// <param name="result">转换后的BigDecimal对象</param>
+        /// <returns>如果成功解析则返回true, 如果不能够解析则反回false</returns>
         public static bool TryParse(string s, byte decimals, out BigDecimal result)
         {
             int e = 0;
