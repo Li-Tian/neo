@@ -10,7 +10,10 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace Neo
-{
+{   
+    /// <summary>
+    ///Neo的工具类
+    /// </summary>
     public static class Helper
     {
         private static readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -59,6 +62,11 @@ namespace Neo
             return (string)attribute.ConstructorArguments[0].Value;
         }
 
+        /// <summary>
+        /// 将一个表示十六进制数的字符串转换为bytes
+        /// </summary>
+        /// <param name="value">被转换的十六进制的字符串</param>
+        /// <returns>转换后成功的byte数组</returns>
         public static byte[] HexToBytes(this string value)
         {
             if (value == null || value.Length == 0)
@@ -126,6 +134,12 @@ namespace Neo
             return new BigInteger(b);
         }
 
+
+        /// <summary>
+        /// 传入一个实现了IEnumerable接口的Fixed8集合，遍历其中所有对象并求和后返回
+        /// </summary>
+        /// <param name="source">一个包含多个Fixed8对象的实现了IEnumerable接口的集合</param>
+        /// <returns>集合中所有Fixed8对象的总和</returns>
         public static Fixed8 Sum(this IEnumerable<Fixed8> source)
         {
             long sum = 0;
@@ -139,6 +153,13 @@ namespace Neo
             return new Fixed8(sum);
         }
 
+        /// <summary>
+        /// 传入一个实现了IEnumerable接口的任意对象集合, 将其中所有成员对象为Tsource泛型, 然后求和后返回正或者负
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source">一个包含多个TSource对象,实现了IEnumerable接口的集合</param>
+        /// <param name="selector">选择器,讲Tsource转会Fixed8</param>
+        /// <returns></returns>/returns>
         public static Fixed8 Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, Fixed8> selector)
         {
             return source.Select(selector).Sum();
@@ -149,16 +170,31 @@ namespace Neo
             return (i & (BigInteger.One << index)) > BigInteger.Zero;
         }
 
+        /// <summary>
+        /// 将一个时间戳转换为当前所在时区的Datetime
+        /// </summary>
+        /// <param name="timestamp">用uint表示的待转换的时间戳数值</param>
+        /// <returns>表示了当前时区时间的DateTime对象</returns>
         public static DateTime ToDateTime(this uint timestamp)
         {
             return unixEpoch.AddSeconds(timestamp).ToLocalTime();
         }
 
+        /// <summary>
+        /// 将一个时间戳转换为当前所在时区的Datetime
+        /// </summary>
+        /// <param name="timestamp">用ulong表示的待转换的时间戳数值></param>
+        /// <returns>表示了当前时区时间的DateTime对象</returns>
         public static DateTime ToDateTime(this ulong timestamp)
         {
             return unixEpoch.AddSeconds(timestamp).ToLocalTime();
         }
 
+        /// <summary>
+        /// 将一个Byts集合转化成十六进制表达的字符串
+        /// </summary>
+        /// <param name="value">一个实现了IEnumerable接口的Bytes集合</param>
+        /// <returns>转换后的十六进制字符串</returns>
         public static string ToHexString(this IEnumerable<byte> value)
         {
             StringBuilder sb = new StringBuilder();
@@ -185,6 +221,11 @@ namespace Neo
             }
         }
 
+        /// <summary>
+        /// 将一个时间Datetime转化为时间戳
+        /// </summary>
+        /// <param name="time">需要被转化的DateTime对象</param>
+        /// <returns>以uint表示的时间戳</returns>
         public static uint ToTimestamp(this DateTime time)
         {
             return (uint)(time.ToUniversalTime() - unixEpoch).TotalSeconds;
