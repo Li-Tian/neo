@@ -98,10 +98,20 @@ namespace Neo
             return true;
         }
 
+        
+        // <summary>
+        // Operator &gt; returns true if left UInt256 is bigger than right UInt256
+        // Example: UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) &gt; UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
+        // </summary>
+        // 
+
+
         /// <summary>
-        /// Operator &gt; returns true if left UInt256 is bigger than right UInt256
-        /// Example: UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) &gt; UInt256(01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
+        /// 
         /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator >(UInt256 left, UInt256 right)
         {
             return left.CompareTo(right) > 0;

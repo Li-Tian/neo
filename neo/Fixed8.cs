@@ -13,17 +13,29 @@ namespace Neo
     {
         private const long D = 100_000_000;
         internal long value;
-
+        /// <summary>
+        /// MaxValue字段代表了一个有效值为long最大值的Fixed8对象
+        /// </summary>
         public static readonly Fixed8 MaxValue = new Fixed8 { value = long.MaxValue };
-
+        /// <summary>
+        /// MinValue字段代表了一个有效值为long最小值的Fixed8对象
+        /// </summary>
         public static readonly Fixed8 MinValue = new Fixed8 { value = long.MinValue };
-
+        /// <summary>
+        ///  One 字段代表了有效值为100_000_000的Fixed8对象, 其值代表了1
+        /// </summary>
         public static readonly Fixed8 One = new Fixed8 { value = D };
-
+        /// <summary>
+        /// Satoshi字段代表了有效值为1的Fixed8对象, 其值代表了交易中最小的交易单位0.00000001
+        /// </summary>
         public static readonly Fixed8 Satoshi = new Fixed8 { value = 1 };
-
+        /// <summary>
+        ///  Zero 字段代表了有效值为0的Fixed8对象, 其值代表了0
+        /// </summary>
         public static readonly Fixed8 Zero = default(Fixed8);
-
+        /// <summary>
+        /// Size属性代表了这个类型的大小，用字节来表示
+        /// </summary>
         public int Size => sizeof(long);
 
         /// <summary>
