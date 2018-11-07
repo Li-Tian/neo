@@ -2,7 +2,10 @@
 using System.IO;
 
 namespace Neo.Consensus
-{
+{   
+    /// <summary>
+    ///  Changeview message
+    /// </summary>
     internal class ChangeView : ConsensusMessage
     {
         public byte NewViewNumber;

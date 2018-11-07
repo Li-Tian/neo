@@ -2,8 +2,14 @@
 
 namespace Neo.Consensus
 {
+    /// <summary>
+    ///  PrepareResponse message
+    /// </summary>
     internal class PrepareResponse : ConsensusMessage
     {
+        /// <summary>
+        /// consensus block signature
+        /// </summary>
         public byte[] Signature;
 
         public PrepareResponse()

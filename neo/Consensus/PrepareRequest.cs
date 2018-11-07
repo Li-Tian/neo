@@ -6,12 +6,34 @@ using System.Linq;
 
 namespace Neo.Consensus
 {
+    /// <summary>
+    ///  PrepareRequest message
+    /// </summary>
     internal class PrepareRequest : ConsensusMessage
     {
+        /// <summary>
+        /// block nonce, random value
+        /// </summary>
         public ulong Nonce;
+
+        /// <summary>
+        /// next block's consensus nodes multi-sign script hash
+        /// </summary>        
         public UInt160 NextConsensus;
+
+        /// <summary>
+        /// consensus block txs' hash list
+        /// </summary>   
         public UInt256[] TransactionHashes;
+
+        /// <summary>
+        /// consensus block's miner transanction. It contains block bonus for `primrary` node
+        /// </summary>   
         public MinerTransaction MinerTransaction;
+
+        /// <summary>
+        /// consensus block's signatures, but it only store `primrary` signature
+        /// </summary>   
         public byte[] Signature;
 
         public PrepareRequest()

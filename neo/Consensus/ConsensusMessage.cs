@@ -5,6 +5,9 @@ using System.IO;
 
 namespace Neo.Consensus
 {
+    /// <summary>
+    ///  Consensus message
+    /// </summary>
     internal abstract class ConsensusMessage : ISerializable
     {
         /// <summary>
