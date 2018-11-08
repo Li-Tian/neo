@@ -128,10 +128,7 @@
 **处理**
 
 
-1. **PrepareRequest** 消息处理
-
-`PrepareRequest`消息，是由一轮共识的议长发出的消息，其中附带了`block`相关的数据。
-
+1. **PrepareRequest** 由一轮共识的议长发出，其中附带了`block`相关的数据。
 
    1. 检查节点自身，是否在本轮共识中，是议员。如果不是议员，则忽略该消息。或者`PrepareRequest`已接收过。
    2. 根据`ConsensusPayload.ValidatorIndex` 确定对方是不是本轮的议长，若不是，则忽略。 
@@ -145,9 +142,7 @@
 
 
 
-2. **PrepareResponse** 消息处理
-
-`PrepareResponse`消息，是议员对议长发的`PrepareRequest`消息中的`block`进行签名消息。
+2. **PrepareResponse** 是议员对议长发的`PrepareRequest`消息中的`block`进行签名消息。
   
    1. 若当前议员已经出新块了，则忽略消息
    2. 若对方签名已经收到过，则忽略
@@ -156,9 +151,7 @@
 
 
 
-3. **Changeview** 消息处理
-
-议员或者议长，在遇到超时（议长第一次超时例外，用来发送`PrepareRequest`消息），或者错误数据时，则发起`ChangeView`消息。议员在收到`ChangeView`消息做如下处理：
+3. **Changeview** 议员或者议长，在遇到超时（议长第一次超时例外，用来发送`PrepareRequest`消息），或者错误数据时，则发起`ChangeView`消息。议员在收到`ChangeView`消息做如下处理：
 
    1. 若新视图编号，小于该议员之前的视图编号，则忽略
    2. 若新视图编号，小于当前议员的视图编号，则忽略

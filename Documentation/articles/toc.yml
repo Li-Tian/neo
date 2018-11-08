@@ -6,8 +6,15 @@
   href: neo_cli_structure.md
 - name: The Blockchain Paradigm
   href: blockchain_paradigm.md
-- name: Blocks, State and Transactions
-  href: block_state_tx.md
+- name: Blockchain
+  href: blockchain/readme.md
+  items:
+    - name: Economic Model
+      href: blockchain/economic_model.md
+    - name: Header, Block, Trransaction
+      href: blockchain/block.md
+    - name: Asset
+      href: blockchain/asset.md
 - name: Wallets
   href: wallets.md
 - name: Transaction Excution
@@ -27,4 +34,3 @@
   href: neo_vm.md
 - name: Smart Contract
   href: smart_contract.md
-
