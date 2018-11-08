@@ -327,7 +327,7 @@ namespace Neo
         }
 
         /// <summary>
-        /// <c>&lt;</c>操作符,比较第一个Fixed对象是否大于第二个Fixed8对象
+        /// <c>&lt;</c>操作符,比较第一个Fixed对象是否小于第二个Fixed8对象
         /// </summary>
         /// <param name="x">第一个Fixed8对象</param>
         /// <param name="y">第二个Fixed8对象</param>
