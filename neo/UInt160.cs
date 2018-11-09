@@ -107,7 +107,7 @@ namespace Neo
         /// </summary>
         /// <param name="s">被转化的字符串</param>
         /// <param name="result">用来保存结果的一个UInt160的对象</param>
-        /// <returns>如果解析成功返回true, 否则返回false</returns>
+        /// <returns>如果解析成功返回<c>true</c>, 否则返回<c>false</c></returns>
         public static bool TryParse(string s, out UInt160 result)
         {
             if (s == null)
@@ -138,11 +138,11 @@ namespace Neo
         // Example: UInt160(01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) &gt; UInt160 (001f00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
         // </summary>
         /// <summary>
-        /// <c>&gt;</c>操作符,比较第一个Uint160对象是否大于第二个Uint160对象
+        /// <c>&gt;</c>操作符,比较第一个UInt160对象是否大于第二个UInt160对象
         /// </summary>
-        /// <param name="left">第一个Uint160对象</param>
-        /// <param name="right">第二个Uint160对象</param>
-        /// <returns>如果第一个Uint160对象大于第二个Uint160对象返回<c>true</c>,否则返回<c>false</c></returns>
+        /// <param name="left">第一个UInt160对象</param>
+        /// <param name="right">第二个UInt160对象</param>
+        /// <returns>如果第一个UInt160对象大于第二个UInt160对象返回<c>true</c>,否则返回<c>false</c></returns>
         public static bool operator >(UInt160 left, UInt160 right)
         {
             return left.CompareTo(right) > 0;
@@ -153,11 +153,11 @@ namespace Neo
         // Example: UInt160(01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) &gt;= UInt160 (01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) is true
         // </summary>
         /// <summary>
-        /// <c>&gt;=</c>操作符,比较第一个Uint160对象是否大于等于第二个Uint160对象
+        /// <c>&gt;=</c>操作符,比较第一个UInt160对象是否大于等于第二个UInt160对象
         /// </summary>
-        /// <param name="left">第一个Uint160对象</param>
-        /// <param name="right">第二个Uint160对象</param>
-        /// <returns>如果第一个Uint160对象大于等于第二个Uint160对象返回<c>true</c>,否则返回<c>false</c></returns>
+        /// <param name="left">第一个UInt160对象</param>
+        /// <param name="right">第二个UInt160对象</param>
+        /// <returns>如果第一个UInt160对象大于等于第二个UInt160对象返回<c>true</c>,否则返回<c>false</c></returns>
         public static bool operator >=(UInt160 left, UInt160 right)
         {
             return left.CompareTo(right) >= 0;
@@ -168,11 +168,11 @@ namespace Neo
         // Example: UInt160(001f00ff00ff00ff00ff00ff00ff00ff00ff00a3) &lt; UInt160 (01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) is true
         // </summary>
         /// <summary>
-        /// <c>&lt;</c>操作符,比较第一个Uint160对象是否小于第二个Uint160对象
+        /// <c>&lt;</c>操作符,比较第一个UInt160对象是否小于第二个UInt160对象
         /// </summary>
-        /// <param name="left">第一个Uint160对象</param>
-        /// <param name="right">第二个Uint160对象</param>
-        /// <returns>如果第一个Uint160对象小于第二个Uint160对象返回<c>true</c>,否则返回<c>false</c></returns>
+        /// <param name="left">第一个UInt160对象</param>
+        /// <param name="right">第二个UInt160对象</param>
+        /// <returns>如果第一个UInt160对象小于第二个UInt160对象返回<c>true</c>,否则返回<c>false</c></returns>
         public static bool operator <(UInt160 left, UInt160 right)
         {
             return left.CompareTo(right) < 0;
@@ -183,10 +183,10 @@ namespace Neo
         // Example: UInt160(02ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) &lt;= UInt160 (02ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) is true
         // </summary>
         /// <summary>
-        /// <c>&lt;=</c>操作符,比较第一个Uint160对象是否小于等于第二个Uint160对象
+        /// <c>&lt;=</c>操作符,比较第一个UInt160对象是否小于等于第二个UInt160对象
         /// </summary>
-        /// <param name="left">第一个Uint160对象</param>
-        /// <param name="right">第二个Uint160对象</param>
+        /// <param name="left">第一个UInt160对象</param>
+        /// <param name="right">第二个UInt160对象</param>
         /// <returns>如果第一个Uint160对象小于等于第二个Uint160对象返回<c>true</c>,否则返回<c>false</c></returns>
         public static bool operator <=(UInt160 left, UInt160 right)
         {
