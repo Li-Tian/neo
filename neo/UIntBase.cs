@@ -10,7 +10,7 @@ namespace Neo
     // Base class for little-endian unsigned integers. Two classes inherit from this: UInt160 and UInt256.
     // Only basic comparison/serialization are proposed for these classes. For arithmetic purposes, use BigInteger class.
     ///<summary>
-    /// 一个little-endian无符号整数的抽象类. 有两个类继承改抽象类：<c>UInt160</c>和<c>UInt256</c>.
+    /// 一个little-endian无符号整数的抽象类. 有两个类继承该抽象类：<c>UInt160</c>和<c>UInt256</c>.
     /// 
     /// 这两个类能够做简单的比较和序列化用. 如果需要做数学运算, 请使用BigInteger.
     /// </summary>
@@ -74,9 +74,9 @@ namespace Neo
         /// 将当前UInt8对象与另一个UInt8对象进行比较
         /// </summary>
         /// <param name="other">另一个被比较的UintBase对象</param>
-        /// <returns> 如果传入被比较的对象是一个null, 返回<c>flase</c>.
-        /// 如果传入被比较的对象是当前这个对象的引用， 返回<c>ture</c>.
-        /// 如果两个对象数值相等， 则返回<c>ture</c>， 否则返回<c>flase</c>.
+        /// <returns> 如果传入被比较的对象是一个null, 返回<c>false</c>.
+        /// 如果传入被比较的对象是当前这个对象的引用， 返回<c>true</c>.
+        /// 如果两个对象数值相等， 则返回<c>true</c>， 否则返回<c>false</c>.
         /// </returns>
         public bool Equals(UIntBase other)
         {
@@ -98,9 +98,9 @@ namespace Neo
         /// </summary>
         /// <param name="obj">另一个被比较的Object</param>
         /// <returns>
-        /// 如果传入的被比较的对象是一个null, 返回<c>flase</c>.
-        /// 如果传入的被比较的对象不是一个UintBase对象, 返回<c>flase</c>.
-        /// 如果都是UnitBase对象，则比较两个数值，如果两个对象数值相等， 则返回<c>ture</c>， 否则返回<c>flase</c>.
+        /// 如果传入的被比较的对象是一个null, 返回<c>false</c>.
+        /// 如果传入的被比较的对象不是一个UintBase对象, 返回<c>false</c>.
+        /// 如果都是UnitBase对象，则比较两个数值，如果两个对象数值相等， 则返回<c>ture</c>， 否则返回<c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
@@ -117,7 +117,7 @@ namespace Neo
         /// <summary>
         /// 用这个Uint对象的前4个字节作为HashCode并且返回.
         /// </summary>
-        /// <returns>一个32位init所表述的hascose</returns>
+        /// <returns>一个32位init所表述的hashcode</returns>
         public override int GetHashCode()
         {
             return data_bytes.ToInt32(0);
@@ -234,12 +234,12 @@ namespace Neo
         /// <summary>
         /// <c>==</c>操作符,比较两个UintBase对象是否相等
         /// </summary>
-        /// <param name="left">第一个UintBase对象</param>
-        /// <param name="right">第二个UintBase对象</param>
+        /// <param name="left">第一个UIntBase对象</param>
+        /// <param name="right">第二个UIntBase对象</param>
         /// <returns>
-        /// 如果两个UintBase对象引用一个对象，则返回<c>true</c>.
+        /// 如果两个UIntBase对象引用一个对象，则返回<c>true</c>.
         /// 如果两个对象中其中一个指向<c>null</c>,则返回<c>false</c>.
-        /// 如果两个UintBase8数值相等则返回<c>true</c>,否则返回<c>false</c>
+        /// 如果两个UIntBase数值相等则返回<c>true</c>,否则返回<c>false</c>
         /// </returns>
         public static bool operator ==(UIntBase left, UIntBase right)
         {
@@ -260,9 +260,9 @@ namespace Neo
         /// <param name="left">第一个UintBase对象</param>
         /// <param name="right">第二个UintBase对象</param>
         /// <returns>
-        /// 如果两个UintBase对象引用一个对象，则返回<c>false</c>.
+        /// 如果两个UIntBase对象引用一个对象，则返回<c>false</c>.
         /// 如果两个对象中其中一个指向<c>null</c>,则返回<c>true</c>.
-        /// 如果两个UintBase8数值不相等则返回<c>true</c>,否则返回<c>false</c></returns>
+        /// 如果两个UIntBase数值不相等则返回<c>true</c>,否则返回<c>false</c></returns>
         public static bool operator !=(UIntBase left, UIntBase right)
         {
             return !(left == right);
