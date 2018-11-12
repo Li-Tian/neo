@@ -7,23 +7,42 @@ using System.Numerics;
 
 namespace Neo.Cryptography.ECC
 {
+    /// <summary>
+    /// 这个类代表了椭圆曲线（EC Curve）上的一个点
+    /// </summary>
     public class ECPoint : IComparable<ECPoint>, IEquatable<ECPoint>, ISerializable
     {
         internal ECFieldElement X, Y;
         internal readonly ECCurve Curve;
 
+        /// <summary>
+        /// 判定一个点是否为无穷远点（零元）
+        /// </summary>
         public bool IsInfinity
         {
             get { return X == null && Y == null; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int Size => IsInfinity ? 1 : 33;
 
+        /// <summary>
+        /// 空构造函数, 构造一个零元，即无穷远点, x坐标和y坐标分别为null, 曲线为<c>.Secp256r1</c>
+        /// </summary>
         public ECPoint()
             : this(null, null, ECCurve.Secp256r1)
         {
         }
 
+        /// <summary>
+        /// 构造函数， 返回一个指定椭圆曲线上的，坐标为x,y的点
+        /// </summary>
+        /// <param name="x">代表x坐标的ECField对象</param>
+        /// <param name="y">代表y坐标的ECField对象</param>
+        /// <param name="curve">改点所用的椭圆曲线</param>
+        /// <exception cref="ArgumentException">x坐标或者y坐标不能单独为Null</exception>
         internal ECPoint(ECFieldElement x, ECFieldElement y, ECCurve curve)
         {
             if ((x != null && y == null) || (x == null && y != null))
@@ -33,6 +52,15 @@ namespace Neo.Cryptography.ECC
             this.Curve = curve;
         }
 
+        /// <summary>
+        /// 将这个点和另一个点比较
+        /// </summary>
+        /// <param name="other">另一个ECPoint点</param>
+        /// <returns>
+        /// 如果两个点是一个引用返回0.
+        /// 否则,先比较X坐标值的大小,如果不相等则返回1或者-1
+        /// 如果X坐标值相等， 则比较Y轴坐标值.
+        /// </returns>
         public int CompareTo(ECPoint other)
         {
             if (ReferenceEquals(this, other)) return 0;
@@ -188,6 +216,10 @@ namespace Neo.Cryptography.ECC
             }
         }
 
+        /// <summary>
+        /// 计算这个对象的HashCode并且返回,这个对象的HashCode为X坐标值的HashCode和Y坐标值的HashCode之和
+        /// </summary>
+        /// <returns>返回当前Ecpoint的HashCode</returns>
         public override int GetHashCode()
         {
             return X.GetHashCode() + Y.GetHashCode();
@@ -370,11 +402,22 @@ namespace Neo.Cryptography.ECC
             return wnafShort;
         }
 
+        /// <summary>
+        /// <c>-</c>操作符,求出这个点的负元, 将其y坐标对称转换
+        /// </summary>
+        /// <param name="x">被转换的点</param>
+        /// <returns>返回一个负元,即这个曲线上y坐标为原来点的负数的点</returns>
         public static ECPoint operator -(ECPoint x)
         {
             return new ECPoint(x.X, -x.Y, x.Curve);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
         public static ECPoint operator *(ECPoint p, byte[] n)
         {
             if (p == null || n == null)
@@ -389,6 +432,17 @@ namespace Neo.Cryptography.ECC
             return Multiply(p, k);
         }
 
+        /// <summary>
+        ///  <c>+</c>操作符, 加法曲线上的加法运算
+        /// </summary>
+        /// <param name="x">第一个点</param>
+        /// <param name="y">第二个点</param>
+        /// <returns>
+        /// 如果有一个点为无穷远点（零元），则返回另一个点.
+        /// 如果一个点为另一个点的对于x轴对称点，则返回一个无穷点.
+        /// 如果两个点完全相同， 则返回一个点的twice之后的结果.
+        /// 否则返回在这个曲线上两个点求和后的新点
+        /// </returns>
         public static ECPoint operator +(ECPoint x, ECPoint y)
         {
             if (x.IsInfinity)
@@ -408,6 +462,12 @@ namespace Neo.Cryptography.ECC
             return new ECPoint(x3, y3, x.Curve);
         }
 
+        /// <summary>
+        /// <c>-</c>操作符,计算两个椭圆曲线上点的差值
+        /// </summary>
+        /// <param name="x">第一个点</param>
+        /// <param name="y">第二个点</param>
+        /// <returns>两个点的差.如果第二个点是无穷远点(零元)则返回第一个点x, 否则返回第一个点和第二个点取负数的和</returns>
         public static ECPoint operator -(ECPoint x, ECPoint y)
         {
             if (y.IsInfinity)
