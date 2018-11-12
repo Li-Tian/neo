@@ -418,7 +418,9 @@ Example:
 
 2、使用SPV钱包，验证区块数据
 
+参考文献：
 
+1、https://en.wikipedia.org/wiki/Merkle_tree
 
 # AES加密
 **摘要**
