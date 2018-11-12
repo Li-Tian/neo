@@ -1,14 +1,12 @@
-<center><h2>共识机制</h2></center>
+<center><h2>Consensus Mechanism</h2></center>
+
+&emsp;&emsp; All public-blockchains run on the peer-to-peer network, their nodes maintain the common account. Therefore, how to motivate the node to supply reliable service, how to solve the "Byzantine Fault Tolerant" problem, and support high performance at the sametime, it becomes a big problem for most blockchain companies. Decentralization, scalability and security have become the "Impossible Triangle" problem at present.
+
+&emsp;&emsp;On the consensus mechanism, many blockchains can be divided into the following categories:
+
+- POW (Proof of work): Represented by bitcoin, it uses computing power to handle fault tolerance. Criticisms about it requiring a lot of energy and not scaling well, but has been proven to work over 10 year.
+- POS (Proof of Stake):  Represented by peercoin, all nodes can mine block, but the bonus depends on the coin-age. The more coin you hold, the more rewards you get. It also faces the high performance problem.
+- DPOS (Delegated Proof of Stake): Represented by eos, the community votes to select 21 super nodes to exercise block writing rights. When there are evil nodes, the deposit will be confiscated. 
 
 
-&emsp;&emsp;公链区块链都运行在公开的P2P网络上，维护着共同的全网账本。如何激励节点提供安全可靠的服务，解决拜占庭容错问题，以及提供高性能的处理。是当下所有区块链技术要解决的问题。去中心化，可扩展性，安全性，已成为目前“不可能三角问题”。
-
-&emsp;&emsp;众多区块链在共识机制上，大致分为下面几种：
-- POW（工作量证明）：以比特币为代表，利用计算能力来解决拜占庭容错问题，安全性最高，但是效率最低，非常消耗能源。
-- POS（权益证明）：以比特股为代表，按照持有者币龄获取奖励，同时任意节点可以参与挖矿过程。
-- POS+POW（混合模式）： 以DCR为代表，POW在POS的节点下挖矿出块，并奖励POW矿工和POS节点分红。
-- DPOS（委托权益证明）： 以EOS为代表，社区投票选择21个节点行使记账权，轮流出块。当有作恶节点时，没收担保金和重新投票更换节点。
-
-&emsp;&emsp; NEO实现了一种委托的改进拜占庭容错算法，具备⌊(n-1)/3⌋的节点容错能力，交易吞吐量实测环境中达到1000tps，未来有能力做到10000tps，支持大规模商业应用。结合POS与DPOS特性，持有NEO的用户根据币龄分红NeoGas（NEO网络费用代币），共识节点由持有NEO的用户实时投票选出，负责行使记账权，从而克服了POS的全节点可出块导致的性能低下，但共识节点的奖励并非区块奖励，而是网络手续费奖励，平衡生态激励。
-
-
+&emsp;&emsp; NEO has implemented a delegated Byzantine Fault Tolerant algorithm, provides fault tolerance of `f = ⌊ (n-1) / 3 ⌋` nodes, and 1, 000TPS transaction throughput in mainnet network, which is possiable to reach 10, 000TPS in the future, for supporting large-scale commercial applications. Different from DPoS, NEO stakeholders can vote and select the consensus nodes in neo network at any time. Consensus nodes package new block in turn which overcomes low perfomance without all nodes mining in PoS, and get the block's network fee GAS as rewards. 

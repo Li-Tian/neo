@@ -125,7 +125,7 @@ $$
 在概率分布函数上，截取[0.25, 0.75]覆盖到的共识节点个数，再对这些点求取期望值，最后与备用共识节点个数比较取最大值，得到最终的共识节点个数。公式如下：
 
 $$
-ConsensusCount = max( \sum_{i = \lceil A \rceil}^{\lceil B \rceil} i *  \frac{ min(0.75, F_i) - max( F_{i - 1}, 0.25 ) }{ 0.5 }, StandbyValidators.Length)
+Count = max( \sum_{i = \lceil A \rceil}^{\lceil B \rceil} i *  \frac{ min(0.75, F_i) - max( F_{i - 1}, 0.25 ) }{ 0.5 }, StandbyValidators.Length)
 $$
 
 - 其中，⌈A⌉ 代表第一个 F<sub>i</sub> >= 0.25 的点， 
@@ -140,7 +140,7 @@ $$
 ### 共识节点
 
 
-在上面的步骤中，根据投票情况确定了共识节点个数`ConsensusCount`，再根据申请验证人的投票进行降序排序，取前`ConsensusCount`个。若申请的验证人不足时，则从备用共识节点进行补充，最后得到当前参与共识的验证人，即议员。
+在上面的步骤中，根据投票情况确定了共识节点个数`Count`，再根据申请验证人的投票进行降序排序，取前`Count`个。若申请的验证人不足时，则从备用共识节点进行补充，最后得到当前参与共识的验证人，即议员。
 
 
 > [!Note]
