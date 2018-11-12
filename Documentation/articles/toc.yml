@@ -11,10 +11,10 @@
   items:
     - name: Economic Model
       href: blockchain/economic_model.md
-    - name: Header, Block, Trransaction
+    - name: Header, Block, Transaction
       href: blockchain/block.md
-    - name: Asset
-      href: blockchain/asset.md
+    - name: Account, Asset, Validator
+      href: blockchain/account_asset_validator.md
 - name: Wallets
   href: wallets.md
 - name: Transaction Excution
