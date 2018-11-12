@@ -11,6 +11,9 @@ using System.Threading;
 
 namespace Neo.Cryptography
 {
+    /// <summary>
+    /// Cryptography中的帮助类, 主要是一些交易和验证中用到的一些hash算法和编码解码算法
+    /// </summary>
     public static class Helper
     {
         private static ThreadLocal<SHA256> _sha256 = new ThreadLocal<SHA256>(() => SHA256.Create());
@@ -71,7 +74,11 @@ namespace Neo.Cryptography
                 }
             }
         }
-
+        /// <summary>
+        /// 将一个Based58Check编码的字符串解码为字节数组
+        /// </summary>
+        /// <param name="input">被解码的字符串</param>
+        /// <returns>解码后的字节数组</returns>
         public static byte[] Base58CheckDecode(this string input)
         {
             byte[] buffer = Base58.Decode(input);
@@ -82,6 +89,11 @@ namespace Neo.Cryptography
             return buffer.Take(buffer.Length - 4).ToArray();
         }
 
+        /// <summary>
+        /// 将一个字节数组经过Based58Check编码后返回其字符串
+        /// </summary>
+        /// <param name="data">需要用Based58Check编码的字节数组</param>
+        /// <returns>解码后的Base58CheckEncode字符串</returns>
         public static string Base58CheckEncode(this byte[] data)
         {
             byte[] checksum = data.Sha256().Sha256();
@@ -91,11 +103,24 @@ namespace Neo.Cryptography
             return Base58.Encode(buffer);
         }
 
+        /// <summary>
+        /// 使用RIPEMD-160算法的哈希函数来对一个字节集合进行哈希加密处理
+        /// </summary>
+        /// <param name="value">被哈希函数处理的字节集合</param>
+        /// <returns>哈希函数处理过后的字节数组</returns>
         public static byte[] RIPEMD160(this IEnumerable<byte> value)
         {
             return _ripemd160.Value.ComputeHash(value.ToArray());
         }
 
+
+
+        /// <summary>
+        /// 使用Murmur3算法的哈希函数来对一个字节集合进行哈希加密处理,产生一个32-bit哈希值
+        /// </summary>
+        /// <param name="value">被哈希函数处理的字节集合</param>
+        /// <param name="seed"> Murmur3中用到的一个随机的种子数， 用来防止HshDos攻击a[</param>
+        /// <returns>Murmur3函数处理过后的字节数组</returns>   
         public static uint Murmur32(this IEnumerable<byte> value, uint seed)
         {
             using (Murmur3 murmur = new Murmur3(seed))
@@ -104,11 +129,22 @@ namespace Neo.Cryptography
             }
         }
 
+        /// <summary>
+        /// 使用Sha256算法的哈希函数来对一个字节集合进行哈希加密处理
+        /// </summary>
+        /// <param name="value">被哈希函数处理的字节集合</param>
+        /// <returns>Sha256函数处理过后的字节数组</returns>
         public static byte[] Sha256(this IEnumerable<byte> value)
         {
             return _sha256.Value.ComputeHash(value.ToArray());
         }
-
+        /// <summary>
+        /// 使用Sha256算法的哈希函数来对一个字节集合的一部分数据进行哈希加密处理
+        /// </summary>
+        /// <param name="value">被哈希函数处理的字节集合</param>
+        /// <param name="offset">字节数组中被取出做哈希处理的开始字节位置</param>
+        /// <param name="count">字节数组中取出来做哈希加密部分的字节大小</param>
+        /// <returns>Sha256函数处理过后的字节数组</returns>
         public static byte[] Sha256(this byte[] value, int offset, int count)
         {
             return _sha256.Value.ComputeHash(value, offset, count);

@@ -100,7 +100,7 @@ namespace Neo
         /// <returns>
         /// 如果传入的被比较的对象是一个null, 返回<c>false</c>.
         /// 如果传入的被比较的对象不是一个UintBase对象, 返回<c>false</c>.
-        /// 如果都是UnitBase对象，则比较两个数值，如果两个对象数值相等， 则返回<c>ture</c>， 否则返回<c>false</c>.
+        /// 如果都是UnitBase对象，则比较两个数值，如果两个对象数值相等， 则返回<c>true</c>， 否则返回<c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
