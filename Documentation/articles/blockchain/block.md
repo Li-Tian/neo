@@ -25,6 +25,11 @@
 | 1  | - | - | uint8 | 	固定为 0   |
 
 
+> [!WARNING]
+> 每一个Block，都会带有`NextConsensus`字段，锁定了参与下一个出块的共识节点。`NextConsensus` 是根据截止当前区块为止的验证人投票情况，计算出的共识节点的三分之二签名脚本hash, 代表脚本如下图。在进行Block脚本验证时，`NextConsensus`所代表的多方签名脚本，需要三分之二的共识节点的签名作为参数验证，确保了每一个新块，至少三分之二以上的共识节点达成一致。
+
+<p align="center"><img src="../../images/blockchain/nextconsensus_script.jpg" /><br></p
+
 ### **Block**
 
 
@@ -152,6 +157,7 @@
 > 3. 当发行资产时，input.Asset < output. Asset
 
 
+区块链网络中，一切的事物操作都是通过交易完成，包括转账，部署合约，调用合约，提取分红的Gas，
 
 | 尺寸 | 字段 | 类型 | 描述 |
 |-----|-----|------|-------|
@@ -195,14 +201,17 @@
 | 20 | ScriptHash | UInt160 | 地址 |
 
 
+每个交易中最多只能包含 65536 个输出。
+
+
 ### **Attribute**
 
 
 | 尺寸 | 字段 | 类型 | 描述 |
 |---|-------|------|------|
 | 1 | Usage | byte | 属性类型 |
-| ? | Data | byte[] | 属性值 | 
-
+| 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
+| ? | Data | byte[length] | 特定于用途的外部数据 | 
 
 TransactionAttributeUsage，交易属性使用表
 
@@ -213,39 +222,16 @@ TransactionAttributeUsage，交易属性使用表
 | ECDH03 | 0x03 | 用于ECDH密钥交换的公钥，该公钥的第一个字节为0x03 |
 | Script | 0x20 | 用于对交易进行额外的验证, 如股权类转账，存放收款人的脚本hash |
 | Vote | 0x30 |  |
-| DescriptionUrl | 0x81 |  |
-| Description | 0x90 |  |
-| Hash1 | 0xa1 |  |
-| Hash2 | 0xa2 |  |
-| Hash3 | 0xa3 |  |
-| Hash4 | 0xa4 |  |
-| Hash5 | 0xa5 |  |
-| Hash6 | 0xa6 |  |
-| Hash7 | 0xa7 |  |
-| Hash8 | 0xa8 |  |
-| Hash9 | 0xa9 |  |
-| Hash10 | 0xaa |  |
-| Hash11 | 0xab |  |
-| Hash12 | 0xac |  |
-| Hash13 | 0xad |  |
-| Hash14 | 0xae |  |
-| Hash15 | 0xaf |  |
-| Remark | 0xf0 | 备注 |
-| Remark1 | 0xf1 |  |
-| Remark2 | 0xf2 |  |
-| Remark3 | 0xf3 |  |
-| Remark4 | 0xf4 |  |
-| Remark5 | 0xf5 |  |
-| Remark6 | 0xf6 |  |
-| Remark7 | 0xf7 |  |
-| Remark8 | 0xf8 |  |
-| Remark9 | 0xf9 |  |
-| Remark10 | 0xfa |  |
-| Remark11 | 0xfb |  |
-| Remark12 | 0xfc |  |
-| Remark13 | 0xfd |  |
-| Remark14 | 0xfe |  |
-| Remark15 | 0xff |  |
+| DescriptionUrl | 0x81 | 外部介绍信息地址 |
+| Description | 0x90 | 简短的介绍信息 |
+| Hash1 - Hash15 | 0xa1-0xaf | 用于存放自定义的散列值 |
+| Remark-Remark15 | 0xf0-0xff | 备注 |
+
+ContractHash，ECDH 系列，Vote，Hash 系列，数据长度固定为 32 字节，length 字段省略；
+
+Script，必须明确给出数据长度，且长度不能超过 65535；
+
+DescriptionUrl，Description，Remark 系列，必须明确给出数据长度，且长度不能超过 255。
 
 
 ### **Witness**
@@ -255,8 +241,15 @@ TransactionAttributeUsage，交易属性使用表
 
 | 尺寸 | 字段 | 类型 | 描述 |
 |--|-------|------|------|
-| ?  | InvocationScript | byte[] |执行脚本，补全脚本参数 |
+| ?  | InvocationScript | byte[] |调用脚本，补全脚本参数 |
 | ?  | VerificationScript | byte[] | 验证脚本  | 
+
+调用脚本进行压栈操作相关的指令，用于向验证脚本传递参数（如签名等）。脚本解释器会先执行栈脚本代码，然后执行验证脚本代码。
+
+`Block.NextConsensus`所代表的多方签名脚本，填充签名参数后的可执行脚本，如下图所示，[`Opt.CHECKMULTISIG`](../neo_vm.md#checkmultisig) 在NVM内部执行时，完成对签名以及公钥之间的多方签名校验。
+<p align="center"><img src="../../images/blockchain/nextconsensus_witness.jpg" /><br></p
+
+
 
 UTXO进行转账时，实际上是对能解锁`Output.scriptHash`的output进行消费，并在新交易的见证人上填充其签名参数。账户地址，实际上就是脚本hash的base58check处理，代表的是一段签名认证脚本，如下图。 [`Op.CheckSig`](../neo_vm.md#checksig) 执行需要公钥和签名两个参数，在地址脚本中，已经包含了公钥参数，故在交易中只需要补充签名参数。
 
