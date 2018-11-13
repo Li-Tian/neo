@@ -6,7 +6,10 @@
 &emsp;&emsp;同时，NEO的每一个区块，都带了指向参与下一轮出块的共识节点的多方签名脚本hash的`NextConsensus`字段，即当前交易，决定下一轮共识节点。
 
 
-&emsp;&emsp; The PoS model of NEO is embodied in: (1) Anyone can initiate a transaction to become a validator. (2) Anyone who hold the NEO coin, can vote on the validators and decide the consensus nodes at anytime.
+
+
+
+&emsp;&emsp; The PoS model of NEO is embodied in: (1) Anyone can initiate a transaction to become a validator. (2) Anyone who hold the NEO coin, can vote on the validators and decide the consensus nodes at anytime. 
 
 ## 投票
 
