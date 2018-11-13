@@ -69,6 +69,17 @@ namespace Neo.Cryptography.ECC
             return Y.CompareTo(other.Y);
         }
 
+        /// <summary>
+        /// 将一个代表一个ECPoint的字节数组解码为一个ECPoint对象.
+        /// 如果第一个字节为0x00, 则为零元. 
+        /// 如果第一个字节为0x02或者0x03, 则解码为compressed的ECPoint.
+        /// 如果第一个字节为0x04,0x06,0x07, 则解码为uncompressed的ECPoint
+        /// 如果都不符合, 则抛出异常.
+        /// </summary>
+        /// <exception cref="FormatException">编码格式有问题</exception>
+        /// <param name="encoded">编码后的字节数组</param>
+        /// <param name="curve">使用的椭圆曲线</param>
+        /// <returns>解码后的ECPoint对象</returns>
         public static ECPoint DecodePoint(byte[] encoded, ECCurve curve)
         {
             ECPoint p = null;
@@ -134,6 +145,10 @@ namespace Neo.Cryptography.ECC
             return new ECPoint(x, beta, curve);
         }
 
+        /// <summary>
+        /// 从一个字节流中读出并转换成为一个ECPoint, 并且将其X,Y坐标分别赋予当前ECPoint对象的X，Y 
+        /// </summary>
+        /// <param name="reader">一个BinaryReader， 从字节流中读入被转换的ECPoint</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ECPoint p = DeserializeFrom(reader, Curve);
@@ -141,6 +156,13 @@ namespace Neo.Cryptography.ECC
             Y = p.Y;
         }
 
+        /// <summary>
+        /// 从一个字节流中读出并转换成为一个ECPoint
+        /// </summary>
+        /// <param name="reader">一个BinaryReader， 从字节流中读入被转换的ECPoint</param>
+        /// <param name="curve">这个ECPoint所在的ECCurve</param>
+        /// <exception cref="FormatException">如果读出来的字节流第一个字节不符合格式</exception>
+        /// <returns>反序列化之后的ECPoint</returns>
         public static ECPoint DeserializeFrom(BinaryReader reader, ECCurve curve)
         {
             int expectedLength = (curve.Q.GetBitLength() + 7) / 8;
@@ -164,6 +186,14 @@ namespace Neo.Cryptography.ECC
             }
         }
 
+        /// <summary>
+        /// 压缩方法，将这对象内ECPoint对象编码为一个字符串
+        /// </summary>
+        /// <param name="commpressed">判断是否为压缩之后的ECPoint</param>
+        /// <returns>
+        /// 如果压缩， 则返回经过解压的算法得来的ECPoint方法
+        /// </returns>
+
         public byte[] EncodePoint(bool commpressed)
         {
             if (IsInfinity) return new byte[1];
@@ -184,6 +214,16 @@ namespace Neo.Cryptography.ECC
             return data;
         }
 
+        /// <summary>
+        /// 比较方法，与另一个ECpoint进行比较。
+        /// </summary>
+        /// <param name="other">另一个拿来比较的姑娘</param>
+        /// <returns>
+        /// 如果是一个引用，返回Ture. 
+        /// 如果一个是null ， 也可以去.
+        /// 如果你教比别人大 开心。
+        /// 
+        /// </returns>
         public bool Equals(ECPoint other)
         {
             if (ReferenceEquals(this, other)) return true;
@@ -193,6 +233,11 @@ namespace Neo.Cryptography.ECC
             return X.Equals(other.X) && Y.Equals(other.Y);
         }
 
+        /// <summary>
+        /// 比较两个Object是否相等
+        /// </summary>
+        /// <param name="obj">待比较的object对象</param>
+        /// <returns>如果两个相等则返回<C>True</C>, 如果不等则返回<c>flse</c></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as ECPoint);
@@ -224,7 +269,12 @@ namespace Neo.Cryptography.ECC
         {
             return X.GetHashCode() + Y.GetHashCode();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
         internal static ECPoint Multiply(ECPoint p, BigInteger k)
         {
             // floor(log2(k))
@@ -324,21 +374,42 @@ namespace Neo.Cryptography.ECC
             return q;
         }
 
+        /// <summary>
+        /// 解析一个字符串，转换成ECPoint
+        /// </summary>
+        /// <param name="value">被解析的字符串</param>
+        /// <param name="curve">椭圆曲线类型</param>
+        /// <returns>被解析的ECpoint</returns>
         public static ECPoint Parse(string value, ECCurve curve)
         {
             return DecodePoint(value.HexToBytes(), curve);
         }
 
+        /// <summary>
+        /// 序列化这个ECPoint并且写入字节流中
+        /// </summary>
+        /// <param name="writer">写入字节流的BianryWriter</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(EncodePoint(true));
         }
 
+        /// <summary>
+        /// 将这个ECPoint编码后转换为16进制的字符串
+        /// </summary>
+        /// <returns>转换之后的字符串</returns>
         public override string ToString()
         {
             return EncodePoint(true).ToHexString();
         }
 
+        /// <summary>
+        /// 解析一个字符串, 将其解析为一个ECCpoint
+        /// </summary>
+        /// <param name="value">被解析的字符串</param>
+        /// <param name="curve">椭圆曲线类型</param>
+        /// <param name="point">将解析过后的ECCpoint保存到point</param>
+        /// <returns>如果能够解析返回<c>true</c>, 否则返回<c>false</c></returns>
         public static bool TryParse(string value, ECCurve curve, out ECPoint point)
         {
             try
@@ -413,11 +484,17 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 
+        /// <c>*</c>操作符, 用来计算曲线上的乘法运算
         /// </summary>
-        /// <param name="p"></param>
-        /// <param name="n"></param>
-        /// <returns></returns>
+        /// <param name="p">作为被乘数的坐标点</param>
+        /// <param name="n">作为乘数的坐标点所存储的字节数组</param>
+        /// <exception cref="ArgumentNullException">如果两个参数中有一个是null</exception>
+        /// <exception cref="ArgumentException">如果传入的字节长度不是32</exception>
+        /// <returns>
+        /// 求乘法计算后的结果.如果该点为无穷远点, 则返回这个零点
+        /// 如果乘数是0,返回无穷零点
+        /// 否则, 调用Multiply方法计算。
+        /// </returns>
         public static ECPoint operator *(ECPoint p, byte[] n)
         {
             if (p == null || n == null)
@@ -433,7 +510,7 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        ///  <c>+</c>操作符, 加法曲线上的加法运算
+        ///  <c>+</c>操作符, 计算曲线上的加法运算
         /// </summary>
         /// <param name="x">第一个点</param>
         /// <param name="y">第二个点</param>

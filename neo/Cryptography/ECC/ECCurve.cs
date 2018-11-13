@@ -33,7 +33,7 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 返回一个random的椭圆曲线
+        /// 返回一个Koblitz类型的椭圆曲线
         /// </summary>
         public static readonly ECCurve Secp256k1 = new ECCurve
         (
@@ -45,7 +45,7 @@ namespace Neo.Cryptography.ECC
         );
 
         /// <summary>
-        /// 返回一个Koblitz类型的椭圆曲线
+        ///  返回一个Random的椭圆曲线
         /// </summary>
         public static readonly ECCurve Secp256r1 = new ECCurve
         (
