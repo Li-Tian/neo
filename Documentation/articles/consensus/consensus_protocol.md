@@ -1,206 +1,201 @@
-<center><h2>共识协议</center></h2>
+<center><h2>Consensus Protocol</center></h2>
 
-### 一、共识消息格式
+### 一、Consensus Message Format
 
 
-##### **P2P消息格式**
+##### **P2p** message format
 
-| 尺寸 | 字段 | 类型  | 说明 |
+| Size | Field | Type  | Description |
 |------|------|-------|------|
-|  4    | Magic |  uint | 网络p2p协议魔法数，默认为配置文件`protocol.json`中的`ProtocolConfiguration.Magic`值，主网为 `7630401`, 测试网为`1953787457`   |
-| 12   | Command | string | `consensus`，共识消息  |
-| 4     | length    | uint32 | Payload长度|
-| 4     | Checksum | uint | 校验码 |
-| length   | Payload | byte[] | `ConsensusPayload` 共识消息内容 |
+|  4    | Magic |  uint | Protocol ID, defined in the configuration file `protocol.json`, mainnet is `7630401`, testnet is `1953787457`   |
+| 12   | Command | string | Command, all consensus messages' command is `consensus`  |
+| 4     | length    | uint32 | Length of payload|
+| 4     | Checksum | uint | Checksum |
+| length  | Payload | byte[] | Content of message, all consensus messages' payload is `ConsensusPayload`  |
 
 
 ##### **ConsensusPayload** 
 
-| 尺寸 | 字段 | 类型  | 说明 |
+| Size | Field | Type  | Description |
 |----|------|-------|------|
-| 4  | Version |  uint | 共识版本号， 目前为`0` |
-| 32  | PrevHash | UInt256 | 上一个区块的hash |
-| 4 | BlockIndex |uint | 当前Block高度 |
-| 2 | ValidatorIndex | ushort | 发送共识消息的议员，在议员列表中的序号 |
-| 4  | Timestamp | byte[] | 时间戳 |
-| ?  |  Data | byte[] | 具体消息内容： `ChangeView`, `PrepareRequest`, `PrepareResponse` |
-| 1 |  - | uint8 | 	固定为 1 |
-| ? | Witness | Witness | 见证人 |
+| 4  | Version |  uint | 	Version of protocol, 0 for now |
+| 32  | PrevHash | UInt256 | Previous block's hash |
+| 4 | BlockIndex |uint | Height of the block |
+| 2 | ValidatorIndex | ushort | The index of the current consensus node in validators array |
+| 4  | Timestamp | byte[] | Time-stamp |
+| ?  |  Data | byte[] | Includes `ChangeView`, `PrepareRequest` and `PrepareResponse` |
+| 1 |  - | uint8 | It's fixed to 1 |
+| ? | Witness | Witness | Witness contains invokecation script and verificatioin script |
 
 
-##### **Changeview** 消息格式
+##### **Changeview** 
 
-| 尺寸| 字段 | 类型 | 说明  |
+| Size | Field | Type  | Description |
 |----|------|-----|-------|
 | 1 | Type | ConsensusMessageType |  `0x00` |
-| 1 | ViewNumber | byte | 当前视图编号 |
-| 1 | NewViewNumber | byte |  新视图编号 |
+| 1 | ViewNumber | byte | Current view number |
+| 1 | NewViewNumber | byte |  New view number |
 
 
-##### **PrepareRequest** 消息格式
+##### **PrepareRequest**
 
 
-| 尺寸| 字段 | 类型 | 说明  |
+| Size | Field | Type  | Description |
 |----|------|-----|-------|
 | 1 | Type | ConsensusMessageType |  `0x20` |
-| 1 | ViewNumber | byte | 当前视图编号 |
-| 1 | Nonce | byte |  Block随机值 |
-| 20  | NextConsensus | UInt160 |  下一轮共识节点地址的多方签名 |
-| 4 + 32 * length   | TransactionHashes | UInt256[] |  打包的交易hash列表 |
-| 78  | MinerTransaction | MinerTransaction | 议长的出块奖励交易 |
-|  64 | Signature | byte[] |  Block的签名 |
+| 1 | ViewNumber | byte | Current view number |
+| 1 | Nonce | byte |  block nonce |
+| 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-sign contract  |
+| 4 + 32 * length   | TransactionHashes | UInt256[] |  The proposal block's transaction hashes |
+| 78  | MinerTransaction | MinerTransaction |  It is used to reward all transaction fees of the current block to the speaker. |
+|  64 | Signature | byte[] |  Block signature |
 
-##### **PrepareResponse** 消息格式
+##### **PrepareResponse**
 
-| 尺寸| 字段 | 类型 | 说明  |
+| Size | Field | Type  | Description |
 |----|------|-----|-------|
 |  1  | Type | ConsensusMessageType |  `0x21` |
-|  1  | ViewNumber | byte | 当前视图编号 |
-|  64  | Signature | byte[] | Block的签名 |
+|  1  | ViewNumber | byte | Current view number |
+|  64  | Signature | byte[] | Block signature |
 
 
 
 
-### 二、传输协议
+### 二、Transport Protocol
 
 
-共识消息进入P2P网络后，和其他数据包一样，进行广播传输，（因为共识节点之间并不知道对方的IP地址), 即普通都可能收到共识数据包。共识消息的广播流程如下图。
+When consensus message enters the P2P network, it broadcasts and transmits like other data packets, becuase consensus nodes do not know each other's IP address. That is to say, ordinary nodes can receive consensus message. The broadcast flow of consensus messages is as follows.
 
 <p align="center"><img src="../../images/consensus/consensus_msg_seq.jpg" /><br></p>
 
-  1. 在发送`consensus`消息之前，先发送`inv`消息，携带上`consensus`消息的`payload`的hash数据。
 
-  2. 若一个节点已经收到过该hash对应的数据，或在短时间内，已经重复获取该`inv`消息时，则不处理；否则，进入步骤三。
+  1. Before send `consensus` message, send `inv` message attached with `consensus.payload.hash` first. 
 
-  3. 向外广播`getdata`消息，附带上`inv`消息中的hash数据。
+  2. If a node has received thee hash corresponding data, or has repeatedly acquiredd the `inv` message in a short time, it will not process it. Otherwise, goto step 3).
 
-  4. 共识节点收到`getdata`消息后，则发送`consenus`消息给对方。
+  3. Broadcast `getdata` message attached with the hash in the `inv` message.
 
-  5. 节点收到`consensus`消息后，则触发共识模块对消息处理。
+  4. The consensus node send `consensus` message to it, after receiving `getdata` message.
+
+  5. After receiving the `consensus` message, the node triggers the consensus module to process the message.
 
 
+##### **inv message format** 
 
-
-##### **inv 消息格式** 
-
-| 尺寸 | 字段 | 类型  | 说明 |
+| Size | Field | Type  | Description |
 |------|------|-------|------|
-|  4    | Magic |  uint | 网络p2p协议魔法数|
+|  4    | Magic |  uint | Protocol ID |
 | 12   | Command | string | `inv`  |
-| 4     | length    | uint32 | Payload长度|
-| 4     | Checksum | uint | 校验码 |
-| length   | Payload | byte[] | `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
+| 4     | length    | uint32 | Length of payload|
+| 4     | Checksum | uint | Checksum |
+| length   | Payload | byte[] | Format: `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
 
 > [!Note] 
-> Payload格式为： `inv.type + inv.payloads.length + inv.payload`
-> `inv` 消息的payload，有三种类型:
-> 1. `0x01`: 交易， inv.payload存放为交易hash列表
-> 2. `0x02`: 区块， inv.payload 存放共识消息`ConsensusPayload`的hash列表
-> 3. `0xe0`: 共识， inv.payload 存放区块的hash列表
+> Payload's format： `inv.type + inv.payloads.length + inv.payload`
+> `inv` message's payload has three types as follow:
+> 1. `0x01`: Transaction. inv.payload is assigned to transaction's hash.
+> 2. `0x02`: Block.  inv.payload is assigned to `ConsensusPayload` message's hash.
+> 3. `0xe0`: Consensus. inv.payload is assigned to block's hash.
 
 
-##### **getdata 消息格式** 
+##### **getdata message format** 
 
-| 尺寸 | 字段 | 类型  | 说明 |
+| Size | Field | Type  | Description |
 |------|------|-------|------|
-|  4    | Magic |  uint | 网络p2p协议魔法数|
+|  4    | Magic |  uint | Protocol ID|
 | 12   | Command | string | `getdata`  |
-| 4     | length    | uint32 | Payload长度|
-| 4     | Checksum | uint | 校验码 |
-| length   | Payload | byte[] | `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
+| 4     | length    | uint32 |  Length of payload|
+| 4     | Checksum | uint | Checksum |
+| length   | Payload | byte[] | Format: `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
 
 > [!Note] 
-> `getdata` 消息主要用来获取 `inv`消息附带hash列表对应的具体内容。
+> `getdata` message is mainly used to get the `inv` message with specific content hash.
 
 
 
+### 三、 Consensus Message Process
 
-### 三、 共识消息处理
+#####  **Verification**
 
-#####  **校验**
+1. If the `ConsensusPayload.BlockIndex` no more than current block height, then ignore.
 
-1. 检查`ConsensusPayload.BlockIndex`。若小于或等于当前高度，则忽略该消息
+2. If the verification script executed failed or the script hash not equal to `ConsensusPayload.ValidatorIndex` address's script hash, then ignore.
 
-2. 检查验证脚本是否通过，以及验证脚本的地址hash，是否等于`ConsensusPayload.ValidatorIndex`所在议员列表中，对应的地址签名脚本hash。
+3. If the `ConsensusPayload.ValidatorIndex` equal to current node index, then ignore.
 
-3. 检查`ConsensusPayload.ValidatorIndex`。若等于当前节点的共识列表序号，则忽略该消息（自己发出的消息，不接收）
+4. If the `ConsensusPayload.Version` not equal to current consensus version, then ignore.
 
-4. 检查共识版本号。若不等于当前共识协议版本号时，则忽略。
+5. If the `ConsensusPayload.PreHash` and `ConsensusPayload.BlockIndex` are not equal to the current node context's, then ignore.
 
-5. 检查`ConsensusPayload.PreHash` 和 `ConsensusPayload.BlockIndex`, 是否等于当前共识节点上下文的`PreHash`与`BlockIndex`。 若不是，则忽略。
+6. If the `ConsensusPayload.ValidatorIndex` more than the length of the current consensus nodes array, then ignore.
 
-6. 检查`ConsensusPayload.ValidatorIndex`，若超过当前议员总数时，则忽略。
+7. If the `ConsensusMessage.ViewNumber` not equal to the current node context's `ViewNumber` and the consensus message is not `ChangeView`, then ignore.
 
-7. 检查`ConsensusMessage.ViewNumber`. 若不等于当前共识阶段上下文的`ViewNumber`且不是`ChangeView`消息时，则忽略
-
-
-##### **处理**
+##### **Process**
 
 
-1. **PrepareRequest** 由一轮共识的议长发出，其中附带了`block`相关的数据。
+1. **PrepareRequest** was send by the speaker, attached with block proposal data.
 
-   1. 检查节点自身，是否在本轮共识是议员。如果不是议员，则忽略该消息。或者`PrepareRequest`已接收过。
+   1. If the current node is not delegates in the consensus round, or the `PrepareRequest` received already, then ignore.
 
-   2. 根据`ConsensusPayload.ValidatorIndex` 确定对方是不是本轮的议长，若不是，则忽略。 
+   2. If the `ConsensusPayload.ValidatorIndex` is not the index of the current round speaker, then ignore.
 
-   3. 检查 `ConsensusPayload.Timestamp`， 若小于等于上一个区块的时间戳，或者超过了当前时间10分钟以上，则认为消息过期，忽略。
+   3. If the `ConsensusPayload.Timestamp` no more than the time stamp of the previous block, or more than 10 minutes above the current time, then ignore.
 
-   4. 检查对block的签名是否对
+   4. If the block signature is incorrent, then ingore.
 
-   5. 检查内存池已经包含的block所需的交易。若交易已经在区块链中，或者插件校验失败，则认为交易数据不对，发起`ChangeView`消息。
+   5. If the block's transantions in the memory pool, are in the blockchain already, or verified failure by the plugin-in, then the transaction data is considered incorrent and initiate the `ChangeView` message.
 
-   6. 检查block中第一笔交易，即挖矿交易，同步骤5检查，并进行交易自身验证。若验证失败，忽略该消息。
+   6. Check the first transaction in block -- `MinerTransaction`, like step 5). If validation fails, then ignore
 
-   7. 收集签名。
+   7. Collect the signature in the `PrepareRequest` message.
 
-   8. 若缺少`block`中的交易时，发送`getdata`消息，附带缺少交易的hash列表。
-
-   9. 若交易齐全时，首先校验`PrepareRequest.NextConsensus` 是否等于 结合了最新交易的下一个区块共识节点的多方签名脚本hash。若不是，则发起`ChangeView`消息；若是，则对block进行签名，并广播`PrepareResponse`消息。
+   8. If there is a lack of transactions in `block`, send the `getdata` message with the hashes of those transactions. 
 
 
+   9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-sign contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
 
-2. **PrepareResponse** 议员对议长发的`PrepareRequest`消息回应，并附带了对block的签名
-  
-   1. 若当前议员已经出新块了，则忽略消息
+
+2. **PrepareResponse** is the Delegates' answer to the `PrepareRequest` message sent by the Speaker attached with block signture.
+
+   1. If the current node has published the new full block, then ignore.
+
+   2. If the block signature has collected already, then ignore.
+
+   3. Check the signature is correct. If not, then ingore, else collect.
+
+   4. If there are at least `N+f` signatures, then publish the new full block.
+
+
+3. **Changeview** was send by consensus node, when timeout occured or received illegal data
+
+   1. If the view number less than the  sender view number, then ignore.
    
-   2. 若对方签名已经收到过，则忽略
+   2. If the new view number less than current node view number, then ignore.
 
-   3. 校验对方的签名，若通过，则收下签名，否则忽略。
-
-   4. 检查签名数，若已经满足`2f+1`个签名，则出新块，向网络广播`block`.
+   3. If received at least `N-f` `ChangeView` messages with the same new view number, then the View Change completed. The current node reset the consensus process with the new view number.
 
 
+4. **onTimeout** 
 
-3. **Changeview** 议员或者议长，在遇到超时（议长第一次超时例外，发送`PrepareRequest`消息），或者校验失败时，则发送`ChangeView`消息。议员，议长收到`ChangeView`消息做如下处理：
+   1. If the Speaker timeout, the `PrepareRequeset` message will be sent for the first time, and the `ChangeView` message will be luanched subsequently.
 
-   1. 若新视图编号，小于该议员之前的视图编号，则忽略
-   
-   2. 若新视图编号，小于当前议员的视图编号，则忽略
-
-   3. 若有不少于`2f+1`个议员的视图编号等于新视图编号时，则切换视图成功，当前议员重置共识流程，视图编号为新的视图编号。
+   2. If Delegates timeout, then broadcast `ChangeView` message directly.
 
 
-
-4. **onTimeout** 消息处理
-
-   1. 若是议长超时，第一次超时发送`PrepareRequest`消息，后续则发起`ChangeView`消息。
-
-   2. 若是议员超时，则直接发送`ChangeView`消息
-
-
-5. **NewBlock** 事件处理
+5. **New Block** 
  
-   1. 重置共识过程
+   1. resetting consensus process
 
 
-6. **New Tx** 事件处理
+6. **New Transaction** 
 
-    1. 若是挖矿交易，则忽略。（挖矿交易是直接附在`PrepareRequest`消息中，不需要单独进行广播该交易）
+    1. If the transaction is the `MinerTransaction`, then ignore. As the `PrepareRequest` contains the `MinerTransaction`.
 
-    2. 若当前节点是议长，或已经发送过`PrepareRequset`或者`PrepareResponse`消息，或正在切换视图中，则忽略该交易
+    2. If the current node is the Speaker, or the node has sent `PrepareRequest` or `PrepareResponse` messages, or in switching view process, then ignore.
 
-    3. 若已经收到过该交易，则忽略
+    3. If the transaction has received before, then ignore.
 
-    4. 若交易不在待打包block里面的，则忽略
+    4. If the transacion isn't in the propoal block, then ignore.
 
-    5. 将交易收下，放到待打包的block里
+    5. Collect the transaction.

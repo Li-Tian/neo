@@ -5,6 +5,9 @@
 
 &emsp;&emsp;同时，NEO的每一个区块，都带了指向参与下一轮出块的共识节点的多方签名脚本hash的`NextConsensus`字段，即当前交易，决定下一轮共识节点。
 
+
+&emsp;&emsp; The PoS model of NEO is embodied in: (1) Anyone can initiate a transaction to become a validator. (2) Anyone who hold the NEO coin, can vote on the validators and decide the consensus nodes at anytime.
+
 ## 投票
 
 
@@ -15,7 +18,7 @@
 
 ##### **交易结构**
 
-| 尺寸 | 字段 | 类型 | 说明 |
+| Size | Field | Type  | Description |
 |-----|------|------|------|
 | 1 | Type | uint8 | 交易类型， `0x20` |
 | 1 | Version | uint8 | 	交易版本，目前为 0 |
@@ -43,7 +46,7 @@
 
 ##### **交易结构**
 
-| 尺寸 | 字段 | 类型 | 说明 |
+| Size | Field | Type  | Description |
 |-----|------|------|------|
 | 1 | Type | uint8 | 交易类型， `0x90` |
 | 1 | Version | uint8 | 	交易版本，目前为 0 |
@@ -55,7 +58,7 @@
 
 **StateDescriptor结构**
 
-| 尺寸  |   字段  | 类型 |  说明 |
+| Size | Field | Type  | Description |
 |-------|---------|------|-------|
 | 1  | Type |  StateType | `0x40`--投票， `0x48`--申请验证人 |
 | 20/30 |  Key | byte[] |  当`Field = "Votes"`时， 存放投票人地址的脚本hash， `Key`代表投票人; 当`Field = "Registered"`时， 存放公钥， `Key`代表申请人  | 

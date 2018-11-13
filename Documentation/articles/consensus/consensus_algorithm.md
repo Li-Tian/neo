@@ -1,104 +1,115 @@
-<center><h2> dBFT算法介绍 </h2></center>
-
-&emsp;&emsp;dBFT(Delegated Byzantine Fault Tolerant)[1]算法是在PBFT(Practical Byzantine Fault Tolerance)[3]算法上改良过来。PBFT算法能够有效解决分布式可信共识，但是当投票节点越来越多时，性能下降越厉害，其算法时间复杂度 O(n<sup>2</sup>), n是节点个数。 在此基础上，NEO提出结合POS模式特点的DBFT算法，利用区块链投票，决定下一轮共识节点，即授权少数节点出块，其他节点作为普通节点验证和接收区块信息。
+<center><h2> The dBFT Algorithm </h2></center>
 
 
-### 基本概念
-
-* 共识节点： 具有发起新块提案，提案投票权限的节点。
-* 普通节点： 具有转账，交易，全网账本，但不具有记录权限，不能发起区块提案与投票。
-* 议长：负责向其他节点，广播新块提案。
-* 议员：参与共识出块的节点，负责对新块提案进行投票，当票数不少于2𝑓+1时，则提案通过。
-* 验证人： 被投票选举参与共识的节点
-* 视图： 一轮共识从开始到结束所使用的数据集。视图编号 𝑣，从 0 开始，并逐渐递增，直到新的提案通过后清零。
+&emsp;&emsp;dBFT(Delegated Byzantine Fault Tolerant) algorithm is based on PBFT(Practical Byzantine Fault Tolerance) algorithm, more suitable in blockchain. PBFT algorithm can solve distributed network consensus effectively, but the more nodes join, the faster the performance drops, as the time complexity is O(n<sup>2</sup>) . On this basis, NEO proposes a dBFT algorithm which combines the characteristics of PoS mode. By voting on the blockchain, it decides the next round of consensus nodes, namely authorizing a few nodes to create block, and the other nodes as ordinary nodes to receive and verify block.
 
 
-### 算法流程
+### List of Terms
+
+* **Consensus Node**: This node participates in the consensus activity, make a block proposal and vote.
+
+* **Ordinary Node**: This node can transfer, make a transaction, but not participate in the consensus activity.
+
+* **Speaker(One)**: The Speaker is responsible for transmitting a block proposal to the system.
+
+* **Delegates(Multiple)**: Delegates are responsible for voting on the block proposal. The proposal will be accepted, if more than `2f+1` consensus nodes vote it.
+
+* **Validator**: Nodes participating in elections, namely consensus candidate nodes.
+
+* **View**: The dataset used during one consensus activity. The view number start from 0 in each round, and increase number when reach a consensus failed in one round.
+
+
+### Algorithm Flow
 
  
-**符号定义**
+**Symbolic Definition**
 
-- N: 本轮共识节点总个数
-- f：最大容错节点个数， 不超过 ⌊(N-1)/3⌋。
-- v: 视图编号，从0开始。
-- ℎ： 当前共识的区块高度
-- p: 议长编号，`p = (h - v) mod N`
-- i：议员节点编号，等于本轮共识列表中的序号。
-- t: 出块时间。配置在文件`protocol.json`中的`SecondsPerBlock`值，默认15秒钟。
-- 𝑏𝑙𝑜𝑐𝑘： 提案的新块
-- 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: 第i个共识节点对𝑏𝑙𝑜𝑐𝑘的签名。
+- N: The number of active consensus nodes.
+
+- f：The maximum threshold of faulty consensus nodes in the system, no more than ⌊(N-1)/3⌋.
+
+- v: The view number, start from 0.
+
+- ℎ：The current block height during consensus activity.
+
+- p: The index of Speaker in array. `p = (h - v) mod N`
+
+- i：The index of consensus node in array. 
+
+- t: The block time, config in `protocol.json/SecondsPerBlock`, default 15 seconds.
+
+- 𝑏𝑙𝑜𝑐𝑘：The proposal block
+
+- 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: The block signature of the `i`th consensus node.
 
 
-**一般流程**
+**General Procedures**
 
 
-假设当前共识节点总数N, 最多 f 个容错节点。 刚开始时，具有相同的视图编号v = 0, 区块高度 ℎ = 当前区块高度。（若没有处在同一高度，可通过P2P之间区块同步，最终达成一致），共识算法涉及到的流程如下：
+Assume the total number of active consensus nodes is `N`, up to `f` fault tolerance nodes. At the begin, the nodes have the same view number `v = 0`, and block height `h = current block height`. If not at the same height, it can be achieved by block synchronization between P2Ps. The process involved in the consensus algorithm is as follows:
 
-1. 用户通过钱包发起一笔交易，如转账，发布智能合约，智能合约调用等。
+1. Users initate a transaction through wallet, such as transfer, deploy intelligent contract, release assets, etc.
 
-2. 钱包对交易进行签名，并发给节点P2P广播；
+2. The wallet signs the transaction data, and broadcasts to the entire networks.
 
-3. 共识节点收到该笔交易，存放到内存池；
+3. The consensus node received the transaction, and put into the memory pool.
 
-4. 在某一轮共识中，其议长将内存池交易，打包到新𝑏𝑙𝑜𝑐𝑘中，并广播 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡,ℎ,𝑣,𝑝,𝑏𝑙𝑜𝑐𝑘,
-〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑝</sub>〉  新块提案；
+4. In one consensus round, the Speaker package the transactions from the memory pool into a new block,  then broadcast the block proposal 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡,ℎ,𝑣,𝑝,𝑏𝑙𝑜𝑐𝑘,
+〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑝</sub>〉. 
 
-   1. 加载内存池交易
+   1. Load all the transactions in the memory pool.
 
-   2. 加载[`IPolicyPlugin`](https://github.com/neo-project/neo-plugins)插件，对交易进行排序和过滤
+   2. Load [`IPolicyPlugin`](https://github.com/neo-project/neo-plugins) plugin, sort and filter the transaction.
    
-   3. 计算总交易的网络手续费（`= input.GAS - output.GAS - 交易系统费 `)，将其作为当前议长的`MinerTransaction`奖励。
+   3. Calculate the network fee (`= inputs.GAS - outputs.GAS - transactions_system_fee `), and take it as the `MinerTransaction` award for the current Speaker.
+
+   4. Combining the above transactions and the previous validators votes, calculate the next round consensus nodes, and assign the multi-party signature script hash to `block.NextConsensus`, locking the consensus nodes of the next block.
+
+   5.  Set the timestamp of block to the current time and calculate the signature of the speaker.
    
-   4. 结合上面的交易和以前的验证人投票情况，计算出下一个区块的共识节点，并将多方签名脚本hash赋值给`block.NextConsensus`，锁定下一区块的共识节点。
-   
-   5. 设置block的时间戳为当前时间，并计算议长对block的签名
-   
-   6. 广播`PrepareRequset`共识消息
+   6. Broadcast `PrepareRequset` consensus messsage.
 
-   7. 广播`inv`消息，附带上除`MinerTransaction`外的交易hash。（通知其他节点，同步要打包的交易数据）
+   7. Broadcast `inv` message, attached with transactions' hashs except `MinerTransaction`. (Notify the other nodes to synchronize the transactions to be packed)
 
-5. 议员，在收到该提案与验证后，广播 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>〉 投票消息
-
-6. 当任意一个议员（包括议长），在收到𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒中的 2𝑓+1 个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名（包括自己的签名）后，即达成共识，开始发布新块，并广播；
-
-7. 任意一个节点收到该新块后，将上面交易从内存池中删除，并记录该区块内容。 若是共识节点收到新区块后，则进入下一轮共识。
-
-<p align="center"><img src="../../images/consensus/dbft_two_phase.jpg" /><br></p>
+5. Delegates recieved the block proposal, and verify the new block, then broadcast 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>〉 consensus message.
 
 
+6. Any node, receiving at leat `n-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub> , reaches a consensus and publishes the full block.
 
-算法可以划分为三阶段。1）`PRE-PREPARE`预准备阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。 2）`PREPARE`准备阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个节点收到不少于`2f+1`个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。3)`PERSIST`出块阶段， 负责向外广播新块，并进入下一轮共识。
+7. Any node, after receiving the full block, deletes all the full block's transactions in the memory pool. If the node is the consensus node, then enter the next round consensus.
 
+
+<p align="center"><img src="../../images/consensus/dbft_two_phase_en.jpg" /><br></p>
+
+
+The algorithm can be divided into three stages. 1) `PRE-PREPARE`, the speaker of this round is responsible for broadcasting `Prepare-request` message to the delegates and initiating the block proposal. 2) `PREPARE`, the delegates after receiving `PRE-PREPARE`, then broadcast `Prepare-Response` if the proposal verified successful. When a node receives at least `N-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>, it enters the third stage. 3) `PERSIST`, the consensus node publishes the full node and enter the next consensus round.
 
 > [!Note]
-> 1. 刚启动区块链网络时，默认读取配置文件`protocol.json`的备用共识节点列表`StandbyValidators`.
-> 2. 与普通块不一样，创世块并非共识节点出块，而是默认为区块链第一个区块。创世块中的`NextConsensus`指定了下一个块的共识节点为`StandbyValidators`的多方签名脚本hash。
+> 1. At the beigining of the blockchain network started, `StandbyValidators` are read from the configureation file `protocol.json` by default.
+> 2. Unlike ordinary block, genesis block is the first block in the blockchain by default, which is not published by consensus nodes. The `NextConsensus` in the genesis block specifies the conosensus nodes of the next block as the `StandbyValidators` nodes.
 
 
+**View Change**
 
-**视图更换**
-
-在开放的P2P网络环境共识过程中，可能会遇到网络延迟超时，恶意节点发送假数据等，议员可以发起更换视图消息，若收到不少于2f+1个更换视图消息时，则进入新的视图和新的议长，重新进行区块共识。
-
+In the process of consensus on a open p2p network environment, there may be network delay, evil node sending illegal data, etc. The consensus nodes can initiate a `ChangeView` proposal. They enter a new view with new speaker, and restart consensus, after receiving at least `N-f` `ChangeView` messages with the same view number.
 
 <p align="center"><img src="../../images/consensus/dbft_state_graph.jpg" /><br></p>
 
 
-当节点 𝑖 在经过 2<sup>𝑣+1</sup> ⋅ 𝑡 的时间间隔后仍未达成共识，或接收到包含非法交易的提案后，开始进入视图更换流程： 
+The View Change will take place, when one consensus node could not reach a consensus in `2<sub>v+1 </sub>*t` time interval, or received illegal proposals such as contain invalid transactions.
 
-1. 令 𝑘 = 1，𝑣<sub>𝑘 </sub>= 𝑣 + 𝑘； 
+1. Given 𝑘 = 1, 𝑣<sub>𝑘 </sub>= 𝑣 + 𝑘； 
 
-2. 节点 𝑖 发出视图更换请求 〈𝐶ℎ𝑎𝑛𝑔𝑒𝑉𝑖𝑒𝑤,ℎ,𝑣,𝑖,𝑣<sub>𝑘</sub>〉； 
+2. The `𝑖`th node initiate a 〈𝐶ℎ𝑎𝑛𝑔𝑒𝑉𝑖𝑒𝑤,ℎ,𝑣,𝑖,𝑣<sub>𝑘</sub>〉 proposal.
 
-3. 任意节点收到至少 2𝑓+1 个来自不同 𝑖 的相同 𝑣<sub>𝑘</sub> 后，视图更换达成，令 𝑣 = 𝑣<sub>𝑘</sub> 并开始共识；
+3. When any one node received at least `N-f` `ChangeView` with the same 𝑣<sub>𝑘</sub> from different consensus nodes, the View Change will be completed. Set 𝑣 = 𝑣<sub>𝑘</sub> and start the consensus process.
 
-4. 若经过 2<sup>𝑣<sub>𝑘 </sub>+1</sup> ⋅ 𝑡 的时间间隔后，视图更换仍未达成，则 𝑘 递增并回到第 2 步； 
-
-随着 𝑘 的增加，超时的等待时间也会呈指数级增加，可以避免频繁的视图更换操作，并使各节点尽快对 𝑣 达成一致。 而在视图更换达成之前，原来的 𝑣 依然有效，避免因偶然性的网络延迟超时而导致不必要的视图更换。 
+4. If the View Change is not completed in `2<sup>𝑣<sub>𝑘 </sub>+1</sup> ⋅ 𝑡` time interval, then increase k and back to step 2).
 
 
+With the k increase, the overtime waiting time will increase exponentially, which can avoid frequent View Change and make the nodes reach agreement as soon as possible. The original view `v` is still valid until the completion of View Change, avoiding unnecessary View Change due to accidental network latency.
 
-[1] [一种用于区块链的拜占庭容错算法](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
-[2] [共识机制图解](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
+[1] [A Byzantine Fault Tolerance Algorithm for Blockchain](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
+[2] [Consensus Diagram](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
 [3] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>

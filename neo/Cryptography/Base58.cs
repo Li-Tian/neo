@@ -11,6 +11,9 @@ namespace Neo.Cryptography
     /// </summary>
     public static class Base58
     {
+        /// <summary>
+        /// Base58字母表
+        /// </summary>
         public const string Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
         /// <summary>
         /// 将一个Base56的字符串解析为一个字节数组
