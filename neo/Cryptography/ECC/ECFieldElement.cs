@@ -17,7 +17,7 @@ namespace Neo.Cryptography.ECC
         /// </summary>
         /// <param name="value">坐标值</param>
         /// <param name="curve">椭圆曲线</param>
-        /// <exception cref="ArgumentException">如果该坐标值太大</exception>
+        /// <exception cref="ArgumentException">如果该坐标值太,超过有限域</exception>
         public ECFieldElement(BigInteger value, ECCurve curve)
         {
             if (value >= curve.Q)
@@ -137,6 +137,10 @@ namespace Neo.Cryptography.ECC
             return Value.GetHashCode();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ECFieldElement Sqrt()
         {
             if (curve.Q.TestBit(1))
@@ -181,9 +185,9 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 
+        /// 计算这个坐标域的平方值， 为Value取值后再对有限域Q取模后的值。
         /// </summary>
-        /// <returns></returns>
+        /// <returns>一个包含这个坐标域的平方值的ECFieldElement对象</returns>
         public ECFieldElement Square()
         {
             return new ECFieldElement((Value * Value).Mod(curve.Q), curve);
