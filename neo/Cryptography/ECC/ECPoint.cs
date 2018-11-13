@@ -189,9 +189,10 @@ namespace Neo.Cryptography.ECC
         /// <summary>
         /// 压缩方法，将这对象内ECPoint对象编码为一个字符串
         /// </summary>
-        /// <param name="commpressed">判断是否为压缩之后的ECPoint</param>
+        /// <param name="commpressed">判断是否返回压缩之后的ECPoint</param>
         /// <returns>
-        /// 如果压缩， 则返回经过解压的算法得来的ECPoint方法
+        /// 如果压缩， 则返回经过压缩的算法得来的ECPoint对象的字节数组
+        /// 如果不压缩，则直接返回ECPoint对象的字节数组
         /// </returns>
 
         public byte[] EncodePoint(bool commpressed)
@@ -215,14 +216,15 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 比较方法，与另一个ECpoint进行比较。
+        /// 比较方法，与另一个ECPoint进行比较。
         /// </summary>
-        /// <param name="other">另一个拿来比较的姑娘</param>
+        /// <param name="other">另一个拿来比较的ECPoint</param>
         /// <returns>
-        /// 如果是一个引用，返回Ture. 
-        /// 如果一个是null ， 也可以去.
-        /// 如果你教比别人大 开心。
-        /// 
+        /// 如果是一个引用，返回<c>true</c>. 
+        /// 如果一个是null , 返回<c>false</c>.
+        /// 如果是两个都是零元, 返回<c>true</c>
+        /// 如果一个是零元，则返回<c>false</c>.
+        /// 否则对两个坐标值 X,Y进行比较
         /// </returns>
         public bool Equals(ECPoint other)
         {
@@ -237,12 +239,18 @@ namespace Neo.Cryptography.ECC
         /// 比较两个Object是否相等
         /// </summary>
         /// <param name="obj">待比较的object对象</param>
-        /// <returns>如果两个相等则返回<C>True</C>, 如果不等则返回<c>flse</c></returns>
+        /// <returns>如果两个相等则返回<c>true</c>, 如果不等则返回<c>false</c></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as ECPoint);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pubkey"></param>
+        /// <param name="curve"></param>
+        /// <returns></returns>
         public static ECPoint FromBytes(byte[] pubkey, ECCurve curve)
         {
             switch (pubkey.Length)
@@ -269,12 +277,7 @@ namespace Neo.Cryptography.ECC
         {
             return X.GetHashCode() + Y.GetHashCode();
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="p"></param>
-        /// <param name="k"></param>
-        /// <returns></returns>
+     
         internal static ECPoint Multiply(ECPoint p, BigInteger k)
         {
             // floor(log2(k))

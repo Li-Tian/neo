@@ -1,4 +1,8 @@
-#  Base58
+# 区块链范式
+
+本章节会介绍NEO中所使用的相关算法
+
+##  Base58
 
 **摘要**
 
@@ -10,7 +14,7 @@ Base58是一种将非可视字符与可视化字符(ASCII)相互转化的编解�
 
 采用数字、大写字母、小写字母（去除歧义字符 0 (零), O (大写字母O), I (大写的字母i) and l (小写的字母L) ），总计58个字符作为编码的字母表。
 
-neo使用的字母表为：123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz
+neo使用的字母表为：**123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz**
 
 接口定义：
 
@@ -21,13 +25,11 @@ string Encode(byte[] input)
 ~~~
 
 
-
 2、解码方法：Base58字符串String解码成byte[]数据
 
 ~~~
 byte[] Decode(string input)
 ~~~
-
 
 
 编码步骤：
@@ -48,35 +50,15 @@ byte[] Decode(string input)
 
 3、统计原输入的字符串中字母表游标为零所对应的字符的个数count
 
-4、若byte[]数据的长度大于1，且byte[0]等于0，byte[1]大于等于0x80,则从byte[1+count]开始截取，
+4、若byte[]数据的长度大于1，且byte[0]等于0，byte[1]大于等于0x80,则从byte[1+count]开始截
 
-​      否则从byte[count]开始截取,得到结果
+取，否则从byte[count]开始截取,得到结果
 
 Example:
 
-1、String-->byte[]
-
-​                                                                                                     [0x17,0xad,0x5c,0xac,0x59,
-
-​                                                                                                      0x6a,0x1e,0xf6,0xc1,0x8a,
-
-AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF             --------->0xc1,0x74,0x6d,0xfd,0x30, 
-
-​                                                                                                      0x4f,0x93,0x96,0x43,0x54,
-
-​                                                                                                      0xb5,0x78,0xa5,0x83,0x22]
-
-2、byte[]-->String
-
-[0x17,0xad,0x5c,0xac,0x59,
-
- 0x6a,0x1e,0xf6,0xc1,0x8a,
-
-0xc1,0x74,0x6d,0xfd,0x30,           --------->AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF
-
-0x4f,0x93,0x96,0x43,0x54,
-
-0xb5,0x78,0xa5,0x83,0x22]
+| 字符串 | byte[] |
+| --- | --- |
+| AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF   |  [0x17,0xad,0x5c,0xac,0x59,0x6a,<br>0x1e,0xf6,0xc1,0x8a,<br>0xc1,0x74,0x6d,0xfd,0x30, <br>0x4f,0x93,0x96,0x43,0x54,0xb5,0x78,0xa5,0x83,0x22] |
 
 应用场景：
 
@@ -84,9 +66,7 @@ AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF             --------->0xc1,0x74,0x6d,0xfd,0x3
 
 
 
-
-
-# Base58Check
+## Base58Check
 
 **摘要**
 
@@ -131,29 +111,10 @@ byte[]数据的后4字节比较是否相同，相同则返回data,否则抛出�
 
 Example:
 
-1、String-->byte[]
+| 字符串 | byte[] |
+| --- | --- |
+| AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF   |  [0x17,0xad,0x5c,0xac,0x59,0x6a<br>0x1e,0xf6,0xc1,0x8a,0xc1,0x74,0x6d,0xfd,<br>0x30,0x4f,0x93,0x96,0x43,0x54,0xb5]|
 
-​                                                                                                     [0x17,0xad,0x5c,0xac,0x59,
-
-​                                                                                                      0x6a,0x1e,0xf6,0xc1,0x8a,
-
-AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF             --------->0xc1,0x74,0x6d,0xfd,0x30, 
-
-​                                                                                                      0x4f,0x93,0x96,0x43,0x54,
-
-​                                                                                                      0xb5]
-
-2、byte[]-->String
-
-[0x17,0xad,0x5c,0xac,0x59,
-
- 0x6a,0x1e,0xf6,0xc1,0x8a,
-
-0xc1,0x74,0x6d,0xfd,0x30,           --------->AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF
-
-0x4f,0x93,0x96,0x43,0x54,
-
-0xb5]
 
 应用场景：
 
@@ -165,7 +126,7 @@ AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF             --------->0xc1,0x74,0x6d,0xfd,0x3
 
 
 
-# ECC椭圆曲线加密
+## ECC椭圆曲线加密
 
 **摘要**
 
@@ -175,7 +136,7 @@ AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF             --------->0xc1,0x74,0x6d,0xfd,0x3
 
 ​     ECC椭圆曲线加密算法是一种非对称加密算法。利用其K=k*G过程不可逆的特性（其中K为公钥，G为基点（常数点)),可以预防通过公钥暴力求解私钥。相较于RSA等其他加密算法，在相同密钥长度情况下，其具备更高的安全性，同时更节约算力。ECC结合其他算法广泛应用于签名等领域，例如ECDsa数字签名。
 
-　NEO与比特币一样都采用ECC作为其公钥生成算法，NEO采用了secp256k1 标准所定义的⼀条特殊的椭圆曲线，使用的参数：
+　NEO与比特币一样都采用ECC作为其公钥生成算法，NEO采用了secp256r1 标准所定义的⼀条特殊的椭圆曲线，使用的参数：
 
 　素数Ｑ：00FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF
 
@@ -190,22 +151,14 @@ AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF             --------->0xc1,0x74,0x6d,0xfd,0x3
 　　　　　０ｘ4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5)
 
 
-
-注：1、NEO私钥采用32字节长度密钥
-
-​       2、NEO公钥采用两种格式：压缩形：02or03+x坐标+y坐标
-
-​                                                       非压缩形：04 +x坐标
-
 Example:
 
-1、private-->public
+| 名称 | 数值 |
+| --- | --- |
+| 私钥   |  c7134d6fd8e73d819e82755c64c93788d8db0961929e025a53363c4cc02a6962|
+| 公钥(压缩型) |  035a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74faab3a2b61a|
+| 公钥(非压缩型) |  045a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74faab3a2b61a35dfab<br>cb79ac492a2a88588d2f2e73f045cd8af58059282e09d693dc340e113f|
 
-​      输入：c7134d6fd8e73d819e82755c64c93788d8db0961929e025a53363c4cc02a6962
-​      输出（压缩型）：035a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74faab3a2b61a
-​      输出（非压缩型）：045a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74faab3a2b61a35dfabcb79ac492a
-
-2a88588d2f2e73f045cd8af58059282e09d693dc340e113f                                                                                         
 
 应用场景：
 
@@ -217,9 +170,11 @@ Example:
 
 1、[一个关于椭圆曲线密码学的初级读本 ](https://arstechnica.com/information-technology/2013/10/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography/)
 
+> [!NOTE]
+> 如果发现死链接，请联系 feedback@neo.org
 
 
-# ECDSA 签名
+## ECDSA 签名
 
 **摘要**
 
@@ -227,9 +182,9 @@ Example:
 
 **详述**
 
-​     椭圆曲线数字签名算法（ECDSA）是使用椭圆曲线密码（ECC）对数字签名算法（DSA）的模拟。
+​     椭圆曲线数字签名算法（ECDSA）是使用椭圆曲线密码（ECC）对数字签名算法（DSA）的模拟。其优点是速度快，强度高，签名短。
 
-其优点是速度快，强度高，签名短。其基本使用方法如下：
+其基本使用方法如下：
 
 ​     假设私钥、公钥、基点分别为k、K、G，根据ECC算法可知有K = k·G。
 
@@ -261,7 +216,6 @@ Example:
 
 = r·G
 
-​      NEO与比特币一样都采用ECDSA作为其数字签名的算法 。作为一个通用算法，多数高级语言会提供其对应的算法包，NEO使用了微软提供的System.Security.Cryptography算法库，其使用的求解消息的哈希算法为SHA256，公钥由ECC算法转化私钥求得。​                                                                       
 
 应用场景：
 
@@ -269,15 +223,11 @@ Example:
 
 ２、共识
 
-
-
-
-
-# 哈希算法
+## 哈希算法
 
 ​     哈希函数，又称散列算法，是一种从任何一种数据中创建数字“指纹”的方法。散列函数把消息或数据压缩成摘要，使得数据量变小，将数据的格式固定下来。该函数将数据打乱混合，重新创建一个叫做散列值（或哈希值）的指纹。散列值通常用一个短的随机字母和数字组成的字符串来代表。
 
-##  RIPEMD160 
+###  RIPEMD160 
 
 **摘要**
 
@@ -291,11 +241,6 @@ Example:
 
 ​       NEO使用RIPEMD160来生成合约脚本160bit的哈希值。
 
-Example:
-
-​      String---->hash
-
-​      "hello world" ------->"98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f "                                                                 
 
 应用场景：
 
@@ -303,7 +248,7 @@ Example:
 
 
 
-## SHA256 
+### SHA256 
 
 **摘要**
 
@@ -314,12 +259,6 @@ Example:
 ​      SHA256是SHA-2下细分出的一种算法。SHA-2 ，一种密码散列函数算法标准，由美国国家安全局研发，属于SHA算法之一，是SHA-1的后继者。SHA-2下又可再分为六个不同的算法标准，包括了：SHA-224、SHA-256、SHA-384、SHA-512、SHA-512/224、SHA-512/256。
 
 ​       对于任意长度的消息，SHA256都会产生一个256bit长的哈希值(可用16进制字符串表示)。
-
-Example:
-
-​       string---->hash
-
-​       "hello world" ------->"f0da559ea59ced68b4d657496bee9753c0447d70702af1a351c7577226d97723"                                                         
 
 应用场景：
 
@@ -333,7 +272,7 @@ Example:
 
 
 
-## Murmur3 
+### Murmur3 
 
 **摘要**
 
@@ -346,8 +285,10 @@ Example:
 其特点是：
 
 ​      1.碰撞率低
+
 ​      2.计算速度快
-​      3.擅长大文件的hash                                                              
+
+​      3.擅长大文件的哈希                                                              
 
 应用场景：
 
@@ -355,9 +296,7 @@ Example:
 
 2、leveldb存储
 
-
-
-## Scrypt
+### Scrypt
 
 **摘要**
 
@@ -368,10 +307,12 @@ Example:
 ​       Scrypt算法是基于PBKDF2-HMAC-SHA-256算法之上的安全加密算法。由著名的FreeBSD黑客 Colin Percival为他的备份服务 Tarsnap开发的，当初的设计是为了降低CPU负荷，尽量少的依赖cpu计算，利用CPU闲置时间进行计算，因此scrypt不仅计算所需时间长，而且占用的内存也多，使得并行计算多个摘要异常困难，因此利用rainbow table进行暴力攻击更加困难。
 
 ​     Neo中使用主要使用SCRYPT算法来生成满足NEP2规范的加密型密钥，使用的参数为：
-​     N（CPU/内存消耗指数，一般取值为2的若干次方）：16384
-​     p（并行计算参数，理论上取值范围为1-255，参数值越大越依赖于并发计算）：8
-​     r（表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽  ）：  8                                                          
 
+​     N（CPU/内存消耗指数，一般取值为2的若干次方）：16384
+
+​     p（并行计算参数，理论上取值范围为1-255，参数值越大越依赖于并发计算）：8
+
+​     r（表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽  ）：  8                                                          
 应用场景：
 
 1、NEP2格式密钥的导出。
@@ -384,7 +325,7 @@ Example:
 
 
 
-# MerkleTree
+## MerkleTree
 
 **摘要**
 
@@ -392,7 +333,7 @@ Example:
 
 **详述**
 
-​    梅克尔树是一种二叉树,能快速检查和归纳大量数据,可用于验证区块中交易记录的完整性。
+​    梅克尔树是一种二叉树,能快速检查和归纳大量数据,可用于验证区块中交易记录的完整性。NEO使用梅克尔树来构建区块模型。不同于比特币，NEO中每个区块的区块头都会保存一份该区块所有所有交易的梅克尔树根，区块的数据区存放的是交易数组。
 
 ![MerkleTree01](../images/blockchain_paradigm/MerkleTree01.png)
 
@@ -410,7 +351,6 @@ Example:
 
 ​      通过Transcation001、Transcation002、Hash1计算Top Hash 与原本的Top Hash比对，即可验证Transcation001的有效性。
 
-​      NEO使用梅克尔树来构建区块模型。不同于比特币，NEO中每个区块的区块头都会保存一份该区块所有所有交易的梅克尔树根，区块的数据区存放的是交易数组。
 
 应用场景：
 
@@ -421,8 +361,10 @@ Example:
 参考文献：
 
 1、https://en.wikipedia.org/wiki/Merkle_tree
+> [!NOTE]
+> 如果发现死链接，请联系 feedback@neo.org
 
-# AES加密
+## AES加密
 **摘要**
 
 ​    AES 是对称加密算法中的一种分组算法
@@ -459,9 +401,7 @@ Example：
 1、DB3钱包账户密码的存储、验证
 
 
-
-
-# BloomFilter布隆过滤器
+## BloomFilter布隆过滤器
 
 **摘要**
 
