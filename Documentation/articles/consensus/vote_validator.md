@@ -1,124 +1,110 @@
-<center><h2>投票，验证人，议员，议长</h2></center>
+<center><h2>Voting, Validator, Delegates, Speaker</h2></center>
 
+&emsp;&emsp; The PoS model of NEO is embodied in: (1) Anyone can initiate a transaction to become a validator. (2) Anyone who hold the NEO coin, can vote on the validators and decide the consensus nodes at anytime. The consensus nodes are calculated by this algorithm introduced in this chapter combining with the voting.  And voting is a dynamic and continuous process. If the NEO asset of the voting account changed, the number of votes at the previous voting address will also change, and consensus nodes will change accordingly.
 
-&emsp;&emsp;NEO的POS模式，体现在 (1) 任何人都可以发起交易申请成为验证人，(2) 任何人都可以通过持有NEO对申请验证人进行投票，决定共识节点和个数。根据投票情况，按照本章介绍的算法，计算出共识节点。同时，投票是一个动态持续过程，若投票的账户发生NEO资产变动，之前被投票地址的投票数也会发生变动，共识节点也相应产生变动。
+&emsp;&emsp; At the same time, each block contains `NextConsensus` field, which points to the next consensus activity nodes. That is to say, the current transaction determines the consensus nodes in the next round. 
 
-&emsp;&emsp;同时，NEO的每一个区块，都带了指向参与下一轮出块的共识节点的多方签名脚本hash的`NextConsensus`字段，即当前交易，决定下一轮共识节点。
+## Voting
 
-
-
-
-
-&emsp;&emsp; The PoS model of NEO is embodied in: (1) Anyone can initiate a transaction to become a validator. (2) Anyone who hold the NEO coin, can vote on the validators and decide the consensus nodes at anytime. 
-
-## 投票
-
-
-&emsp;&emsp;在NEO中，可以通过两种特殊类型交易发起投票。一是，`EnrollmentTransaction` 直接申请成为验证人。二是，`StateTransanction` 进行投票或申请成为验证人。 当用户选择了被投票人进行投票时，实际上包括两部分投票，一是共识节点个数（= 被投票人个数）的投票（= 持有NEO的个数），另外是被投票人的投票（ = 持有NEO的个数）。
+&emsp;&emsp; In NEO, voting can be initiated through two special types of transactions. First, `EnrollmentTransaction` can be used for applying for validator. Second, `StateTransaction` can be used for voting or validator. When the user chooses the validator to vote, it actually includes two parts: one is the number of consensus nodes, the other is the validator.
 
 
 ### EnrollmentTransaction
 
-##### **交易结构**
+##### **Structure**
 
 | Size | Field | Type  | Description |
 |-----|------|------|------|
-| 1 | Type | uint8 | 交易类型， `0x20` |
-| 1 | Version | uint8 | 	交易版本，目前为 0 |
-| ? | PublicKey | ECPoint | 申请验证人地址 |
-| ?*? | Attributes | tx_attr[]| 该交易所具备的额外特性 |
-| 34*? | Inputs |  tx_in[] | 输入 |
-| 60 * ? | Outputs | tx_out[] | 输出 |
-| ?*? | Scripts | script[] | 用于验证该交易的脚本列表 |
+| 1 | Type | uint8 | transaction type: `0x20` |
+| 1 | Version | uint8 | 	transaction version, current is `0` |
+| ? | PublicKey | ECPoint |  public key of validator |
+| ?*? | Attributes | tx_attr[]| Additional features that the transaction has |
+| 34*? | Inputs |  tx_in[] | tx input |
+| 60 * ? | Outputs | tx_out[] | tx output |
+| ?*? | Scripts | script[] | List of scripts used to validate the transaction |
 
-##### **交易校验**
+##### **Verification**
 
-1. 交易验证返回恒定的`false`, 即交易不再被创建接受。
-2. 验证脚本附带了申请验证人的地址，即需要申请人地址签名该交易。
+1. This transaction can't be accepted any more, as the verification is set to constant `false`.
+2. The validator need to sign the transaction, as the verification script contains the validator's address.
 
+##### **Process**
 
-##### **交易处理**
-
-1. 登记该申请验证人信息
+1. Register the validator information.
 
 > [!Warning]
-> 已弃用， 已被`StateTransanction` 所替代。 目前交易处理保留，为了兼容以前的交易，但是交易验证被设置为恒定`false`, 即不再接受新的`EnrollmentTransaction`交易。
+> Abandoned, replaced by `StateTransanction`, but the transaction processing is reserved for compatibility with the previous transactins.
 
 
 ### StateTransanction
 
-##### **交易结构**
+##### **Structure**
 
 | Size | Field | Type  | Description |
 |-----|------|------|------|
-| 1 | Type | uint8 | 交易类型， `0x90` |
-| 1 | Version | uint8 | 	交易版本，目前为 0 |
-| ?*?   | Descriptors | StateDescriptor[] | 投票信息  |
-| ?*? | Attributes | tx_attr[]| 该交易所具备的额外特性 |
-| 34*? | Inputs |  tx_in[] | 输入 |
-| 60 * ? | Outputs | tx_out[] | 输出 |
-| ?*? | Scripts | script[] | 用于验证该交易的脚本列表 |
+| 1 | Type | uint8 | transaction type: `0x90` |
+| 1 | Version | uint8 | transaction version, current is `0`  |
+| ?*?   | Descriptors | StateDescriptor[] | voting information  |
+| ?*? | Attributes | tx_attr[]| Additional features that the transaction has |
+| 34*? | Inputs |  tx_in[] |  tx input |
+| 60 * ? | Outputs | tx_out[] | tx output |
+| ?*? | Scripts | script[] | List of scripts used to validate the transaction |
 
-**StateDescriptor结构**
+**StateDescriptor Structure**
 
 | Size | Field | Type  | Description |
 |-------|---------|------|-------|
-| 1  | Type |  StateType | `0x40`--投票， `0x48`--申请验证人 |
-| 20/30 |  Key | byte[] |  当`Field = "Votes"`时， 存放投票人地址的脚本hash， `Key`代表投票人; 当`Field = "Registered"`时， 存放公钥， `Key`代表申请人  | 
-| ? | Field | string |  当`Type = 0x40`时， `Field = "Votes"`; <br/>当`Type = 0x48`时， `Field = "Registered"`; |
-| ? | Value | byte[] | 当`Type = 0x40`时， 代表投票地址列表； <br/> 当`Type = 0x48`时， 代表取消或申验证人的布尔值  |
+| 1  | Type |  StateType | `0x40`--voting, `0x48`-- validator |
+| 20/30 |  Key | byte[] |  if `Field = "Votes"`,deposit the script hash the voter; if `Field = "Registered"`, deposit the publicKey of the validator; | 
+| ? | Field | string |  if `Type = 0x40`, `Field = "Votes"`; <br/>if `Type = 0x48`, `Field = "Registered"`; |
+| ? | Value | byte[] | if `Type = 0x40`, deposit the address of the voted validator; <br/> if `Type = 0x48`, deposit boolean value, true -- apply for validator, false -- cancel the application. |
 
 
+#####  **Verification**
 
-#####  **交易校验**
-
-1. 对交易的`StateDescriptor`进行验证，包括如下：
-   1. 检验 `StateDescriptor.Type` 与  `StateDescriptor.Field` 是否匹配
+1. Verify `StateDescriptor`：
+   1. Check `StateDescriptor.Type` matching with  `StateDescriptor.Field`.
   
-   2. 若`StateDescriptor.Type = 0x40`，即进行投票：
-       1. 检查投票账户`StateDescriptor.Key` 是否是非冻结账户，且持有NEO个数大于0.
+   2. When `StateDescriptor.Type = 0x40`, means voting.
+       1. Check the voter account is not frozen and the amount of NEO is more than zero. 
        
-       2. 被投票验证人地址，是否不在备用共识节点地址列表里，且被投票验证人必须已经申请注册。
+       2. The voted validator address is not in the `StandbyValidators` and must be registered.
 
-2. 交易的基本验证：合法性验证，和验证脚本的验证。其中验证脚本包括`StateDescriptor.Key`（注意，当`StateDescriptor.Field = "Votes"`时，需要对`StateDescriptor.Key`从公钥到地址脚本hash转化）， 即交易需要投票地址的账户签名。
+2. Basic validation of transactions contains: legality and verification scripts. The verification scripts contain the `StateDescriptor.Key`, which requires the signature of the voter or the validator. (Note, when `StateDescriptor.Field = "Votes"`, the `StateDescriptor.Key` field must be transfered from public key to script hash.）
 
 
-#####  **交易处理**
+#####  **Process**
 
-1. 若 `StateDescriptor.Type = 0x48`时， 根据 `StateDescriptor.Value`布尔值，注销或者申请验证人。
+1. When `StateDescriptor.Type = 0x48`, according to the `StateDescriptor.Value`, cancel or apply for validator. 
 
-2. 若 `StateDescriptor.Type = 0x40`时，进行如下处理：
-    1. 若投票人之前投过票，则将原先被投票人的票数，减少投票人持有NEO的个数。
+2. When `StateDescriptor.Type = 0x40`, the following are processed:
+    1. If the voter has voted before, the number of votes of the original will be reduced the amount of NEO asset held by the voter.
 
-    2. 新的被投票人，累加上投票人所持有NEO的个数，作为票数。
+    2. The voted validator will be counted as the amount of NEO asset held by the voter.
 
-    3. 若投票人之前投过的投票人数 与 当前投票人数不一致时，则共识节点个数的票数，也做类似处理，旧的减少票数，新的增加票数。
+    3. If the number of validators who have voted before is not consistent with the current, the votes of the number of consensus nodes will change similarly.
 
 
 > [!Warning]
-> 当一个投票用户的NEO资产发生变动时，相应的其投票数也做同样变动。
+> When the NEO asset of the voter change, the number of votes will change accordingly.
 
 
-
-## 验证人到议员
-
-
-从选举投到共识节点，需经2个步骤计算：一是根据被投票列表个数的票数，计算出共识节点个数；二是，根据被选举人的票数，计算出具体的共识节点。
+## From validator to delegates
 
 
-### 共识节点个数
+From voting to consensus nodes, need 2 steps: one is to calculate the number of consensus nodes, the other is to calculate the specific consensus nodes.
+
+### The number of consensus nodes
 
 
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 
 
-
-根据用户的投票情况，共识节点个数的投票得到类似如下图形式
-
+According to the voting above, we can get the votes diagram of the number of consensus nodes like the following figure.
 
 <p align="center"><img src="../../images/consensus/calculate_consensus_count_0.jpg" /><br></p>
 
-按照如下公式，转化成概率分布函数 F（离散函数）， 其中投票数的占比即为共识个数 i 的概率。
+By using the following formula, get the probability distribution funnction F(discrete function), in which the probability of the `i`th consensus node equals its proportion of votes.
 
 $$
 F_i = \frac{\sum_{j = 1}^i Vote_j }{\sum_{k = 1}^N Vote_k}
@@ -128,35 +114,28 @@ $$
 <p align="center"><img src="../../images/consensus/calculate_consensus_count_1.jpg" /><br></p>
 
 
-在概率分布函数上，截取[0.25, 0.75]覆盖到的共识节点个数，再对这些点求取期望值，最后与备用共识节点个数比较取最大值，得到最终的共识节点个数。公式如下：
+In the probability distribution function, we calculate the expected value from the points which are covered by the range [0.25, 0.75], then obtain the maximum value by comparing with the number of `StandbyValidators`.  The formula is as follows:
 
 $$
 Count = max( \sum_{i = \lceil A \rceil}^{\lceil B \rceil} i *  \frac{ min(0.75, F_i) - max( F_{i - 1}, 0.25 ) }{ 0.5 }, StandbyValidators.Length)
 $$
 
-- 其中，⌈A⌉ 代表第一个 F<sub>i</sub> >= 0.25 的点， 
-- ⌈B⌉ 代表第一个  F<sub>i</sub> >= 0.75 的点。
-- min(0.75, F<sub>i</sub>) - max( F<sub>i - 1</sub>, 0.25 )  表示只取阴影部分的概率。
-- StandbyValidators 代表备用共识节点列表
+- `⌈A⌉` represents the first F<sub>i</sub> >= 0.25 point. 
+- `⌈B⌉` represents the first  F<sub>i</sub> >= 0.75 point.
+- `min(0.75, F<sub>i</sub>) - max( F<sub>i - 1</sub>, 0.25 )`  the shadow part.
+- `StandbyValidators` standby validators
 
 > [!Note]
-> 过滤掉共识节点个数中，过大和过小的点，避免对均值造成的过大或过小的影响，故我们只考虑中间部分的投票情况。
+> We only consider the middle part in the voting diagram, filter out too large or too small points which may have great impact on the mean.
+
+### Consensus Nodes
+
+In the above steps, we calcuate the number of consensus nodes `Count`, and take the first `Count` validators from the validators ranked by votes in descending order. It will be supplemented from `StandbyValidators`, if the applicant is insufficient. Finally, the consensus nodes are selected.
+
+## From Delegates to Speaker
 
 
-### 共识节点
+The list of consesus nodes is obtained from the above method, and the Speaker is determined by the formula `p = (h - v) mod N` in the dBFT algorithm. while, `h` -- the proposal block height, `v` - view number, start from 0, `N` -- the number of consensus nodes.
 
 
-在上面的步骤中，根据投票情况确定了共识节点个数`Count`，再根据申请验证人的投票进行降序排序，取前`Count`个。若申请的验证人不足时，则从备用共识节点进行补充，最后得到当前参与共识的验证人，即议员。
-
-
-> [!Note]
-> 创世块作为第一个块，其`NextConsensus`被设定为备用共识节点的2/3多方签名脚本hash值。
-
-## 议员到议长
-
-
-按照上面的方法，得到了参与本轮共识节点的议员列表，以及议员编号（即列表序号）。根据共识算法，议长由公式 `p = (h - v) mod N` 决定，其中 `h`是当前需要达成共识的块高度，`v`是视图编号，刚开始从0开始，N是议员总数。 
-
-
-议长在共识阶段，将发送`PrepareRequest`消息，并附带上决定下一个区块共识节点的`NextConsensus`。议长结合打包Block中的交易（存在对投票数有影响交易：一是可能存在StateTransaction；二是，投票人的NEO资产可能发生转账变动），与之前的投票情况，计算出下一轮共识节点，再创建三分之二多方签名脚本的hash值作为`block.NextConsensus`，完成本轮交易对下一轮共识节点的锁定。
-
+During the consensus phase, the Speaker will send `PrepareRequest` message with `NextConsensus`, which determines the next block consensus nodes. The Speaker calculates the next round of conosensus nodes by combining the proposal block's transactions with the previous votes, and assign the script hash of 2/3 multi-signs contract to `NextConsensus`. There are transactions that may affect the number of votes, first, there may be a `StateTransaction`, second, there may be a transfer change in voter's NEO assets.

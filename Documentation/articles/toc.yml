@@ -28,7 +28,7 @@
       href: consensus/consensus_algorithm.md
     - name: Consensus Protocol
       href: consensus/consensus_protocol.md
-    - name: Vote, Validator, Delegates, Speaker
+    - name: Voting, Validator, Delegates, Speaker
       href: consensus/vote_validator.md
 - name: Neo Virtual Machine
   href: neo_vm.md
