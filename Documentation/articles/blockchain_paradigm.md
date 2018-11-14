@@ -217,6 +217,17 @@ Example:
 = r·G
 
 
+
+Example:
+
+| 名称      | 数值      |
+| ----------- | ------------------ |
+| 消息 |Hello World|
+| 私钥|f9be359876aac462df9ec642e5d063140daedb83aefc0f8657b08132d3da62d2|
+| 公钥 |04ed08d3bc46390a54350d841c8110ca02f9e357f8ba08702078de2d7041727<br>5956e94045d041a2bf89be25d5a56ddcf15c4f629d5a1db32657d0da13ebde64b29|
+| 签名 |54a6faec9159e98d45f5868e5799762de290c3e7e67e013c1bd6a2a6f8a2e500<br>a4d29567359bd171ddebc547dcddd670fb6b367e3e19298d7672f0422b5a2c52|
+
+
 应用场景：
 
 1、交易的签名。
@@ -241,6 +252,11 @@ Example:
 
 ​       NEO使用RIPEMD160来生成合约脚本160bit的哈希值。
 
+Example:
+
+| 字符串 | 哈希值  |
+| ---|---|
+| Hello World |98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f |
 
 应用场景：
 
@@ -259,6 +275,12 @@ Example:
 ​      SHA256是SHA-2下细分出的一种算法。SHA-2 ，一种密码散列函数算法标准，由美国国家安全局研发，属于SHA算法之一，是SHA-1的后继者。SHA-2下又可再分为六个不同的算法标准，包括了：SHA-224、SHA-256、SHA-384、SHA-512、SHA-512/224、SHA-512/256。
 
 ​       对于任意长度的消息，SHA256都会产生一个256bit长的哈希值(可用16进制字符串表示)。
+
+Example:
+
+| 字符串 | 哈希值  |
+| ---|---|
+| Hello World |a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e |
 
 应用场景：
 
@@ -288,7 +310,13 @@ Example:
 
 ​      2.计算速度快
 
-​      3.擅长大文件的哈希                                                              
+​      3.擅长大文件的哈希       
+
+Example:
+
+| 字符串 | 哈希值  |
+| ---|---|
+| Hello World |ce837619 |
 
 应用场景：
 
@@ -312,7 +340,17 @@ Example:
 
 ​     p（并行计算参数，理论上取值范围为1-255，参数值越大越依赖于并发计算）：8
 
-​     r（表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽  ）：  8                                                          
+​     r（表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽  ）：  8                                                         
+
+Example:
+
+| 数据 | 参数  | 哈希值  |
+| ---|---|---|
+| Hello World |key:"1 love code"<br>N:16384<br>p:8<br>r:8 |74d0cba55220e2dd91c6f57028992b43f<br>823ca6649bdec393c393469523cc0f23e4<br>78e9411d2cb0f8cc5fe2615c26fae7a<br>91c2578a40ca981fa6097b54e5457c|
+
+
+
+
 应用场景：
 
 1、NEP2格式密钥的导出。
@@ -321,8 +359,9 @@ Example:
 
 参考
 
-1、RFC 7914《The scrypt Password-Based Key Derivation Function》
-
+1、<https://en.wikipedia.org/wiki/Scrypt>
+> [!NOTE]
+> 如果发现死链接，请联系 feedback@neo.org
 
 
 ## MerkleTree
@@ -360,7 +399,8 @@ Example:
 
 参考文献：
 
-1、https://en.wikipedia.org/wiki/Merkle_tree
+1、<https://en.wikipedia.org/wiki/Merkle_tree>
+
 > [!NOTE]
 > 如果发现死链接，请联系 feedback@neo.org
 
