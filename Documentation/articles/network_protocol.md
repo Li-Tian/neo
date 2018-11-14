@@ -75,26 +75,43 @@ NEO 的网络协议规范与比特币的协议大致类似，但在区块、交�
 9. 对方收到 getdata 消息之后，发送 block 消息发送区块的完整内容。
 10. neo 节点每5秒检查一次连接数，如果连接数不足10个，会主动去连接后备连接节点。后备连接节点不足时，会向已经连接的节点发送 getaddr 消息询问网络中的其它节点的信息。
 11. 对方节点收到 getaddr 消息后，通过 addr 消息应答发送不超过200个节点的地址和端口号。
+12. 对于共识信息、区块、交易这些较大的数据，通过哈希值管理来避免同时从不同节点获取多分重复的数据。
+13. 节点有义务将收到的共识信息、区块、交易这些信息通过 inv 消息转发给其它节点。
 
-## version
-## verack
-## getaddr
-## addr
-## getheaders
-## headers
-## mempool
-## getblocks
-## inv
-## reject
-## getdata
-## tx
-## block
-## consensus
-## notfound
-## filterload
-## filteradd
-## filterclear
-## merkleblock
-## ping
-## pong
-## alert
+# 对话序列实例
+
+| 消息方向 | 消息种类 |
+| --- | --- |
+| send | version |
+| receive | version |
+| send | verack |
+| receive | verack |
+| send | getheaders |
+| receive | headers |
+| send | getblocks |
+| receive | inv |
+| send | getdata |
+| receive | inv |
+| send | getdata |
+| receive | inv |
+| send | getdata |
+| receive | consensus |
+| send | inv |
+| receive | consensus |
+| send | inv |
+| receive | inv |
+| receive | block |
+| send | inv |
+| receive | block |
+| send | inv |
+| receive | block |
+| send | inv |
+| receive | block |
+| send | inv |
+| ... | ... |
+
+
+参考阅读：<http://docs.neo.org/en-us/network/network-protocol.html>
+
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>
