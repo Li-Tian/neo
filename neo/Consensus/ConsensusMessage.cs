@@ -15,16 +15,34 @@ namespace Neo.Consensus
         /// </summary>
         private static ReflectionCache<byte> ReflectionCache = ReflectionCache<byte>.CreateFromEnum<ConsensusMessageType>();
 
+        /// <summary>
+        /// Consensus message type
+        /// </summary>
         public readonly ConsensusMessageType Type;
+
+        /// <summary>
+        /// Current view number
+        /// </summary>
         public byte ViewNumber;
 
+        /// <summary>
+        /// Message size
+        /// </summary>
         public int Size => sizeof(ConsensusMessageType) + sizeof(byte);
 
+        /// <summary>
+        /// Create ConsensusMessage attached message type
+        /// </summary>
+        /// <param name="type"></param>
         protected ConsensusMessage(ConsensusMessageType type)
         {
             this.Type = type;
         }
 
+        /// <summary>
+        /// Deserialize from the reader
+        /// </summary>
+        /// <param name="reader">binary reader</param>
         public virtual void Deserialize(BinaryReader reader)
         {
             if (Type != (ConsensusMessageType)reader.ReadByte())
@@ -32,6 +50,11 @@ namespace Neo.Consensus
             ViewNumber = reader.ReadByte();
         }
 
+        /// <summary>
+        /// Deserialize from the `data` parameter
+        /// </summary>
+        /// <param name="data">source data</param>
+        /// <returns></returns>
         public static ConsensusMessage DeserializeFrom(byte[] data)
         {
             ConsensusMessage message = ReflectionCache.CreateInstance<ConsensusMessage>(data[0]);
@@ -45,6 +68,10 @@ namespace Neo.Consensus
             return message;
         }
 
+        /// <summary>
+        /// Serialize the message
+        /// </summary>
+        /// <param name="writer">binary writer</param>
         public virtual void Serialize(BinaryWriter writer)
         {
             writer.Write((byte)Type);
