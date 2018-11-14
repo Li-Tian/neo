@@ -5,18 +5,30 @@ using System.Security.Cryptography;
 
 namespace Neo.Cryptography.ECC
 {
+    /// <summary>
+    /// 用椭圆曲线和产生的公钥拿来做签名
+    /// </summary>
     public class ECDsa
     {
         private readonly byte[] privateKey;
         private readonly ECPoint publicKey;
         private readonly ECCurve curve;
 
+        /// <summary>
+        /// 作为构造函数传入私钥和椭圆曲线
+        /// </summary>
+        /// <param name="privateKey">私钥</param>
+        /// <param name="curve">椭圆曲线</param>
         public ECDsa(byte[] privateKey, ECCurve curve)
             : this(curve.G * privateKey)
         {
             this.privateKey = privateKey;
         }
 
+        /// <summary>
+        /// 作为构造函数传入一个包含了publicKey的ECPoint作为参数，存为这个ECDsa的publicKey， 并且将椭圆曲线类型存为curve
+        /// </summary>
+        /// <param name="publicKey">包含了publicKey的ECPoint</param>
         public ECDsa(ECPoint publicKey)
         {
             this.publicKey = publicKey;
@@ -34,6 +46,11 @@ namespace Neo.Cryptography.ECC
             return trunc;
         }
 
+        /// <summary>
+        /// 产生签名
+        /// </summary>
+        /// <param name="message">被签名的信息</param>
+        /// <returns>作为签名的大数对r,s</returns>
         public BigInteger[] GenerateSignature(byte[] message)
         {
             if (privateKey == null) throw new InvalidOperationException();
@@ -92,6 +109,14 @@ namespace Neo.Cryptography.ECC
             return R;
         }
 
+
+        /// <summary>
+        /// 验证签名
+        /// </summary>
+        /// <param name="message">等待被验证的消息</param>
+        /// <param name="r">作为签名的大数r</param>
+        /// <param name="s">作为签名的大数对s</param>
+        /// <returns>如果验证通过返回<c>true</c>, 如果不通过返回<c>false</c></returns>
         public bool VerifySignature(byte[] message, BigInteger r, BigInteger s)
         {
             if (r.Sign < 1 || s.Sign < 1 || r.CompareTo(curve.N) >= 0 || s.CompareTo(curve.N) >= 0)

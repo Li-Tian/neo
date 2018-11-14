@@ -18,18 +18,24 @@ namespace Neo.Cryptography.ECC
         /// <summary>
         /// 判定一个点是否为无穷远点（零元）
         /// </summary>
+        /// <value>
+        /// 如果是无穷远点返回<c>true</c>,不是的话返回<c>false</c>
+        /// </value>
         public bool IsInfinity
         {
             get { return X == null && Y == null; }
         }
 
         /// <summary>
-        /// 
+        /// 判定一个点的大小
         /// </summary>
+        /// <value>
+        /// 判定一个点是否为无穷远点， 如果是的化返回1， 不是的话返回33
+        /// </value>
         public int Size => IsInfinity ? 1 : 33;
 
         /// <summary>
-        /// 空构造函数, 构造一个零元，即无穷远点, x坐标和y坐标分别为null, 曲线为<c>.Secp256r1</c>
+        /// 空构造函数, 作用是构造一个零元，即无穷远点, 其x坐标和y坐标分别为null, 曲线为<c>Secp256r1</c>
         /// </summary>
         public ECPoint()
             : this(null, null, ECCurve.Secp256r1)
@@ -53,7 +59,7 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 将这个点和另一个点比较
+        /// 将这个点和另一个ECPoint点比较
         /// </summary>
         /// <param name="other">另一个ECPoint点</param>
         /// <returns>
@@ -72,8 +78,8 @@ namespace Neo.Cryptography.ECC
         /// <summary>
         /// 将一个代表一个ECPoint的字节数组解码为一个ECPoint对象.
         /// 如果第一个字节为0x00, 则为零元. 
-        /// 如果第一个字节为0x02或者0x03, 则解码为compressed的ECPoint.
-        /// 如果第一个字节为0x04,0x06,0x07, 则解码为uncompressed的ECPoint
+        /// 如果第一个字节为0x02或者0x03, 则解码为压缩过的ECPoint.
+        /// 如果第一个字节为0x04,0x06,0x07, 则解码为非压缩过的ECPoint
         /// 如果都不符合, 则抛出异常.
         /// </summary>
         /// <exception cref="FormatException">编码格式有问题</exception>
@@ -146,7 +152,7 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 从一个字节流中读出并转换成为一个ECPoint, 并且将其X,Y坐标分别赋予当前ECPoint对象的X，Y 
+        /// 从一个字节流中读出并转换成为一个ECPoint对象, 并且将其X,Y坐标分别赋予当前ECPoint对象的X，Y 
         /// </summary>
         /// <param name="reader">一个BinaryReader， 从字节流中读入被转换的ECPoint</param>
         void ISerializable.Deserialize(BinaryReader reader)
@@ -187,11 +193,11 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 压缩方法，将这对象内ECPoint对象编码为一个字符串
+        /// 将这对象内ECPoint对象编码为一个字符串
         /// </summary>
         /// <param name="commpressed">判断是否返回压缩之后的ECPoint</param>
         /// <returns>
-        /// 如果压缩， 则返回经过压缩的算法得来的ECPoint对象的字节数组
+        /// 如果需要压缩， 则返回经过压缩的算法得来的ECPoint对象的字节数组
         /// 如果不压缩，则直接返回ECPoint对象的字节数组
         /// </returns>
 
@@ -246,11 +252,13 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 
+        /// 将一个由椭圆曲线生成的公钥解码为一个ECPoint对象
         /// </summary>
-        /// <param name="pubkey"></param>
-        /// <param name="curve"></param>
-        /// <returns></returns>
+        /// <param name="pubkey">需要被解码的公钥</param>
+        /// <param name="curve">椭圆曲线</param>
+        /// <returns>
+        /// 根据不同类型的公钥解码后的ECPoint对象
+        /// </returns>
         public static ECPoint FromBytes(byte[] pubkey, ECCurve curve)
         {
             switch (pubkey.Length)
@@ -496,7 +504,7 @@ namespace Neo.Cryptography.ECC
         /// <returns>
         /// 求乘法计算后的结果.如果该点为无穷远点, 则返回这个零点
         /// 如果乘数是0,返回无穷零点
-        /// 否则, 调用Multiply方法计算。
+        /// 否则, 调用Multiply方法计算两者乘积。
         /// </returns>
         public static ECPoint operator *(ECPoint p, byte[] n)
         {
