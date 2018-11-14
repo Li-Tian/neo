@@ -7,14 +7,20 @@
 - name: The Blockchain Paradigm
   href: blockchain_paradigm.md
 - name: Blockchain
-  href: blockchain/readme.md
+  href: blockchain/neo_system.md
   items:
     - name: Economic Model
       href: blockchain/economic_model.md
-    - name: Header, Block, Transaction
-      href: blockchain/block.md
-    - name: Account, Asset, Validator
-      href: blockchain/account_asset_validator.md
+    - name: Blockchain Data Structure
+      href: blockchain/blockchain_datastructure.md
+    - name: Transaction
+      href: blockchain/transaction.md
+    - name: Account and Asset
+      href: blockchain/account_asset.md
+    - name: NEP5 Asset
+      href: blockchain/nep5asset.md
+    - name: Validator
+      href: blockchain/validator.md
 - name: Wallets
   href: wallets.md
 - name: Transaction Excution
