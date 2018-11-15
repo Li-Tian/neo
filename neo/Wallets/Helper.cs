@@ -6,13 +6,27 @@ using System.Linq;
 
 namespace Neo.Wallets
 {
+    /// <summary>
+    /// 钱包中的帮助类, 提供了两个转换地址的函数
+    /// </summary>
     public static class Helper
     {
+        /// <summary>
+        /// 用ecdsa对一个IVerifiable的消息做签名
+        /// </summary>
+        /// <param name="verifiable">待处理的消息</param>
+        /// <param name="key">公钥私钥对</param>
+        /// <returns>签完名之后的消息</returns>
         public static byte[] Sign(this IVerifiable verifiable, KeyPair key)
         {
             return Crypto.Default.Sign(verifiable.GetHashData(), key.PrivateKey, key.PublicKey.EncodePoint(false).Skip(1).ToArray());
         }
 
+        /// <summary>
+        /// 讲一个ScriptHash转换成地址
+        /// </summary>
+        /// <param name="scriptHash">被转换的ScriptHash</param>
+        /// <returns>返回转换后的地址</returns>
         public static string ToAddress(this UInt160 scriptHash)
         {
             byte[] data = new byte[21];
@@ -21,6 +35,12 @@ namespace Neo.Wallets
             return data.Base58CheckEncode();
         }
 
+        /// <summary>
+        /// 将一个地址转换为ScriptHash
+        /// </summary>
+        /// <param name="address">待转换的地址</param>
+        /// <exception cref="FormatException">如果地址转换为字节数组长度不是21或者第一个字节不是指定的字节格式</exception>
+        /// <returns>转换后的一个UInt160表示的ScriptHash</returns>
         public static UInt160 ToScriptHash(this string address)
         {
             byte[] data = address.Base58CheckDecode();
