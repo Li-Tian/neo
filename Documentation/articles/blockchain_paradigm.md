@@ -18,14 +18,14 @@ neo使用的字母表为：**123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrs
 
 接口定义：
 
-1、编码方法：把byte[]数据编码成Base58字符串String数据
+1.  编码方法：把byte[]数据编码成Base58字符串String数据
 
 ~~~
 string Encode(byte[] input)
 ~~~
 
 
-2、解码方法：Base58字符串String解码成byte[]数据
+2.  解码方法：Base58字符串String解码成byte[]数据
 
 ~~~
 byte[] Decode(string input)
@@ -34,23 +34,23 @@ byte[] Decode(string input)
 
 编码步骤：
 
-1、把byte[]数据前添加一个0x00，生成一个新的byte数组，并将新数组做倒序排序
+1.  把byte[]数据前添加一个0x00，生成一个新的byte数组，并将新数组做倒序排序
 
-2、把数组的数据转成10进制BigInteger数
+2.  把数组的数据转成10进制BigInteger数
 
-3、把BigInteger数按字母表转换成58进制字符串
+3.  把BigInteger数按字母表转换成58进制字符串
 
-4、统计原byte[]数据中0x00的个数count，在字符串前补count个字母表游标为零所对应的字符
+4.  统计原byte[]数据中0x00的个数count，在字符串前补count个字母表游标为零所对应的字符
 
 解码步骤：
 
-1、倒序输入的字符串，将其按字母表转换成10进制Biginteger数
+1.  倒序输入的字符串，将其按字母表转换成10进制Biginteger数
 
-2、把Biginteger数转换成byte[]数据，并将byte[]数据倒序排序
+2.  把Biginteger数转换成byte[]数据，并将byte[]数据倒序排序
 
-3、统计原输入的字符串中字母表游标为零所对应的字符的个数count
+3.  统计原输入的字符串中字母表游标为零所对应的字符的个数count
 
-4、若byte[]数据的长度大于1，且byte[0]等于0，byte[1]大于等于0x80,则从byte[1+count]开始截
+4.  若byte[]数据的长度大于1，且byte[0]等于0，byte[1]大于等于0x80,则从byte[1+count]开始截
 
 取，否则从byte[count]开始截取,得到结果
 
@@ -62,7 +62,7 @@ Example:
 
 应用场景：
 
-1、为Base58Check编解码方法提供服务。
+1.  为Base58Check编解码方法提供服务。
 
 
 
@@ -78,32 +78,32 @@ Base58Check是基于Base58的改进型编解码方法.通过对原数据添加�
 
 接口定义：
 
-1、编码方法：把byte[]数据编码成带效验功能Base58字符串String数据
+1. 编码方法：把byte[]数据编码成带效验功能Base58字符串String数据
 
 ```
 string Base58CheckEncode(byte[] input)
 ```
 
-2、解码方法：把带效验功能Base58字符串String解码成byte[]数据
+2.  解码方法：把带效验功能Base58字符串String解码成byte[]数据
 
 ```
 byte[] Base58CheckDecode(string input)
 ```
 编码步骤：
 
-1、通过对原byte[]数据做两次sha256得到原数据的哈希，取其前4字节作为版本前缀checksum，添加到原byte[]  
+1.  通过对原byte[]数据做两次sha256得到原数据的哈希，取其前4字节作为版本前缀checksum，添加到原byte[]  
 
 ​     数据的末尾
 
-2、把添加了版本前缀的byte[]数据做Base58编码得到对应的字符串
+2.  把添加了版本前缀的byte[]数据做Base58编码得到对应的字符串
 
 解码步骤：
 
-1、把输入的字符串做Base58解码，得到byte[]数据
+1.  把输入的字符串做Base58解码，得到byte[]数据
 
-2、取byte[]数据收字节到到数第4字节前的所有数据byte[] data
+2.  取byte[]数据收字节到到数第4字节前的所有数据byte[] data
 
-3、把data做两次sha256得到的哈希值的前4字节作为版本前缀checksum，与
+3.  把data做两次sha256得到的哈希值的前4字节作为版本前缀checksum，与
 
 byte[]数据的后4字节比较是否相同，相同则返回data,否则抛出异常
 
@@ -118,11 +118,11 @@ Example:
 
 应用场景：
 
-1、导入、导出输出wif格式的密钥     
+1.  导入、导出输出wif格式的密钥     
 
-2、合约脚本哈希与地址字符串相互转换
+2. 合约脚本哈希与地址字符串相互转换
 
-3、导入、导出NEP2格式密钥
+3. 导入、导出NEP2格式密钥
 
 
 
@@ -162,13 +162,13 @@ Example:
 
 应用场景：
 
-1、私钥生成公钥
+1. 私钥生成公钥
 
-２、签名和验证签名
+2. 签名和验证签名
 
 参考文献：
 
-1、[一个关于椭圆曲线密码学的初级读本 ](https://arstechnica.com/information-technology/2013/10/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography/)
+1. [一个关于椭圆曲线密码学的初级读本 ](https://arstechnica.com/information-technology/2013/10/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography/)
 
 > [!NOTE]
 > 如果发现死链接，请联系 feedback@neo.org
@@ -190,19 +190,19 @@ Example:
 
 签名过程：
 
-​       1、选择随机数r，计算点r·G(x, y)。
+​       1. 选择随机数r，计算点r·G(x, y)。
 
-​       2、根据随机数r、消息M的哈希h、私钥k，计算s = (h + k·x)/r。
+​       2. 根据随机数r、消息M的哈希h、私钥k，计算s = (h + k·x)/r。
 
-​       3、将消息M、和签名{r·G, s}发给接收方。
+​       3. 将消息M、和签名{r·G, s}发给接收方。
 
 验证过程：
 
-​       1、接收方收到消息M、以及签名{r·G=(x,y), s}。
+​       1. 接收方收到消息M、以及签名{r·G=(x,y), s}。
 
-​       2、根据消息求哈希h。
+​       2. 根据消息求哈希h。
 
-​       3、使用发送方公钥K计算：h·G/s + x·K/s，并与r·G比较，如相等即验签成功。
+​       3. 使用发送方公钥K计算：h·G/s + x·K/s，并与r·G比较，如相等即验签成功。
 
 推导原理如下：
 
@@ -230,9 +230,9 @@ Example:
 
 应用场景：
 
-1、交易的签名。
+1. 交易的签名。
 
-２、共识
+2. 共识
 
 ## 哈希算法
 
@@ -260,7 +260,7 @@ Example:
 
 应用场景：
 
-1、生成合约的哈希
+1. 生成合约的哈希
 
 
 
@@ -284,13 +284,13 @@ Example:
 
 应用场景：
 
-1、计算合约的哈希。
+1. 计算合约的哈希。
 
-２、签名和确认签名
+2. 签名和确认签名
 
-3、Base58Check编解码
+3. Base58Check编解码
 
-4、dB3、NEP6钱包的密钥的存储、导出、验证
+4. dB3、NEP6钱包的密钥的存储、导出、验证
 
 
 
@@ -306,11 +306,11 @@ Example:
 
 其特点是：
 
-​      1.碰撞率低
+​      1. 碰撞率低
 
-​      2.计算速度快
+​      2. 计算速度快
 
-​      3.擅长大文件的哈希       
+​      3. 擅长大文件的哈希       
 
 Example:
 
@@ -320,9 +320,9 @@ Example:
 
 应用场景：
 
-1、布隆过滤器
+1. 布隆过滤器
 
-2、leveldb存储
+2. leveldb存储
 
 ### Scrypt
 
@@ -346,20 +346,21 @@ Example:
 
 | 数据 | 参数  | 哈希值  |
 | ---|---|---|
-| Hello World |key:"1 love code"<br>N:16384<br>p:8<br>r:8 |74d0cba55220e2dd91c6f57028992b43f<br>823ca6649bdec393c393469523cc0f23e4<br>78e9411d2cb0f8cc5fe2615c26fae7a<br>91c2578a40ca981fa6097b54e5457c|
+| Hello World |key:"I love code"<br>N:16384<br>p:8<br>r:8 |17b94895fab004e035b3630a718b498f6<br>647458351f04b84b4a2c0bf1db963630fa<br>7bfd1c29663c7bf3556fd7ba6131e5ddfd6<br>40b9f6a2a9ad75d3d59b65f932|
 
 
 
 
 应用场景：
 
-1、NEP2格式密钥的导出。
+1. NEP2格式密钥的导出。
 
-2、NEP6钱包的密码效验。
+2. NEP6钱包的密码效验。
 
 参考
 
-1、<https://en.wikipedia.org/wiki/Scrypt>
+1. <https://en.wikipedia.org/wiki/Scrypt>
+
 > [!NOTE]
 > 如果发现死链接，请联系 feedback@neo.org
 
@@ -378,13 +379,13 @@ Example:
 
    梅克尔树基本特点：
 
-​           1、MT是一种树，大多数是二叉树（NEO采用二叉树形式），也可以多叉树，无论是几叉树，它都具有树结
+​           1. MT是一种树，大多数是二叉树（NEO采用二叉树形式），也可以多叉树，无论是几叉树，它都具有树结
 
 ​                 构的所有特点；
 
-​            2、Merkle Tree的叶子节点的value是数据集合的单元数据或者单元数据HASH。
+​            2. Merkle Tree的叶子节点的value是数据集合的单元数据或者单元数据HASH。
 
-​            3、非叶子节点的value是根据它下面所有的叶子节点值，然后按照Hash算法计算而得出的
+​            3. 非叶子节点的value是根据它下面所有的叶子节点值，然后按照Hash算法计算而得出的
 
 交易验证原理：
 
@@ -393,13 +394,13 @@ Example:
 
 应用场景：
 
-1、构建区块头时会维护一个MerkleTree根
+1. 构建区块头时会维护一个MerkleTree根
 
-2、使用SPV钱包，验证区块数据
+2. 使用SPV钱包，验证区块数据
 
 参考文献：
 
-1、<https://en.wikipedia.org/wiki/Merkle_tree>
+1. <https://en.wikipedia.org/wiki/Merkle_tree>
 
 > [!NOTE]
 > 如果发现死链接，请联系 feedback@neo.org
@@ -417,7 +418,7 @@ Example:
 
 Example：
 
-​    1、msg,key----->passphrase-protected msg
+​    1. msg,key----->passphrase-protected msg
 
    （消息："Hello World"的256位哈希") +（密码："l love coding"的256位哈希)
 
@@ -427,7 +428,7 @@ Example：
 
 -------->"a8158a64c1e9d776e12582d8c63553ee0c7687bd8e374f79c766e7459577f547"
 
-​     2、passphrase-protected msg,key----->msg
+​     2. passphrase-protected msg,key----->msg
 
 ​           加密密文 +（密码："l love coding"的256位哈希)
 
@@ -438,7 +439,7 @@ Example：
 -------->"a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e"
 
 应用场景：
-1、DB3钱包账户密码的存储、验证
+1. DB3钱包账户密码的存储、验证
 
 
 ## BloomFilter布隆过滤器
@@ -455,18 +456,18 @@ Example：
 
 使用方式：
 
-​        1、SPV钱包向全节点发送布隆过滤器，并由全节点加载布隆过滤器
+​        1. SPV钱包向全节点发送布隆过滤器，并由全节点加载布隆过滤器
 
-​        2、SPV钱包向全节点发送布隆过滤器参数，并由全节点加载相应布隆过滤器参数（可选）。
+​        2. SPV钱包向全节点发送布隆过滤器参数，并由全节点加载相应布隆过滤器参数（可选）。
 
-​        3、SPV钱包向全节点用区块hash查询交易数据，全节点使用布隆过滤器过滤后返回交易数据以及构建的梅克
+​        3. SPV钱包向全节点用区块hash查询交易数据，全节点使用布隆过滤器过滤后返回交易数据以及构建的梅克
 
 ​             尔树路径（待确认）
 
-​        4、SPV钱包用梅克尔树路径验证交易数据有效性（待确认）
+​        4. SPV钱包用梅克尔树路径验证交易数据有效性（待确认）
 
-​        4、SPV钱包向全节点发送指令清除布隆过滤器，全节点清除过滤器。                                                          
+​        5. SPV钱包向全节点发送指令清除布隆过滤器，全节点清除过滤器。                                                          
 
 应用场景：
 
-1、SPV钱包验证交易数据
+1. SPV钱包验证交易数据
