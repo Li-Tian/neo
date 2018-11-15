@@ -111,7 +111,7 @@ namespace Neo.Consensus
         /// Change view completed, update the context ViewNumber, PrimaryIndex and ExpectedView[Myindex]
         /// </summary>
         /// <remarks>
-        /// If the node has send the Signature, then keep the Signatures array, else reset it
+        /// If the node has the SignatureSent flag, reserve the signatures array, else reset it
         /// </remarks>
         /// <param name="view_number">new view number</param>
         public void ChangeView(byte view_number)
@@ -267,7 +267,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Fill the proposal block, contains txs, minertransaction, nextconsensus
+        /// Fill the proposal block, contains txs, MinerTransaction, NextConsensus
         /// </summary>
         /// <param name="wallet"></param>
         public void Fill(Wallet wallet)

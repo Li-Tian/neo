@@ -3,7 +3,7 @@
 namespace Neo.Consensus
 {
     /// <summary>
-    /// consensus state
+    /// Consensus state
     /// </summary>
     [Flags]
     internal enum ConsensusState : byte

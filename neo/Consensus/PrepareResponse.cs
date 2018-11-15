@@ -8,7 +8,7 @@ namespace Neo.Consensus
     internal class PrepareResponse : ConsensusMessage
     {
         /// <summary>
-        /// signature of the proposal block
+        /// Signature of the proposal block
         /// </summary>
         public byte[] Signature;
 
@@ -18,7 +18,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// deserialize from the reader
+        /// Deserialize from the reader
         /// </summary>
         /// <param name="reader">binary reader</param>
         public override void Deserialize(BinaryReader reader)
@@ -28,7 +28,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// serialize the message
+        /// Serialize the message
         /// </summary>
         /// <param name="writer"></param>
         public override void Serialize(BinaryWriter writer)

@@ -16,23 +16,61 @@ using System.Linq;
 
 namespace Neo.Consensus
 {
+    /// <summary>
+    /// Consensus sevice, implemented the dBFT algorithm
+    /// </summary>
+    /// <remarks>
+    ///  http://docs.neo.org/en-us/basic/consensus/whitepaper.html
+    /// </remarks>
     public sealed class ConsensusService : UntypedActor
     {
+        /// <summary>
+        /// start consensus activity event
+        /// </summary>
         public class Start { }
+
+        /// <summary>
+        /// update the current view number event
+        /// </summary>
         public class SetViewNumber { public byte ViewNumber; }
+
+        /// <summary>
+        /// time out event
+        /// </summary>
         internal class Timer { public uint Height; public byte ViewNumber; }
 
+        /// <summary>
+        /// consensus context in current round
+        /// </summary>
         private readonly ConsensusContext context = new ConsensusContext();
         private readonly NeoSystem system;
         private readonly Wallet wallet;
+
+        /// <summary>
+        /// The latest block received time
+        /// </summary>
         private DateTime block_received_time;
 
+        /// <summary>
+        /// Construct consensus service
+        /// </summary>
+        /// <param name="system"></param>
+        /// <param name="wallet"></param>
         public ConsensusService(NeoSystem system, Wallet wallet)
         {
             this.system = system;
             this.wallet = wallet;
         }
 
+        /// <summary>
+        /// Add new transaction
+        /// </summary>
+        /// <remarks>
+        /// Note, if the proposal block's transactions are all received, the PrepareResponse will be send.
+        /// </remarks>
+        /// <param name="tx"></param>
+        /// <param name="verify">Whether or not to the verify the transaction</param>
+        /// <returns></returns>
         private bool AddTransaction(Transaction tx, bool verify)
         {
             if (context.Snapshot.ContainsTransaction(tx.Hash) ||
@@ -63,6 +101,10 @@ namespace Neo.Consensus
             return true;
         }
 
+        /// <summary>
+        /// Set `delay` seconds timer
+        /// </summary>
+        /// <param name="delay"></param>
         private void ChangeTimer(TimeSpan delay)
         {
             Context.System.Scheduler.ScheduleTellOnce(delay, Self, new Timer
@@ -72,6 +114,13 @@ namespace Neo.Consensus
             }, ActorRefs.NoSender);
         }
 
+        /// <summary>
+        /// Check the exptected view arrays. 
+        /// </summary>
+        /// <remarks>
+        /// If there are at least M nodes meeting the EV[i] == view_number, the view change completed.
+        /// </remarks>
+        /// <param name="view_number"></param>
         private void CheckExpectedView(byte view_number)
         {
             if (context.ViewNumber == view_number) return;
@@ -81,6 +130,9 @@ namespace Neo.Consensus
             }
         }
 
+        /// <summary>
+        /// Check if there are at least M signatures, the proposal block will be accepted and send the full block
+        /// </summary>
         private void CheckSignatures()
         {
             if (context.Signatures.Count(p => p != null) >= context.M && context.TransactionHashes.All(p => context.Transactions.ContainsKey(p)))
@@ -102,6 +154,10 @@ namespace Neo.Consensus
             }
         }
 
+        /// <summary>
+        /// initialize consensus activity with view_number
+        /// </summary>
+        /// <param name="view_number"></param>
         private void InitializeConsensus(byte view_number)
         {
             if (view_number == 0)
@@ -133,6 +189,15 @@ namespace Neo.Consensus
             Plugin.Log(nameof(ConsensusService), level, message);
         }
 
+
+        /// <summary>
+        /// ChangeView processing
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <param name="payload"></param>
+        /// <param name="message"></param>
         private void OnChangeViewReceived(ConsensusPayload payload, ChangeView message)
         {
             if (message.NewViewNumber <= context.ExpectedView[payload.ValidatorIndex])
@@ -142,6 +207,10 @@ namespace Neo.Consensus
             CheckExpectedView(message.NewViewNumber);
         }
 
+        /// <summary>
+        /// Consensus message check and process
+        /// </summary>
+        /// <param name="payload"></param>
         private void OnConsensusPayload(ConsensusPayload payload)
         {
             if (context.State.HasFlag(ConsensusState.BlockSent)) return;
@@ -153,7 +222,7 @@ namespace Neo.Consensus
                 if (context.Snapshot.Height + 1 < payload.BlockIndex)
                 {
                     Log($"chain sync: expected={payload.BlockIndex} current: {context.Snapshot.Height} nodes={LocalNode.Singleton.ConnectedCount}", LogLevel.Warning);
-                }
+                }                          
                 return;
             }
             if (payload.ValidatorIndex >= context.Validators.Length) return;
@@ -165,7 +234,7 @@ namespace Neo.Consensus
             catch
             {
                 return;
-            }
+            } 
             if (message.ViewNumber != context.ViewNumber && message.Type != ConsensusMessageType.ChangeView)
                 return; 
             switch (message.Type)
@@ -182,6 +251,10 @@ namespace Neo.Consensus
             }
         }
 
+        /// <summary>
+        /// New block event handler, reset consensus activity
+        /// </summary>
+        /// <param name="block"></param>
         private void OnPersistCompleted(Block block)
         {
             Log($"persist block: {block.Hash}");
@@ -189,6 +262,17 @@ namespace Neo.Consensus
             InitializeConsensus(0);
         }
 
+        /// <summary>
+        /// PrepareRequest message processing
+        /// </summary>
+        /// <remarks>
+        /// 1. check the message
+        /// 2. reserve the proposal block's data: Timestamp, Nonce, NextConsenus, TransactionHashes, and Signature
+        /// 3. filter the signatures received before
+        /// 4. send inv message to acquire the missing txs
+        /// </remarks>
+        /// <param name="payload"></param>
+        /// <param name="message"></param>
         private void OnPrepareRequestReceived(ConsensusPayload payload, PrepareRequest message)
         {
             if (context.State.HasFlag(ConsensusState.RequestReceived)) return;
@@ -243,13 +327,20 @@ namespace Neo.Consensus
             }
         }
 
+        /// <summary>
+        /// PrepareResponse message processing
+        /// </summary>
+        /// If PrepareRequest received before, verify the signature.
+        /// Else reserve the signature and filter it in PrepareRequest processing.
+        /// <param name="payload"></param>
+        /// <param name="message"></param>
         private void OnPrepareResponseReceived(ConsensusPayload payload, PrepareResponse message)
         {
             if (context.Signatures[payload.ValidatorIndex] != null) return;
             Log($"{nameof(OnPrepareResponseReceived)}: height={payload.BlockIndex} view={message.ViewNumber} index={payload.ValidatorIndex}");
             byte[] hashData = context.MakeHeader()?.GetHashData();
             if (hashData == null)
-            {// 表明还没有收到 prepare-request, 则先收下签名，在过滤
+            {
                 context.Signatures[payload.ValidatorIndex] = message.Signature;
             }
             else if (Crypto.Default.VerifySignature(hashData, message.Signature, context.Validators[payload.ValidatorIndex].EncodePoint(false)))
@@ -259,6 +350,10 @@ namespace Neo.Consensus
             }
         }
 
+        /// <summary>
+        /// Message receiver, inlcudes Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted
+        /// </summary>
+        /// <param name="message"></param>
         protected override void OnReceive(object message)
         {
             switch (message)
@@ -284,12 +379,23 @@ namespace Neo.Consensus
             }
         }
 
+        /// <summary>
+        /// State event handler, initialize consensus activity
+        /// </summary>
         private void OnStart()
         {
             Log("OnStart");
             InitializeConsensus(0);
         }
 
+        /// <summary>
+        /// Timeout event handler
+        /// </summary>
+        /// <remarks>
+        /// If it's Primary and has not send PrepareRequest, send PrepareRequest
+        /// Else send ChangeView
+        /// </remarks>
+        /// <param name="timer"></param>
         private void OnTimer(Timer timer)
         {
             if (context.State.HasFlag(ConsensusState.BlockSent)) return;
@@ -319,6 +425,10 @@ namespace Neo.Consensus
             }
         }
 
+        /// <summary>
+        /// New transaction event handler
+        /// </summary>
+        /// <param name="transaction"></param>
         private void OnTransaction(Transaction transaction)
         {
             if (transaction.Type == TransactionType.MinerTransaction) return;
@@ -336,11 +446,20 @@ namespace Neo.Consensus
             base.PostStop();
         }
 
+        /// <summary>
+        /// Create actorref with mail box `consensus-service-mailbox`
+        /// </summary>
+        /// <param name="system"></param>
+        /// <param name="wallet"></param>
+        /// <returns></returns>
         public static Props Props(NeoSystem system, Wallet wallet)
         {
             return Akka.Actor.Props.Create(() => new ConsensusService(system, wallet)).WithMailbox("consensus-service-mailbox");
         }
 
+        /// <summary>
+        /// Send ChangeView message
+        /// </summary>
         private void RequestChangeView()
         {
             context.State |= ConsensusState.ViewChanging;
@@ -351,6 +470,10 @@ namespace Neo.Consensus
             CheckExpectedView(context.ExpectedView[context.MyIndex]);
         }
 
+        /// <summary>
+        /// Sign payload and replay
+        /// </summary>
+        /// <param name="payload"></param>
         private void SignAndRelay(ConsensusPayload payload)
         {
             ContractParametersContext sc;
@@ -368,13 +491,52 @@ namespace Neo.Consensus
         }
     }
 
+    /// <summary>
+    /// Consensus service mailbox
+    /// </summary>
     internal class ConsensusServiceMailbox : PriorityMailbox
     {
+        /// <summary>
+        /// Register consensus service mailbox
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <param name="config"></param>
         public ConsensusServiceMailbox(Akka.Actor.Settings settings, Config config)
             : base(settings, config)
         {
         }
 
+        /// <summary>
+        /// Check if the message is high priority
+        /// <list type="bullet">
+        /// <item>
+        /// <term>ConsensusPayload</term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>SetViewNumber</term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Timer</term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Blockchain.PersistCompleted </term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Start</term>
+        /// <description>low priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Transaction</term>
+        /// <description>low priority</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         protected override bool IsHighPriority(object message)
         {
             switch (message)

@@ -32,7 +32,7 @@
 
 | 尺寸| 字段 | 类型 | 说明  |
 |----|------|-----|-------|
-| 1 | Type | ConsensusMessageType |  `0x00` |
+| 1 | Type | ConsensusMessageType | 值 `0x00` |
 | 1 | ViewNumber | byte | 当前视图编号 |
 | 1 | NewViewNumber | byte |  新视图编号 |
 
@@ -42,7 +42,7 @@
 
 | 尺寸| 字段 | 类型 | 说明  |
 |----|------|-----|-------|
-| 1 | Type | ConsensusMessageType |  `0x20` |
+| 1 | Type | ConsensusMessageType | 值 `0x20` |
 | 1 | ViewNumber | byte | 当前视图编号 |
 | 1 | Nonce | byte |  Block随机值 |
 | 20  | NextConsensus | UInt160 |  下一轮共识节点地址的多方签名 |
@@ -54,7 +54,7 @@
 
 | 尺寸| 字段 | 类型 | 说明  |
 |----|------|-----|-------|
-|  1  | Type | ConsensusMessageType |  `0x21` |
+|  1  | Type | ConsensusMessageType | 值 `0x21` |
 |  1  | ViewNumber | byte | 当前视图编号 |
 |  64  | Signature | byte[] | Block的签名 |
 
@@ -131,7 +131,7 @@
 
 6. 检查`ConsensusPayload.ValidatorIndex`，若超过当前议员总数时，则忽略。
 
-7. 检查`ConsensusMessage.ViewNumber`. 若不等于当前共识阶段上下文的`ViewNumber`且不是`ChangeView`消息时，则忽略
+7. 检查`ConsensusMessage.ViewNumber`, 若不等于当前共识阶段上下文的`ViewNumber`且不是`ChangeView`消息时，则忽略
 
 
 ##### **处理**
@@ -147,23 +147,27 @@
 
    4. 检查对block的签名是否对
 
-   5. 检查内存池已经包含的block所需的交易。若交易已经在区块链中，或者插件校验失败，则认为交易数据不对，发起`ChangeView`消息。
+   5. 过滤在此之前收到的不合法签名（Prepare-Reponse 消息可能先到达）
 
-   6. 检查block中第一笔交易，即挖矿交易，同步骤5检查，并进行交易自身验证。若验证失败，忽略该消息。
+   6. 收集签名。
 
-   7. 收集签名。
+   7. 检查内存池已经包含的block所需的交易。若交易已经在区块链中，或者插件校验失败，则认为交易数据不对，发起`ChangeView`消息。
 
-   8. 若缺少`block`中的交易时，发送`getdata`消息，附带缺少交易的hash列表。
+   8. 检查未确认交易池中包含的block所需的交易，首先进行交易验证，再进行步骤 6）的检查
 
-   9. 若交易齐全时，首先校验`PrepareRequest.NextConsensus` 是否等于 结合了最新交易的下一个区块共识节点的多方签名脚本hash。若不是，则发起`ChangeView`消息；若是，则对block进行签名，并广播`PrepareResponse`消息。
+   9. 检查block中第一笔交易，即挖矿交易，同步骤5检查，并进行交易自身验证。若验证失败，忽略该消息。
+
+   10. 若缺少`block`中的交易时，发送`getdata`消息，附带缺少交易的hash列表。
+
+   11. 若交易齐全时，首先校验`PrepareRequest.NextConsensus` 是否等于 结合了最新交易的下一个区块共识节点的多方签名脚本hash。若不是，则发起`ChangeView`消息；若是，则对block进行签名，并广播`PrepareResponse`消息。
 
 
 
 2. **PrepareResponse** 议员对议长发的`PrepareRequest`消息回应，并附带了对block的签名
   
-   1. 若当前议员已经出新块了，则忽略消息
-   
-   2. 若对方签名已经收到过，则忽略
+   1. 若对方签名已经收到过，则忽略
+
+   2. 若在此之前尚未收到 `PrepareRequest` 消息时，则先收下该签名（后续收到PrepareRequest时，进行过滤）。否则进入步骤 3）
 
    3. 校验对方的签名，若通过，则收下签名，否则忽略。
 
@@ -175,9 +179,7 @@
 
    1. 若新视图编号，小于该议员之前的视图编号，则忽略
    
-   2. 若新视图编号，小于当前议员的视图编号，则忽略
-
-   3. 若有不少于`2f+1`个议员的视图编号等于新视图编号时，则切换视图成功，当前议员重置共识流程，视图编号为新的视图编号。
+   2. 若有不少于`2f+1`个议员的视图编号等于新视图编号时，则切换视图成功，当前议员重置共识流程，视图编号为新的视图编号。
 
 
 
