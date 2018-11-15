@@ -15,11 +15,17 @@ namespace Neo.Cryptography.ECC
         /// <summary>
         /// 这条椭圆曲线的零元
         /// </summary>
+        /// <value>
+        /// 返回这条椭圆曲线的零元
+        /// </value>
         public readonly ECPoint Infinity;
 
         /// <summary>
         /// 这条椭圆曲线的基点
         /// </summary>
+        /// <value>
+        /// 返回这条椭圆曲线的基点
+        /// </value>
         public readonly ECPoint G;
 
         private ECCurve(BigInteger Q, BigInteger A, BigInteger B, BigInteger N, byte[] G)
@@ -35,6 +41,9 @@ namespace Neo.Cryptography.ECC
         /// <summary>
         /// 返回一个Koblitz类型的椭圆曲线
         /// </summary>
+        /// <value>
+        /// 返回一个Koblitz类型的椭圆曲线
+        /// </value>
         public static readonly ECCurve Secp256k1 = new ECCurve
         (
             BigInteger.Parse("00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", NumberStyles.AllowHexSpecifier),
@@ -47,6 +56,9 @@ namespace Neo.Cryptography.ECC
         /// <summary>
         ///  返回一个Random的椭圆曲线
         /// </summary>
+        /// <value>
+        /// 返回一个Koblitz类型的椭圆曲线
+        /// </value>
         public static readonly ECCurve Secp256r1 = new ECCurve
         (
             BigInteger.Parse("00FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF", NumberStyles.AllowHexSpecifier),

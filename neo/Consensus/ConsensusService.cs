@@ -123,7 +123,7 @@ namespace Neo.Consensus
             }
             else
             {
-                context.State = ConsensusState.Backup;
+                context.State = ConsensusState.Backup;// 重置 State
                 ChangeTimer(TimeSpan.FromSeconds(Blockchain.SecondsPerBlock << (view_number + 1)));
             }
         }
@@ -167,7 +167,7 @@ namespace Neo.Consensus
                 return;
             }
             if (message.ViewNumber != context.ViewNumber && message.Type != ConsensusMessageType.ChangeView)
-                return;
+                return; 
             switch (message.Type)
             {
                 case ConsensusMessageType.ChangeView:
@@ -249,7 +249,7 @@ namespace Neo.Consensus
             Log($"{nameof(OnPrepareResponseReceived)}: height={payload.BlockIndex} view={message.ViewNumber} index={payload.ValidatorIndex}");
             byte[] hashData = context.MakeHeader()?.GetHashData();
             if (hashData == null)
-            {
+            {// 表明还没有收到 prepare-request, 则先收下签名，在过滤
                 context.Signatures[payload.ValidatorIndex] = message.Signature;
             }
             else if (Crypto.Default.VerifySignature(hashData, message.Signature, context.Validators[payload.ValidatorIndex].EncodePoint(false)))
