@@ -80,35 +80,28 @@ NEO 的网络协议规范与比特币的协议大致类似，但在区块、交�
 
 # 对话序列实例
 
-| 消息方向 | 消息种类 |
-| --- | --- |
-| send | version |
-| receive | version |
-| send | verack |
-| receive | verack |
-| send | getheaders |
-| receive | headers |
-| send | getblocks |
-| receive | inv |
-| send | getdata |
-| receive | inv |
-| send | getdata |
-| receive | inv |
-| send | getdata |
-| receive | consensus |
-| send | inv |
-| receive | consensus |
-| send | inv |
-| receive | inv |
-| receive | block |
-| send | inv |
-| receive | block |
-| send | inv |
-| receive | block |
-| send | inv |
-| receive | block |
-| send | inv |
-| ... | ... |
+| 消息方向 | 消息种类 | 说明 |
+| --- | --- | --- |
+| send | version | 发送 version 进行第一次握手 |
+| receive | version | 接收 version 进行第一次握手 |
+| send | verack | 发送 verack 进行第二次握手 |
+| receive | verack | 接收 verack 进行第二次握手 |
+| send | getheaders | 发送 getheaders 获取区块头 |
+| receive | headers | 接收 区块头 |
+| send | getblocks | 发送 getblocks 获取区块 |
+| receive | inv(blocks) | 收到 inv 若干区块的哈希值 |
+| send | getdata(blocks) | 发送 getdata 获取若干区块的完整区块 |
+| receive | inv(consensus) | 收到 inv 一个共识数据的哈希值 |
+| send | getdata(consensus) | 发送 getdata 获取指定哈希值的共识数据 |
+| receive | consensus | 收到一个完整的共识数据 |
+| send | inv(consensus) | 将收到的共识的哈希值转发给其它节点 |
+| receive | block | 收到一个完整的区块 |
+| send | inv(block) | 转发区块的哈希 |
+| receive | block | 收到一个完整的区块 |
+| send | inv(block) | 转发区块的哈希 |
+| receive | block | 收到一个完整的区块 |
+| send | inv(block) | 转发区块的哈希 |
+| ... | ... | ... |
 
 
 参考阅读：<http://docs.neo.org/en-us/network/network-protocol.html>
