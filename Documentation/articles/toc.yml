@@ -1,42 +1,42 @@
-- name: Introduction
+- name: 阅读说明
   href: introduction.md
-- name: Conventions
+- name: 技术约定
   href: conventions.md
-- name: Neo-cli Structure
+- name: Neo-cli 的结构
   href: neo_cli_structure.md
-- name: The Blockchain Paradigm
+- name: 区块链范式
   href: blockchain_paradigm.md
-- name: Blockchain
+- name: 区块链系统
   href: blockchain/neo_system.md
   items:
-    - name: Economic Model
+    - name: 经济模型
       href: blockchain/economic_model.md
-    - name: Blockchain Data Structure
+    - name: 区块链数据结构
       href: blockchain/blockchain_datastructure.md
-    - name: Transaction
+    - name: 交易
       href: blockchain/transaction.md
-    - name: Account and Asset
+    - name: 账户和资产
       href: blockchain/account_asset.md
-    - name: NEP5 Asset
+    - name: NEP5 资产
       href: blockchain/nep5asset.md
-    - name: Validator
+    - name: 验证人
       href: blockchain/validator.md
-- name: Wallets
+- name: 钱包
   href: wallets.md
-- name: Transaction Excution
+- name: 交易流程
   href: tx_execution.md
-- name: Network Protocol
+- name: 网络协议
   href: network_protocol.md
-- name: Consensus
+- name: 共识机制
   href: consensus/readme.md
   items:
-    - name: Consensus Algorithm
+    - name: 共识算法
       href: consensus/consensus_algorithm.md
-    - name: Consensus Protocol
+    - name: 共识协议
       href: consensus/consensus_protocol.md
-    - name: Vote, Validator, Delegates, Speaker
+    - name: 投票，验证人，议员，议长
       href: consensus/vote_validator.md
-- name: Neo Virtual Machine
+- name: Neo 虚拟机
   href: neo_vm.md
-- name: Smart Contract
+- name: 智能合约
   href: smart_contract.md
