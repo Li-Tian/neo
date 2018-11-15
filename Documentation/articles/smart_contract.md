@@ -628,7 +628,7 @@ System.StorageContext.AsReadOnly
 |------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 绑定函数： | Asset_Create                                                                                                                                                                         |
 | 功能描述： | 注册一种资产                                                                                                                                                                         |
-| C\#函数：  | Asset Create(byte asset_type, string name, long amount, byte precision, byte[] owner, byte[] admin, byte[] issuer);                                                                  |
+| C\#函数：  | Asset Create(byte asset_type, string name, long amount, </br> byte precision, byte[] owner, byte[] admin, byte[] issuer);                                                                  |
 
 ### Neo.Asset.Renew
 
@@ -681,7 +681,7 @@ System.StorageContext.AsReadOnly
 |------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 绑定函数： | Contract_Create                                                                                                                                                                                       |
 | 功能描述： | 发布智能合约                                                                                                                                                                                          |
-| C\#函数：  | Contract Create(byte[] script, byte[] parameter_list, byte return_type, ContractPropertyState contract_property_state, string name, string version, string author, string email, string description); |
+| C\#函数：  | Contract Create(byte[] script, byte[] parameter_list, byte return_type, </br> ContractPropertyState contract_property_state, string name, </br> string version, string author, string email, string description); |
 
 ### Neo.Contract.Migrate
 
@@ -689,7 +689,7 @@ System.StorageContext.AsReadOnly
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 绑定函数： | Contract_Migrate                                                                                                                                                                                                                  |
 | 功能描述： | 迁移 / 更新智能合约                                                                                                                                                                                                               |
-| C\#函数：  | Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, ContractPropertyState contract_property_state, string name, string version, string author, string email, string description);                            |
+| C\#函数：  | Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, </br> ContractPropertyState contract_property_state, string name, </br> string version, string author, string email, string description);                            |
 | 说明：     | 详见本章“升级” 部分|
 
 ## Enumerator：迭代器相关API
