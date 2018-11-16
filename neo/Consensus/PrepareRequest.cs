@@ -12,35 +12,42 @@ namespace Neo.Consensus
     internal class PrepareRequest : ConsensusMessage
     {
         /// <summary>
-        /// block nonce, random value
+        /// Block nonce, random value
         /// </summary>
         public ulong Nonce;
 
         /// <summary>
-        /// next block's consensus nodes multi-sign script hash
+        /// The script hash of the next round consensus nodes' multi-sign contract
         /// </summary>        
         public UInt160 NextConsensus;
 
         /// <summary>
-        /// consensus block txs' hash list
+        /// Hash list of the proposal block's transactions
         /// </summary>   
         public UInt256[] TransactionHashes;
 
         /// <summary>
-        /// consensus block's miner transanction. It contains block bonus for `primrary` node
+        /// Miner transanction. It contains block reward for the `Primary` node
         /// </summary>   
         public MinerTransaction MinerTransaction;
 
         /// <summary>
-        /// consensus block's signatures, but it only store `primrary` signature
+        /// Signature of the proposal block
         /// </summary>   
         public byte[] Signature;
 
+        /// <summary>
+        /// Construct PrepareRequest
+        /// </summary>
         public PrepareRequest()
             : base(ConsensusMessageType.PrepareRequest)
         {
         }
 
+        /// <summary>
+        /// Deserialize from the reader
+        /// </summary>
+        /// <param name="reader">binary reader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -55,6 +62,37 @@ namespace Neo.Consensus
             Signature = reader.ReadBytes(64);
         }
 
+
+        /// <summary>
+        /// Serialize this message
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Type</term>
+        /// <description>message type</description>
+        /// </item>
+        /// <item>
+        /// <term>ViewNumber</term>
+        /// <description>view number</description>
+        /// </item>
+        /// <item>
+        /// <term>Nonce</term>
+        /// <description>block nonce</description>
+        /// </item>
+        /// <term>NextConsensus</term>
+        /// <description>The script hash of the next round consensus nodes' multi-sign contract</description>
+        /// </item>
+        /// <term>TransactionHashes</term>
+        /// <description>Hash list of the proposal block's transactions</description>
+        /// </item>
+        /// <term>MinerTransaction</term>
+        /// <description>Miner transanction</description>
+        /// </item>
+        /// <term>Signature</term>
+        /// <description>Signature of the proposal block</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">binaray writer</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);

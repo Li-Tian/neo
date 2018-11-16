@@ -9,17 +9,51 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// P2p consensus message payload
+    /// </summary>
     public class ConsensusPayload : IInventory
     {
+        /// <summary>
+        /// Consensus message version
+        /// </summary>
         public uint Version;
+        
+        /// <summary>
+        /// The previous block hash
+        /// </summary>
         public UInt256 PrevHash;
+
+        /// <summary>
+        /// The proposal block index
+        /// </summary>
         public uint BlockIndex;
+
+        /// <summary>
+        /// The sender(the Speaker or Delegates) index in the validators array
+        /// </summary>
         public ushort ValidatorIndex;
+
+        /// <summary>
+        /// Block timestamp
+        /// </summary>
         public uint Timestamp;
+
+        /// <summary>
+        /// Consensus message data
+        /// </summary>
         public byte[] Data;
+
+        /// <summary>
+        /// Witness, the executable verification script
+        /// </summary>
         public Witness Witness;
 
         private UInt256 _hash = null;
+
+        /// <summary>
+        /// Hash data of the GetHashData( = unsigned data) by using hash256 algorithm
+        /// </summary>
         UInt256 IInventory.Hash
         {
             get
@@ -32,8 +66,14 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// P2p inventory message type, equals to InventoryType.Consensus
+        /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.Consensus;
 
+        /// <summary>
+        /// Witness array
+        /// </summary>
         Witness[] IVerifiable.Witnesses
         {
             get
@@ -47,8 +87,15 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// ConsensusPayload size
+        /// </summary>
         public int Size => sizeof(uint) + PrevHash.Size + sizeof(uint) + sizeof(ushort) + sizeof(uint) + Data.GetVarSize() + 1 + Witness.Size;
 
+        /// <summary>
+        /// Deserialize from the reader
+        /// </summary>
+        /// <param name="reader"></param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ((IVerifiable)this).DeserializeUnsigned(reader);
@@ -56,6 +103,10 @@ namespace Neo.Network.P2P.Payloads
             Witness = reader.ReadSerializable<Witness>();
         }
 
+        /// <summary>
+        ///  Deserialize from the reader of the unsigned binary data without the witness field
+        /// </summary>
+        /// <param name="reader"></param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
         {
             Version = reader.ReadUInt32();
@@ -66,11 +117,20 @@ namespace Neo.Network.P2P.Payloads
             Data = reader.ReadVarBytes();
         }
 
+        /// <summary>
+        /// Script message = GetHashData()
+        /// </summary>
+        /// <returns></returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
         }
 
+        /// <summary>
+        /// Get the verification scripts' hashes
+        /// </summary>
+        /// <param name="snapshot"></param>
+        /// <returns> the script hash of the sender's signing contract</returns>
         UInt160[] IVerifiable.GetScriptHashesForVerifying(Snapshot snapshot)
         {
             ECPoint[] validators = snapshot.GetValidators();
@@ -79,12 +139,81 @@ namespace Neo.Network.P2P.Payloads
             return new[] { Contract.CreateSignatureRedeemScript(validators[ValidatorIndex]).ToScriptHash() };
         }
 
+        /// <summary>
+        /// Serialize the message. It includes the fields as follows:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Version</term>
+        /// <description>consensus message version, current is zero</description>
+        /// </item>
+        /// <item>
+        /// <term>PrevHash</term>
+        /// <description>the previous block hash</description>
+        /// </item>
+        /// <item>
+        /// <term>BlockIndex</term>
+        /// <description>the proposal block index</description>
+        /// </item>
+        /// <item>
+        /// <term>ValidatorIndex</term>
+        /// <description>the sender(the Speaker or Delegates) index in the validators array</description>
+        /// </item>
+        /// <item>
+        /// <term>Timestamp</term>
+        /// <description>block time stamp</description>
+        /// </item>
+        /// <item>
+        /// <term>Data</term>
+        /// <description>consensus message data</description>
+        /// </item>
+        /// <item>
+        /// <term>1</term>
+        /// <description>fixed value</description>
+        /// </item>
+        /// <item>
+        /// <term>Witness</term>
+        /// <description>Witness, the executable verification script</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">binary writer</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             ((IVerifiable)this).SerializeUnsigned(writer);
             writer.Write((byte)1); writer.Write(Witness);
         }
 
+
+        /// <summary>
+        /// Serialize the unsigned message. It includes the fields as follows:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Version</term>
+        /// <description>consensus message version, current is zero</description>
+        /// </item>
+        /// <item>
+        /// <term>PrevHash</term>
+        /// <description>the previous block hash</description>
+        /// </item>
+        /// <item>
+        /// <term>BlockIndex</term>
+        /// <description>the proposal block index</description>
+        /// </item>
+        /// <item>
+        /// <term>ValidatorIndex</term>
+        /// <description>the sender(the Speaker or Delegates) index in the validators array</description>
+        /// </item>
+        /// <item>
+        /// <term>Timestamp</term>
+        /// <description>block time stamp</description>
+        /// </item>
+        /// <item>
+        /// <term>Data</term>
+        /// <description>consensus message data</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">binary writer</param>
         void IVerifiable.SerializeUnsigned(BinaryWriter writer)
         {
             writer.Write(Version);
@@ -95,6 +224,15 @@ namespace Neo.Network.P2P.Payloads
             writer.WriteVarBytes(Data);
         }
 
+        /// <summary>
+        /// Verify this payload
+        /// </summary>
+        /// <remarks>
+        /// 1) Check if BlockIndex is more than the snapshot.Height
+        /// 2) Verify the witness script
+        /// </remarks>
+        /// <param name="snapshot"></param>
+        /// <returns></returns>
         public bool Verify(Snapshot snapshot)
         {
             if (BlockIndex <= snapshot.Height)
