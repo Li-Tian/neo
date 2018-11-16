@@ -17,42 +17,42 @@ using System.Linq;
 namespace Neo.Consensus
 {
     /// <summary>
-    /// Consensus sevice, implemented the dBFT algorithm
+    /// 共识服务，实现了dBFF算法
     /// </summary>
     /// <remarks>
-    ///  http://docs.neo.org/en-us/basic/consensus/whitepaper.html
+    ///  算法介绍： http://docs.neo.org/en-us/basic/consensus/whitepaper.html
     /// </remarks>
     public sealed class ConsensusService : UntypedActor
     {
         /// <summary>
-        /// start consensus activity event
+        /// 开始共识消息
         /// </summary>
         public class Start { }
 
         /// <summary>
-        /// update the current view number event
+        /// 更新视图消息
         /// </summary>
         public class SetViewNumber { public byte ViewNumber; }
 
         /// <summary>
-        /// time out event
+        /// 超时消息
         /// </summary>
         internal class Timer { public uint Height; public byte ViewNumber; }
 
         /// <summary>
-        /// consensus context in current round
+        /// 上下文
         /// </summary>
         private readonly ConsensusContext context = new ConsensusContext();
         private readonly NeoSystem system;
         private readonly Wallet wallet;
 
         /// <summary>
-        /// The latest block received time
+        /// 最新收块时间
         /// </summary>
         private DateTime block_received_time;
 
         /// <summary>
-        /// Construct consensus service
+        /// 构建共识服务
         /// </summary>
         /// <param name="system"></param>
         /// <param name="wallet"></param>
@@ -63,13 +63,14 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Add new transaction
+        /// 添加新交易
         /// </summary>
         /// <remarks>
-        /// Note, if the proposal block's transactions are all received, the PrepareResponse will be send.
+        /// 注意，1. 若提案block的交易全部收齐时，将发送PrepareReponse消息
+        /// 2. 校验失败时，会触发ChangeView
         /// </remarks>
-        /// <param name="tx"></param>
-        /// <param name="verify">Whether or not to the verify the transaction</param>
+        /// <param name="tx">待添加交易</param>
+        /// <param name="verify">是否进行交易验证</param>
         /// <returns></returns>
         private bool AddTransaction(Transaction tx, bool verify)
         {
@@ -102,9 +103,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Set `delay` seconds timer
+        /// 更新定时器
         /// </summary>
-        /// <param name="delay"></param>
+        /// <param name="delay">delay秒后超时</param>
         private void ChangeTimer(TimeSpan delay)
         {
             Context.System.Scheduler.ScheduleTellOnce(delay, Self, new Timer
@@ -115,12 +116,12 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Check the exptected view arrays. 
+        /// 检查视图更换是否达成一致 
         /// </summary>
         /// <remarks>
-        /// If there are at least M nodes meeting the EV[i] == view_number, the view change completed.
+        /// 当有最少M个节点的期望视图编号都等于view_number时，则视图更换完成，重置共识活动以及使该视图编号
         /// </remarks>
-        /// <param name="view_number"></param>
+        /// <param name="view_number">视图编号</param>
         private void CheckExpectedView(byte view_number)
         {
             if (context.ViewNumber == view_number) return;
@@ -131,7 +132,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Check if there are at least M signatures, the proposal block will be accepted and send the full block
+        /// 检查收到的提案block的签名是否齐全，若已收到最少M个签名时，则提案通过，并广播完整的区块
         /// </summary>
         private void CheckSignatures()
         {
@@ -155,9 +156,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// initialize consensus activity with view_number
+        /// 初始化共识活动
         /// </summary>
-        /// <param name="view_number"></param>
+        /// <param name="view_number">视图编号</param>
         private void InitializeConsensus(byte view_number)
         {
             if (view_number == 0)
@@ -191,13 +192,10 @@ namespace Neo.Consensus
 
 
         /// <summary>
-        /// ChangeView processing
+        /// ChangeView消息处理
         /// </summary>
-        /// <remarks>
-        /// 
-        /// </remarks>
-        /// <param name="payload"></param>
-        /// <param name="message"></param>
+        /// <param name="payload">ChangeView货物</param>
+        /// <param name="message">ChangeView消息</param>
         private void OnChangeViewReceived(ConsensusPayload payload, ChangeView message)
         {
             if (message.NewViewNumber <= context.ExpectedView[payload.ValidatorIndex])
@@ -208,9 +206,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Consensus message check and process
+        /// 共识消息货物的处理，检查与具体共识消息处理
         /// </summary>
-        /// <param name="payload"></param>
+        /// <param name="payload">共识消息货物</param>
         private void OnConsensusPayload(ConsensusPayload payload)
         {
             if (context.State.HasFlag(ConsensusState.BlockSent)) return;
@@ -252,9 +250,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// New block event handler, reset consensus activity
+        /// 块持久化完毕消息处理，重置共识过程
         /// </summary>
-        /// <param name="block"></param>
+        /// <param name="block">已处理完的block</param>
         private void OnPersistCompleted(Block block)
         {
             Log($"persist block: {block.Hash}");
@@ -263,16 +261,16 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// PrepareRequest message processing
+        /// PrepareRequest消息处理
         /// </summary>
         /// <remarks>
-        /// 1. check the message
-        /// 2. reserve the proposal block's data: Timestamp, Nonce, NextConsenus, TransactionHashes, and Signature
-        /// 3. filter the signatures received before
-        /// 4. send inv message to acquire the missing txs
+        /// 1. 检查消息
+        /// 2. 保存提案内容： Timestamp, Nonce, NextConsenus, TransactionHashes, and Signature
+        /// 3. 过滤 signatures 数组
+        /// 4. 若还有缺少的交易，则发送inv消息附带上缺少的交易hash
         /// </remarks>
-        /// <param name="payload"></param>
-        /// <param name="message"></param>
+        /// <param name="payload">PrepareRequest货物</param>
+        /// <param name="message">PrepareRequest消息</param>
         private void OnPrepareRequestReceived(ConsensusPayload payload, PrepareRequest message)
         {
             if (context.State.HasFlag(ConsensusState.RequestReceived)) return;
@@ -328,12 +326,11 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// PrepareResponse message processing
+        /// PrepareResponse 消息处理
         /// </summary>
-        /// If PrepareRequest received before, verify the signature.
-        /// Else reserve the signature and filter it in PrepareRequest processing.
-        /// <param name="payload"></param>
-        /// <param name="message"></param>
+        /// 若PrepareRequest消息已收过，则验证签名数据后收下；否则先收下（后续在收到PrepareRequset消息时，会进行验证）
+        /// <param name="payload">PrepareResponse货物</param>
+        /// <param name="message">PrepareResponse消息</param>
         private void OnPrepareResponseReceived(ConsensusPayload payload, PrepareResponse message)
         {
             if (context.Signatures[payload.ValidatorIndex] != null) return;
@@ -351,7 +348,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Message receiver, inlcudes Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted
+        /// 消息接收器： Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted
         /// </summary>
         /// <param name="message"></param>
         protected override void OnReceive(object message)
@@ -380,7 +377,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// State event handler, initialize consensus activity
+        /// 启动共识事件处理
         /// </summary>
         private void OnStart()
         {
@@ -389,11 +386,10 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Timeout event handler
+        /// 超时处理
         /// </summary>
         /// <remarks>
-        /// If it's Primary and has not send PrepareRequest, send PrepareRequest
-        /// Else send ChangeView
+        /// 若是议长且尚未发送 PrepareRequest, 则发送PrepareRequest消息,否则发送ChangeView
         /// </remarks>
         /// <param name="timer"></param>
         private void OnTimer(Timer timer)
@@ -426,8 +422,11 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// New transaction event handler
+        /// 新交易消息处理
         /// </summary>
+        /// <remarks>
+        /// 若缺少该交易，并在提案块中，则添加
+        /// </remarks>
         /// <param name="transaction"></param>
         private void OnTransaction(Transaction transaction)
         {
@@ -447,10 +446,10 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Create actorref with mail box `consensus-service-mailbox`
+        /// 创建ActorRef并带邮箱`consensus-service-mailbox`
         /// </summary>
-        /// <param name="system"></param>
-        /// <param name="wallet"></param>
+        /// <param name="system">NEO系统</param>
+        /// <param name="wallet">钱包</param>
         /// <returns></returns>
         public static Props Props(NeoSystem system, Wallet wallet)
         {
@@ -458,7 +457,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Send ChangeView message
+        /// 发送改变视图消息
         /// </summary>
         private void RequestChangeView()
         {
@@ -471,9 +470,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Sign payload and replay
+        /// 签名数据并转发
         /// </summary>
-        /// <param name="payload"></param>
+        /// <param name="payload">待签名数据</param>
         private void SignAndRelay(ConsensusPayload payload)
         {
             ContractParametersContext sc;
@@ -492,12 +491,12 @@ namespace Neo.Consensus
     }
 
     /// <summary>
-    /// Consensus service mailbox
+    /// 共识服务优先级邮箱
     /// </summary>
     internal class ConsensusServiceMailbox : PriorityMailbox
     {
         /// <summary>
-        /// Register consensus service mailbox
+        /// 注册共识服务邮箱
         /// </summary>
         /// <param name="settings"></param>
         /// <param name="config"></param>
@@ -507,31 +506,31 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Check if the message is high priority
+        /// 检查消息是否是高优先级
         /// <list type="bullet">
         /// <item>
         /// <term>ConsensusPayload</term>
-        /// <description>high priority</description>
+        /// <description>高优先级</description>
         /// </item>
         /// <item>
         /// <term>SetViewNumber</term>
-        /// <description>high priority</description>
+        /// <description>高优先级</description>
         /// </item>
         /// <item>
         /// <term>Timer</term>
-        /// <description>high priority</description>
+        /// <description>高优先级</description>
         /// </item>
         /// <item>
         /// <term>Blockchain.PersistCompleted </term>
-        /// <description>high priority</description>
+        /// <description>高优先级</description>
         /// </item>
         /// <item>
         /// <term>Start</term>
-        /// <description>low priority</description>
+        /// <description>低优先级</description>
         /// </item>
         /// <item>
         /// <term>Transaction</term>
-        /// <description>low priority</description>
+        /// <description>低优先级</description>
         /// </item>
         /// </list>
         /// </summary>
