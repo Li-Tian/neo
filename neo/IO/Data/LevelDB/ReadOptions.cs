@@ -7,6 +7,9 @@ namespace Neo.IO.Data.LevelDB
         public static readonly ReadOptions Default = new ReadOptions();
         internal readonly IntPtr handle = Native.leveldb_readoptions_create();
 
+        /// <summary>
+        /// 是否进行校验
+        /// </summary>
         public bool VerifyChecksums
         {
             set
@@ -15,6 +18,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 是否将读取的内容存放到缓存
+        /// </summary>
         public bool FillCache
         {
             set
@@ -23,6 +29,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 设置从本快照读取
+        /// </summary>
         public Snapshot Snapshot
         {
             set

@@ -438,6 +438,9 @@ namespace Neo.Consensus
             AddTransaction(transaction, true);
         }
 
+        /// <summary>
+        /// Actor停止前回调，回收资源
+        /// </summary>
         protected override void PostStop()
         {
             Log("OnStop");

@@ -2,11 +2,24 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    /// <summary>
+    /// Leveldb的相关选项
+    /// </summary>
     public class Options
     {
+        /// <summary>
+        /// 默认设置
+        /// </summary>
         public static readonly Options Default = new Options();
+
+        /// <summary>
+        /// db句柄
+        /// </summary>
         internal readonly IntPtr handle = Native.leveldb_options_create();
 
+        /// <summary>
+        /// 若db不存在则创建
+        /// </summary>
         public bool CreateIfMissing
         {
             set
@@ -15,6 +28,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        ///  若db已存在时返回错误 
+        /// </summary>
         public bool ErrorIfExists
         {
             set
@@ -23,6 +39,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 是否进行数据损坏检查
+        /// </summary>
         public bool ParanoidChecks
         {
             set
@@ -31,6 +50,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 写缓存大小
+        /// </summary>
         public int WriteBufferSize
         {
             set
@@ -39,6 +61,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 最大打开文件数
+        /// </summary>
         public int MaxOpenFiles
         {
             set
@@ -47,6 +72,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// Leveldb存储的Block大小
+        /// </summary>
         public int BlockSize
         {
             set
@@ -55,6 +83,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 每隔几个key就直接存储一个重启点key(为了兼顾查找效率，每隔K个key，leveldb就不使用前缀压缩，而是存储整个key，这就是重启点（restartpoint）) 
+        /// </summary>
         public int BlockRestartInterval
         {
             set
@@ -63,6 +94,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 是否压缩
+        /// </summary>
         public CompressionType Compression
         {
             set
@@ -71,6 +105,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 过滤策略
+        /// </summary>
         public IntPtr FilterPolicy
         {
             set

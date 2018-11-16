@@ -7,6 +7,9 @@ namespace Neo.IO.Data.LevelDB
         public static readonly WriteOptions Default = new WriteOptions();
         internal readonly IntPtr handle = Native.leveldb_writeoptions_create();
 
+        /// <summary>
+        /// 是否直接同步到磁盘
+        /// </summary>
         public bool Sync
         {
             set

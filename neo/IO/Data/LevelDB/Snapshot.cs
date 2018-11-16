@@ -2,6 +2,9 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    /// <summary>
+    /// 快照
+    /// </summary>
     public class Snapshot : IDisposable
     {
         internal IntPtr db, handle;
@@ -12,6 +15,10 @@ namespace Neo.IO.Data.LevelDB
             this.handle = Native.leveldb_create_snapshot(db);
         }
 
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
         public void Dispose()
         {
             if (handle != IntPtr.Zero)
