@@ -14,6 +14,9 @@ using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 namespace Neo.Wallets
 {
+    /// <summary>
+    /// NEO中钱包的抽象类
+    /// </summary>
     public abstract class Wallet : IDisposable
     {
         public abstract event EventHandler<WalletTransactionEventArgs> WalletTransaction;
@@ -35,6 +38,10 @@ namespace Neo.Wallets
         public abstract IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts);
         public abstract IEnumerable<UInt256> GetTransactions();
 
+        /// <summary>
+        /// 创建一个私钥并且, 创建一个account
+        /// </summary>
+        /// <returns>返回新创建的account</returns>
         public WalletAccount CreateAccount()
         {
             byte[] privateKey = new byte[32];
@@ -47,6 +54,12 @@ namespace Neo.Wallets
             return account;
         }
 
+        /// <summary>
+        /// 传入一个合约和一个私钥, 创建一个新的账户
+        /// </summary>
+        /// <param name="contract">合约</param>
+        /// <param name="privateKey">私钥</param>
+        /// <returns>返回新创建的account</returns>
         public WalletAccount CreateAccount(Contract contract, byte[] privateKey)
         {
             if (privateKey == null) return CreateAccount(contract);
@@ -142,6 +155,10 @@ namespace Neo.Wallets
             return account?.ScriptHash;
         }
 
+        /// <summary>
+        /// 返会所有acctouns的Coins
+        /// </summary>
+        /// <returns>一个实现了IEnumerable的Coin集合</returns>
         public IEnumerable<Coin> GetCoins()
         {
             return GetCoins(GetAccounts().Select(p => p.ScriptHash));
@@ -170,6 +187,13 @@ namespace Neo.Wallets
             return prikey;
         }
 
+        /// <summary>
+        /// 解码一个WIF格式的私钥并且转换成字节数组返回
+        /// </summary>
+        /// <param name="wif">WIF格式的私钥</param>
+        /// <exception cref="ArgumentNullException">如果WIF是null</exception>
+        /// <exception cref="FormatException">这个wif的格式不是私钥</exception>
+        /// <returns>代表一串私钥的字符字节</returns>
         public static byte[] GetPrivateKeyFromWIF(string wif)
         {
             if (wif == null) throw new ArgumentNullException();
