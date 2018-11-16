@@ -14,13 +14,13 @@ namespace Neo.Consensus
         ChangeView = 0x00,
 
         /// <summary>
-        /// Prepare-request消息，由议长发送
+        /// PrepareRequest消息，由议长发送
         /// </summary>
         [ReflectionCache(typeof(PrepareRequest))]
         PrepareRequest = 0x20,
 
         /// <summary>
-        /// Prepare-response消息，由议员发送
+        /// PrepareResponse消息，由议员发送
         /// </summary>
         [ReflectionCache(typeof(PrepareResponse))]
         PrepareResponse = 0x21,
