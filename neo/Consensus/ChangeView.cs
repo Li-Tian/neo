@@ -4,12 +4,12 @@ using System.IO;
 namespace Neo.Consensus
 {   
     /// <summary>
-    ///  Changeview message
+    ///  ChangeView 消息
     /// </summary>
     internal class ChangeView : ConsensusMessage
     {
         /// <summary>
-        /// New view number
+        /// 新视图编号
         /// </summary>
         public byte NewViewNumber;
 
@@ -19,9 +19,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Deserialize from reader
+        /// 从reader中反序列化
         /// </summary>
-        /// <param name="reader">binary reader</param>
+        /// <param name="reader">二进制读取流</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -30,9 +30,22 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Serialize the message
+        /// 序列化消息内容
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Type</term>
+        /// <description>消息类型</description>
+        /// </item>
+        /// <item>
+        /// <term>ViewNumber</term>
+        /// <description>当前视图编号</description>
+        /// </item>
+        /// <term>NewViewNumber</term>
+        /// <description>新视图编号</description>
+        /// </item>
+        /// </list>
         /// </summary>
-        /// <param name="writer">binary writer</param>
+        /// <param name="writer">二进制输出流</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);

@@ -13,105 +13,105 @@ using System.Linq;
 namespace Neo.Consensus
 {
     /// <summary>
-    /// Consensus context, it records the data in current consensus activity.
+    /// 共识过程上下文，记录当前共识活动信息
     /// </summary>
     internal class ConsensusContext : IDisposable
     {
         /// <summary>
-        /// Consensus message version, it's fixed to 0 currently
+        /// 共识协议版本号，目前为0
         /// </summary>
         public const uint Version = 0;
 
         /// <summary>
-        /// Context state
+        /// 所处共识过程状态
         /// </summary>
         public ConsensusState State;
 
         /// <summary>
-        /// The previous block hash
+        /// 上一个block的hash
         /// </summary>
         public UInt256 PrevHash;
 
         /// <summary>
-        /// The proposal block height
+        /// 提案block高度
         /// </summary>
         public uint BlockIndex;
 
         /// <summary>
-        /// Current view number
+        /// 当前视图编号
         /// </summary>
         public byte ViewNumber;
 
         /// <summary>
-        /// Levedb snapshot
+        /// 持久层快照
         /// </summary>
         public Snapshot Snapshot;
 
         /// <summary>
-        /// Consensus nodes in the current round
+        /// 本轮共识节点公钥列表
         /// </summary>
         public ECPoint[] Validators;
 
         /// <summary>
-        /// My index in the validators
+        /// 当前节点编号，在Validators数组中序号
         /// </summary>
         public int MyIndex;
 
         /// <summary>
-        /// The Speaker index
+        /// 本轮共识的议长编号
         /// </summary>
         public uint PrimaryIndex;
 
         /// <summary>
-        /// Time stmap
+        /// 当前提案block时间戳
         /// </summary>
         public uint Timestamp;
 
         /// <summary>
-        /// Block nonce
+        /// 当前提案block的nonce
         /// </summary>
         public ulong Nonce;
 
         /// <summary>
-        /// Script hash of the next round consensus nodes' multi-signs contract
+        /// 当前提案block的NextConsensus, 指定下一轮共识节点
         /// </summary>
         public UInt160 NextConsensus;
 
         /// <summary>
-        /// Hash list of Transactions
+        /// 当前提案block的交易hash列表
         /// </summary>
         public UInt256[] TransactionHashes;
 
         /// <summary>
-        /// The proposal block transactions
+        /// 当前提案block的交易
         /// </summary>
         public Dictionary<UInt256, Transaction> Transactions;
 
         /// <summary>
-        /// 
+        /// 存放收到的提案block的签名数组
         /// </summary>
         public byte[][] Signatures;
 
         /// <summary>
-        /// The expected view number of validators
+        /// 收到的各节点期望视图编号，主要用在改变视图过程中
         /// </summary>
         public byte[] ExpectedView;
 
         /// <summary>
-        /// Key pair
+        /// 钥匙对
         /// </summary>
         public KeyPair KeyPair;
 
         /// <summary>
-        /// The safe consensus threshold. Below this threshold, the network is exposed to fault.
+        /// 最低共识节点安全阈值个数，低于该阈值，共识过程将会出错
         /// </summary>
         public int M => Validators.Length - (Validators.Length - 1) / 3;
 
         /// <summary>
-        /// Change view completed, update the context ViewNumber, PrimaryIndex and ExpectedView[Myindex]
+        /// 修改上下文视图编号，即改变视图达成一致，同时重新计算议长编号
         /// </summary>
         /// <remarks>
-        /// If the node has the SignatureSent flag, reserve the signatures array, else reset it
+        /// 若状态带有SignatureSent标志，则保留签名数组（视图过程中，可能收到别的已经提前发来的签名，后面会再进行过滤处理）
         /// </remarks>
         /// <param name="view_number">new view number</param>
         public void ChangeView(byte view_number)
@@ -130,7 +130,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Free ConsensusContext
+        /// 释放资源，释放持久化层快照
         /// </summary>
         public void Dispose()
         {
@@ -138,9 +138,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Get the Speaker index = (BlockIndex - view_number) % Validators.Length
+        /// 计算议长编号 = (提案block高区 - 视图编号) % 共识节点个数
         /// </summary>
-        /// <param name="view_number">current view number</param>
+        /// <param name="view_number">给定当前视图编号</param>
         /// <returns></returns>
         public uint GetPrimaryIndex(byte view_number)
         {
@@ -149,9 +149,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Create ChangeView message payload
+        /// 构建ChangeView消息的货物类
         /// </summary>
-        /// <returns>ConsensusPayload</returns>
+        /// <returns>共识消息货物</returns>
         public ConsensusPayload MakeChangeView()
         {
             return MakePayload(new ChangeView
@@ -163,7 +163,7 @@ namespace Neo.Consensus
         private Block _header = null;
 
         /// <summary>
-        /// Contruct the block header 
+        /// 结合上下文数据，构造出区块头
         /// </summary>
         /// <returns>Block</returns>
         public Block MakeHeader()
@@ -187,10 +187,10 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Create ConsensusPayload which contains the ConsensusMessage
+        /// 构建共识消息的货物类
         /// </summary>
-        /// <param name="message">consensus message</param>
-        /// <returns>ConsensusPayload</returns>
+        /// <param name="message">具体的共识消息</param>
+        /// <returns>共识消息货物</returns>
         private ConsensusPayload MakePayload(ConsensusMessage message)
         {
             message.ViewNumber = ViewNumber;
@@ -206,9 +206,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Create PrepareRequest message paylaod
+        /// 构建PrepareRequset消息的货物类
         /// </summary>
-        /// <returns>ConsensusPayload</returns>
+        /// <returns>共识消息货物</returns>
         public ConsensusPayload MakePrepareRequest()
         {
             return MakePayload(new PrepareRequest
@@ -222,10 +222,10 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Create PrepareReponse message paylaod
+        /// 构建PrepareResponse消息的货物类
         /// </summary>
-        /// <param name="signature">signaure of the proposal block</param>
-        /// <returns>ConsensusPayload</returns>
+        /// <param name="signature">对提案block的签名</param>
+        /// <returns>共识消息货物</returns>
         public ConsensusPayload MakePrepareResponse(byte[] signature)
         {
             return MakePayload(new PrepareResponse
@@ -235,8 +235,15 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Reset the context
+        /// 重置上下文数据
         /// </summary>
+        /// 1. 重新获取当前区块快照
+        /// 2. 初始化状态
+        /// 3. 重置区块高度为当前快照区块高区+1
+        /// 4. 重置视图编号为0
+        /// 5. 重新计算议长编号
+        /// 6. 清空签名，期望视图数组
+        /// 7. 重新计算自身编号
         /// <param name="wallet"></param>
         public void Reset(Wallet wallet)
         {
@@ -267,8 +274,11 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Fill the proposal block, contains txs, MinerTransaction, NextConsensus
+        ///  填充提案block的数据
         /// </summary>
+        /// 1. 交易，从内存池加载交易，并进行插件过滤和排序
+        /// 2. MinerTransaction和奖励费（奖励费 = Inputs.GAS - outputs.GAS - 总交易系统手续费）
+        /// 3. NextConsensus，结合上面的交易，计算下一轮的共识节点，并计算得到
         /// <param name="wallet"></param>
         public void Fill(Wallet wallet)
         {
@@ -307,9 +317,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Get block nonce, random data
+        /// 获取Nonce值
         /// </summary>
-        /// <returns></returns>
+        /// <returns>返回随机值</returns>
         private static ulong GetNonce()
         {
             byte[] nonce = new byte[sizeof(ulong)];
@@ -320,8 +330,12 @@ namespace Neo.Consensus
 
 
         /// <summary>
-        /// Verify the `prepare-request` transactions, check if NextConsensus is correct and MinerTransaction.output.value is equal to txs network fee
+        /// 校验PrepareRequest所带的提案block数据
         /// </summary>
+        /// <remarks>
+        /// 1. 校验NextConsensus 是否与计算出的一致
+        /// 2. 校验MinerTransaction的奖励是否一致
+        /// </remarks>
         /// <returns></returns>
         public bool VerifyRequest()
         {
