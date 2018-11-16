@@ -348,9 +348,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 消息接收器： Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted
+        /// 消息接收器
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">六类消息：Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted</param>
         protected override void OnReceive(object message)
         {
             switch (message)
