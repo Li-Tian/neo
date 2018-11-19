@@ -55,7 +55,7 @@ namespace Neo.Wallets
         }
 
         /// <summary>
-        /// 传入一个合约和一个私钥, 创建一个新的账户
+        /// 传入一个鉴权合约和一个私钥, 创建一个新的账户
         /// </summary>
         /// <param name="contract">合约</param>
         /// <param name="privateKey">私钥</param>
@@ -97,6 +97,11 @@ namespace Neo.Wallets
                 return unspents_ordered.Take(i).Concat(new[] { unspents_ordered.Last(p => p.Output.Value >= amount) }).ToArray();
         }
 
+        /// <summary>
+        /// 返回一个NEO账户
+        /// </summary>
+        /// <param name="pubkey">账户所对应的公钥</param>
+        /// <returns>找到的公钥所对应的账户</returns>
         public WalletAccount GetAccount(ECPoint pubkey)
         {
             return GetAccount(Contract.CreateSignatureRedeemScript(pubkey).ToScriptHash());
@@ -137,11 +142,21 @@ namespace Neo.Wallets
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="asset_id"></param>
+        /// <returns></returns>
         public Fixed8 GetBalance(UInt256 asset_id)
         {
             return GetCoins(GetAccounts().Select(p => p.ScriptHash)).Where(p => !p.State.HasFlag(CoinState.Spent) && p.Output.AssetId.Equals(asset_id)).Sum(p => p.Output.Value);
         }
 
+        /// <summary>
+        /// 选择这个钱包中账户中的一个作为找零地址. 
+        /// 选择顺序为先选择默认账户, 已有签名合约的账号 ,非监视账号, 普通账号.
+        /// </summary>
+        /// <returns>返回一个找零地址</returns>
         public virtual UInt160 GetChangeAddress()
         {
             WalletAccount[] accounts = GetAccounts().ToArray();
@@ -164,6 +179,15 @@ namespace Neo.Wallets
             return GetCoins(GetAccounts().Select(p => p.ScriptHash));
         }
 
+        /// <summary>
+        /// 将加密后的加密后的nep2key解密为私钥PrivateKey
+        /// </summary>
+        /// <param name="nep2">nep2key</param>
+        /// <param name="passphrase">nep2key加密的密码</param>
+        /// <param name="N">参数N</param>
+        /// <param name="r">参数R</param>
+        /// <param name="p">参数P</param>
+        /// <returns>转换后的用字节数组表示的私钥</returns>
         public static byte[] GetPrivateKeyFromNEP2(string nep2, string passphrase, int N = 16384, int r = 8, int p = 8)
         {
             if (nep2 == null) throw new ArgumentNullException(nameof(nep2));
@@ -206,6 +230,10 @@ namespace Neo.Wallets
             return privateKey;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Coin> GetUnclaimedCoins()
         {
             IEnumerable<UInt160> accounts = GetAccounts().Where(p => !p.Lock && !p.WatchOnly).Select(p => p.ScriptHash);
@@ -227,7 +255,11 @@ namespace Neo.Wallets
             Array.Clear(privateKey, 0, privateKey.Length);
             return account;
         }
-
+        /// <summary>
+        /// 导入私钥
+        /// </summary>
+        /// <param name="wif">钱包导入格式的私钥</param>
+        /// <returns>导入后新生成的账号</returns>
         public virtual WalletAccount Import(string wif)
         {
             byte[] privateKey = GetPrivateKeyFromWIF(wif);
@@ -235,7 +267,12 @@ namespace Neo.Wallets
             Array.Clear(privateKey, 0, privateKey.Length);
             return account;
         }
-
+        /// <summary>
+        /// 通过Nep2key导入私钥并创建一个账户
+        /// </summary>
+        /// <param name="nep2">加密后的nep2key字符串</param>
+        /// <param name="passphrase">nep2key的密码</param>
+        /// <returns>新创建的用Nep2key所包含的私钥创建的账户</returns>
         public virtual WalletAccount Import(string nep2, string passphrase)
         {
             byte[] privateKey = GetPrivateKeyFromNEP2(nep2, passphrase);
@@ -244,6 +281,15 @@ namespace Neo.Wallets
             return account;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tx"></param>
+        /// <param name="from"></param>
+        /// <param name="change_address"></param>
+        /// <param name="fee"></param>
+        /// <returns></returns>
         public T MakeTransaction<T>(T tx, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8)) where T : Transaction
         {
             if (tx.Outputs == null) tx.Outputs = new TransactionOutput[0];
@@ -303,6 +349,15 @@ namespace Neo.Wallets
             return tx;
         }
 
+        /// <summary>
+        ///  通过钱包发起一笔交易
+        /// </summary>
+        /// <param name="attributes"></param>
+        /// <param name="outputs"></param>
+        /// <param name="from">交易的提交发</param>
+        /// <param name="change_address">零钱存入的地址</param>
+        /// <param name="fee">交易费用</param>
+        /// <returns>交易的Transaction</returns>
         public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnumerable<TransferOutput> outputs, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8))
         {
             var cOutputs = outputs.Where(p => !p.IsGlobalAsset).GroupBy(p => new
@@ -407,6 +462,11 @@ namespace Neo.Wallets
             return tx;
         }
 
+        /// <summary>
+        /// 对一笔涉及多个账号的交易进行签名， 用每一个参与交易的账户的私钥来进行签名。
+        /// </summary>
+        /// <param name="context">交易的上下文信息</param>
+        /// <returns>>如果签名全部成功返回<c>true</c>, 否则返回<c>false</c></returns>
         public bool Sign(ContractParametersContext context)
         {
             bool fSuccess = false;
@@ -421,6 +481,11 @@ namespace Neo.Wallets
             return fSuccess;
         }
 
+        /// <summary>
+        /// 验证钱包的密码
+        /// </summary>
+        /// <param name="password">钱包密码</param>
+        /// <returns>如果密码正确返回<c>true</c>, 如果密码不正确返回<c>false</c></returns>
         public abstract bool VerifyPassword(string password);
 
         private static byte[] XOR(byte[] x, byte[] y)
