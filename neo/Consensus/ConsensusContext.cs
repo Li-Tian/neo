@@ -4,8 +4,9 @@ using Neo.IO;
 using Neo.Ledger;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
-using Neo.Wallets;
 using Neo.Plugins;
+using Neo.SmartContract;
+using Neo.Wallets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,12 +101,18 @@ namespace Neo.Consensus
         /// <summary>
         /// 钥匙对
         /// </summary>
-        public KeyPair KeyPair;
+        private KeyPair KeyPair;
+        private readonly Wallet wallet;
 
         /// <summary>
         /// 最低共识节点安全阈值个数，低于该阈值，共识过程将会出错
         /// </summary>
         public int M => Validators.Length - (Validators.Length - 1) / 3;
+
+        public ConsensusContext(Wallet wallet)
+        {
+            this.wallet = wallet;
+        }
 
         /// <summary>
         /// 修改上下文视图编号，即改变视图达成一致，同时重新计算议长编号
@@ -127,6 +134,23 @@ namespace Neo.Consensus
             if (MyIndex >= 0)
                 ExpectedView[MyIndex] = view_number;
             _header = null;
+        }
+
+        public Block CreateBlock()
+        {
+            Block block = MakeHeader();
+            if (block == null) return null;
+            Contract contract = Contract.CreateMultiSigContract(M, Validators);
+            ContractParametersContext sc = new ContractParametersContext(block);
+            for (int i = 0, j = 0; i < Validators.Length && j < M; i++)
+                if (Signatures[i] != null)
+                {
+                    sc.AddSignature(contract, Validators[i], Signatures[i]);
+                    j++;
+                }
+            sc.Verifiable.Witnesses = sc.GetWitnesses();
+            block.Transactions = TransactionHashes.Select(p => Transactions[p]).ToArray();
+            return block;
         }
 
         /// <summary>
@@ -154,7 +178,7 @@ namespace Neo.Consensus
         /// <returns>共识消息货物</returns>
         public ConsensusPayload MakeChangeView()
         {
-            return MakePayload(new ChangeView
+            return MakeSignedPayload(new ChangeView
             {
                 NewViewNumber = ExpectedView[MyIndex]
             });
@@ -191,10 +215,10 @@ namespace Neo.Consensus
         /// </summary>
         /// <param name="message">具体的共识消息</param>
         /// <returns>共识消息货物</returns>
-        private ConsensusPayload MakePayload(ConsensusMessage message)
+        private ConsensusPayload MakeSignedPayload(ConsensusMessage message)
         {
             message.ViewNumber = ViewNumber;
-            return new ConsensusPayload
+            ConsensusPayload payload = new ConsensusPayload
             {
                 Version = Version,
                 PrevHash = PrevHash,
@@ -203,6 +227,28 @@ namespace Neo.Consensus
                 Timestamp = Timestamp,
                 Data = message.ToArray()
             };
+            SignPayload(payload);
+            return payload;
+        }
+
+        public void SignHeader()
+        {
+            Signatures[MyIndex] = MakeHeader()?.Sign(KeyPair);
+        }
+
+        private void SignPayload(ConsensusPayload payload)
+        {
+            ContractParametersContext sc;
+            try
+            {
+                sc = new ContractParametersContext(payload);
+                wallet.Sign(sc);
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
+            sc.Verifiable.Witnesses = sc.GetWitnesses();
         }
 
         /// <summary>
@@ -211,7 +257,7 @@ namespace Neo.Consensus
         /// <returns>共识消息货物</returns>
         public ConsensusPayload MakePrepareRequest()
         {
-            return MakePayload(new PrepareRequest
+            return MakeSignedPayload(new PrepareRequest
             {
                 Nonce = Nonce,
                 NextConsensus = NextConsensus,
@@ -228,7 +274,7 @@ namespace Neo.Consensus
         /// <returns>共识消息货物</returns>
         public ConsensusPayload MakePrepareResponse(byte[] signature)
         {
-            return MakePayload(new PrepareResponse
+            return MakeSignedPayload(new PrepareResponse
             {
                 Signature = signature
             });
@@ -236,7 +282,6 @@ namespace Neo.Consensus
 
         /// <summary>
         /// 重置上下文数据
-        /// </summary>
         /// 1. 重新获取当前区块快照
         /// 2. 初始化状态
         /// 3. 重置区块高度为当前快照区块高区+1
@@ -244,8 +289,8 @@ namespace Neo.Consensus
         /// 5. 重新计算议长编号
         /// 6. 清空签名，期望视图数组
         /// 7. 重新计算自身编号
-        /// <param name="wallet"></param>
-        public void Reset(Wallet wallet)
+        /// </summary>
+        public void Reset()
         {
             Snapshot?.Dispose();
             Snapshot = Blockchain.Singleton.GetSnapshot();
@@ -279,8 +324,7 @@ namespace Neo.Consensus
         /// 1. 交易，从内存池加载交易，并进行插件过滤和排序
         /// 2. MinerTransaction和奖励费（奖励费 = Inputs.GAS - outputs.GAS - 总交易系统手续费）
         /// 3. NextConsensus，结合上面的交易，计算下一轮的共识节点，并计算得到
-        /// <param name="wallet"></param>
-        public void Fill(Wallet wallet)
+        public void Fill()
         {
             IEnumerable<Transaction> mem_pool = Blockchain.Singleton.GetMemoryPool();
             foreach (IPolicyPlugin plugin in Plugin.Policies)
@@ -314,6 +358,7 @@ namespace Neo.Consensus
             TransactionHashes = transactions.Select(p => p.Hash).ToArray();
             Transactions = transactions.ToDictionary(p => p.Hash);
             NextConsensus = Blockchain.GetConsensusAddress(Snapshot.GetValidators(transactions).ToArray());
+            Timestamp = Math.Max(DateTime.UtcNow.ToTimestamp(), Snapshot.GetHeader(PrevHash).Timestamp + 1);
         }
 
         /// <summary>
