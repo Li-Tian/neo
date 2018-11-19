@@ -55,7 +55,7 @@ neo的官方实现提供两种格式的钱包，其中一种是sqlite数据库�
  - **ILogPlugin** : 智能合约的执行结果存储插件。
  - **IPolicyPlugin** : 生成新区块时交易的排序策略插件。
  - **IRpcPlugin** : 执行RPC调用的插件。
- - **IPersistencePlugin** : TODO
+ - **IPersistencePlugin** : 节点收到新的区块，将其保存到本地数据库时的自定义行为插件。
 
 ## NeoVM
 
