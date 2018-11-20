@@ -8,13 +8,27 @@ using System.Text;
 
 namespace Neo.SmartContract
 {
+    /// <summary>
+    /// 合约参数类，主要包括对合约参数赋值，以及合约参数的格式转换方法
+    /// </summary>
     public class ContractParameter
     {
+        /// <summary>
+        /// 合约的参数类型
+        /// </summary>
         public ContractParameterType Type;
+        /// <summary>
+        /// 合约参数的值
+        /// </summary>
         public object Value;
-
+        /// <summary>
+        /// 默认构造函数
+        /// </summary>
         public ContractParameter() { }
-
+        /// <summary>
+        /// 参数为ContractParameterType的构造函数
+        /// </summary>
+        /// <param name="type">合约参数类型</param>
         public ContractParameter(ContractParameterType type)
         {
             this.Type = type;
@@ -54,7 +68,11 @@ namespace Neo.SmartContract
                     throw new ArgumentException();
             }
         }
-
+        /// <summary>
+        /// 从Json对象中获取合约参数
+        /// </summary>
+        /// <param name="json">包含合约参数类型和参数值的Json对象</param>
+        /// <returns>获取到的合约参数</returns>
         public static ContractParameter FromJson(JObject json)
         {
             ContractParameter parameter = new ContractParameter
@@ -97,7 +115,10 @@ namespace Neo.SmartContract
                 }
             return parameter;
         }
-
+        /// <summary>
+        /// 给合约参数赋值，函数将根据参数类型做对应的赋值操作
+        /// </summary>
+        /// <param name="text">string类型的参数值</param>
         public void SetValue(string text)
         {
             switch (Type)
@@ -132,7 +153,10 @@ namespace Neo.SmartContract
                     throw new ArgumentException();
             }
         }
-
+        /// <summary>
+        /// 将合约参数转化为Json对象类型
+        /// </summary>
+        /// <returns>转化完成的Json对象</returns>
         public JObject ToJson()
         {
             return ToJson(this, null);
@@ -184,7 +208,10 @@ namespace Neo.SmartContract
                 }
             return json;
         }
-
+        /// <summary>
+        /// 将合约参数的值转化为String类型
+        /// </summary>
+        /// <returns>转化为String类型的参数值</returns>
         public override string ToString()
         {
             return ToString(this, null);
