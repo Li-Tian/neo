@@ -370,7 +370,7 @@ namespace Neo.Wallets
         /// <typeparam name="T"></typeparam>
         /// <param name="tx"></param>
         /// <param name="from"></param>
-        /// <param name="change_address"></param>
+        /// <param name="change_address">找零地址</param>
         /// <param name="fee"></param>
         /// <returns></returns>
         public T MakeTransaction<T>(T tx, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8)) where T : Transaction
@@ -436,9 +436,9 @@ namespace Neo.Wallets
         ///  通过钱包发起一笔交易
         /// </summary>
         /// <param name="attributes"></param>
-        /// <param name="outputs"></param>
+        /// <param name="outputs">交易输出地址</param>
         /// <param name="from">交易的提交发</param>
-        /// <param name="change_address">零钱存入的地址</param>
+        /// <param name="change_address">找零地址</param>
         /// <param name="fee">交易费用</param>
         /// <returns>交易的Transaction</returns>
         public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnumerable<TransferOutput> outputs, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8))
