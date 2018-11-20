@@ -11,18 +11,56 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 区块基类
+    /// </summary>
     public abstract class BlockBase : IVerifiable
     {
+        /// <summary>
+        /// 区块版本号
+        /// </summary>
         public uint Version;
+        
+        /// <summary>
+        /// 上一个区块hash
+        /// </summary>
         public UInt256 PrevHash;
+
+        /// <summary>
+        /// 交易的梅克尔根
+        /// </summary>
         public UInt256 MerkleRoot;
+
+        /// <summary>
+        /// 区块时间戳
+        /// </summary>
         public uint Timestamp;
+
+        /// <summary>
+        /// 区块高度
+        /// </summary>
         public uint Index;
+
+        /// <summary>
+        /// 共识附加数据，默认为block nonce
+        /// </summary>
         public ulong ConsensusData;
+
+        /// <summary>
+        /// 下一个区块共识地址，为共识节点三分之二多方签名合约地址
+        /// </summary>
         public UInt160 NextConsensus;
+
+        /// <summary>
+        /// 见证人
+        /// </summary>
         public Witness Witness;
 
         private UInt256 _hash = null;
+
+        /// <summary>
+        /// 区块hash
+        /// </summary>
         public UInt256 Hash
         {
             get
@@ -48,8 +86,16 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public virtual int Size => sizeof(uint) + PrevHash.Size + MerkleRoot.Size + sizeof(uint) + sizeof(uint) + sizeof(ulong) + NextConsensus.Size + 1 + Witness.Size;
 
+
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader"></param>
         public virtual void Deserialize(BinaryReader reader)
         {
             ((IVerifiable)this).DeserializeUnsigned(reader);
@@ -82,6 +128,40 @@ namespace Neo.Network.P2P.Payloads
             return new UInt160[] { prev_header.NextConsensus };
         }
 
+        /// <summary>
+        /// 序列化
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Version</term>
+        /// <description>状态版本号</description>
+        /// </item>
+        /// <item>
+        /// <term>PrevHash</term>
+        /// <description>上一个区块hash</description>
+        /// </item>
+        /// <item>
+        /// <term>MerkleRoot</term>
+        /// <description>梅克尔树</description>
+        /// </item>
+        /// <item>
+        /// <term>Timestamp</term>
+        /// <description>时间戳</description>
+        /// </item>
+        /// <item>
+        /// <term>Index</term>
+        /// <description>区块高度</description>
+        /// </item>
+        /// <item>
+        /// <term>ConsensusData</term>
+        /// <description>共识数据，默认为block nonce</description>
+        /// </item>
+        /// <item>
+        /// <term>NextConsensus</term>
+        /// <description>下一个区块共识地址</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer"></param>
         public virtual void Serialize(BinaryWriter writer)
         {
             ((IVerifiable)this).SerializeUnsigned(writer);
@@ -99,6 +179,10 @@ namespace Neo.Network.P2P.Payloads
             writer.Write(NextConsensus);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public virtual JObject ToJson()
         {
             JObject json = new JObject();
@@ -115,6 +199,11 @@ namespace Neo.Network.P2P.Payloads
             return json;
         }
 
+        /// <summary>
+        /// 根据当前区块快照，校验该区块
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <returns>1）若上一个区块不存在或者上一个区块高度加一不等于当前区块高度，2）或者上一个区块时间戳大于当前区块时间戳，3）或见证人校验失败，则返回false，否则返回true</returns>
         public virtual bool Verify(Snapshot snapshot)
         {
             Header prev_header = snapshot.GetHeader(PrevHash);

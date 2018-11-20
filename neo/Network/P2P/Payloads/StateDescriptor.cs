@@ -10,15 +10,40 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 投票状态描述：投票，申请
+    /// </summary>
     public class StateDescriptor : ISerializable
     {
+        /// <summary>
+        /// 类型
+        /// </summary>
         public StateType Type;
+
+        /// <summary>
+        /// 当Field = "Votes"时， 存放投票人地址的脚本hash， Key代表投票人; 当Field = "Registered"时， 存放公钥， Key代表申请人
+        /// </summary>
         public byte[] Key;
+
+        /// <summary>
+        /// 当Type = 0x40时， Field = "Votes";  当Type = 0x48时， Field = "Registered";
+        /// </summary>
         public string Field;
+
+        /// <summary>
+        /// 当Type = 0x40时， 代表投票地址列表；  当Type = 0x48时， 代表取消或申验证人的布尔值
+        /// </summary>
         public byte[] Value;
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public int Size => sizeof(StateType) + Key.GetVarSize() + Field.GetVarSize() + Value.GetVarSize();
 
+
+        /// <summary>
+        /// 交易手续费  若是申请见证人，需要1000个GAS， 否则0
+        /// </summary>
         public Fixed8 SystemFee
         {
             get
@@ -32,6 +57,7 @@ namespace Neo.Network.P2P.Payloads
                 }
             }
         }
+
 
         private void CheckAccountState()
         {
@@ -86,6 +112,10 @@ namespace Neo.Network.P2P.Payloads
             writer.WriteVarBytes(Value);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public JObject ToJson()
         {
             JObject json = new JObject();
