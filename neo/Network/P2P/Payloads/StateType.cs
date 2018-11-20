@@ -9,6 +9,10 @@
         /// 投票
         /// </summary>
         Account = 0x40,
+
+        /// <summary>
+        /// 申请验证人
+        /// </summary>
         Validator = 0x48
     }
 }
