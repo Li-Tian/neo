@@ -10,50 +10,49 @@ using System.IO;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// p2p consensus message payload
+    /// 共识消息货物（包装具体的共识消息. p2p广播时，将存放在Inventory消息的payload中）
     /// </summary>
     public class ConsensusPayload : IInventory
     {
         /// <summary>
-        /// consensus message version, current is zero
+        /// 当前共识协议版本号
         /// </summary>
         public uint Version;
 
         /// <summary>
-        /// the previous block hash
+        /// 上一个区块hash
         /// </summary>
         public UInt256 PrevHash;
 
         /// <summary>
-        /// the proposal block index
+        /// 提案block高度
         /// </summary>
         public uint BlockIndex;
 
-
         /// <summary>
-        /// the sender(the Speaker or Delegates) index in the validators array
+        /// 共识节点编号
         /// </summary>
         public ushort ValidatorIndex;
         
         /// <summary>
-        /// block time stamp
+        /// 时间戳
         /// </summary>
         public uint Timestamp;
 
         /// <summary>
-        /// consensus message data
+        /// 具体的共识消息
         /// </summary>
         public byte[] Data;
 
         /// <summary>
-        /// witness, the executable verification script
+        /// 见证人, 可执行验证脚本
         /// </summary>
         public Witness Witness;
 
         private UInt256 _hash = null;
 
         /// <summary>
-        /// hash of the GetHashData( = unsigned data) by using hash256 algorithm
+        /// 内容hash, 未签名数据的hash256值
         /// </summary>
         UInt256 IInventory.Hash
         {
@@ -68,12 +67,12 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// p2p inventory message type, here is InventoryType.Consensus
+        /// 货物类型， InventoryType.Consensus
         /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.Consensus;
 
         /// <summary>
-        /// witnesses, the executable verification scripts
+        /// 见证人列表
         /// </summary>
         Witness[] IVerifiable.Witnesses
         {
@@ -89,44 +88,14 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// ConsensusPayload size
+        /// 消息大小
         /// </summary>
         public int Size => sizeof(uint) + PrevHash.Size + sizeof(uint) + sizeof(ushort) + sizeof(uint) + Data.GetVarSize() + 1 + Witness.Size;
 
         /// <summary>
-        /// deserialize from the reader
-        /// <list type="bullet">
-        /// <item>
-        /// <term>Version</term>
-        /// <description>consensus message version, current is zero</description>
-        /// </item>
-        /// <item>
-        /// <term>PrevHash</term>
-        /// <description>the previous block hash</description>
-        /// </item>
-        /// <item>
-        /// <term>BlockIndex</term>
-        /// <description>the proposal block index</description>
-        /// </item>
-        /// <item>
-        /// <term>ValidatorIndex</term>
-        /// <description>the sender(the Speaker or Delegates) index in the validators array</description>
-        /// </item>
-        /// <item>
-        /// <term>Timestamp</term>
-        /// <description>block time stamp</description>
-        /// </item>
-        /// <item>
-        /// <term>Data</term>
-        /// <description>consensus message data</description>
-        /// </item>
-        /// <item>
-        /// <term>Witness</term>
-        /// <description> </description>
-        /// </item>
-        /// </list>
+        /// 反序列化
         /// </summary>
-        /// <param name="reader">binary reader</param>
+        /// <param name="reader">二进制输入流</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ((IVerifiable)this).DeserializeUnsigned(reader);
@@ -135,35 +104,9 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// deserialize from the reader without the witness field
-        /// <list type="bullet">
-        /// <item>
-        /// <term>Version</term>
-        /// <description>consensus message version, current is zero</description>
-        /// </item>
-        /// <item>
-        /// <term>PrevHash</term>
-        /// <description>the previous block hash</description>
-        /// </item>
-        /// <item>
-        /// <term>BlockIndex</term>
-        /// <description>the proposal block index</description>
-        /// </item>
-        /// <item>
-        /// <term>ValidatorIndex</term>
-        /// <description>the sender(the Speaker or Delegates) index in the validators array</description>
-        /// </item>
-        /// <item>
-        /// <term>Timestamp</term>
-        /// <description>block time stamp</description>
-        /// </item>
-        /// <item>
-        /// <term>Data</term>
-        /// <description>consensus message data</description>
-        /// </item>
-        /// </list>
+        /// 发序列化未签名数据
         /// </summary>
-        /// <param name="reader">binary reader</param>
+        /// <param name="reader">二进制输入流</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
         {
             Version = reader.ReadUInt32();
@@ -175,19 +118,19 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// script message, here is unsigned data
+        /// 脚本容器消息
         /// </summary>
-        /// <returns>unsigned data</returns>
+        /// <returns>未签名数据</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
         }
 
         /// <summary>
-        /// get the script hash of the sender's signature contract
+        /// 获取验证脚本hash
         /// </summary>
-        /// <param name="snapshot">blockchain snapshot</param>
-        /// <returns>script hash</returns>
+        /// <param name="snapshot">区块快照</param>
+        /// <returns>脚本hash列表</returns>
         UInt160[] IVerifiable.GetScriptHashesForVerifying(Snapshot snapshot)
         {
             ECPoint[] validators = snapshot.GetValidators();
@@ -197,9 +140,9 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// serialize the message
+        /// 序列化数据
         /// </summary>
-        /// <param name="writer">binary writer</param>
+        /// <param name="writer">二进制输出流</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             ((IVerifiable)this).SerializeUnsigned(writer);
@@ -207,31 +150,31 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// serialize the message without the witness field. It includes the fields as follows:
+        ///  序列化未签名数据
         /// <list type="bullet">
         /// <item>
         /// <term>Version</term>
-        /// <description>consensus message version, current is zero</description>
+        /// <description>版本号</description>
         /// </item>
         /// <item>
         /// <term>PrevHash</term>
-        /// <description>the previous block hash</description>
+        /// <description>上一个区块hash</description>
         /// </item>
         /// <item>
         /// <term>BlockIndex</term>
-        /// <description>the proposal block index</description>
+        /// <description>区块高度</description>
         /// </item>
         /// <item>
         /// <term>ValidatorIndex</term>
-        /// <description>the sender(the Speaker or Delegates) index in the validators array</description>
+        /// <description>节点编号</description>
         /// </item>
         /// <item>
         /// <term>Timestamp</term>
-        /// <description>block time stamp</description>
+        /// <description>时间戳</description>
         /// </item>
         /// <item>
         /// <term>Data</term>
-        /// <description>consensus message data</description>
+        /// <description>具体的共识数据</description>
         /// </item>
         /// </list>
         /// </summary>
@@ -247,9 +190,13 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// verify the message. it include two step: 1) check the BlockIndex is more than the snapshot.Height, 2) verify the witness script
+        /// 内容校验
         /// </summary>
-        /// <param name="snapshot">blockchain snapshot</param>
+        /// <remarks>
+        /// 1) 检查BlockIndex 是否大于已经存储的区块高度
+        /// 2) 校验验证脚本
+        /// </remarks>
+        /// <param name="snapshot">区块快照</param>
         /// <returns></returns>
         public bool Verify(Snapshot snapshot)
         {

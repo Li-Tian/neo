@@ -23,7 +23,7 @@ namespace Neo.Wallets
         }
 
         /// <summary>
-        /// 讲一个ScriptHash转换成地址
+        /// 将一个ScriptHash转换成地址
         /// </summary>
         /// <param name="scriptHash">被转换的ScriptHash</param>
         /// <returns>返回转换后的地址</returns>

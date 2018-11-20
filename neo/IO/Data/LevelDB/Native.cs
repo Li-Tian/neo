@@ -4,12 +4,24 @@ using System.Runtime.InteropServices;
 
 namespace Neo.IO.Data.LevelDB
 {
+    /// <summary>
+    /// leveldb压缩策略
+    /// </summary>
     public enum CompressionType : byte
     {
+        /// <summary>
+        /// 不压缩
+        /// </summary>
         kNoCompression = 0x0,
+        /// <summary>
+        /// kSnappy算法压缩
+        /// </summary>
         kSnappyCompression = 0x1
     }
 
+    /// <summary>
+    /// Leveldb提供的原生API
+    /// </summary>
     public static class Native
     {
 #if NET47

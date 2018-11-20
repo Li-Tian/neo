@@ -2,6 +2,9 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    /// <summary>
+    /// 封装的leveldb迭代器
+    /// </summary>
     public class Iterator : IDisposable
     {
         private IntPtr handle;
@@ -27,6 +30,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 获取当前Key值
+        /// </summary>
+        /// <returns>切片</returns>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
         public Slice Key()
         {
             UIntPtr length;
@@ -35,38 +43,63 @@ namespace Neo.IO.Data.LevelDB
             return new Slice(key, length);
         }
 
+        /// <summary>
+        /// 游标前移一位
+        /// </summary>
         public void Next()
         {
             Native.leveldb_iter_next(handle);
             CheckError();
         }
 
+        /// <summary>
+        /// 游标后退一位
+        /// </summary>
         public void Prev()
         {
             Native.leveldb_iter_prev(handle);
             CheckError();
         }
 
+        /// <summary>
+        /// 移动游标到某一个Key上
+        /// </summary>
+        /// <param name="target">目标key</param>
         public void Seek(Slice target)
         {
             Native.leveldb_iter_seek(handle, target.buffer, (UIntPtr)target.buffer.Length);
         }
 
+        /// <summary>
+        /// 移动游标到首位置
+        /// </summary>
         public void SeekToFirst()
         {
             Native.leveldb_iter_seek_to_first(handle);
         }
 
+        /// <summary>
+        /// 移动游标到最后一位位置
+        /// </summary>
         public void SeekToLast()
         {
             Native.leveldb_iter_seek_to_last(handle);
         }
 
+        /// <summary>
+        /// 检查句柄是否合法
+        /// </summary>
+        /// <returns></returns>
         public bool Valid()
         {
             return Native.leveldb_iter_valid(handle);
         }
 
+        /// <summary>
+        /// 当前位置的值
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
         public Slice Value()
         {
             UIntPtr length;

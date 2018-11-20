@@ -233,6 +233,11 @@ namespace Neo.Wallets
             return GetCoins(GetAccounts().Select(p => p.ScriptHash)).Where(p => !p.State.HasFlag(CoinState.Spent) && p.Output.AssetId.Equals(asset_id)).Sum(p => p.Output.Value);
         }
 
+        /// <summary>
+        /// 选择这个钱包中账户中的一个作为找零地址. 
+        /// 选择顺序为先选择默认账户, 已有签名合约的账号 ,非监视账号, 普通账号.
+        /// </summary>
+        /// <returns>返回一个找零地址</returns>
         public virtual UInt160 GetChangeAddress()
         {
             WalletAccount[] accounts = GetAccounts().ToArray();
@@ -285,6 +290,7 @@ namespace Neo.Wallets
                 throw new FormatException();
             return prikey;
         }
+
         /// <summary>
         /// 解析WIF格式字符串中的私钥
         /// </summary>
@@ -302,6 +308,7 @@ namespace Neo.Wallets
             Array.Clear(data, 0, data.Length);
             return privateKey;
         }
+
         /// <summary>
         /// 查询获取钱包内所有可用账户内满足条件(已确认&已花费&未提取gas&未冻结)的neo的Coin集合
         /// </summary>
@@ -357,6 +364,15 @@ namespace Neo.Wallets
             return account;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tx"></param>
+        /// <param name="from"></param>
+        /// <param name="change_address"></param>
+        /// <param name="fee"></param>
+        /// <returns></returns>
         public T MakeTransaction<T>(T tx, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8)) where T : Transaction
         {
             if (tx.Outputs == null) tx.Outputs = new TransactionOutput[0];
@@ -416,6 +432,15 @@ namespace Neo.Wallets
             return tx;
         }
 
+        /// <summary>
+        ///  通过钱包发起一笔交易
+        /// </summary>
+        /// <param name="attributes"></param>
+        /// <param name="outputs"></param>
+        /// <param name="from">交易的提交发</param>
+        /// <param name="change_address">零钱存入的地址</param>
+        /// <param name="fee">交易费用</param>
+        /// <returns>交易的Transaction</returns>
         public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnumerable<TransferOutput> outputs, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8))
         {
             var cOutputs = outputs.Where(p => !p.IsGlobalAsset).GroupBy(p => new

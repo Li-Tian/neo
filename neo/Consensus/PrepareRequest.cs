@@ -7,37 +7,37 @@ using System.Linq;
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  PrepareRequest message. it only can be sent by the Speaker
+    ///  PrepareRequest消息.
     /// </summary>
     internal class PrepareRequest : ConsensusMessage
     {
         /// <summary>
-        /// Block nonce, random value
+        /// Block nonce, 随机值
         /// </summary>
         public ulong Nonce;
 
         /// <summary>
-        /// The script hash of the next round consensus nodes' multi-sign contract
+        /// 下一轮共识节点的多方签名脚本hash
         /// </summary>        
         public UInt160 NextConsensus;
 
         /// <summary>
-        /// Hash list of the proposal block's transactions
+        /// 提案block的交易hash列表
         /// </summary>   
         public UInt256[] TransactionHashes;
 
         /// <summary>
-        /// Miner transanction. It contains block reward for the `Primary` node
+        /// 挖矿交易，议长奖励交易
         /// </summary>   
         public MinerTransaction MinerTransaction;
 
         /// <summary>
-        /// Signature of the proposal block
+        /// 提案block的签名
         /// </summary>   
         public byte[] Signature;
 
         /// <summary>
-        /// Construct PrepareRequest
+        /// 构建PrepareRequest消息
         /// </summary>
         public PrepareRequest()
             : base(ConsensusMessageType.PrepareRequest)
@@ -45,9 +45,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Deserialize from the reader
+        /// 反序列化
         /// </summary>
-        /// <param name="reader">binary reader</param>
+        /// <param name="reader">二进制读取流</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -63,9 +63,32 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Serialize the message
+        /// 序列化
         /// </summary>
-        /// <param name="writer">binary writer</param>
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Type</term>
+        /// <description>消息类型</description>
+        /// </item>
+        /// <item>
+        /// <term>ViewNumber</term>
+        /// <description>当前视图编号</description>
+        /// </item>
+        /// <item>
+        /// <term>Nonce</term>
+        /// <description>Block nonce</description>
+        /// </item>
+        /// <term>NextConsensus</term>
+        /// <description>下一轮共识节点的多方签名脚本hash</description>
+        /// </item>
+        /// <term>TransactionHashes</term>
+        /// <description>提案block的交易hash列表</description>
+        /// </item>
+        /// <term>Signature</term>
+        /// <description>对提案block的签名</description>
+        /// </item>
+        /// </list>
+        /// <param name="writer">二进制输出流</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);

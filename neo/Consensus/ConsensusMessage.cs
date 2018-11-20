@@ -6,43 +6,43 @@ using System.IO;
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  Consensus message
+    ///  抽象的共识消息
     /// </summary>
     internal abstract class ConsensusMessage : ISerializable
     {
         /// <summary>
-        /// Reflection cache for ConsensusMessageType
+        /// 消息类型反射缓存
         /// </summary>
         private static ReflectionCache<byte> ReflectionCache = ReflectionCache<byte>.CreateFromEnum<ConsensusMessageType>();
 
         /// <summary>
-        /// Consensus message type
+        /// 共识消息类型
         /// </summary>
         public readonly ConsensusMessageType Type;
 
-        /// <summary>
-        /// Current view number
+        /// <summary> 
+        /// 当前视图编号
         /// </summary>
         public byte ViewNumber;
 
         /// <summary>
-        /// Message size
+        /// 消息大小
         /// </summary>
         public int Size => sizeof(ConsensusMessageType) + sizeof(byte);
 
         /// <summary>
-        /// Create ConsensusMessage attached message type
+        /// 构建共识消息
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">消息类型</param>
         protected ConsensusMessage(ConsensusMessageType type)
         {
             this.Type = type;
         }
 
         /// <summary>
-        /// Deserialize from the reader
+        /// 发序列化
         /// </summary>
-        /// <param name="reader">binary reader</param>
+        /// <param name="reader">二进制读取流</param>
         public virtual void Deserialize(BinaryReader reader)
         {
             if (Type != (ConsensusMessageType)reader.ReadByte())
@@ -51,9 +51,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Deserialize from the `data` parameter
+        /// 从data中反序列化
         /// </summary>
-        /// <param name="data">source data</param>
+        /// <param name="data">数据源</param>
         /// <returns></returns>
         public static ConsensusMessage DeserializeFrom(byte[] data)
         {
@@ -69,9 +69,20 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Serialize the message
+        /// 序列化
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Type</term>
+        /// <description>消息类型</description>
+        /// </item>
+        /// <item>
+        /// <term>ViewNumber</term>
+        /// <description>当前视图编号</description>
+        /// </item>
+        /// <item>
+        /// </list>
         /// </summary>
-        /// <param name="writer">binary writer</param>
+        /// <param name="writer">二进制输出流</param>
         public virtual void Serialize(BinaryWriter writer)
         {
             writer.Write((byte)Type);

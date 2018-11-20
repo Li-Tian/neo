@@ -7,15 +7,30 @@ namespace Neo.Wallets
 {
     public class AssetDescriptor
     {
+        /// <summary>
+        /// 资产的ID
+        /// </summary>
         public UIntBase AssetId;
+
+        /// <summary>
+        /// 资产的名字
+        /// </summary>
         public string AssetName;
+
+        /// <summary>
+        /// 资产的数额
+        /// </summary>
         public byte Decimals;
 
+        /// <summary>
+        /// 构造函数, 传入一个assetId, 创建一个AssetDescriptor
+        /// </summary>
+        /// <param name="asset_id">资产的id标识</param>
         public AssetDescriptor(UIntBase asset_id)
         {
             if (asset_id is UInt160 asset_id_160)
             {
-                byte[] script;
+                byte[] script; 
                 using (ScriptBuilder sb = new ScriptBuilder())
                 {
                     sb.EmitAppCall(asset_id_160, "decimals");
@@ -37,6 +52,10 @@ namespace Neo.Wallets
             }
         }
 
+        /// <summary>
+        /// 使用AssetName作为字符串返回
+        /// </summary>
+        /// <returns>返回这个AssetDescriptor的AssetName</returns>
         public override string ToString()
         {
             return AssetName;
