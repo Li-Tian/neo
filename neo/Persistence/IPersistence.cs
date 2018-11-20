@@ -5,6 +5,9 @@ using Neo.Ledger;
 
 namespace Neo.Persistence
 {
+    /// <summary>
+    /// 持久化操作接口
+    /// </summary>
     public interface IPersistence
     {
         /// <summary>
