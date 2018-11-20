@@ -4,6 +4,9 @@ using System.Security.Cryptography;
 
 namespace Neo.Cryptography
 {
+    /// <summary>
+    /// 实现Murmur3算法的类
+    /// </summary>
     public sealed class Murmur3 : HashAlgorithm
     {
         private const uint c1 = 0xcc9e2d51;
@@ -25,6 +28,12 @@ namespace Neo.Cryptography
             Initialize();
         }
 
+        /// <summary>
+        /// Murmur3算法的计算部分
+        /// </summary>
+        /// <param name="array">被哈希的数据</param>
+        /// <param name="ibStart">开始的字节位</param>
+        /// <param name="cbSize">原数据中用来计算哈希的长度</param>
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
             length += cbSize;
@@ -56,6 +65,10 @@ namespace Neo.Cryptography
             }
         }
 
+        /// <summary>
+        /// 计算当前对象数据的哈希值
+        /// </summary>
+        /// <returns>计算过后的哈希值</returns>
         protected override byte[] HashFinal()
         {
             hash ^= (uint)length;
