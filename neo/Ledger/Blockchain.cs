@@ -20,22 +20,88 @@ using System.Threading;
 
 namespace Neo.Ledger
 {
+    /// <summary>
+    /// 区块链核心Actor
+    /// </summary>
     public sealed class Blockchain : UntypedActor
     {
+        /// <summary>
+        /// 注册消息
+        /// </summary>
         public class Register { }
-        public class ApplicationExecuted { public Transaction Transaction; public ApplicationExecutionResult[] ExecutionResults; }
-        public class PersistCompleted { public Block Block; }
-        public class Import { public IEnumerable<Block> Blocks; }
+
+        /// <summary>
+        /// 智能合约应用执行完毕消息
+        /// </summary>
+        public class ApplicationExecuted {
+            /// <summary>
+            /// 所处交易
+            /// </summary>
+            public Transaction Transaction;
+            /// <summary>
+            /// 执行结果
+            /// </summary>
+            public ApplicationExecutionResult[] ExecutionResults;
+        }
+
+        /// <summary>
+        /// 区块持久化完毕消息
+        /// </summary>
+        public class PersistCompleted {
+            /// <summary>
+            /// 持久化的block
+            /// </summary>
+            public Block Block;
+        }
+
+        /// <summary>
+        /// 导入区块消息
+        /// </summary>
+        public class Import {
+            /// <summary>
+            /// 待导入的区块列表
+            /// </summary>
+            public IEnumerable<Block> Blocks;
+        }
+        /// <summary>
+        /// 区块导入完毕消息
+        /// </summary>
         public class ImportCompleted { }
 
+        /// <summary>
+        /// 出块时间
+        /// </summary>
         public static readonly uint SecondsPerBlock = Settings.Default.SecondsPerBlock;
+
+        /// <summary>
+        /// 块奖励调整周期
+        /// </summary>
         public const uint DecrementInterval = 2000000;
+
+        /// <summary>
+        /// 最大验证人个数
+        /// </summary>
         public const uint MaxValidators = 1024;
+
+        /// <summary>
+        /// 区块奖励
+        /// </summary>
         public static readonly uint[] GenerationAmount = { 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+
+        /// <summary>
+        /// 区块时间
+        /// </summary>
         public static readonly TimeSpan TimePerBlock = TimeSpan.FromSeconds(SecondsPerBlock);
+
+        /// <summary>
+        /// 备用验证人列表
+        /// </summary>
         public static readonly ECPoint[] StandbyValidators = Settings.Default.StandbyValidators.OfType<string>().Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
 
 #pragma warning disable CS0612
+        /// <summary>
+        /// NEO代币定义
+        /// </summary>
         public static readonly RegisterTransaction GoverningToken = new RegisterTransaction
         {
             AssetType = AssetType.GoverningToken,
@@ -50,6 +116,9 @@ namespace Neo.Ledger
             Witnesses = new Witness[0]
         };
 
+        /// <summary>
+        /// GAS代币定义
+        /// </summary>
         public static readonly RegisterTransaction UtilityToken = new RegisterTransaction
         {
             AssetType = AssetType.UtilityToken,
@@ -65,6 +134,9 @@ namespace Neo.Ledger
         };
 #pragma warning restore CS0612
 
+        /// <summary>
+        /// 创世块定义
+        /// </summary>
         public static readonly Block GenesisBlock = new Block
         {
             PrevHash = UInt256.Zero,
@@ -125,13 +197,36 @@ namespace Neo.Ledger
         private readonly HashSet<IActorRef> subscribers = new HashSet<IActorRef>();
         private Snapshot currentSnapshot;
 
+        /// <summary>
+        /// 持久化存储器
+        /// </summary>
         public Store Store { get; }
+        
+        /// <summary>
+        /// 当前区块高度
+        /// </summary>
         public uint Height => currentSnapshot.Height;
+
+        /// <summary>
+        /// 区块头高度
+        /// </summary>
         public uint HeaderHeight => (uint)header_index.Count - 1;
+
+        /// <summary>
+        /// 当前区块hash
+        /// </summary>
         public UInt256 CurrentBlockHash => currentSnapshot.CurrentBlockHash;
+
+        /// <summary>
+        /// 当前区块头hash
+        /// </summary>
         public UInt256 CurrentHeaderHash => header_index[header_index.Count - 1];
 
         private static Blockchain singleton;
+
+        /// <summary>
+        /// 获取单例的区块链
+        /// </summary>
         public static Blockchain Singleton
         {
             get
@@ -146,6 +241,11 @@ namespace Neo.Ledger
             GenesisBlock.RebuildMerkleRoot();
         }
 
+        /// <summary>
+        /// 启动区块链核心
+        /// </summary>
+        /// <param name="system">neo actor系统</param>
+        /// <param name="store">持久化存储</param>
         public Blockchain(NeoSystem system, Store store)
         {
             this.system = system;
@@ -181,12 +281,22 @@ namespace Neo.Ledger
             }
         }
 
+        /// <summary>
+        /// 根据区块hash查询区块是否存在
+        /// </summary>
+        /// <param name="hash">区块hash</param>
+        /// <returns></returns>
         public bool ContainsBlock(UInt256 hash)
         {
             if (block_cache.ContainsKey(hash)) return true;
             return Store.ContainsBlock(hash);
         }
 
+        /// <summary>
+        /// 根据交易hash查询交易是否存在
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         public bool ContainsTransaction(UInt256 hash)
         {
             if (mem_pool.ContainsKey(hash)) return true;
@@ -199,6 +309,11 @@ namespace Neo.Ledger
                 subscriber.Tell(message);
         }
 
+        /// <summary>
+        /// 根据区块hash查询区块
+        /// </summary>
+        /// <param name="hash">区块hash</param>
+        /// <returns>区块</returns>
         public Block GetBlock(UInt256 hash)
         {
             if (block_cache.TryGetValue(hash, out Block block))
@@ -206,27 +321,50 @@ namespace Neo.Ledger
             return Store.GetBlock(hash);
         }
 
+        /// <summary>
+        /// 根据区块高度查询区块
+        /// </summary>
+        /// <param name="index">区块高度</param>
+        /// <returns>区块</returns>
         public UInt256 GetBlockHash(uint index)
         {
             if (header_index.Count <= index) return null;
             return header_index[(int)index];
         }
 
+        /// <summary>
+        /// 获取共识地址
+        /// </summary>
+        /// <param name="validators">验证人列表，或共识节点</param>
+        /// <returns>共识节点的三分之二多方签名合约的脚本hash</returns>
         public static UInt160 GetConsensusAddress(ECPoint[] validators)
         {
             return Contract.CreateMultiSigRedeemScript(validators.Length - (validators.Length - 1) / 3, validators).ToScriptHash();
         }
 
+        /// <summary>
+        /// 获取内存池交易
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Transaction> GetMemoryPool()
         {
             return mem_pool;
         }
 
+        /// <summary>
+        /// 获取区块快照
+        /// </summary>
+        /// <returns></returns>
         public Snapshot GetSnapshot()
         {
             return Store.GetSnapshot();
         }
 
+        /// <summary>
+        /// 根据交易hash查询交易
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         public Transaction GetTransaction(UInt256 hash)
         {
             if (mem_pool.TryGetValue(hash, out Transaction transaction))
@@ -234,6 +372,11 @@ namespace Neo.Ledger
             return Store.GetTransaction(hash);
         }
 
+        /// <summary>
+        /// 根据交易hash查询未验证的交易
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         internal Transaction GetUnverifiedTransaction(UInt256 hash)
         {
             mem_pool_unverified.TryGetValue(hash, out Transaction transaction);
@@ -660,6 +803,12 @@ namespace Neo.Ledger
             }
         }
 
+        /// <summary>
+        /// 创建blockchain ActorRef
+        /// </summary>
+        /// <param name="system">neo actor系统</param>
+        /// <param name="store">持久化存储</param>
+        /// <returns></returns>
         public static Props Props(NeoSystem system, Store store)
         {
             return Akka.Actor.Props.Create(() => new Blockchain(system, store)).WithMailbox("blockchain-mailbox");
