@@ -13,6 +13,9 @@ using System.Text;
 
 namespace Neo.SmartContract
 {
+    /// <summary>
+    /// 合约参数上下文类，主要提供了合约参数上下文的相关判断，以及脚本对应见证人等功能
+    /// </summary>
     public class ContractParametersContext
     {
         private class ContextItem
@@ -58,10 +61,14 @@ namespace Neo.SmartContract
                 return json;
             }
         }
-
+        /// <summary>
+        /// 可验证类型的对象，一般为交易，区块等
+        /// </summary>
         public readonly IVerifiable Verifiable;
         private readonly Dictionary<UInt160, ContextItem> ContextItems;
-
+        /// <summary>
+        /// 合约参数上下文是否已完成，如果所有ContextItem均不为空，且所有ContextItem对应的ContractParameter的值不为空，则为true
+        /// </summary>
         public bool Completed
         {
             get
@@ -73,6 +80,9 @@ namespace Neo.SmartContract
         }
 
         private UInt160[] _ScriptHashes = null;
+        /// <summary>
+        /// 根据当前快照获取所有需要验证的脚本的哈希值
+        /// </summary>
         public IReadOnlyList<UInt160> ScriptHashes
         {
             get
@@ -85,13 +95,22 @@ namespace Neo.SmartContract
                 return _ScriptHashes;
             }
         }
-
+        /// <summary>
+        /// 合约参数上下文构造函数
+        /// </summary>
+        /// <param name="verifiable">可验证类型的对象</param>
         public ContractParametersContext(IVerifiable verifiable)
         {
             this.Verifiable = verifiable;
             this.ContextItems = new Dictionary<UInt160, ContextItem>();
         }
-
+        /// <summary>
+        /// 对合约参数列表指定参数赋值
+        /// </summary>
+        /// <param name="contract">合约</param>
+        /// <param name="index">参数值所对应的下标</param>
+        /// <param name="parameter">参数值对象</param>
+        /// <returns>是否赋值成功，成功返回true,失败返回false</returns>
         public bool Add(Contract contract, int index, object parameter)
         {
             ContextItem item = CreateItem(contract);
@@ -99,7 +118,15 @@ namespace Neo.SmartContract
             item.Parameters[index].Value = parameter;
             return true;
         }
-
+        /// <summary>
+        /// 将签名添加至参数表中，首先判断合约脚本是多签还是单签，
+        /// 如果是多签，则首先获取所有需要签名的地址列表，然后检测是否有需要该用户签名的，如果是，则把签名添加到签名列表中。当所有签名完毕时，对所有签名排序。
+        /// 如果是单签，则找到参数列表中签名参数所在的下标，将签名 signature 加入到合约的参数变量列表里面。
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <param name="pubkey"></param>
+        /// <param name="signature"></param>
+        /// <returns></returns>
         public bool AddSignature(Contract contract, ECPoint pubkey, byte[] signature)
         {
             if (contract.Script.IsMultiSigContract())
@@ -180,7 +207,11 @@ namespace Neo.SmartContract
             ContextItems.Add(contract.ScriptHash, item);
             return item;
         }
-
+        /// <summary>
+        /// 从Json对象中获取合约参数上下文
+        /// </summary>
+        /// <param name="json">需要转换的Json对象</param>
+        /// <returns>从Json对象转换来的合约参数上下文</returns>
         public static ContractParametersContext FromJson(JObject json)
         {
             IVerifiable verifiable = typeof(ContractParametersContext).GetTypeInfo().Assembly.CreateInstance(json["type"].AsString()) as IVerifiable;
@@ -197,19 +228,31 @@ namespace Neo.SmartContract
             }
             return context;
         }
-
+        /// <summary>
+        /// 获取脚本哈希对应脚本的参数中，对应索引的参数
+        /// </summary>
+        /// <param name="scriptHash">合约的哈希值</param>
+        /// <param name="index">参数对应的索引</param>
+        /// <returns>获取到的合约参数</returns>
         public ContractParameter GetParameter(UInt160 scriptHash, int index)
         {
             return GetParameters(scriptHash)?[index];
         }
-
+        /// <summary>
+        /// 根据合约哈希获取合约的所有参数
+        /// </summary>
+        /// <param name="scriptHash">合约的哈希值</param>
+        /// <returns>合约哈希对应的所有参数列表</returns>
         public IReadOnlyList<ContractParameter> GetParameters(UInt160 scriptHash)
         {
             if (!ContextItems.TryGetValue(scriptHash, out ContextItem item))
                 return null;
             return item.Parameters;
         }
-
+        /// <summary>
+        /// 获取所有脚本见证人，对每个见证人，分别填充对应的参数和脚本信息。
+        /// </summary>
+        /// <returns>填充完成的所有脚本见证人</returns>
         public Witness[] GetWitnesses()
         {
             if (!Completed) throw new InvalidOperationException();
@@ -232,12 +275,19 @@ namespace Neo.SmartContract
             }
             return witnesses;
         }
-
+        /// <summary>
+        /// 从字符串中解析合约参数上下文
+        /// </summary>
+        /// <param name="value">需要解析的字符串</param>
+        /// <returns>解析出来的合约参数上下文</returns>
         public static ContractParametersContext Parse(string value)
         {
             return FromJson(JObject.Parse(value));
         }
-
+        /// <summary>
+        /// 将目标转化为Json对象
+        /// </summary>
+        /// <returns>转化得到的Json对象</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();
@@ -254,7 +304,10 @@ namespace Neo.SmartContract
                 json["items"][item.Key.ToString()] = item.Value.ToJson();
             return json;
         }
-
+        /// <summary>
+        /// 重写ToString方法，用于将JObject对象转化成的json字符串
+        /// </summary>
+        /// <returns>输出JObject对象转化成的json字符串</returns>
         public override string ToString()
         {
             return ToJson().ToString();
