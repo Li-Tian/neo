@@ -5,20 +5,41 @@ using System.Security.Cryptography;
 
 namespace Neo.Cryptography
 {
+    /// <summary>
+    /// Neo算法的扩展类，提供一些额外的算法组合接口
+    /// </summary>
     public class Crypto : ICrypto
     {
+        /// <summary>
+        /// 默认初始值，可以不用使用时再额外创建Crypto对象
+        /// </summary>
         public static readonly Crypto Default = new Crypto();
-
+        /// <summary>
+        /// 将数据做一次Sha256和RIPEMD160运算，这个过程被称为Hash160
+        /// </summary>
+        /// <param name="message">待处理的数据</param>
+        /// <returns>运算结果</returns>
         public byte[] Hash160(byte[] message)
         {
             return message.Sha256().RIPEMD160();
         }
-
+        /// <summary>
+        /// 将数据做2次Sha256运算，这个过程被称为Hash256
+        /// </summary>
+        /// <param name="message">待处理的数据</param>
+        /// <returns>运算结果</returns>
         public byte[] Hash256(byte[] message)
         {
             return message.Sha256().Sha256();
         }
-
+        /// <summary>
+        /// 使用ECDsa算法，利用私钥和公钥对数据进行签名
+        /// 使用的椭圆曲线是nistP256，哈希算法是SHA256
+        /// </summary>
+        /// <param name="message">待签名数据</param>
+        /// <param name="prikey">私钥</param>
+        /// <param name="pubkey">公钥</param>
+        /// <returns>数据的签名</returns>
         public byte[] Sign(byte[] message, byte[] prikey, byte[] pubkey)
         {
             using (var ecdsa = ECDsa.Create(new ECParameters
@@ -35,7 +56,13 @@ namespace Neo.Cryptography
                 return ecdsa.SignData(message, HashAlgorithmName.SHA256);
             }
         }
-
+        /// <summary>
+        /// 验证签名
+        /// </summary>
+        /// <param name="message">数据消息</param>
+        /// <param name="signature">待验证的消息的签名</param>
+        /// <param name="pubkey">公钥</param>
+        /// <returns>验证结果，验证通过返回true,否则返回false</returns>
         public bool VerifySignature(byte[] message, byte[] signature, byte[] pubkey)
         {
             if (pubkey.Length == 33 && (pubkey[0] == 0x02 || pubkey[0] == 0x03))

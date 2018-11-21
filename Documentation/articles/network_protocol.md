@@ -103,7 +103,7 @@ NEO 的网络协议规范与比特币的协议大致类似，但在区块、交�
 | ... | ... | ... |
 
 
-参考阅读：<http://docs.neo.org/en-us/network/network-protocol.html>
+参考阅读：<http://docs.neo.org/en-us/network/network-protocol.html#network-message>
 
 > [!NOTE]
 > 如果发现有死链接，请联系 <feedback@neo.org>

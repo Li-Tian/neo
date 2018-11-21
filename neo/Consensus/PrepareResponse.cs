@@ -12,6 +12,8 @@ namespace Neo.Consensus
         /// </summary>
         public byte[] Signature;
 
+        public override int Size => base.Size + Signature.Length;
+
         public PrepareResponse()
             : base(ConsensusMessageType.PrepareResponse)
         {
