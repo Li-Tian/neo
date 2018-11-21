@@ -70,7 +70,7 @@ namespace Neo.SmartContract
         /// </summary>
         /// <param name="trigger">合约触发器类型，现阶段一共有四种触发器。</param>
         /// <param name="container">脚本容器</param>
-        /// <param name="snapshot">快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <param name="gas">合约支付的Gas数量</param>
         /// <param name="testMode">是否为测试模式</param>
         public ApplicationEngine(TriggerType trigger, IScriptContainer container, Snapshot snapshot, Fixed8 gas, bool testMode = false)
