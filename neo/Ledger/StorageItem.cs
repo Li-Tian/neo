@@ -62,6 +62,7 @@ namespace Neo.Ledger
         /// <term>Value</term>
         /// <description>存储的具体值</description>
         /// </item>
+        /// <item>
         /// <term>IsConstant</term>
         /// <description>是否是常量</description>
         /// </item>

@@ -37,7 +37,7 @@ namespace Neo.Persistence
         /// 获取某个区块
         /// </summary>
         /// <param name="persistence">持久化器</param>
-        /// <param name="index"区块高度></param>
+        /// <param name="index">区块高度</param>
         /// <returns></returns>
         public static Block GetBlock(this IPersistence persistence, uint index)
         {

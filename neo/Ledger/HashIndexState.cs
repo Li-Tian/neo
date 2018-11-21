@@ -61,6 +61,7 @@ namespace Neo.Ledger
         /// <term>Hash</term>
         /// <description>区块hash</description>
         /// </item>
+        /// <item>
         /// <term>Index</term>
         /// <description>区块高度</description>
         /// </item>
