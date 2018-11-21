@@ -461,7 +461,7 @@ namespace Neo.Wallets.NEP6
         /// </summary>
         /// <param name="password">用户输入的密码</param>
         /// <returns></returns>
-        /// <exception cref="System.CryptographicException">密码验证失败时抛出</exception>
+        /// <exception cref="System.Security.Cryptography.CryptographicException">密码验证失败时抛出</exception>
         public IDisposable Unlock(string password)
         {
             if (!VerifyPassword(password))
