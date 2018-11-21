@@ -1,3 +1,5 @@
+<center> <h2> 加密算法 </h2> </center>
+
 ## ECC椭圆曲线加密
 
 ​　ECC椭圆曲线加密算法是一种非对称加密算法。利用其 K=k*G 过程不可逆的特性（其中K为公钥，G为基点（常数点）），可以预防通过公钥暴力求解私钥。相较于 RSA 等其他加密算法，在相同密钥长度情况下，其具备更高的安全性，同时更节约算力。ECC 结合其他算法广泛应用于签名等领域，例如 ECDSA 数字签名。
@@ -64,13 +66,16 @@ Example:
 
 推导原理如下：
 
-```
-h·G/s + x·K/s 
-= h·G/s + x(k·G)/s
-= (h+x·k)G/s
-= r(h+x·k)G / (h+k·x) 
-= r·G
-```
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+$$
+h·G/s + x·K/s           \\\\
+= h·G/s + x(k·G)/s      \\\\
+= (h+x·k)G/s                  \\\\
+= r(h+x·k)G / (h+k·x)   \\\\
+= r·G                                  
+$$
+
 
 Example:
 
