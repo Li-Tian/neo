@@ -310,7 +310,7 @@ namespace Neo.Wallets
         }
 
         /// <summary>
-        /// 查询获取钱包内所有可用账户内满足条件(已确认&已花费&未提取gas&未冻结)的neo的Coin集合
+        /// 查询获取钱包内所有可用账户内满足条件(已确认、已花费、未提取gas、未冻结)的neo的Coin集合
         /// </summary>
         /// <returns>查询出的Coin集合</returns>
         public IEnumerable<Coin> GetUnclaimedCoins()
