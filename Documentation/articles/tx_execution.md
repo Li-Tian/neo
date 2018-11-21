@@ -44,9 +44,16 @@ NEO中定义的交易类型如下所示：
         ReflectionCache，Size，序列化/反序列化，等等
 
 
+#### TransactionAttribute
+
+TransactionAttribute Attributes是Transaction类别的一个变量，表示该交易所具备的额外特性。TransactionAttribute类别包含两个变量，TransactionAttributeUsage Usage和byte[] Data。其中，TransactionAttributeUsage为枚举类型，标记了该TransactionAttribute的用途，包含外部合同的散列值，用于ECDH密钥交换的公钥，用于对交易进行额外的验证，投票，描述/描述URL，散列值，备注，等等。而Data则记录了特定于用途的外部数据。
+
+
+
+
 #### MinerTransaction
 
-MinerTransaction为用于分配字节费的特殊交易。
+MinerTransaction为用于分配字节费的特殊交易。系统在创世块创建了第一个MinerTransaction，此后在创建新块的时候，由议长创建相应的MinerTransaction。此外，也会在调用共识的ConsensusMessage使用到MinerTransaction信息作为验证。
 
 MinerTransaction在基类的基础上添加了一个新的变量Nonce，用于该交易的标记。其中，创世区块的Nonce的值与比特币的创世区块相同，为2083236893，而其他情况下为随机数值。
 
@@ -55,7 +62,7 @@ MinerTransaction的网络费用为0。
 
 #### RegisterTransaction
 
-RegisterTransaction为用于资产登记的交易。
+RegisterTransaction为用于资产登记的交易。系统在创世区块调用RegisterTransaction发行了两个资产种类：NEO Coin（旧称小蚁股，AntShare）和NEO Gas（旧称小蚁币，AntCoin）。这里注意一点，用户在GUI创建资产种类时，实际调用的是InvocationTransaction。
 
 RegisterTransaction在基类的基础上添加了以下新的变量：
 
@@ -77,21 +84,21 @@ Admin，为资产管理员的合约散列值。
 
 RegisterTransaction的系统费，当资产种类为小蚁币（小蚁币），或小蚁股（AntShare）时，为0；否则使用默认系统费用。
 
-RegisterTransaction的验证恒为false。
+RegisterTransaction的系统费为10000，验证恒为false。
 
 
 #### IssueTransaction
 
-IssueTransaction为用于分发资产的特殊交易。
+IssueTransaction为用于分发资产的特殊交易。完成资产注册后，就可以在资产创设所设定的总量上限范围内，向发行人指定的地址中发放该资产。分发后的资产可以用于转账和交易。分发资产需要消耗一定数量的 GAS 作为附加服务费，目前为1 GAS。
 
-IssueTransaction的系统费，当版本大于等于1时为0；当输出列表中的元素的资产种类均为小蚁币（小蚁币），或小蚁股（AntShare）时，为0；否则使用默认系统费用。
+IssueTransaction的系统费，当版本大于等于1时为0；当输出列表中的元素的资产种类均为小蚁币（小蚁币），或小蚁股（AntShare）时，为0；否则使用默认系统费用（500）。
 
 
 #### ClaimTransaction
 
-ClaimTransaction为用于分配 NeoGas 的交易。
+ClaimTransaction为用于提取NeoGas 的交易。可以通过CLI的claim gas指令或者在NEO GUI的提取GAS功能，调用ClaimTransaction完成提取GAS的操作。
 
-ClaimTransaction在基类的基础上添加了一个新的变量：Claims，用于记录该交易的交易输入列表。
+ClaimTransaction在基类的基础上添加了一个新的变量：Claims，用于记录该交易的需提取的资产列表。
 
 ClaimTransaction的网络费用为0。
 
@@ -106,25 +113,26 @@ PublicKey，即记账人的公钥；
 
 ScriptHash，即使用记账人公钥生成Check Signature脚本的散列值。
 
-EnrollmentTransaction的验证恒为false。
+EnrollmentTransaction的系统费为1000，验证恒为false。
 
 
 #### StateTransaction
 
-StateTransaction为申请见证人或共识节点投票的交易。
+StateTransaction为申请见证人或共识节点投票的交易。用户可以在NEO GUI报名成为候选人，成为候选人后就可以根据投票数竞选成为共识节点。报名成为候选人需要花费手续费 1000 GAS。具体操作请参阅[选举与投票](http://docs.neo.org/zh-cn/node/gui/vote.html)。
 
-StateTransaction在基类的基础上添加了一个新的变量Descriptors，用于记录该交易的账户状态列表或候选人状态列表。每个状态的类型由其内部成员变量指定，并取决于StateTransaction的具体功能。
+StateTransaction在基类的基础上添加了一个新的变量Descriptors，用于记录该交易的账户状态列表或候选人状态列表。每个状态的类型由其内部成员变量StateType指定。
 
 StateTransaction的系统费为Descriptors中各元素的系统费之和。
 
 
 #### ContractTransaction
 
-ContractTransaction为合约交易，这是最常用的一种交易。
+ContractTransaction为合约交易，这是最常用的一种交易。ContractTransaction用于转账交易（NEO CLI, API 的send指令，以及GUI的send操作）。
+
 
 #### PublishTransaction
 
-PublishTransaction为智能合约发布的特殊交易。
+PublishTransaction为智能合约发布的特殊交易。这里注意一点，用户在GUI发布智能合约时，实际调用的是InvocationTransaction。
 
 PublishTransaction在基类的基础上添加了以下新的变量：
 
@@ -146,10 +154,12 @@ Email，即合约作者电子邮箱；
 
 Description，即合约描述。
 
+PublishTransaction的系统费为500。
+
 
 #### InvocationTransaction
 
-InvocationTransaction为调用智能合约的特殊交易。
+InvocationTransaction为调用智能合约的特殊交易。用户可以通过NEO API的invoke/invokefunction/invokescript指令，或者NEO GUI，根据输入的智能合约信息创建InvocationTransaction对象并调用。用户在GUI创建资产种类和发布智能合约时，实际调用的是InvocationTransaction。
 
 InvocationTransaction在基类的基础上添加了两个新的变量，Script，即智能合约的脚本，以及Gas，即智能合约的系统费。
 
