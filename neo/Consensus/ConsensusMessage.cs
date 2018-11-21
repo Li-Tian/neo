@@ -28,7 +28,7 @@ namespace Neo.Consensus
         /// <summary>
         /// Message size
         /// </summary>
-        public int Size => sizeof(ConsensusMessageType) + sizeof(byte);
+        public virtual int Size => sizeof(ConsensusMessageType) + sizeof(byte);
 
         /// <summary>
         /// Create ConsensusMessage attached message type

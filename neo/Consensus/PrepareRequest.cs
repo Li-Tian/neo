@@ -37,6 +37,12 @@ namespace Neo.Consensus
         public byte[] Signature;
 
         /// <summary>
+        /// 消息大小：
+        /// <code>base.Size + sizeof(ulong) + NextConsensus.Size + TransactionHashes.GetVarSize() + MinerTransaction.Size + Signature.Length</code>
+        /// </summary>
+        public override int Size => base.Size + sizeof(ulong) + NextConsensus.Size + TransactionHashes.GetVarSize() + MinerTransaction.Size + Signature.Length;
+
+        /// <summary>
         /// Construct PrepareRequest
         /// </summary>
         public PrepareRequest()
