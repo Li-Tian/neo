@@ -27,10 +27,9 @@ namespace Neo.Consensus
         /// Start consensus activity message
         /// </summary>
         public class Start { }
+
         /// <summary>
         /// Update the current view number message
-        /// </summary>
-
         /// </summary>
         public class SetViewNumber { public byte ViewNumber; }
 
