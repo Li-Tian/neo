@@ -14,8 +14,16 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.SmartContract
 {
+    /// <summary>
+    /// Neo互操作服务类，主要提供了Neo命名空间的互操作服务方法
+    /// </summary>
     public class NeoService : StandardService
     {
+        /// <summary>
+        /// Neo互操作服务构造函数
+        /// </summary>
+        /// <param name="trigger">触发器类型</param>
+        /// <param name="snapshot">当前区块链的快照</param>
         public NeoService(TriggerType trigger, Snapshot snapshot)
             : base(trigger, snapshot)
         {

@@ -14,8 +14,14 @@ using System.Text;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 交易
+    /// </summary>
     public abstract class Transaction : IEquatable<Transaction>, IInventory
     {
+        /// <summary>
+        /// 交易最大存储大小
+        /// </summary>
         public const int MaxTransactionSize = 102400;
         /// <summary>
         /// Maximum number of attributes that can be contained within a transaction
@@ -27,14 +33,41 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         private static ReflectionCache<byte> ReflectionCache = ReflectionCache<byte>.CreateFromEnum<TransactionType>();
 
+        /// <summary>
+        /// 交易类型
+        /// </summary>
         public readonly TransactionType Type;
+
+        /// <summary>
+        /// 交易版本号
+        /// </summary>
         public byte Version;
+
+        /// <summary>
+        /// 交易属性
+        /// </summary>
         public TransactionAttribute[] Attributes;
+
+        /// <summary>
+        /// 交易输入
+        /// </summary>
         public CoinReference[] Inputs;
+
+        /// <summary>
+        /// 交易输出
+        /// </summary>
         public TransactionOutput[] Outputs;
+
+        /// <summary>
+        /// 见证人
+        /// </summary>
         public Witness[] Witnesses { get; set; }
 
         private UInt256 _hash = null;
+
+        /// <summary>
+        /// 交易hash
+        /// </summary>
         public UInt256 Hash
         {
             get
@@ -49,9 +82,16 @@ namespace Neo.Network.P2P.Payloads
 
         InventoryType IInventory.InventoryType => InventoryType.TX;
 
+        /// <summary>
+        /// 是否是低优先级交易   若是claim交易或网络费用低于某阈值时，则为低优先级交易
+        /// </summary>
         public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
 
         private Fixed8 _network_fee = -Fixed8.Satoshi;
+
+        /// <summary>
+        /// 网络手续费
+        /// </summary>
         public virtual Fixed8 NetworkFee
         {
             get
@@ -67,6 +107,10 @@ namespace Neo.Network.P2P.Payloads
         }
 
         private IReadOnlyDictionary<CoinReference, TransactionOutput> _references;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public IReadOnlyDictionary<CoinReference, TransactionOutput> References
         {
             get
@@ -93,10 +137,20 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public virtual int Size => sizeof(TransactionType) + sizeof(byte) + Attributes.GetVarSize() + Inputs.GetVarSize() + Outputs.GetVarSize() + Witnesses.GetVarSize();
 
+        /// <summary>
+        /// 手续费
+        /// </summary>
         public virtual Fixed8 SystemFee => Settings.Default.SystemFee.TryGetValue(Type, out Fixed8 fee) ? fee : Fixed8.Zero;
 
+        /// <summary>
+        /// 创建交易
+        /// </summary>
+        /// <param name="type">交易类型</param>
         protected Transaction(TransactionType type)
         {
             this.Type = type;
@@ -109,10 +163,20 @@ namespace Neo.Network.P2P.Payloads
             OnDeserialized();
         }
 
+        /// <summary>
+        /// 反序列化非data数据
+        /// </summary>
+        /// <param name="reader"></param>
         protected virtual void DeserializeExclusiveData(BinaryReader reader)
         {
         }
 
+        /// <summary>
+        /// 从给定的byte数组中反序列化
+        /// </summary>
+        /// <param name="value">原数据</param>
+        /// <param name="offset">偏移量</param>
+        /// <returns></returns>
         public static Transaction DeserializeFrom(byte[] value, int offset = 0)
         {
             using (MemoryStream ms = new MemoryStream(value, offset, value.Length - offset, false))
@@ -150,6 +214,11 @@ namespace Neo.Network.P2P.Payloads
             Outputs = reader.ReadSerializableArray<TransactionOutput>(ushort.MaxValue + 1);
         }
 
+        /// <summary>
+        /// 判断两笔交易是否相等
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public bool Equals(Transaction other)
         {
             if (other is null) return false;
@@ -157,11 +226,21 @@ namespace Neo.Network.P2P.Payloads
             return Hash.Equals(other.Hash);
         }
 
+        /// <summary>
+        /// 判断交易是否等于该对象
+        /// </summary>
+        /// <param name="obj">待比较对象</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Transaction);
         }
 
+
+        /// <summary>
+        /// 获取hash code
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
@@ -172,6 +251,12 @@ namespace Neo.Network.P2P.Payloads
             return this.GetHashData();
         }
 
+        /// <summary>
+        /// 获取验证脚本hash
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <returns>包含：1. 交易输入所指向的收款人地址脚本hash，2. 交易属性为script时，包含该Data， 3. 若资产类型包含AssetType.DutyFlag时，包含收款人地址脚本hash</returns>
+        /// <exception cref="System.InvalidOperationException">若输入为空或者资产不存在时，抛出该异常</exception>
         public virtual UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             if (References == null) throw new InvalidOperationException();
@@ -189,6 +274,10 @@ namespace Neo.Network.P2P.Payloads
             return hashes.OrderBy(p => p).ToArray();
         }
 
+        /// <summary>
+        /// 获取交易资产变化
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<TransactionResult> GetTransactionResults()
         {
             if (References == null) return null;
@@ -231,6 +320,10 @@ namespace Neo.Network.P2P.Payloads
             writer.Write(Outputs);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public virtual JObject ToJson()
         {
             JObject json = new JObject();
@@ -252,6 +345,12 @@ namespace Neo.Network.P2P.Payloads
             return Verify(snapshot, Enumerable.Empty<Transaction>());
         }
 
+        /// <summary>
+        /// 校验交易
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <param name="mempool">内存池交易</param>
+        /// <returns></returns>
         public virtual bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (Size > MaxTransactionSize) return false;

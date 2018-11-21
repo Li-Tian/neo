@@ -12,14 +12,40 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 资产登记交易【已弃用】
+    /// </summary>
     [Obsolete]
     public class RegisterTransaction : Transaction
     {
+        /// <summary>
+        /// 资产类型
+        /// </summary>
         public AssetType AssetType;
+
+        /// <summary>
+        /// 资产名字
+        /// </summary>
         public string Name;
+
+        /// <summary>
+        /// 资产总量
+        /// </summary>
         public Fixed8 Amount;
+
+        /// <summary>
+        /// 精度
+        /// </summary>
         public byte Precision;
+
+        /// <summary>
+        /// 所有者公钥
+        /// </summary>
         public ECPoint Owner;
+
+        /// <summary>
+        /// 管理员地址脚本hash
+        /// </summary>
         public UInt160 Admin;
 
         private UInt160 _script_hash = null;
@@ -35,8 +61,14 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public override int Size => base.Size + sizeof(AssetType) + Name.GetVarSize() + Amount.Size + sizeof(byte) + Owner.Size + Admin.Size;
 
+        /// <summary>
+        /// 系统手续费  若资产是NEO，GAS则费用为0
+        /// </summary>
         public override Fixed8 SystemFee
         {
             get
@@ -47,11 +79,18 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 创建资产登记交易
+        /// </summary>
         public RegisterTransaction()
             : base(TransactionType.RegisterTransaction)
         {
         }
 
+        /// <summary>
+        /// 反序列化非data数据
+        /// </summary>
+        /// <param name="reader">二进制输入流</param>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version != 0) throw new FormatException();
@@ -65,12 +104,21 @@ namespace Neo.Network.P2P.Payloads
             Admin = reader.ReadSerializable<UInt160>();
         }
 
+        /// <summary>
+        /// 获取验证脚本hash集合
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <returns>交易的其他验证脚本 和 资产所有者地址脚本hash</returns>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             UInt160 owner = Contract.CreateSignatureRedeemScript(Owner).ToScriptHash();
             return base.GetScriptHashesForVerifying(snapshot).Union(new[] { owner }).OrderBy(p => p).ToArray();
         }
 
+        /// <summary>
+        /// 序列化后处理
+        /// </summary>
+        /// <exception cref="System.FormatException">若资产是NEO，GAS，但是hash值不对应时，抛出该异常</exception>
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
@@ -80,6 +128,36 @@ namespace Neo.Network.P2P.Payloads
                 throw new FormatException();
         }
 
+        /// <summary>
+        /// 序列化非data数据
+        /// <list type="bullet">
+        /// <item>
+        /// <term>AssetType</term>
+        /// <description>资产类型</description>
+        /// </item>
+        /// <item>
+        /// <term>Name</term>
+        /// <description>名字</description>
+        /// </item>
+        /// <item>
+        /// <term>Amount</term>
+        /// <description>总量</description>
+        /// </item> 
+        /// <item>
+        /// <term>Precision</term>
+        /// <description>精度</description>
+        /// </item>
+        /// <item>
+        /// <term>Owner</term>
+        /// <description>所有者</description>
+        /// </item>
+        /// <item>
+        /// <term>Admin</term>
+        /// <description>管理员</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer"></param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.Write((byte)AssetType);
@@ -90,6 +168,10 @@ namespace Neo.Network.P2P.Payloads
             writer.Write(Admin);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -110,6 +192,12 @@ namespace Neo.Network.P2P.Payloads
             return json;
         }
 
+        /// <summary>
+        /// 校验交易
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <param name="mempool">内存池交易</param>
+        /// <returns>固定值false，已弃用</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             return false;

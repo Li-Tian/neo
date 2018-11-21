@@ -7,12 +7,29 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 交易输出
+    /// </summary>
     public class TransactionOutput : IInteropInterface, ISerializable
     {
+        /// <summary>
+        /// 资产Id
+        /// </summary>
         public UInt256 AssetId;
+
+        /// <summary>
+        /// 转账金额
+        /// </summary>
         public Fixed8 Value;
+
+        /// <summary>
+        /// 收款人地址脚本hash
+        /// </summary>
         public UInt160 ScriptHash;
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public int Size => AssetId.Size + Value.Size + ScriptHash.Size;
 
         void ISerializable.Deserialize(BinaryReader reader)
@@ -30,6 +47,11 @@ namespace Neo.Network.P2P.Payloads
             writer.Write(ScriptHash);
         }
 
+        /// <summary>
+        /// 转成json数据
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public JObject ToJson(ushort index)
         {
             JObject json = new JObject();

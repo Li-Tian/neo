@@ -3,6 +3,9 @@ using System.Security.Cryptography;
 
 namespace Neo.Cryptography
 {
+    /// <summary>
+    /// 用来计算生成SCrypt key的类
+    /// </summary>
     public static class SCrypt
     {
         private unsafe static void BulkCopy(void* dst, void* src, int len)
@@ -244,7 +247,16 @@ namespace Neo.Cryptography
                 Encode32(&B[4 * k], X[k]);
             }
         }
-
+        /// <summary>
+        ///使用Scrypt算法生成一个key
+        /// </summary>
+        /// <param name="password">生成Scrupt key所需要的密码</param>
+        /// <param name="salt">生成key算法要用的salt参数</param>
+        /// <param name="N">算法Scrypt使用的参数N</param>
+        /// <param name="r">算法Scrypt使用的参数r</param>
+        /// <param name="p">算法Scrypt使用的参数p</param>
+        /// <param name="derivedKeyLength">生成key的长途</param>
+        /// <returns>生成的scrypt key</returns>
 #if NET47
         public static byte[] DeriveKey(byte[] password, byte[] salt, int N, int r, int p, int derivedKeyLength)
         {

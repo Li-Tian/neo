@@ -15,33 +15,91 @@ using ECPoint = Neo.Cryptography.ECC.ECPoint;
 namespace Neo.Wallets
 {
     /// <summary>
-    /// NEO中钱包的抽象类
+    /// Wallet类是一个钱包抽象类，是各种钱包实现类的父类。
+    /// 用于描述一个钱包所需实现的各种功能
     /// </summary>
     public abstract class Wallet : IDisposable
     {
+        /// <summary>
+        /// 钱包交易的委托，在收到交易时，调用绑定的方法
+        /// </summary>
         public abstract event EventHandler<WalletTransactionEventArgs> WalletTransaction;
 
         private static readonly Random rand = new Random();
-
+        /// <summary>
+        /// 钱包名称
+        /// </summary>
         public abstract string Name { get; }
+        /// <summary>
+        /// 钱包版本
+        /// </summary>
         public abstract Version Version { get; }
+        /// <summary>
+        /// 钱包高度
+        /// </summary>
         public abstract uint WalletHeight { get; }
 
         public abstract void ApplyTransaction(Transaction tx);
-        public abstract bool Contains(UInt160 scriptHash);
-        public abstract WalletAccount CreateAccount(byte[] privateKey);
-        public abstract WalletAccount CreateAccount(Contract contract, KeyPair key = null);
-        public abstract WalletAccount CreateAccount(UInt160 scriptHash);
-        public abstract bool DeleteAccount(UInt160 scriptHash);
-        public abstract WalletAccount GetAccount(UInt160 scriptHash);
-        public abstract IEnumerable<WalletAccount> GetAccounts();
-        public abstract IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts);
-        public abstract IEnumerable<UInt256> GetTransactions();
-
         /// <summary>
-        /// 创建一个私钥并且, 创建一个account
+        /// 判断钱包内是否存在某个脚本哈希对应的账户
         /// </summary>
-        /// <returns>返回新创建的account</returns>
+        /// <param name="scriptHash">待查询的脚本哈希</param>
+        /// <returns>存在，返回true,否则返回false</returns>
+        public abstract bool Contains(UInt160 scriptHash);
+        /// <summary>
+        /// 利用私钥创建钱包账户
+        /// 这是个抽象方法
+        /// </summary>
+        /// <param name="privateKey">私钥</param>
+        /// <returns>生成的钱包账户对象</returns>
+        public abstract WalletAccount CreateAccount(byte[] privateKey);
+        /// <summary>
+        /// 利用合约对象和密钥对创建钱包账户
+        /// </summary>
+        /// <param name="contract">合约对象</param>
+        /// <param name="key">密钥对</param>
+        /// <returns>生成的钱包账户对象</returns>
+        public abstract WalletAccount CreateAccount(Contract contract, KeyPair key = null);
+        /// <summary>
+        /// 利用脚本哈希创建钱包账户
+        /// </summary>
+        /// <param name="scriptHash">脚本哈希</param>
+        /// <returns>生成的钱包账户对象</returns>
+        public abstract WalletAccount CreateAccount(UInt160 scriptHash);
+        /// <summary>
+        /// 根据脚本哈希删除钱包内对应的账户对象
+        /// 这是个抽象方法
+        /// </summary>
+        /// <param name="scriptHash">指定账户的脚本哈希</param>
+        /// <returns>删除成功返回true,否则返回false</returns>
+        public abstract bool DeleteAccount(UInt160 scriptHash);
+        /// <summary>
+        /// 根据脚本哈希获取钱包内对应的账户对象
+        /// 这是个抽象方法
+        /// </summary>
+        /// <param name="scriptHash">指定账户的脚本哈希</param>
+        /// <returns>获取的钱包账户对象</returns>
+        public abstract WalletAccount GetAccount(UInt160 scriptHash);
+        /// <summary>
+        /// 获取钱包内所有的账户对象
+        /// </summary>
+        /// <returns>钱包内所有的账户对象</returns>
+        public abstract IEnumerable<WalletAccount> GetAccounts();
+        /// <summary>
+        /// 获取指定账户对象集合内的Coin集合
+        /// </summary>
+        /// <param name="accounts">指定账户对象集合</param>
+        /// <returns>查询到的Coin集合</returns>
+        public abstract IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts);
+        /// <summary>
+        /// 查询与钱包内账户有关的交易
+        /// </summary>
+        /// <returns>查询到的交易的哈希</returns>
+        public abstract IEnumerable<UInt256> GetTransactions();
+        /// <summary>
+        /// 创建钱包账户对象，不带参数（使用随机数生成账户的私钥）
+        /// </summary>
+        /// <returns>生成的钱包账户对象</returns>
         public WalletAccount CreateAccount()
         {
             byte[] privateKey = new byte[32];
@@ -53,34 +111,51 @@ namespace Neo.Wallets
             Array.Clear(privateKey, 0, privateKey.Length);
             return account;
         }
-
         /// <summary>
-        /// 传入一个合约和一个私钥, 创建一个新的账户
+        /// 利用合约对象和私钥创建账户对象
         /// </summary>
-        /// <param name="contract">合约</param>
+        /// <param name="contract">合约对象</param>
         /// <param name="privateKey">私钥</param>
-        /// <returns>返回新创建的account</returns>
+        /// <returns>生成的账户对象</returns>
         public WalletAccount CreateAccount(Contract contract, byte[] privateKey)
         {
             if (privateKey == null) return CreateAccount(contract);
             return CreateAccount(contract, new KeyPair(privateKey));
         }
-
+        /// <summary>
+        /// 回收方法，保留
+        /// </summary>
         public virtual void Dispose()
         {
         }
-
+        /// <summary>
+        /// 查询指定账户地址集合内所有未花费的Coin集合
+        /// </summary>
+        /// <param name="from">待查询账户地址集合</param>
+        /// <returns>查询到的Coin集合</returns>
         public IEnumerable<Coin> FindUnspentCoins(params UInt160[] from)
         {
             IEnumerable<UInt160> accounts = from.Length > 0 ? from : GetAccounts().Where(p => !p.Lock && !p.WatchOnly).Select(p => p.ScriptHash);
             return GetCoins(accounts).Where(p => p.State.HasFlag(CoinState.Confirmed) && !p.State.HasFlag(CoinState.Spent) && !p.State.HasFlag(CoinState.Frozen));
         }
-
+        /// <summary>
+        /// 查询指定账户集合内某一全局资产（neo、gas）所有为花费的Coin集合中满足指定金额的子集(按照降序查找)
+        /// </summary>
+        /// <param name="asset_id">指定全局资产的ID</param>
+        /// <param name="amount">指定金额</param>
+        /// <param name="from">指定账户集合</param>
+        /// <returns>查询到的Coin的集合</returns>
         public virtual Coin[] FindUnspentCoins(UInt256 asset_id, Fixed8 amount, params UInt160[] from)
         {
             return FindUnspentCoins(FindUnspentCoins(from), asset_id, amount);
         }
-
+        /// <summary>
+        /// 查询某一未花费Coin集合内某一全局资产（neo、gas）的Coin集合中满足指定金额的子集(按照降序查找)
+        /// </summary>
+        /// <param name="unspents">某未花费Coin集合</param>
+        /// <param name="asset_id">指定全局资产的ID</param>
+        /// <param name="amount">指定金额</param>
+        /// <returns>查询到的Coin集合</returns>
         protected static Coin[] FindUnspentCoins(IEnumerable<Coin> unspents, UInt256 asset_id, Fixed8 amount)
         {
             Coin[] unspents_asset = unspents.Where(p => p.Output.AssetId == asset_id).ToArray();
@@ -96,17 +171,29 @@ namespace Neo.Wallets
             else
                 return unspents_ordered.Take(i).Concat(new[] { unspents_ordered.Last(p => p.Output.Value >= amount) }).ToArray();
         }
-
+        /// <summary>
+        /// 根据公钥查询钱包内对应的账户对象
+        /// </summary>
+        /// <param name="pubkey">公钥</param>
+        /// <returns>查询到的账户对象</returns>
         public WalletAccount GetAccount(ECPoint pubkey)
         {
             return GetAccount(Contract.CreateSignatureRedeemScript(pubkey).ToScriptHash());
         }
-
+        /// <summary>
+        /// 查询钱包内指定全局资产(neo、gas)的可用金额
+        /// </summary>
+        /// <param name="asset_id">指定的全局资产（neo、gas）ID</param>
+        /// <returns>钱包内指定的全局资产可用金额</returns>
         public Fixed8 GetAvailable(UInt256 asset_id)
         {
             return FindUnspentCoins().Where(p => p.Output.AssetId.Equals(asset_id)).Sum(p => p.Output.Value);
         }
-
+        /// <summary>
+        /// 查询钱包内指定的资产(全局资产、NEP5资产)可用金额
+        /// </summary>
+        /// <param name="asset_id">指定的资产id</param>
+        /// <returns>钱包内指定资产的可用金额</returns>
         public BigDecimal GetAvailable(UIntBase asset_id)
         {
             if (asset_id is UInt160 asset_id_160)
@@ -136,12 +223,21 @@ namespace Neo.Wallets
                 return new BigDecimal(GetAvailable((UInt256)asset_id).GetData(), 8);
             }
         }
-
+        /// <summary>
+        /// 查询钱包内所有账户某个全局资产（neo、gas）的可用余额
+        /// </summary>
+        /// <param name="asset_id">指定全局资产的id</param>
+        /// <returns>指定全局资产的可用余额</returns>
         public Fixed8 GetBalance(UInt256 asset_id)
         {
             return GetCoins(GetAccounts().Select(p => p.ScriptHash)).Where(p => !p.State.HasFlag(CoinState.Spent) && p.Output.AssetId.Equals(asset_id)).Sum(p => p.Output.Value);
         }
 
+        /// <summary>
+        /// 选择这个钱包中账户中的一个作为找零地址. 
+        /// 选择顺序为先选择默认账户, 已有签名合约的账号 ,非监视账号, 普通账号.
+        /// </summary>
+        /// <returns>返回一个找零地址</returns>
         public virtual UInt160 GetChangeAddress()
         {
             WalletAccount[] accounts = GetAccounts().ToArray();
@@ -154,16 +250,24 @@ namespace Neo.Wallets
                 account = accounts.FirstOrDefault();
             return account?.ScriptHash;
         }
-
         /// <summary>
-        /// 返会所有acctouns的Coins
+        /// 查询获取钱包内所用账户的Coin集合
         /// </summary>
-        /// <returns>一个实现了IEnumerable的Coin集合</returns>
+        /// <returns>钱包内所用账户的Coin集合</returns>
         public IEnumerable<Coin> GetCoins()
         {
             return GetCoins(GetAccounts().Select(p => p.ScriptHash));
         }
-
+        /// <summary>
+        /// 解析NEP2格式密文中的私钥，并且会验证密码是否正确
+        /// </summary>
+        /// <param name="nep2">NEP2格式的密文</param>
+        /// <param name="passphrase">NEP2格式的密文的加密密码</param>
+        /// <param name="N">NEP2格式的解密算法Scrypt使用的参数N,默认为16384</param>
+        /// <param name="r">NEP2格式的解密算法Scrypt使用的参数r，默认为8</param>
+        /// <param name="p">NEP2格式的解密算法Scrypt使用的参数p，默认为8</param>
+        /// <returns>从NEP2格式的密文中解析出的私钥</returns>
+        /// <exception cref="System.FormatException">验证密码不正确时抛出</exception>
         public static byte[] GetPrivateKeyFromNEP2(string nep2, string passphrase, int N = 16384, int r = 8, int p = 8)
         {
             if (nep2 == null) throw new ArgumentNullException(nameof(nep2));
@@ -188,12 +292,11 @@ namespace Neo.Wallets
         }
 
         /// <summary>
-        /// 解码一个WIF格式的私钥并且转换成字节数组返回
+        /// 解析WIF格式字符串中的私钥
         /// </summary>
-        /// <param name="wif">WIF格式的私钥</param>
-        /// <exception cref="ArgumentNullException">如果WIF是null</exception>
-        /// <exception cref="FormatException">这个wif的格式不是私钥</exception>
-        /// <returns>代表一串私钥的字符字节</returns>
+        /// <param name="wif">WIF格式字符串</param>
+        /// <returns>从WIF格式字符串中解析出的私钥</returns>
+        /// <exception cref="System.ArgumentNullException">wif为null时抛出</exception>
         public static byte[] GetPrivateKeyFromWIF(string wif)
         {
             if (wif == null) throw new ArgumentNullException();
@@ -206,6 +309,10 @@ namespace Neo.Wallets
             return privateKey;
         }
 
+        /// <summary>
+        /// 查询获取钱包内所有可用账户内满足条件(已确认&已花费&未提取gas&未冻结)的neo的Coin集合
+        /// </summary>
+        /// <returns>查询出的Coin集合</returns>
         public IEnumerable<Coin> GetUnclaimedCoins()
         {
             IEnumerable<UInt160> accounts = GetAccounts().Where(p => !p.Lock && !p.WatchOnly).Select(p => p.ScriptHash);
@@ -215,7 +322,11 @@ namespace Neo.Wallets
             coins = coins.Where(p => !p.State.HasFlag(CoinState.Claimed) && !p.State.HasFlag(CoinState.Frozen));
             return coins;
         }
-
+        /// <summary>
+        /// 导入X509证书，利用其中的数据生成钱包账户对象
+        /// </summary>
+        /// <param name="cert">X509格式证书</param>
+        /// <returns>利用X509格式证书中的数据生成钱包账户对象</returns>
         public virtual WalletAccount Import(X509Certificate2 cert)
         {
             byte[] privateKey;
@@ -227,7 +338,11 @@ namespace Neo.Wallets
             Array.Clear(privateKey, 0, privateKey.Length);
             return account;
         }
-
+        /// <summary>
+        /// 导入wif格式字符串，利用其中的数据生成钱包账户对象
+        /// </summary>
+        /// <param name="wif">wif格式字符串</param>
+        /// <returns>wif格式字符串生成的钱包账户对象</returns>
         public virtual WalletAccount Import(string wif)
         {
             byte[] privateKey = GetPrivateKeyFromWIF(wif);
@@ -235,7 +350,12 @@ namespace Neo.Wallets
             Array.Clear(privateKey, 0, privateKey.Length);
             return account;
         }
-
+        /// <summary>
+        /// 导入NEP2格式密文，利用其中的数据生成钱包对象
+        /// </summary>
+        /// <param name="nep2">NEP2格式密文</param>
+        /// <param name="passphrase">解析NEP2格式密文的密码</param>
+        /// <returns>利用NEP2格式密文中的数据生成的钱包账户</returns>
         public virtual WalletAccount Import(string nep2, string passphrase)
         {
             byte[] privateKey = GetPrivateKeyFromNEP2(nep2, passphrase);
@@ -244,6 +364,15 @@ namespace Neo.Wallets
             return account;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tx"></param>
+        /// <param name="from"></param>
+        /// <param name="change_address">找零地址</param>
+        /// <param name="fee"></param>
+        /// <returns></returns>
         public T MakeTransaction<T>(T tx, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8)) where T : Transaction
         {
             if (tx.Outputs == null) tx.Outputs = new TransactionOutput[0];
@@ -303,6 +432,15 @@ namespace Neo.Wallets
             return tx;
         }
 
+        /// <summary>
+        ///  通过钱包发起一笔交易
+        /// </summary>
+        /// <param name="attributes"></param>
+        /// <param name="outputs">交易输出地址</param>
+        /// <param name="from">交易的提交发</param>
+        /// <param name="change_address">找零地址</param>
+        /// <param name="fee">交易费用</param>
+        /// <returns>交易的Transaction</returns>
         public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnumerable<TransferOutput> outputs, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8))
         {
             var cOutputs = outputs.Where(p => !p.IsGlobalAsset).GroupBy(p => new
@@ -406,7 +544,11 @@ namespace Neo.Wallets
             tx = MakeTransaction(tx, from, change_address, fee);
             return tx;
         }
-
+        /// <summary>
+        /// 对合约参数上下文对象（交易、共识等）中的数据进行签名
+        /// </summary>
+        /// <param name="context">合约参数上下文对象（交易、共识等）</param>
+        /// <returns>签名的结果，成功为true,失败为false</returns>
         public bool Sign(ContractParametersContext context)
         {
             bool fSuccess = false;
@@ -420,7 +562,12 @@ namespace Neo.Wallets
             }
             return fSuccess;
         }
-
+        /// <summary>
+        /// 验证用户输入的钱包密码的正确性.
+        /// 这是个抽象方法。
+        /// </summary>
+        /// <param name="password">户输入的钱包</param>
+        /// <returns>验证成功返回true，否则返回false</returns>
         public abstract bool VerifyPassword(string password);
 
         private static byte[] XOR(byte[] x, byte[] y)

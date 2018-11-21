@@ -6,24 +6,76 @@ using System.Linq;
 
 namespace Neo.Ledger
 {
+    /// <summary>
+    /// 合约状态
+    /// </summary>
     public class ContractState : StateBase, ICloneable<ContractState>
     {
+        /// <summary>
+        /// 合约脚本
+        /// </summary>
         public byte[] Script;
+
+        /// <summary>
+        /// 合约参数列表
+        /// </summary>
         public ContractParameterType[] ParameterList;
+
+        /// <summary>
+        /// 合约返回值类型
+        /// </summary>
         public ContractParameterType ReturnType;
+
+        /// <summary>
+        /// 合约属性状态
+        /// </summary>
         public ContractPropertyState ContractProperties;
+
+        /// <summary>
+        /// 合约名字
+        /// </summary>
         public string Name;
+
+        /// <summary>
+        /// 代码版本号
+        /// </summary>
         public string CodeVersion;
+
+        /// <summary>
+        /// 作者
+        /// </summary>
         public string Author;
+
+        /// <summary>
+        /// 邮箱
+        /// </summary>
         public string Email;
+
+        /// <summary>
+        /// 合约描述
+        /// </summary>
         public string Description;
 
-
+        /// <summary>
+        /// 是否包含存储空间
+        /// </summary>
         public bool HasStorage => ContractProperties.HasFlag(ContractPropertyState.HasStorage);
+
+        /// <summary>
+        /// 是否动态调用
+        /// </summary>
         public bool HasDynamicInvoke => ContractProperties.HasFlag(ContractPropertyState.HasDynamicInvoke);
+
+        /// <summary>
+        /// 是否可支付
+        /// </summary>
         public bool Payable => ContractProperties.HasFlag(ContractPropertyState.Payable);
 
         private UInt160 _scriptHash;
+
+        /// <summary>
+        /// 合约脚本hash
+        /// </summary>
         public UInt160 ScriptHash
         {
             get
@@ -36,6 +88,9 @@ namespace Neo.Ledger
             }
         }
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public override int Size => base.Size + Script.GetVarSize() + ParameterList.GetVarSize() + sizeof(ContractParameterType) + sizeof(bool) + Name.GetVarSize() + CodeVersion.GetVarSize() + Author.GetVarSize() + Email.GetVarSize() + Description.GetVarSize();
 
         ContractState ICloneable<ContractState>.Clone()
@@ -54,6 +109,10 @@ namespace Neo.Ledger
             };
         }
 
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入流</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -81,6 +140,53 @@ namespace Neo.Ledger
             Description = replica.Description;
         }
 
+
+        /// <summary>
+        /// 序列化
+        /// <list type="bullet">
+        /// <item>
+        /// <term>StateVersion</term>
+        /// <description>状态版本号</description>
+        /// </item>
+        /// <item>
+        /// <term>Script</term>
+        /// <description>脚本</description>
+        /// </item>
+        /// <item>
+        /// <term>ParameterList</term>
+        /// <description>参数列表</description>
+        /// </item>
+        /// <item>
+        /// <term>ReturnType</term>
+        /// <description>合约脚本返回值类型</description>
+        /// </item>
+        /// <item>
+        /// <term>ContractProperties</term>
+        /// <description>合约属性状态</description>
+        /// </item>
+        /// <item>
+        /// <term>Name</term>
+        /// <description>合约名字</description>
+        /// </item>
+        /// <item>
+        /// <term>CodeVersion</term>
+        /// <description>代码版本号</description>
+        /// </item>
+        /// <item>
+        /// <term>Author</term>
+        /// <description>作者</description>
+        /// </item>
+        /// <item>
+        /// <term>Email</term>
+        /// <description>邮箱</description>
+        /// </item>
+        /// <item>
+        /// <term>Description</term>
+        /// <description>描述</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">二进制输出流</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
@@ -95,6 +201,11 @@ namespace Neo.Ledger
             writer.WriteVarString(Description);
         }
 
+
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

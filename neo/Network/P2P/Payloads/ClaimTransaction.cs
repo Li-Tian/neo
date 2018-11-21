@@ -9,19 +9,38 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// Claim交易，用于发起提取GAS交易
+    /// </summary>
     public class ClaimTransaction : Transaction
     {
+        /// <summary>
+        /// 已经花费的GAS outputs
+        /// </summary>
         public CoinReference[] Claims;
 
+        /// <summary>
+        /// 网络费用，默认0
+        /// </summary>
         public override Fixed8 NetworkFee => Fixed8.Zero;
-
+        
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public override int Size => base.Size + Claims.GetVarSize();
 
+        /// <summary>
+        /// 创建Claim交易
+        /// </summary>
         public ClaimTransaction()
             : base(TransactionType.ClaimTransaction)
         {
         }
 
+        /// <summary>
+        /// 反序列化，读取claims数据，其他数据未提取
+        /// </summary>
+        /// <param name="reader"></param>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version != 0) throw new FormatException();
@@ -29,6 +48,12 @@ namespace Neo.Network.P2P.Payloads
             if (Claims.Length == 0) throw new FormatException();
         }
 
+        /// <summary>
+        /// 获取待验证脚本hash
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <returns>验证脚本hash集合，包括output指向的收款人地址</returns>
+        /// <exception cref="System.InvalidOperationException">若引用的output不存在时，抛出该异常</exception>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             HashSet<UInt160> hashes = new HashSet<UInt160>(base.GetScriptHashesForVerifying(snapshot));
@@ -45,11 +70,25 @@ namespace Neo.Network.P2P.Payloads
             return hashes.OrderBy(p => p).ToArray();
         }
 
+        /// <summary>
+        /// 序列化
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Claims</term>
+        /// <description>已经花费的GAS outputs</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">二进制输出流</param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.Write(Claims);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -57,6 +96,12 @@ namespace Neo.Network.P2P.Payloads
             return json;
         }
 
+        /// <summary>
+        /// 验证交易
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <param name="mempool">已经花费的GAS outputs</param>
+        /// <returns></returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (!base.Verify(snapshot, mempool)) return false;

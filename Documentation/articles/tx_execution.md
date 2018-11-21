@@ -21,6 +21,143 @@ NEO中定义的交易类型如下所示：
 | InvocationTransaction | 0 | 调用智能合约的特殊交易
 
 
+### 1 不同交易类型的比较
+
+#### 共同特征
+
+所有的交易类型均派生自Neo.Core.Transaction类型。在这个类型里，提供了一些共有的功能和特征，如：
+
+（1）关于交易属性：
+
+        交易的属性列表和最大属性数量 = 16，交易类型，版本（默认为1），等等
+
+（2）关于交易的功能性：
+
+        输入/输出列表，验证该交易的脚本列表，网络/系统费用，每一个交易输入所引用的交易输出，获取需要校验的脚本散列值，获取交易后各资产的变化量，交易验证，等等
+
+        这里，网络费用的计算方法如下：
+        
+        每一个交易输入所引用的交易输出中，资产种类为小蚁币的，计算其资产值之和input，并计算输出列表中，资产种类为小蚁币的资产之和output，则网络费为input - output - 系统费。
+
+（3）关于交易的读写操作：
+
+        ReflectionCache，Size，序列化/反序列化，等等
+
+
+#### MinerTransaction
+
+MinerTransaction为用于分配字节费的特殊交易。
+
+MinerTransaction在基类的基础上添加了一个新的变量Nonce，用于该交易的标记。其中，创世区块的Nonce的值与比特币的创世区块相同，为2083236893，而其他情况下为随机数值。
+
+MinerTransaction的网络费用为0。
+
+
+#### RegisterTransaction
+
+RegisterTransaction为用于资产登记的交易。
+
+RegisterTransaction在基类的基础上添加了以下新的变量：
+
+AssetType，为登记的资产类别；
+
+Name，为登记的资产名称；
+
+Amount，为发行总量，共有2种模式：
+
+    1. 限量模式：当Amount为正数时，表示当前资产的最大总量为Amount，且不可修改（股权在未来可能会支持扩股或增发，会考虑需要公司签名或一定比例的股东签名认可）。
+
+    2. 不限量模式：当Amount等于-1时，表示当前资产可以由创建者无限量发行。这种模式的自由度最大，但是公信力最低，不建议使用。
+
+Precision，为登记的资产的精度；
+
+Owner，为发行者的公钥；
+
+Admin，为资产管理员的合约散列值。
+
+RegisterTransaction的系统费，当资产种类为小蚁币（小蚁币），或小蚁股（AntShare）时，为0；否则使用默认系统费用。
+
+RegisterTransaction的验证恒为false。
+
+
+#### IssueTransaction
+
+IssueTransaction为用于分发资产的特殊交易。
+
+IssueTransaction的系统费，当版本大于等于1时为0；当输出列表中的元素的资产种类均为小蚁币（小蚁币），或小蚁股（AntShare）时，为0；否则使用默认系统费用。
+
+
+#### ClaimTransaction
+
+ClaimTransaction为用于分配 NeoGas 的交易。
+
+ClaimTransaction在基类的基础上添加了一个新的变量：Claims，用于记录该交易的交易输入列表。
+
+ClaimTransaction的网络费用为0。
+
+
+#### EnrollmentTransaction
+
+EnrollmentTransaction为用于报名成为共识候选人的特殊交易。
+
+EnrollmentTransaction在基类的基础上添加了以下新的变量：
+
+PublicKey，即记账人的公钥；
+
+ScriptHash，即使用记账人公钥生成Check Signature脚本的散列值。
+
+EnrollmentTransaction的验证恒为false。
+
+
+#### StateTransaction
+
+StateTransaction为申请见证人或共识节点投票的交易。
+
+StateTransaction在基类的基础上添加了一个新的变量Descriptors，用于记录该交易的账户状态列表或候选人状态列表。每个状态的类型由其内部成员变量指定，并取决于StateTransaction的具体功能。
+
+StateTransaction的系统费为Descriptors中各元素的系统费之和。
+
+
+#### ContractTransaction
+
+ContractTransaction为合约交易，这是最常用的一种交易。
+
+#### PublishTransaction
+
+PublishTransaction为智能合约发布的特殊交易。
+
+PublishTransaction在基类的基础上添加了以下新的变量：
+
+Script，即智能合约的脚本；
+
+ParameterList，即智能合约的参数类型列表；
+
+ReturnType，即智能合约的返回类型；
+
+NeedStorage，表示该合约是否需要存储空间；
+
+Name，即合约名称；
+
+CodeVersion，即合约版本编号；
+
+Author，即合约作者姓名；
+
+Email，即合约作者电子邮箱；
+
+Description，即合约描述。
+
+
+#### InvocationTransaction
+
+InvocationTransaction为调用智能合约的特殊交易。
+
+InvocationTransaction在基类的基础上添加了两个新的变量，Script，即智能合约的脚本，以及Gas，即智能合约的系统费。
+
+NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，分为部署费用和执行费用。部署费用是指开发者将一个智能合约部署到区块链上需要向区块链系统支付一定的费用（目前是 500 Gas）。执行费用是指每执行一条智能合约的指令都会向 NEO 系统支付一定的执行费用。具体收费标准请参阅[智能合约费用](http://docs.neo.org/zh-cn/sc/systemfees.html)。
+
+关于智能合约的相关信息，请查阅[智能合约介绍](http://docs.neo.org/zh-cn/sc/introduction.html)。
+
+
 
 ## 交易流程
 
@@ -187,28 +324,3 @@ Wallet 会启动一个线程，监听新来的block，并对block的交易进行
 （3）资产变动事件处理
 
 从未确认队列中，移除确认的新交易
-
-
-从一个钱包地址发起转账到另一个钱包地址。创建交易，签名，发送到网络。
-
-经过节点网络传播到共识节点，然后进入内存池，再由共识节点协作写入新的区块。
-
-然后新的区块再次经过节点网络传播到每一个节点。最后这笔交易被保存到各个节点
-的数据库。
-
-从一个钱包地址发起转账到另一个钱包地址。创建交易，签名，发送到网络。
-
-经过节点网络传播到共识节点，然后进入内存池，再由共识节点协作写入新的区块。
-
-然后新的区块再次经过节点网络传播到每一个节点。最后这笔交易被保存到各个节点
-的数据库。
-
-（需要描述一下 Blockchain 对象所需要提供的功能及接口级别的细节。但是不需要写LevelDB级别的实现细节）
-
-描述不同交易类型(Transaction Type)的执行过程中的不同。
-
-描述不同交易类型的 TransactionAttribute / Usage 的设置。
-
-描述上述过程的详细过程。
-
-※以上内容为建议，可根据对概念的理解调整文章的框架。
