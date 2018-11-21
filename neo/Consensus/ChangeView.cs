@@ -4,7 +4,7 @@ using System.IO;
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  Changeview message
+    ///  ChangeView message
     /// </summary>
     internal class ChangeView : ConsensusMessage
     {

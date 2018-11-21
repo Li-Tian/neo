@@ -4,16 +4,41 @@ using System.IO;
 
 namespace Neo.Ledger
 {
+    /// <summary>
+    /// 验证人状态
+    /// </summary>
     public class ValidatorState : StateBase, ICloneable<ValidatorState>
     {
+        /// <summary>
+        /// 验证人公钥
+        /// </summary>
         public ECPoint PublicKey;
+
+        /// <summary>
+        /// 是否注册
+        /// </summary>
         public bool Registered;
+
+        /// <summary>
+        /// 投票数
+        /// </summary>
         public Fixed8 Votes;
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public override int Size => base.Size + PublicKey.Size + sizeof(bool) + Votes.Size;
 
+        /// <summary>
+        /// 创建验证人
+        /// </summary>
         public ValidatorState() { }
 
+
+        /// <summary>
+        /// 创建验证人
+        /// </summary>
+        /// <param name="pubkey">验证人公钥</param>
         public ValidatorState(ECPoint pubkey)
         {
             this.PublicKey = pubkey;
@@ -31,6 +56,10 @@ namespace Neo.Ledger
             };
         }
 
+        /// <summary>
+        /// 发序列化
+        /// </summary>
+        /// <param name="reader">二进制输入流</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -46,6 +75,29 @@ namespace Neo.Ledger
             Votes = replica.Votes;
         }
 
+
+        /// <summary>
+        /// 序列化
+        /// <list type="bullet">
+        /// <item>
+        /// <term>StateVersion</term>
+        /// <description>状态版本号</description>
+        /// </item>
+        /// <item>
+        /// <term>PublicKey</term>
+        /// <description>验证人公钥</description>
+        /// </item>
+        /// <item>
+        /// <term>Registered</term>
+        /// <description>是否注册</description>
+        /// </item>
+        /// <item>
+        /// <term>Votes</term>
+        /// <description>投票数</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">二进制输出流</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);

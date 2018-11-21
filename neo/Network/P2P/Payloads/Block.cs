@@ -9,11 +9,21 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 区块数据
+    /// </summary>
     public class Block : BlockBase, IInventory, IEquatable<Block>
     {
+        /// <summary>
+        /// 交易集合
+        /// </summary>
         public Transaction[] Transactions;
 
         private Header _header = null;
+
+        /// <summary>
+        /// 区块头
+        /// </summary>
         public Header Header
         {
             get
@@ -37,8 +47,17 @@ namespace Neo.Network.P2P.Payloads
 
         InventoryType IInventory.InventoryType => InventoryType.Block;
 
+
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public override int Size => base.Size + Transactions.GetVarSize();
 
+        /// <summary>
+        /// 计算交易的网络手续费, network_fee = input.GAS - output.GAS - input.systemfee
+        /// </summary>
+        /// <param name="transactions">待计算的交易</param>
+        /// <returns></returns>
         public static Fixed8 CalculateNetFee(IEnumerable<Transaction> transactions)
         {
             Transaction[] ts = transactions.Where(p => p.Type != TransactionType.MinerTransaction && p.Type != TransactionType.ClaimTransaction).ToArray();
@@ -48,6 +67,10 @@ namespace Neo.Network.P2P.Payloads
             return amount_in - amount_out - amount_sysfee;
         }
 
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入流</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -74,6 +97,11 @@ namespace Neo.Network.P2P.Payloads
                 throw new FormatException();
         }
 
+        /// <summary>
+        /// 判断两个区块是否相等
+        /// </summary>
+        /// <param name="other">待比较区块</param>
+        /// <returns>若待比较区块为null，直接返回false。否则进行引用和hash值比较</returns>
         public bool Equals(Block other)
         {
             if (ReferenceEquals(this, other)) return true;
@@ -81,27 +109,81 @@ namespace Neo.Network.P2P.Payloads
             return Hash.Equals(other.Hash);
         }
 
+        /// <summary>
+        /// 判断区块是否等于某个对象
+        /// </summary>
+        /// <param name="obj">待对比对象</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Block);
         }
 
+        /// <summary>
+        /// 获取区块hash code
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
         }
 
+        /// <summary>
+        /// 重新构建梅克尔树
+        /// </summary>
         public void RebuildMerkleRoot()
         {
             MerkleRoot = MerkleTree.ComputeRoot(Transactions.Select(p => p.Hash).ToArray());
         }
 
+        /// <summary>
+        /// 序列化
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Version</term>
+        /// <description>状态版本号</description>
+        /// </item>
+        /// <item>
+        /// <term>PrevHash</term>
+        /// <description>上一个区块hash</description>
+        /// </item>
+        /// <item>
+        /// <term>MerkleRoot</term>
+        /// <description>梅克尔树</description>
+        /// </item>
+        /// <item>
+        /// <term>Timestamp</term>
+        /// <description>时间戳</description>
+        /// </item>
+        /// <item>
+        /// <term>Index</term>
+        /// <description>区块高度</description>
+        /// </item>
+        /// <item>
+        /// <term>ConsensusData</term>
+        /// <description>共识数据，默认为block nonce</description>
+        /// </item>
+        /// <item>
+        /// <term>NextConsensus</term>
+        /// <description>下一个区块共识地址</description>
+        /// </item>
+        /// <item>
+        /// <term>Transactions</term>
+        /// <description>交易集合</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">二进制输出流</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
             writer.Write(Transactions);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -109,6 +191,11 @@ namespace Neo.Network.P2P.Payloads
             return json;
         }
 
+
+        /// <summary>
+        /// 转成简化版的block
+        /// </summary>
+        /// <returns></returns>
         public TrimmedBlock Trim()
         {
             return new TrimmedBlock

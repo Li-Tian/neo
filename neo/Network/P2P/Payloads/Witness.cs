@@ -6,12 +6,26 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 见证人
+    /// </summary>
     public class Witness : ISerializable
     {
+        /// <summary>
+        /// 执行脚本，补全参数
+        /// </summary>
         public byte[] InvocationScript;
+
+        /// <summary>
+        /// 验证脚本
+        /// </summary>
         public byte[] VerificationScript;
 
         private UInt160 _scriptHash;
+
+        /// <summary>
+        /// 交易hash
+        /// </summary>
         public virtual UInt160 ScriptHash
         {
             get
@@ -24,6 +38,9 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public int Size => InvocationScript.GetVarSize() + VerificationScript.GetVarSize();
 
         void ISerializable.Deserialize(BinaryReader reader)
@@ -38,6 +55,10 @@ namespace Neo.Network.P2P.Payloads
             writer.WriteVarBytes(VerificationScript);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public JObject ToJson()
         {
             JObject json = new JObject();

@@ -10,28 +10,108 @@ using System.Linq;
 
 namespace Neo.Persistence
 {
+    /// <summary>
+    /// 快照
+    /// </summary>
     public abstract class Snapshot : IDisposable, IPersistence, IScriptTable
     {
+        /// <summary>
+        /// 当前正在持久化的区块
+        /// </summary>
         public Block PersistingBlock { get; internal set; }
+
+        /// <summary>
+        /// 区块
+        /// </summary>
         public abstract DataCache<UInt256, BlockState> Blocks { get; }
+
+        /// <summary>
+        /// 交易
+        /// </summary>
         public abstract DataCache<UInt256, TransactionState> Transactions { get; }
+
+        /// <summary>
+        /// 账户
+        /// </summary>
         public abstract DataCache<UInt160, AccountState> Accounts { get; }
+
+        /// <summary>
+        /// UTXO
+        /// </summary>
         public abstract DataCache<UInt256, UnspentCoinState> UnspentCoins { get; }
+
+        /// <summary>
+        /// 已花费交易
+        /// </summary>
         public abstract DataCache<UInt256, SpentCoinState> SpentCoins { get; }
+
+        /// <summary>
+        /// 验证人
+        /// </summary>
         public abstract DataCache<ECPoint, ValidatorState> Validators { get; }
+
+        /// <summary>
+        /// 资产
+        /// </summary>
         public abstract DataCache<UInt256, AssetState> Assets { get; }
+
+        /// <summary>
+        /// 合约
+        /// </summary>
         public abstract DataCache<UInt160, ContractState> Contracts { get; }
+
+        /// <summary>
+        /// 合约存储
+        /// </summary>
         public abstract DataCache<StorageKey, StorageItem> Storages { get; }
+
+        /// <summary>
+        /// 区块头hash列表
+        /// </summary>
         public abstract DataCache<UInt32Wrapper, HeaderHashList> HeaderHashList { get; }
+
+        /// <summary>
+        /// 验证人个数投票
+        /// </summary>
         public abstract MetaDataCache<ValidatorsCountState> ValidatorsCount { get; }
+
+        /// <summary>
+        /// 区块索引
+        /// </summary>
         public abstract MetaDataCache<HashIndexState> BlockHashIndex { get; }
+
+        /// <summary>
+        /// 区块头索引
+        /// </summary>
         public abstract MetaDataCache<HashIndexState> HeaderHashIndex { get; }
 
+        /// <summary>
+        /// 当前区块高度
+        /// </summary>
         public uint Height => BlockHashIndex.Get().Index;
+    
+        /// <summary>
+        /// 区块头高度
+        /// </summary>
         public uint HeaderHeight => HeaderHashIndex.Get().Index;
+
+        /// <summary>
+        /// 区块hash
+        /// </summary>
         public UInt256 CurrentBlockHash => BlockHashIndex.Get().Hash;
+
+        /// <summary>
+        /// 区块头hash
+        /// </summary>
         public UInt256 CurrentHeaderHash => HeaderHashIndex.Get().Hash;
 
+        /// <summary>
+        /// 计算可以Claim的GAS
+        /// </summary>
+        /// <param name="inputs">claim指向的交易</param>
+        /// <param name="ignoreClaimed">是否忽略已经claims的input</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentException">若ignoreClaimed设置为false，且发现有已经claim的input时，抛出该异常</exception>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
         {
             List<SpentCoin> unclaimed = new List<SpentCoin>();
@@ -56,6 +136,12 @@ namespace Neo.Persistence
             return CalculateBonusInternal(unclaimed);
         }
 
+        /// <summary>
+        /// 计算可以claim到的GAS奖励
+        /// </summary>
+        /// <param name="inputs">已经花费尚未claim的output</param>
+        /// <param name="height_end">花费的高度</param>
+        /// <returns></returns>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint height_end)
         {
             List<SpentCoin> unclaimed = new List<SpentCoin>();
@@ -115,11 +201,18 @@ namespace Neo.Persistence
             return amount_claimed;
         }
 
+        /// <summary>
+        /// 克隆快照
+        /// </summary>
+        /// <returns></returns>
         public Snapshot Clone()
         {
             return new CloneSnapshot(this);
         }
 
+        /// <summary>
+        /// 持久化到磁盘
+        /// </summary>
         public virtual void Commit()
         {
             Accounts.DeleteWhere((k, v) => !v.IsFrozen && v.Votes.Length == 0 && v.Balances.All(p => p.Value <= Fixed8.Zero));
@@ -140,6 +233,9 @@ namespace Neo.Persistence
             HeaderHashIndex.Commit();
         }
 
+        /// <summary>
+        /// 释放资源
+        /// </summary>
         public virtual void Dispose()
         {
         }
@@ -149,6 +245,11 @@ namespace Neo.Persistence
             return Contracts[new UInt160(script_hash)].Script;
         }
 
+        /// <summary>
+        /// 获取一笔交易尚未Claim的outputs
+        /// </summary>
+        /// <param name="hash">待查询交易hash</param>
+        /// <returns></returns>
         public Dictionary<ushort, SpentCoin> GetUnclaimed(UInt256 hash)
         {
             TransactionState tx_state = Transactions.TryGet(hash);
@@ -170,6 +271,11 @@ namespace Neo.Persistence
         }
 
         private ECPoint[] _validators = null;
+
+        /// <summary>
+        /// 获取当前参与共识的验证人
+        /// </summary>
+        /// <returns></returns>
         public ECPoint[] GetValidators()
         {
             if (_validators == null)
@@ -179,6 +285,11 @@ namespace Neo.Persistence
             return _validators;
         }
 
+        /// <summary>
+        /// 获取参与共识的验证人列表
+        /// </summary>
+        /// <param name="others">打包的交易</param>
+        /// <returns></returns>
         public IEnumerable<ECPoint> GetValidators(IEnumerable<Transaction> others)
         {
             Snapshot snapshot = Clone();

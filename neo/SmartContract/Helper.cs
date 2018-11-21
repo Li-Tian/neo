@@ -6,8 +6,16 @@ using System;
 
 namespace Neo.SmartContract
 {
+    /// <summary>
+    /// 智能合约帮助类，提供了脚本的多签、单签判断等功能
+    /// </summary>
     public static class Helper
     {
+        /// <summary>
+        /// 判断脚本是否为多签脚本,主要是根据多签脚本的结构来判断。
+        /// </summary>
+        /// <param name="script">需要判断的脚本</param>
+        /// <returns>是多签脚本则返回true，否则返回false</returns>
         public static bool IsMultiSigContract(this byte[] script)
         {
             int m, n = 0;
@@ -55,7 +63,11 @@ namespace Neo.SmartContract
             if (script.Length != i) return false;
             return true;
         }
-
+        /// <summary>
+        /// 判断脚本是否为签名脚本，根据签名脚本的结构来判断
+        /// </summary>
+        /// <param name="script">需要判断的脚本</param>
+        /// <returns>是签名脚本则返回true，否则返回false</returns>
         public static bool IsSignatureContract(this byte[] script)
         {
             if (script.Length != 35) return false;
@@ -63,12 +75,20 @@ namespace Neo.SmartContract
                 return false;
             return true;
         }
-
+        /// <summary>
+        /// 判断脚本是否为标准脚本，如果脚本是签名脚本或者多签脚本，则该脚本为标准脚本
+        /// </summary>
+        /// <param name="script">需要判断的脚本</param>
+        /// <returns>是标准脚本则返回true，否则返回false</returns>
         public static bool IsStandardContract(this byte[] script)
         {
             return script.IsSignatureContract() || script.IsMultiSigContract();
         }
-
+        /// <summary>
+        /// 获取脚本的哈希值，对脚本做Hash160
+        /// </summary>
+        /// <param name="script">脚本字节数组</param>
+        /// <returns>脚本的哈希值</returns>
         public static UInt160 ToScriptHash(this byte[] script)
         {
             return new UInt160(Crypto.Default.Hash160(script));

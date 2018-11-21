@@ -1,10 +1,7 @@
 <center><h2> The dBFT Algorithm </h2></center>
 
-
 &emsp;&emsp;dBFT(Delegated Byzantine Fault Tolerant) algorithm is based on PBFT(Practical Byzantine Fault Tolerance) algorithm, more suitable in blockchain. PBFT algorithm can solve distributed network consensus effectively, but the more nodes join, the faster the performance drops, as the time complexity is O(n<sup>2</sup>) . On this basis, NEO proposes a dBFT algorithm which combines the characteristics of PoS mode. By voting on the blockchain, it decides the next round of consensus nodes, namely authorizing a few nodes to create block, and the other nodes as ordinary nodes to receive and verify block.
 
-
-### List of Terms
 
 * **Consensus Node**: This node participates in the consensus activity, make a block proposal and vote.
 
@@ -41,7 +38,6 @@
 - 𝑏𝑙𝑜𝑐𝑘：The proposal block
 
 - 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: The block signature of the `i`th consensus node.
-
 
 **General Procedures**
 
@@ -113,3 +109,7 @@ With the k increase, the overtime waiting time will increase exponentially, whic
 [2] [Consensus Diagram](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
 [3] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
+
+
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>

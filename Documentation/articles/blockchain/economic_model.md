@@ -1,12 +1,10 @@
 <center><h2>经济模型</h2></center>
 
-&emsp;&emsp;NEO中原生定义了两种代币，NEO（缩写符号NEO）和NeoGas（缩写符号GAS）。
+### **原生代币的生成和分发**
 
-<p align="center"><img src="../../images/blockchain/economic_model.jpg" /><br></p
+Neo中原生定义了两种代币，NEO（缩写符号NEO）和NeoGas（缩写符号GAS）。NEO 是管理代币，总量1亿，最小单位为1NEO, 不可分割。在创世块中生成了NEO资产，并存放在备用共识节点（StandbyValidators）地址的三分之二合约签名地址上。持有NEO可以参与NEO网络的治理，包括投票选举共识节点和修改网络参数等。另外，持有NEO就会参与GAS的权益分红，根据持有NEO的数量和币龄，获得相应的GAS收益。GAS是功能代币，也叫网络燃料代币。NEO网络上的各种交易操作和共识节点激励均是以GAS来支付。GAS的总量也是1亿，可分割。最小单位0.00000001。Gas在创始块中生成了，但没有分发出去。由每个区块产生可以提取的GAS，再由持有NEO用户，通过`ClaimTransaction`交易提取其持有的NEO所对应的分红GAS到其账户上。 在NEO中，每200万个区块为一个GAS奖励调整周期（200万个区块*~15秒/一个区块~=1年），通过一个衰减的算法在约 22 年的时间内逐步生成1亿的GAS。
 
-&emsp;&emsp;NEO 属于管理代币，总量1亿，最小单位为1NEO。在创世块中定义了NEO资产，并存放在备用共识节点地址的三分之二合约签名地址上。NEO属于权益类资产，持有NEO可以参与NEO网络的治理，包括投票选举共识节点，修改网络参数等，另外持有NEO将参与GAS的权益分红，根据持有NEO的数量和币龄，获得相应的GAS收益。
-
-&emsp;&emsp;GAS 属于网络燃料代币，NEO网络上的各种交易操作，和共识节点激励均是GAS支付。GAS的总量也是1亿份，最小单位0.00000001, 但并非在创世块中创建， 而是由每个区块产生可以提取的GAS，再由持有NEO用户，通过`Claim`交易提取到持有NEO的分红GAS到账户上。 在NEO中，每200W个区块为一个GAS奖励调整周期（约一年），通过一个衰减的算法在约 22 年的时间内逐步生成1亿的GAS。
+<p align="center"><img src="../../images/blockchain/gas_distribution.jpg" /><br></p
 
 
 | 周期 |  区块高度范围 |   区块奖励GAS |
@@ -22,3 +20,6 @@
 |  23~    |  4600W ~ |    0 |
 
 
+### **收费**
+
+<p align="center"><img src="../../images/blockchain/economic_model.jpg" /><br></p

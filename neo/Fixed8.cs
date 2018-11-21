@@ -5,9 +5,12 @@ using System.IO;
 
 namespace Neo
 {
+    // <summary>
+    // Accurate to 10^-8 64-bit fixed-point numbers minimize rounding errors.
+    // By controlling the accuracy of the multiplier, rounding errors can be completely eliminated.
+    // </summary>
     /// <summary>
-    /// Accurate to 10^-8 64-bit fixed-point numbers minimize rounding errors.
-    /// By controlling the accuracy of the multiplier, rounding errors can be completely eliminated.
+    /// 用一个long类型的value加上固定的10^8的常数，来表达一个10^-8 64位的定点数
     /// </summary>
     public struct Fixed8 : IComparable<Fixed8>, IEquatable<Fixed8>, IFormattable, ISerializable
     {

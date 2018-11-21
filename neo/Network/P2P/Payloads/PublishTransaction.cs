@@ -9,17 +9,55 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 发布智能合约交易【已弃用】
+    /// </summary>
     [Obsolete]
     public class PublishTransaction : Transaction
     {
+        /// <summary>
+        /// 合约脚本
+        /// </summary>
         public byte[] Script;
+
+        /// <summary>
+        /// 合约参数列表
+        /// </summary>
         public ContractParameterType[] ParameterList;
+
+        /// <summary>
+        /// 合约返回值类型
+        /// </summary>
         public ContractParameterType ReturnType;
+
+        /// <summary>
+        /// 是否需要存储空间
+        /// </summary>
         public bool NeedStorage;
+
+        /// <summary>
+        /// 合约名字
+        /// </summary>
         public string Name;
+
+        /// <summary>
+        /// 代码版本号
+        /// </summary>
         public string CodeVersion;
+
+        /// <summary>
+        /// 作者
+        /// </summary>
         public string Author;
+
+        /// <summary>
+        /// 邮箱
+        /// </summary>
         public string Email;
+
+        /// <summary>
+        /// 描述
+        /// </summary>
         public string Description;
 
         private UInt160 _scriptHash;
@@ -35,13 +73,23 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public override int Size => base.Size + Script.GetVarSize() + ParameterList.GetVarSize() + sizeof(ContractParameterType) + Name.GetVarSize() + CodeVersion.GetVarSize() + Author.GetVarSize() + Email.GetVarSize() + Description.GetVarSize();
 
+        /// <summary>
+        /// 创建智能合约发布交易
+        /// </summary>
         public PublishTransaction()
             : base(TransactionType.PublishTransaction)
         {
         }
 
+        /// <summary>
+        /// 反序列化非data数据
+        /// </summary>
+        /// <param name="reader">二进制输入流</param>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version > 1) throw new FormatException();
@@ -59,6 +107,48 @@ namespace Neo.Network.P2P.Payloads
             Description = reader.ReadVarString(65536);
         }
 
+        /// <summary>
+        /// 序列化非data数据
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Script</term>
+        /// <description>交易nonce值</description>
+        /// </item>
+        /// <item>
+        /// <term>ParameterList</term>
+        /// <description>参数列表</description>
+        /// </item>
+        /// <item>
+        /// <term>ReturnType</term>
+        /// <description>返回值类型</description>
+        /// </item> 
+        /// <item>
+        /// <term>NeedStorage</term>
+        /// <description>是否需要存储</description>
+        /// </item>
+        /// <item>
+        /// <term>Name</term>
+        /// <description>合约名字</description>
+        /// </item>
+        /// <item>
+        /// <term>CodeVersion</term>
+        /// <description>代码版本号</description>
+        /// </item>
+        /// <item>
+        /// <term>Author</term>
+        /// <description>作者</description>
+        /// </item>
+        /// <item>
+        /// <term>Email</term>
+        /// <description>邮箱</description>
+        /// </item>
+        /// <item>
+        /// <term>Description</term>
+        /// <description>描述</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">二进制输出流</param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.WriteVarBytes(Script);
@@ -72,6 +162,10 @@ namespace Neo.Network.P2P.Payloads
             writer.WriteVarString(Description);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -90,6 +184,13 @@ namespace Neo.Network.P2P.Payloads
             return json;
         }
 
+
+        /// <summary>
+        /// 校验脚本
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <param name="mempool">内存池交易</param>
+        /// <returns>返回固定值false，已弃用</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             return false;

@@ -8,7 +8,6 @@ using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.Plugins;
-using Neo.SmartContract;
 using Neo.Wallets;
 using System;
 using System.Collections.Generic;
@@ -31,6 +30,8 @@ namespace Neo.Consensus
         /// <summary>
         /// Update the current view number message
         /// </summary>
+
+        /// </summary>
         public class SetViewNumber { public byte ViewNumber; }
 
         /// <summary>
@@ -41,9 +42,9 @@ namespace Neo.Consensus
         /// <summary>
         /// Consensus context in current round
         /// </summary>
-        private readonly ConsensusContext context = new ConsensusContext();
+        private readonly ConsensusContext context;
         private readonly NeoSystem system;
-        private readonly Wallet wallet;
+
         /// <summary>
         /// The latest block received time
         /// </summary>
@@ -57,7 +58,7 @@ namespace Neo.Consensus
         public ConsensusService(NeoSystem system, Wallet wallet)
         {
             this.system = system;
-            this.wallet = wallet;
+            this.context = new ConsensusContext(wallet);
         }
 
         /// <summary>
@@ -87,8 +88,8 @@ namespace Neo.Consensus
                 {
                     Log($"send prepare response");
                     context.State |= ConsensusState.SignatureSent;
-                    context.Signatures[context.MyIndex] = context.MakeHeader().Sign(context.KeyPair);
-                    SignAndRelay(context.MakePrepareResponse(context.Signatures[context.MyIndex]));
+                    context.SignHeader();
+                    system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakePrepareResponse(context.Signatures[context.MyIndex]) });
                     CheckSignatures();
                 }
                 else
@@ -139,17 +140,7 @@ namespace Neo.Consensus
         {
             if (context.Signatures.Count(p => p != null) >= context.M && context.TransactionHashes.All(p => context.Transactions.ContainsKey(p)))
             {
-                Contract contract = Contract.CreateMultiSigContract(context.M, context.Validators);
-                Block block = context.MakeHeader();
-                ContractParametersContext sc = new ContractParametersContext(block);
-                for (int i = 0, j = 0; i < context.Validators.Length && j < context.M; i++)
-                    if (context.Signatures[i] != null)
-                    {
-                        sc.AddSignature(contract, context.Validators[i], context.Signatures[i]);
-                        j++;
-                    }
-                sc.Verifiable.Witnesses = sc.GetWitnesses();
-                block.Transactions = context.TransactionHashes.Select(p => context.Transactions[p]).ToArray();
+                Block block = context.CreateBlock();
                 Log($"relay block: {block.Hash}");
                 system.LocalNode.Tell(new LocalNode.Relay { Inventory = block });
                 context.State |= ConsensusState.BlockSent;
@@ -163,7 +154,7 @@ namespace Neo.Consensus
         private void InitializeConsensus(byte view_number)
         {
             if (view_number == 0)
-                context.Reset(wallet);
+                context.Reset();
             else
                 context.ChangeView(view_number);
             if (context.MyIndex < 0) return;
@@ -181,7 +172,7 @@ namespace Neo.Consensus
             }
             else
             {
-                context.State = ConsensusState.Backup;
+                context.State = ConsensusState.Backup;// 重置 State
                 ChangeTimer(TimeSpan.FromSeconds(Blockchain.SecondsPerBlock << (view_number + 1)));
             }
         }
@@ -254,7 +245,6 @@ namespace Neo.Consensus
             }
         }
 
-
         /// <summary>
         /// BlockPersistComleted message proccessing
         /// </summary>
@@ -266,9 +256,8 @@ namespace Neo.Consensus
             InitializeConsensus(0);
         }
 
-
         /// <summary>
-        /// PrepareRequest消息处理
+        /// PrepareRequest message proccessing
         /// </summary>
         /// <remarks>
         /// 1. Validate the message
@@ -413,11 +402,10 @@ namespace Neo.Consensus
                 context.State |= ConsensusState.RequestSent;
                 if (!context.State.HasFlag(ConsensusState.SignatureSent))
                 {
-                    context.Fill(wallet);
-                    context.Timestamp = Math.Max(DateTime.UtcNow.ToTimestamp(), context.Snapshot.GetHeader(context.PrevHash).Timestamp + 1);
-                    context.Signatures[context.MyIndex] = context.MakeHeader().Sign(context.KeyPair);
+                    context.Fill();
+                    context.SignHeader();
                 }
-                SignAndRelay(context.MakePrepareRequest());
+                system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakePrepareRequest() });
                 if (context.TransactionHashes.Length > 1)
                 {
                     foreach (InvPayload payload in InvPayload.CreateGroup(InventoryType.TX, context.TransactionHashes.Skip(1).ToArray()))
@@ -445,6 +433,9 @@ namespace Neo.Consensus
             AddTransaction(transaction, true);
         }
 
+        /// <summary>
+        /// Post stop method, free resource
+        /// </summary>
         protected override void PostStop()
         {
             Log("OnStop");
@@ -473,88 +464,87 @@ namespace Neo.Consensus
             context.ExpectedView[context.MyIndex]++;
             Log($"request change view: height={context.BlockIndex} view={context.ViewNumber} nv={context.ExpectedView[context.MyIndex]} state={context.State}");
             ChangeTimer(TimeSpan.FromSeconds(Blockchain.SecondsPerBlock << (context.ExpectedView[context.MyIndex] + 1)));
-            SignAndRelay(context.MakeChangeView());
+            system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakeChangeView() });
             CheckExpectedView(context.ExpectedView[context.MyIndex]);
         }
 
-        /// <summary>
-        /// Sign payload and replay
-        /// </summary>
-        /// <param name="payload"></param>
-        private void SignAndRelay(ConsensusPayload payload)
-        {
-            ContractParametersContext sc;
-            try
-            {
-                sc = new ContractParametersContext(payload);
-                wallet.Sign(sc);
-            }
-            catch (InvalidOperationException)
-            {
-                return;
-            }
-            sc.Verifiable.Witnesses = sc.GetWitnesses();
-            system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = payload });
-        }
-    }
+        // This method is deleted by 70680c4
+        ///// <summary>
+        ///// 签名数据并转发
+        ///// </summary>
+        ///// <param name="payload">待签名数据</param>
+        //private void SignAndRelay(ConsensusPayload payload)
+        //{
+        //    ContractParametersContext sc;
+        //    try
+        //    {
+        //        sc = new ContractParametersContext(payload);
+        //        wallet.Sign(sc);
+        //    }
+        //    catch (InvalidOperationException)
+        //    {
+        //        return;
+        //    }
+        //    sc.Verifiable.Witnesses = sc.GetWitnesses();
+        //    system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = payload });
+        //}
+        //}
 
-    /// <summary>
-    /// Consensus service mailbox
-    /// </summary>
-    internal class ConsensusServiceMailbox : PriorityMailbox
-    {
-        /// <summary>
-        /// Register consensus service mailbox
-        /// </summary>
-        /// <param name="settings"></param>
-        /// <param name="config"></param>
-        public ConsensusServiceMailbox(Akka.Actor.Settings settings, Config config)
-            : base(settings, config)
+        internal class ConsensusServiceMailbox : PriorityMailbox
         {
-        }
-
-        /// <summary>
-        /// Check if the message is high priority
-        /// <list type="bullet">
-        /// <item>
-        /// <term>ConsensusPayload</term>
-        /// <description>high priority</description>
-        /// </item>
-        /// <item>
-        /// <term>SetViewNumber</term>
-        /// <description>high priority</description>
-        /// </item>
-        /// <item>
-        /// <term>Timer</term>
-        /// <description>high priority</description>
-        /// </item>
-        /// <item>
-        /// <term>Blockchain.PersistCompleted </term>
-        /// <description>high priority</description>
-        /// </item>
-        /// <item>
-        /// <term>Start</term>
-        /// <description>low priority</description>
-        /// </item>
-        /// <item>
-        /// <term>Transaction</term>
-        /// <description>low priority</description>
-        /// </item>
-        /// </list>
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        protected override bool IsHighPriority(object message)
-        {
-            switch (message)
+            /// <summary>
+            /// Register consensus service mailbox
+            /// </summary>
+            /// <param name="settings"></param>
+            /// <param name="config"></param>
+            public ConsensusServiceMailbox(Akka.Actor.Settings settings, Config config)
+                : base(settings, config)
             {
-                case ConsensusPayload _:
-                case ConsensusService.SetViewNumber _:
-                case ConsensusService.Timer _:
-                case Blockchain.PersistCompleted _:
-                    return true;
-                default:
-                    return false;
+            }
+
+            /// <summary>
+            /// Check if the message is high priority
+            /// <list type="bullet">
+            /// <item>
+            /// <term>ConsensusPayload</term>
+            /// <description>high priority</description>
+            /// </item>
+            /// <item>
+            /// <term>SetViewNumber</term>
+            /// <description>high priority</description>
+            /// </item>
+            /// <item>
+            /// <term>Timer</term>
+            /// <description>high priority</description>
+            /// </item>
+            /// <item>
+            /// <term>Blockchain.PersistCompleted </term>
+            /// <description>high priority</description>
+            /// </item>
+            /// <item>
+            /// <term>Start</term>
+            /// <description>low priority</description>
+            /// </item>
+            /// <item>
+            /// <term>Transaction</term>
+            /// <description>low priority</description>
+            /// </item>
+            /// </list>
+            /// </summary>
+            /// <param name="message"></param>
+            /// <returns></returns>
+            protected override bool IsHighPriority(object message)
+            {
+                switch (message)
+                {
+                    case ConsensusPayload _:
+                    case ConsensusService.SetViewNumber _:
+                    case ConsensusService.Timer _:
+                    case Blockchain.PersistCompleted _:
+                        return true;
+                    default:
+                        return false;
+                }
             }
         }
     }

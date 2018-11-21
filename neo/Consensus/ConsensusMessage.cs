@@ -6,12 +6,12 @@ using System.IO;
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  Consensus message
+    ///  Abstract consensus messagee
     /// </summary>
     internal abstract class ConsensusMessage : ISerializable
     {
         /// <summary>
-        /// Reflection cache for ConsensusMessageType
+        /// Consensus message reflection cache
         /// </summary>
         private static ReflectionCache<byte> ReflectionCache = ReflectionCache<byte>.CreateFromEnum<ConsensusMessageType>();
 

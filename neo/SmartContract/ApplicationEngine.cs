@@ -12,6 +12,9 @@ using System.Text;
 
 namespace Neo.SmartContract
 {
+    /// <summary>
+    /// 智能合约的执行引擎类，主要负责智能合约的执行和相关的检测功能
+    /// </summary>
     public class ApplicationEngine : ExecutionEngine
     {
         #region Limits
@@ -54,10 +57,22 @@ namespace Neo.SmartContract
 
         private int stackitem_count = 0;
         private bool is_stackitem_count_strict = true;
-
+        /// <summary>
+        /// 智能合约执行过程中的Gas消耗量
+        /// </summary>
         public Fixed8 GasConsumed => new Fixed8(gas_consumed);
+        /// <summary>
+        /// Neo的互操作服务
+        /// </summary>
         public new NeoService Service => (NeoService)base.Service;
-
+        /// <summary>
+        /// 执行引擎的构造函数
+        /// </summary>
+        /// <param name="trigger">合约触发器类型，现阶段一共有四种触发器。</param>
+        /// <param name="container">脚本容器</param>
+        /// <param name="snapshot">快照</param>
+        /// <param name="gas">合约支付的Gas数量</param>
+        /// <param name="testMode">是否为测试模式</param>
         public ApplicationEngine(TriggerType trigger, IScriptContainer container, Snapshot snapshot, Fixed8 gas, bool testMode = false)
             : base(container, Cryptography.Crypto.Default, snapshot, new NeoService(trigger, snapshot))
         {
@@ -391,13 +406,18 @@ namespace Neo.SmartContract
                     return true;
             }
         }
-
+        /// <summary>
+        /// 释放执行引擎的资源，包括虚拟机和互操作服务资源
+        /// </summary>
         public override void Dispose()
         {
             base.Dispose();
             Service.Dispose();
         }
-
+        /// <summary>
+        /// 执行智能合约引擎，引擎将依次读取操作码，检测虚拟机状态，同时执行操作码
+        /// </summary>
+        /// <returns>返回虚拟机执行状态，如果虚拟机没有错误，则返回true，否则返回false</returns>
         public new bool Execute()
         {
             try
@@ -457,7 +477,11 @@ namespace Neo.SmartContract
             }
             return count;
         }
-
+        /// <summary>
+        /// 获取操作码对应的Gas消耗量，此处需要注意Gas的单位，最后将乘以Ratio
+        /// </summary>
+        /// <param name="nextInstruction">Opcode类型的下一步执行的操作码</param>
+        /// <returns>消耗Gas的值</returns>
         protected virtual long GetPrice(OpCode nextInstruction)
         {
             if (nextInstruction <= OpCode.PUSH16) return 0;
@@ -495,7 +519,10 @@ namespace Neo.SmartContract
                 default: return 1;
             }
         }
-
+        /// <summary>
+        /// 获取系统调用对应的Gas消耗量
+        /// </summary>
+        /// <returns>消耗Gas的值</returns>
         protected virtual long GetPriceForSysCall()
         {
             if (CurrentContext.InstructionPointer >= CurrentContext.Script.Length - 3)
@@ -609,7 +636,16 @@ namespace Neo.SmartContract
             if (!CheckDynamicInvoke(nextOpcode)) return false;
             return true;
         }
-
+        /// <summary>
+        /// 新建一个合约执行引擎，加载并执行脚本。
+        /// </summary>
+        /// <param name="script">脚本的字节码</param>
+        /// <param name="snapshot">区块链快照</param>
+        /// <param name="container">脚本容器</param>
+        /// <param name="persistingBlock">可选参数，合约执行时区块链当前生成的区块，主要用于获取合约执行的时间戳</param>
+        /// <param name="testMode">是否为测试模式</param>
+        /// <param name="extraGAS">除去免费额度外所需要的Gas数量</param>
+        /// <returns>返回一个执行完成的引擎实例</returns>
         public static ApplicationEngine Run(byte[] script, Snapshot snapshot,
             IScriptContainer container = null, Block persistingBlock = null, bool testMode = false, Fixed8 extraGAS = default(Fixed8))
         {
@@ -634,7 +670,15 @@ namespace Neo.SmartContract
             engine.Execute();
             return engine;
         }
-        
+        /// <summary>
+        /// 重载Run方法，这里为没有传入snapshot的方法。
+        /// </summary>
+        /// <param name="script">脚本的字节码</param>
+        /// <param name="container">脚本容器</param>
+        /// <param name="persistingBlock">可选参数，合约执行时区块链当前生成的区块，主要用于获取合约执行的时间戳</param>
+        /// <param name="testMode">是否为测试模式</param>
+        /// <param name="extraGAS">除去免费额度外所需要的Gas数量</param>
+        /// <returns></returns>
         public static ApplicationEngine Run(byte[] script, IScriptContainer container = null, Block persistingBlock = null, bool testMode = false, Fixed8 extraGAS = default(Fixed8))
         {
             using (Snapshot snapshot = Blockchain.Singleton.GetSnapshot())

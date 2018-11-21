@@ -7,8 +7,14 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 发布资产交易
+    /// </summary>
     public class IssueTransaction : Transaction
     {
+        /// <summary>
+        /// 系统手续费  1）若交易类型大于等于1，手续费为0  2）若发布的资产是NEO，GAS则手续费为0 
+        /// </summary>
         public override Fixed8 SystemFee
         {
             get
@@ -20,16 +26,30 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 创建发布资产
+        /// </summary>
         public IssueTransaction()
             : base(TransactionType.IssueTransaction)
         {
         }
 
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入流</param>
+        /// <exception cref="System.FormatException">若交易版本大于1，则抛出该异常</exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version > 1) throw new FormatException();
         }
 
+        /// <summary>
+        /// 获取验证脚本hash
+        /// </summary>
+        /// <param name="snapshot"></param>
+        /// <returns>交易本身的验证脚本，以及发行者的地址脚本hash</returns>
+        /// <exception cref="System.InvalidOperationException">若发行的资产不存在，则抛出该 异常</exception>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             HashSet<UInt160> hashes = new HashSet<UInt160>(base.GetScriptHashesForVerifying(snapshot));
@@ -42,6 +62,12 @@ namespace Neo.Network.P2P.Payloads
             return hashes.OrderBy(p => p).ToArray();
         }
 
+        /// <summary>
+        /// 校验交易
+        /// </summary>
+        /// <param name="snapshot">区块快照</param>
+        /// <param name="mempool">内存池交易</param>
+        /// <returns>1）若资产变化增多情况等于0，返回false；2）若发行的资产不存在返回false；3）若该交易的发行量加上内存池其他发行量，超过了发行总量，则返回false</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (!base.Verify(snapshot, mempool)) return false;

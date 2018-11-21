@@ -7,11 +7,25 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 交易属性
+    /// </summary>
     public class TransactionAttribute : IInteropInterface, ISerializable
     {
+
+        /// <summary>
+        /// 属性用法
+        /// </summary>
         public TransactionAttributeUsage Usage;
+
+        /// <summary>
+        /// 属性值
+        /// </summary>
         public byte[] Data;
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public int Size
         {
             get
@@ -57,6 +71,10 @@ namespace Neo.Network.P2P.Payloads
                 writer.Write(Data);
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns></returns>
         public JObject ToJson()
         {
             JObject json = new JObject();

@@ -14,8 +14,16 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.SmartContract
 {
+    /// <summary>
+    /// Neo互操作服务类，主要提供了Neo命名空间的互操作服务方法
+    /// </summary>
     public class NeoService : StandardService
     {
+        /// <summary>
+        /// Neo互操作服务构造函数
+        /// </summary>
+        /// <param name="trigger">触发器类型</param>
+        /// <param name="snapshot">当前区块链的快照</param>
         public NeoService(TriggerType trigger, Snapshot snapshot)
             : base(trigger, snapshot)
         {
@@ -855,13 +863,20 @@ namespace Neo.SmartContract
 
         private bool Iterator_Create(ExecutionEngine engine)
         {
-            if (engine.CurrentContext.EvaluationStack.Pop() is Map map)
+            IIterator iterator;
+            switch (engine.CurrentContext.EvaluationStack.Pop())
             {
-                IIterator iterator = new MapWrapper(map);
-                engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(iterator));
-                return true;
+                case VMArray array:
+                    iterator = new ArrayWrapper(array);
+                    break;
+                case Map map:
+                    iterator = new MapWrapper(map);
+                    break;
+                default:
+                    return false;
             }
-            return false;
+            engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(iterator));
+            return true;
         }
 
         private bool Iterator_Key(ExecutionEngine engine)

@@ -8,18 +8,46 @@ using System.Linq;
 
 namespace Neo.Ledger
 {
+    /// <summary>
+    /// 用户状态
+    /// </summary>
     public class AccountState : StateBase, ICloneable<AccountState>
     {
+        /// <summary>
+        /// 脚本合约hash
+        /// </summary>
         public UInt160 ScriptHash;
+
+        /// <summary>
+        /// 账户是否冻结
+        /// </summary>
         public bool IsFrozen;
+
+        /// <summary>
+        /// 投票列表
+        /// </summary>
         public ECPoint[] Votes;
+
+        /// <summary>
+        /// 全局资产余额
+        /// </summary>
         public Dictionary<UInt256, Fixed8> Balances;
 
+        /// <summary>
+        /// 存储大小
+        /// </summary>
         public override int Size => base.Size + ScriptHash.Size + sizeof(bool) + Votes.GetVarSize()
             + IO.Helper.GetVarSize(Balances.Count) + Balances.Count * (32 + 8);
 
+        /// <summary>
+        /// 创建用户状态
+        /// </summary>
         public AccountState() { }
 
+        /// <summary>
+        /// 创建用户状态
+        /// </summary>
+        /// <param name="hash">脚本hash</param>
         public AccountState(UInt160 hash)
         {
             this.ScriptHash = hash;
@@ -39,6 +67,10 @@ namespace Neo.Ledger
             };
         }
 
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入流</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -57,6 +89,10 @@ namespace Neo.Ledger
             }
         }
 
+        /// <summary>
+        /// 从副本拷贝值
+        /// </summary>
+        /// <param name="replica">副本</param>
         void ICloneable<AccountState>.FromReplica(AccountState replica)
         {
             ScriptHash = replica.ScriptHash;
@@ -65,6 +101,11 @@ namespace Neo.Ledger
             Balances = replica.Balances;
         }
 
+        /// <summary>
+        /// 查询资产剩余
+        /// </summary>
+        /// <param name="asset_id">资产ID</param>
+        /// <returns>资产余额，若没有查询到时，返回0</returns>
         public Fixed8 GetBalance(UInt256 asset_id)
         {
             if (!Balances.TryGetValue(asset_id, out Fixed8 value))
@@ -72,6 +113,32 @@ namespace Neo.Ledger
             return value;
         }
 
+        /// <summary>
+        /// 序列化
+        /// <list type="bullet">
+        /// <item>
+        /// <term>StateVersion</term>
+        /// <description>状态版本号</description>
+        /// </item>
+        /// <item>
+        /// <term>ScriptHash</term>
+        /// <description>脚本合约hash</description>
+        /// </item>
+        /// <item>
+        /// <term>IsFrozen</term>
+        /// <description>账户是否冻结</description>
+        /// </item>
+        /// <item>
+        /// <term>Votes</term>
+        /// <description>投票列表</description>
+        /// </item>
+        /// <item>
+        /// <term>Balances</term>
+        /// <description>全局资产余额</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">二进制输出流</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
@@ -87,6 +154,10 @@ namespace Neo.Ledger
             }
         }
 
+        /// <summary>
+        /// 转成json对象
+        /// </summary>
+        /// <returns>格式： { 'script_hash': 'xxxx', 'frozen': false, 'votes':['xxxx'], 'balances':{ 'asset_xxx': 'value...' } } </returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

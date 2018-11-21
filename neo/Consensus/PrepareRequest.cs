@@ -7,7 +7,7 @@ using System.Linq;
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  PrepareRequest message
+    ///  PrepareRequest消息.
     /// </summary>
     internal class PrepareRequest : ConsensusMessage
     {
@@ -61,7 +61,6 @@ namespace Neo.Consensus
                 throw new FormatException();
             Signature = reader.ReadBytes(64);
         }
-
 
         /// <summary>
         /// Serialize this message
