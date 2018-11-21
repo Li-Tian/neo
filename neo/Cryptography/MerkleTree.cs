@@ -8,7 +8,9 @@ namespace Neo.Cryptography
     public class MerkleTree
     {
         private MerkleTreeNode root;
-
+        /// <summary>
+        /// MerkleTree的深度
+        /// </summary>
         public int Depth { get; private set; }
 
         internal MerkleTree(UInt256[] hashes)
@@ -44,7 +46,12 @@ namespace Neo.Cryptography
             }
             return Build(parents); //TailCall
         }
-
+        /// <summary>
+        /// 传入所有交易的哈希值, 构建MerkleTree, 并返回构建后根节点的哈希值
+        /// </summary>
+        /// <param name="hashes">用来构建Merkle树的交易哈希数组</param>
+        /// <exception cref="ArgumentException">如果没有数据拿来构建Merkle树</exception>
+        /// <returns>返回MerkleTree根节点的哈希值</returns>
         public static UInt256 ComputeRoot(UInt256[] hashes)
         {
             if (hashes.Length == 0) throw new ArgumentException();
@@ -67,6 +74,10 @@ namespace Neo.Cryptography
             }
         }
 
+        /// <summary>
+        /// 通过深度优先搜索算法将一个Merkle树的所有叶节点的哈希值转换成数组返回
+        /// </summary>
+        /// <returns>所有叶节点的交易哈希值构成的数组</returns>
         // depth-first order
         public UInt256[] ToHashArray()
         {
@@ -75,6 +86,10 @@ namespace Neo.Cryptography
             return hashes.ToArray();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="flags"></param>
         public void Trim(BitArray flags)
         {
             flags = new BitArray(flags);
