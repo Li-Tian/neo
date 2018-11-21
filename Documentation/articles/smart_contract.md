@@ -87,7 +87,7 @@ VerificationR, ApplicationR则使智能合约能够拒绝一笔转账或者在�
 
 `main("receiving", new object[0]);`
 
-`receiving`函数应具有以下签名:
+`receiving`函数应具有以下编程接口:
 
 `public bool receiving()`
 
@@ -101,7 +101,7 @@ VerificationR, ApplicationR则使智能合约能够拒绝一笔转账或者在�
 
 `main("received", new object[0]);`
 
-`received`函数应具有以下签名:
+`received`函数应具有以下编程接口:
 
 `public byte[] received()`
 

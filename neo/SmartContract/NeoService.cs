@@ -23,7 +23,7 @@ namespace Neo.SmartContract
         /// Neo互操作服务构造函数
         /// </summary>
         /// <param name="trigger">触发器类型</param>
-        /// <param name="snapshot">当前区块链的快照</param>
+        /// <param name="snapshot">数据库的快照</param>
         public NeoService(TriggerType trigger, Snapshot snapshot)
             : base(trigger, snapshot)
         {
