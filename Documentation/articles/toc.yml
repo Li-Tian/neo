@@ -4,8 +4,19 @@
   href: conventions.md
 - name: Neo-cli 的结构
   href: neo_cli_structure.md
-- name: 区块链范式
-  href: blockchain_paradigm.md
+- name: 密码学相关
+  href: cryptography/encode_algorithm.md
+  items:
+     - name: 编码算法
+       href: cryptography/encode_algorithm.md
+     - name: 哈希算法
+       href: cryptography/hash_algorithm.md
+     - name: 加密算法
+       href: cryptography/encryption_algorithm.md
+     - name: 梅克尔树
+       href: cryptography/merkle_tree.md
+     - name: 布隆过滤器
+       href: cryptography/bloom_filter.md
 - name: 区块链系统
   href: blockchain/neo_system.md
   items:

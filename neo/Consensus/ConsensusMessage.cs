@@ -28,7 +28,7 @@ namespace Neo.Consensus
         /// <summary>
         /// 消息大小
         /// </summary>
-        public int Size => sizeof(ConsensusMessageType) + sizeof(byte);
+        public virtual int Size => sizeof(ConsensusMessageType) + sizeof(byte);
 
         /// <summary>
         /// 构建共识消息

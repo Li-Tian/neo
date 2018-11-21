@@ -13,6 +13,8 @@ namespace Neo.Consensus
         /// </summary>
         public byte NewViewNumber;
 
+        public override int Size => base.Size + sizeof(byte);
+
         public ChangeView()
             : base(ConsensusMessageType.ChangeView)
         {
