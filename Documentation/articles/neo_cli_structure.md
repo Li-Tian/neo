@@ -1,55 +1,50 @@
-# 认识 neo-cli
+<center><h2> NEO-CLI </h2></center>
 
-neo 是一个基于点对点网络的区块链系统。它提供基于 UTXO 模型的数字资产记账功能，以及一个基于 neo 虚拟机的智能合约的执行环境。
-这里描述这个网络中节点程序 neo-cli 的整体结构和基本行为。
+&emsp;&emsp; neo 是一个基于点对点网络的区块链系统。它提供基于 UTXO 模型的数字资产记账功能，以及一个基于 neo 虚拟机的智能合约的执行环境。 本章将描述网络中节点程序 neo-cli 的整体结构和基本行为。
 
----
 
-# 整体结构
+## 整体结构
 
-neo 的整体结构如下图。（由于版本升级，部分结构可能会有变化。）
+neo 的整体结构如下图。（由于版本升级，部分结构可能会有变化 ）
 
 [![neo-cli structure](../images/neo_cli_structure/neo-cli.png)](../images/neo_cli_structure/neo-cli.png)
 
-## neo-cli命令行
+### neo-cli命令行
 neo-cli 是一个命令行程序。通过命令行控制台提供与区块链交互的基本功能。可以通过下述链接找到 neo-cli 的命令的详细说明。
 
 <http://docs.neo.org/en-us/node/cli/cli.html>
 
-> [!NOTE]
-> 如果发现有死链接，请联系 <feedback@neo.org>
 
-## 账本 API
+### 账本 API
 
 账本API定义了UTXO模型的基本数据类型，包括交易，区块，记账人等基础数据结构，细节在后续章节中介绍。或者请查看API文档了解细节。
 
-## 钱包
+### 钱包
 
-neo的官方实现提供两种格式的钱包，其中一种是sqlite数据库格式的钱包。另一种是NEP-6钱包。sqlite格式钱包的优点是性能相对较好，缺点是适用的平台不如 NEP-6 钱包更广泛。
+neo的官方实现提供两种格式的钱包，一种是sqlite数据库格式的钱包，另一种是NEP-6钱包。sqlite格式钱包的优点是性能相对较好，缺点是适用的平台不如 NEP-6 钱包更广泛。
 
-## LevelDBStore / Blockchain
+### LevelDBStore / Blockchain
 
 基于leveldb实现的区块链数据管理模块。向其它部分提供区块链数据的存储和查询服务。
 
-## LocalNode
+### LocalNode
 
 节点的网络通信的模块。负责与网络中的其它节点交换信息。细节将在后续章节中介绍。
 
-## RpcServer
+### RpcServer
 
 一个向外提供 RPC 调用接口的模块。可以通过下述链接查看 RPC 编程接口的细节。
 
 <http://docs.neo.org/en-us/node/cli/2.9.0/api.html>
 
-> [!NOTE]
-> 如果发现有死链接，请联系 <feedback@neo.org>
 
-## ConsensusService
+
+### ConsensusService
 
 在 neo 的网络中，只有共识节点需要启动共识服务。共识节点通过点对点网络与其它共识节点交换信息，完成区块链中生成新的区块的过程。
 细节将在后续章节中介绍。
 
-## Plugin
+### Plugin
 
 通过插件的形式实现区块链中一些特定模块的逻辑，方便特定功能的定制和调试。包括下述四个种类。
  - **ILogPlugin** : 智能合约的执行结果存储插件。
@@ -57,25 +52,26 @@ neo的官方实现提供两种格式的钱包，其中一种是sqlite数据库�
  - **IRpcPlugin** : 执行RPC调用的插件。
  - **IPersistencePlugin** : 节点收到新的区块，将其保存到本地数据库时的自定义行为插件。
 
-## NeoVM
+### NeoVM
 
 Neo 实现的虚拟机。用来执行验证脚本和智能合约。细节将在后续章节中介绍。
 ApplicationEngine 是对 Neo VM 的一层封装。Neo VM 被设计成一个独立的模块。可以在区块链之外部署。而 ApplicationEngine 与区块链本身的联系更加紧密。
 
 ---
 
-# 配置文件
+## 配置文件
 
 neo-cli 的节点程序在执行过程中会访问下述配置文件。
 
  - **config.json** : 基础配置文件
  - **protocol.json** : 协议配置文件
 
-## config.json
+### config.json
 
 定义数据库路径、网络配置、启动设置等基础配置。
 
-```code
+
+```json
 {
   "ApplicationConfiguration": {
     "Paths": {
@@ -102,6 +98,7 @@ neo-cli 的节点程序在执行过程中会访问下述配置文件。
 }
 ```
 
+
 属性说明：
 
  - **Paths/Chain** : 区块链数据库的存储目录前缀。存储目录的后缀是Magic数的8位16进制表示。Magic数将在后续提及。
@@ -120,11 +117,11 @@ neo-cli 的节点程序在执行过程中会访问下述配置文件。
 config.mainnet.json 和 config.testnet.json 是两个备份文件，分别存放主网和测试网的配置文件。
 
 
-## protocol.json
+### protocol.json
 
 定义协议级的变量、备用共识节点公钥列表、种子节点列表、系统手续费价格。
 
-```code
+```json
 {
   "ProtocolConfiguration": {
     "Magic": 7630401,
@@ -164,7 +161,6 @@ config.mainnet.json 和 config.testnet.json 是两个备份文件，分别存放
     }
   }
 }
-
 ```
 
 属性说明：
@@ -179,47 +175,64 @@ config.mainnet.json 和 config.testnet.json 是两个备份文件，分别存放
 protocol.mainnet.json 和 protocol.testnet.json 是两个备份文件，分别存放主网和测试网的配置文件。
 
 > [!NOTE]
-> 2.7.6 曾经使用过临时文件 peers.dat 保存已知的其它节点 IP 地址，2.9.0开始不再使用了。
-
-> [!NOTE]
-> neo-cli 运行过程中如果异常终止，那么会将错误内容写入文件 error.log，方便查看错误原因。
+> 1. 2.7.6 曾经使用过临时文件 peers.dat 保存已知的其它节点 IP 地址，2.9.0开始不再使用了。
+> 2. neo-cli 运行过程中如果异常终止，那么会将错误内容写入文件 error.log，方便查看错误原因。
 
 ---
 
-# 启动的基本过程
+## 启动的基本过程
 
-## neo-cli 的启动过程。
+### neo-cli 的启动过程。
 
 1. 初始化 LevelDBStore，创建或者打开 leveldb 数据库。
+
 2. 启动 LocalNode，异步开始点对点网络通信。
+
 3. 根据文件配置决定是否打开钱包，是否启动共识服务。
+
 4. 根据命令行参数(rpc)决定是否启动 JSON-RPC 服务。
+
 5. 开始命令行循环，执行命令行输入的命令。
+
 6. 系统结束时，停止RPC服务，停止 LocalNode 点对点网络通信。关闭 leveldb 数据库。
 
-## LevelDBStore 的初始化过程
+### LevelDBStore 的初始化过程
+
 1. 打开 leveldb 数据库()，初次访问就创建数据库。
+
 2. 读取数据格式版本号，如果版本号小于 2.9.1 就清空数据库，然后写入最新的版本号。
 
-## Blockchain 的初始化过程
+### Blockchain 的初始化过程
+
 1. 从数据库读取区块链的区块头的列表，保存在内存中实现快速索引访问(header_index)。
+
 2. 如果数据库中没有任何区块信息，那么将创世区块写入数据库。
 
-## LocalNode 的初始化过程
+### LocalNode 的初始化过程
 
 1. 扫描本地的所有网卡的IP地址并保存。
+
 2. 启动一个后台循环，每5秒钟检查一次网络节点连接数，如果小于最大连接数(10)，就主动尝试去连接其它节点。如果不知道其它节点地址，就首先连接种子节点，然后向种子节点询问其它节点的地址和端口号。
+
 3. 如果设备在局域网且没有公网的IP地址，那么尝试寻找设备的UPnp外网IP，然后在外网启动TCP/IP的监听端口以及WebSocket的监听端口。
+
 4. 在本地启动监听端口，接受其他网络节点的主动 TCP/IP 连接。
+
 5. 在本地启动 WebSocket 服务，接受其他网络节点的主动 WebSocket 连接。
 
-## 共识服务的初始化过程
-*请参考共识的部分。*
+### 共识服务的初始化过程
 
-## JSON-RPC 服务的初始化过程
+ 1. 初始化共识上下文
+
+ 2. 监听共识消息并处理
+
+
+### JSON-RPC 服务的初始化过程
+
 1. 在指定的网卡地址和端口监听。如果有设置则启用安全链接(https)
 
-## 其他的初始化过程
+### 其他的初始化过程
+
 1. 初始化所有的插件。
 
 插件的种类请参考下述链接。
