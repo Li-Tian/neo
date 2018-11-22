@@ -226,8 +226,6 @@ NEP6钱包采用了以scrypt为核心算法的相关技术作为钱包的加密�
 ​        NEP2提案：<https://github.com/neo-project/proposals/blob/master/nep-2.mediawiki>
 
 ​        NEP6提案：<https://github.com/neo-project/proposals/blob/master/nep-6.mediawiki>
-> [!NOTE]
-> 如果发现死链接，请联系 feedback@neo.org
 
 ## 钱包功能
 

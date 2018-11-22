@@ -101,18 +101,18 @@ neo-cli 的节点程序在执行过程中会访问下述配置文件。
 
 属性说明：
 
- - **Paths/Chain** : 区块链数据库的存储目录前缀。存储目录的后缀是Magic数的8位16进制表示。Magic数将在后续提及。
- - **Paths/Index** : 钱包索引的存储目录前缀。
- - **P2P/Port** : 网络节点之间 TCP/IP 协议连接的监听端口号。
- - **P2P/WsPort** : 网络节点之间 WebSocket 协议连接的监听端口号。
- - **RPC/BindAddress** : JSON-RPC 服务的监听 IP 地址。
- - **RPC/Port** : JSON-RPC 服务的监听端口号。
- - **RPC/SslCert** : JSON-RPC 服务的安全连接的认证。默认为空时，不使用安全连接。
- - **RPC/SslCertPassword** : JSON-RPC 服务的安全连接的密码。默认为空时，不使用安全连接。
- - **UnlockWallet/IsActive** : 启动网络节点时是否自动解锁钱包。
- - **UnlockWallet/Path** : 启动网络节点时解锁钱包的钱包文件地址。
- - **UnlockWallet/Password** : 启动网络节点时解锁钱包的密码。
- - **UnlockWallet/StartConsensus** : 启动网络节点时是否自动开始共识。自动开始共识依赖于自动解锁钱包。
+ - Paths/Chain : 区块链数据库的存储目录前缀。存储目录的后缀是Magic数的8位16进制表示。Magic数将在后续提及。
+ - Paths/Index : 钱包索引的存储目录前缀。
+ - P2P/Port : 网络节点之间 TCP/IP 协议连接的监听端口号。
+ - P2P/WsPort : 网络节点之间 WebSocket 协议连接的监听端口号。
+ - RPC/BindAddress : JSON-RPC 服务的监听 IP 地址。
+ - RPC/Port : JSON-RPC 服务的监听端口号。
+ - RPC/SslCert : JSON-RPC 服务的安全连接的认证。默认为空时，不使用安全连接。
+ - RPC/SslCertPassword : JSON-RPC 服务的安全连接的密码。默认为空时，不使用安全连接。
+ - UnlockWallet/IsActive : 启动网络节点时是否自动解锁钱包。
+ - UnlockWallet/Path : 启动网络节点时解锁钱包的钱包文件地址。
+ - UnlockWallet/Password : 启动网络节点时解锁钱包的密码。
+ - UnlockWallet/StartConsensus : 启动网络节点时是否自动开始共识。自动开始共识依赖于自动解锁钱包。
 
 config.mainnet.json 和 config.testnet.json 是两个备份文件，分别存放主网和测试网的配置文件。
 
@@ -165,12 +165,12 @@ config.mainnet.json 和 config.testnet.json 是两个备份文件，分别存放
 
 属性说明：
 
- - **Magic** : 魔法数字。主网：7630401(0x00746E41) 测试网：1953787457(0x74746E41) 搭建私有链网络时，魔法数字可以改为任意整数，但是同一网络中的节点的魔法数字必须相同。
- - **AddressVersion** : 地址版本。固定值23
- - **SecondsPerBlock** : 出块时间间隔。同一网络中共识节点必须相同。
- - **StandbyValidators** : 备用共识节点的公钥列表。
- - **SeedList** : 种子节点列表。种子节点不是共识节点。种子节点向网络中的新节点提供其它节点的地址查询服务。
- - **SystemFee** : 系统手续费定义。
+ - Magic : 魔法数字。主网：7630401(0x00746E41) 测试网：1953787457(0x74746E41) 搭建私有链网络时，魔法数字可以改为任意整数，但是同一网络中的节点的魔法数字必须相同。
+ - AddressVersion : 地址版本。固定值23
+ - SecondsPerBlock : 出块时间间隔。同一网络中共识节点必须相同。
+ - StandbyValidators : 备用共识节点的公钥列表。
+ - SeedList : 种子节点列表。种子节点不是共识节点。种子节点向网络中的新节点提供其它节点的地址查询服务。
+ - SystemFee : 系统手续费定义。
 
 protocol.mainnet.json 和 protocol.testnet.json 是两个备份文件，分别存放主网和测试网的配置文件。
 
