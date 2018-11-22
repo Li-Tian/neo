@@ -6,7 +6,10 @@ using System.Text;
 
 namespace Neo.VM
 {
-    public static class Helper
+    /// <summary>
+    /// 这个类是从 Helper 重命名 为 Helper_。避免与 Neo.dll中的同名类冲突。不推荐通过类名来访问这些方法。
+    /// </summary>
+    public static class Helper_
     {
         private static Dictionary<string, uint> method_hashes = new Dictionary<string, uint>();
 
