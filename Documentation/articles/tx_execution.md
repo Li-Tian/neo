@@ -332,11 +332,11 @@ public bool Sign(ContractParametersContext context);
 
 钱包所在节点，将进行P2P广播该交易。
 
-**广播推送步骤**：
+**广播步骤**：
 
 1. 调用 LocalNode.relay(tx) 方法，进行交易的验证 与 p2p广播
 
-     1. 若输入inventory为挖矿交易（MinerTransaction）返回false；
+     1. 若输入inventory为 `MinerTransaction` 返回false；
 
      2. 否则若inventory的哈希并未过期不需更新，返回false；
 
@@ -344,21 +344,19 @@ public bool Sign(ContractParametersContext context);
 
 2. 本地的 LocalNode 会调用 RemoteNode.relay 进行实际的广播交易
 
-3. 本地的 RemoteNode 会先进行bloom filter过滤，是否重复发送, 没有的话进行 tx_hash 消息广播。
+3. 远程节点在 StartProtocol 中，监听收到的新消息，首先会调用 OnMessageReceived(msg) 进行消息区分。
 
-4. 远程节点在 StartProtocol 中，监听收到的新消息，首先会调用 OnMessageReceived(msg) 进行消息区分。
+4. 远程节点识别到后，调用 OnInvMessageReceived(msg) 进行处理，识别到一条新消息时候，会向本地接节点发送 getdata 事件。
 
-5. 远程节点识别到后，调用 OnInvMessageReceived(msg) 进行处理，识别到一条新消息时候，会向本地接节点发送 getdata 事件。
+5. 本地的 RemoteNode 识别到是 getdata 消息收，以及是要发送的 tx.hash ，将完整的 tx 数据，发送给远程。
 
-6. 本地的 RemoteNode 识别到是 getdata 消息收，以及是要发送的 tx.hash ，将完整的 tx 数据，发送给远程。
+6. 远程节点的 RemoteLocal 收到新消息是 tx 类型时，会在 OnMessageReceived 中，调用 OnInventoryReceived 进行处理。
 
-7. 远程节点的 RemoteLocal 收到新消息是 tx 类型时，会在 OnMessageReceived 中，调用 OnInventoryReceived 进行处理。
+7. 远程节点的 RemoteLocal 在 OnInventoryReceived 中检测消息的时效性，并触发 LocalNode 的 RemoteNode_InventoryReceived 的操作。
 
-8. 远程节点的 RemoteLocal 在 OnInventoryReceived 中检测消息的时效性，并触发 LocalNode 的 RemoteNode_InventoryReceived 的操作。
+8. 远程节点的 LocalNode，在 RemoteNode_InventoryReceived 中，将收到的交易，先存放到临时交易池 temp_pool 中，并触发一个新交易事件 new_tx_event 。
 
-9. 远程节点的 LocalNode ，在 RemoteNode_InventoryReceived 中，将收到的交易，先存放到临时交易池 temp_pool 中，并触发一个新交易事件 new_tx_event 。
-
-10. AddTransactionLoop 收到交易事件触发后，从临时交易池 temp_pool 中取出交易，进行验证，并将严格合格的交易，放入到内存池中 mem_pool 中。最后，该节点进行p2p的交易广播。
+9. AddTransactionLoop 收到交易事件触发后，从临时交易池 temp_pool 中取出交易，进行验证，并将严格合格的交易，放入到内存池中 mem_pool 中。最后，该节点进行p2p的交易广播。
 
 
 ### （4）交易打包
@@ -369,7 +367,7 @@ public bool Sign(ContractParametersContext context);
 
 2. 将过滤后的交易，打包到新的提案块中，进行共识投票
 
-3. 若有超过 2f+1 个节点投票赞同，则新块完成出块，进行广播新块
+3. 若有超过 `N-f` 个节点投票赞同，则新块完成出块，进行广播新块
 
 
 ### （5）交易处理

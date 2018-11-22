@@ -103,3 +103,10 @@
 [3] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
 
+
+
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>
+
+
+
