@@ -3,6 +3,8 @@
 &emsp;&emsp;交易，是区块链网络的交互操作的唯一方式，包括发布资产，转账，发布智能合约，合约调用等等，都是基于交易的方式进行操作处理。
 NEO中的交易，也是采用比特币类似交易的设计，每一笔交易都包含三个重要部分：input, output, scripts。 input代表资金来源，output代表资金流出，scripts是对input所引用交易的output的验证解锁，通过这种 input-output 组合方式，将资产的每一笔流动都形成了一条链条结构。
 
+&nbsp;
+&nbsp;
 
 ## 交易类型
 
@@ -19,6 +21,40 @@ NEO中定义的交易类型如下所示：
 | ContractTransaction | 0 | 合约交易，这是最常用的一种交易
 | PublishTransaction | 500*n | (已弃用) 智能合约发布的特殊交易
 | InvocationTransaction | 0 | 调用智能合约的特殊交易
+
+&nbsp;
+
+
+### 共同特征
+
+所有的交易类型均派生自Neo.Core.Transaction类型。在这个类型里，提供了一些共有的功能和特征，如：
+
+#### 关于交易属性：
+
+交易的属性列表和最大属性数量 = 16，交易类型（如前文所示），版本（默认为1），等等
+
+
+#### 关于交易的功能性：
+
+ 输入/输出列表，验证该交易的脚本列表，网络/系统费用，每一个交易输入所引用的交易输出，获取需要校验的脚本散列值，获取交易后各资产的变化量，交易验证，等等
+
+这里，网络费用的计算方法如下：
+        
+每一个交易输入所引用的交易输出中，资产种类为小蚁币的，计算其资产值之和input，并计算输出列表中，资产种类为小蚁币的资产之和output，则网络费为input - output - 系统费。
+
+
+#### 关于交易的读写操作：
+
+ReflectionCache，Size，序列化/反序列化，等等
+
+
+#### 关于TransactionAttribute
+
+TransactionAttribute Attributes是Transaction类别的一个变量，表示该交易所具备的额外特性。TransactionAttribute类别包含两个变量，TransactionAttributeUsage Usage和byte[] Data。其中，TransactionAttributeUsage为枚举类型，标记了该TransactionAttribute的用途，其种类包含外部合同的散列值，用于ECDH密钥交换的公钥，用于对交易进行额外的验证，投票，描述/描述URL，散列值，备注，等等。而Data则记录了特定于用途的外部数据。
+
+目前实际使用到的TransactionAttributeUsage 有两个，TransactionAttributeUsage.Script（脚本）和TransactionAttributeUsage.Remark（备注），均用于InvocationTransaction。这里使用TransactionAttribute的原因是因为InvocationTransaction还肩负资产注册，发布合约，以及部份转账的功能，需要TransactionAttribute作为补充信息。
+
+&nbsp;
 
 
 ### MinerTransaction
@@ -135,10 +171,30 @@ Amount 为发行总量，共有2种模式：
 
 调用智能合约的特殊交易。用户可以通过NEO API的invoke/invokefunction/invokescript指令，或者NEO GUI，根据输入的智能合约信息创建InvocationTransaction对象并调用。用户在GUI创建资产种类和发布智能合约时，实际调用的是InvocationTransaction。
 
+InvocationTransaction执行智能合约时，TransactionAttribute为空；
+
+作用为发布合约上链时，TransactionAttribute为空；
+
+作用为资产注册时，TransactionAttribute包含：
+
+（1）用途：TransactionAttributeUsage.Script（脚本），数据：资产所有者的地址脚本哈希数据，数目：1
+
+作用为GUI中的转账时，TransactionAttribute包含：
+
+（1）用途：TransactionAttributeUsage.Script（脚本），数据：向外转账的本地账户地址，数目：若干
+
+（2）用途：TransactionAttributeUsage.Remark（备注），数据：备注数据，数目：1，若备注非空
+
+作用为CLI中的转账的非“sendall”模式时，TransactionAttribute包含：
+
+（1）用途：TransactionAttributeUsage.Script（脚本），数据：向外转账的本地账户地址，数目：若干
+
 NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，分为部署费用和执行费用。部署费用是指开发者将一个智能合约部署到区块链上需要向区块链系统支付一定的费用（目前是 500 Gas）。执行费用是指每执行一条智能合约的指令都会向 NEO 系统支付一定的执行费用。具体收费标准请参阅[智能合约费用](http://docs.neo.org/zh-cn/sc/systemfees.html)。
 
 关于智能合约的相关信息，请查阅[智能合约介绍](http://docs.neo.org/zh-cn/sc/introduction.html)。
 
+&nbsp;
+&nbsp;
 
 -------------------
 
