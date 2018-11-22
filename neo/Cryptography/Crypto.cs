@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 namespace Neo.Cryptography
 {
     /// <summary>
-    /// Neo算法的扩展类，提供一些额外的算法组合接口
+    /// Neo扩展算法的实现类，提供一些额外的算法组合接口的实现
     /// </summary>
     public class Crypto : ICrypto
     {
@@ -58,11 +58,13 @@ namespace Neo.Cryptography
         }
         /// <summary>
         /// 验证签名
+        /// 使用的椭圆曲线是nistP256，哈希算法是SHA256
         /// </summary>
         /// <param name="message">数据消息</param>
         /// <param name="signature">待验证的消息的签名</param>
         /// <param name="pubkey">公钥</param>
         /// <returns>验证结果，验证通过返回true,否则返回false</returns>
+        /// <exception cref="System.ArgumentException">公钥格式错误时抛出</exception>
         public bool VerifySignature(byte[] message, byte[] signature, byte[] pubkey)
         {
             if (pubkey.Length == 33 && (pubkey[0] == 0x02 || pubkey[0] == 0x03))
