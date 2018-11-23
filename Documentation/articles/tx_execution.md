@@ -6,207 +6,8 @@ NEO中的交易，也是采用比特币类似交易的设计，每一笔交易�
 &nbsp;
 &nbsp;
 
-## 交易类型
 
-NEO中定义的交易类型如下所示：
-
-| 名称 | 交易手续费(单位GAS) | 描述 |
-| --------   | :-----:   | :----: |
-| MinerTransaction | 0 | 用于分配字节费的交易 |
-| RegisterTransaction | 10000/0 | (已弃用) 用于资产登记的交易
-| IssueTransaction | 500/0 | 用于分发资产的交易
-| ClaimTransaction | 0 | 用于分配 NeoGas 的交易
-| EnrollmentTransaction | 1000 | (已弃用) 用于报名成为共识候选人的特殊交易
-| StateTransaction | 1000/0 | 申请见证人或共识节点投票
-| ContractTransaction | 0 | 合约交易，这是最常用的一种交易
-| PublishTransaction | 500*n | (已弃用) 智能合约发布的特殊交易
-| InvocationTransaction | 0 | 调用智能合约的特殊交易
-
-&nbsp;
-
-
-### 共同特征
-
-所有的交易类型均派生自Neo.Core.Transaction类型。在该类型里，提供了一些共有的功能和特征，如：
-
-* **交易属性**
-
-交易的属性列表和最大属性数量 = 16，交易类型（如前文所示），版本（默认为1），等等
-
-
-* **交易的功能性**
-
- 输入/输出列表，验证该交易的脚本列表，网络/系统费用，每一个交易输入所引用的交易输出，获取需要校验的脚本散列值，获取交易后各资产的变化量，交易验证，等等
-
-其中，网络费用的计算方法如下：
-        
-每一个交易输入所引用的交易输出中，资产种类为GAS的，计算其资产值之和input，并计算输出列表中，资产种类为GAS的资产之和output，则 `网络费 = input - output - 系统费`。
-
-* **交易的读写操作**
-
-ReflectionCache，Size，序列化/反序列化，等等
-
-* **TransactionAttribute**
-
-Attributes 是Transaction类别的一个变量，表示该交易所具备的额外特性。数据结构如下：
-
-| 尺寸 | 字段 | 类型 | 描述 |
-|---|-------|------|------|
-| 1 | Usage | TransactionAttributeUsage | 属性类型 |
-| 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
-| ? | Data | byte[length] | 特定于用途的外部数据 | 
-
-TransactionAttributeUsage，表示交易属性，数据结构如下：
-
-| 字段 | 值 | 描述 |
-|-------|-----|----|
-| ContractHash | 0x00 | 外部合同的散列值 |
-| ECDH02 | 0x02 | 用于ECDH密钥交换的公钥，该公钥的第一个字节为0x02 |
-| ECDH03 | 0x03 | 用于ECDH密钥交换的公钥，该公钥的第一个字节为0x03 |
-| Script | 0x20 | 用于对交易进行额外的验证, 如股权类转账，存放收款人的脚本hash |
-| Vote | 0x30 | 投票 |
-| DescriptionUrl | 0x81 | 外部介绍信息地址 |
-| Description | 0x90 | 简短的介绍信息 |
-| Hash1 - Hash15 | 0xa1-0xaf | 用于存放自定义的散列值 |
-| Remark-Remark15 | 0xf0-0xff | 备注 |
-
-
-目前实际使用到的TransactionAttributeUsage 有两个，TransactionAttributeUsage.Script（脚本）和TransactionAttributeUsage.Remark（备注），均用于InvocationTransaction。 因InvocationTransaction肩负资产注册，发布合约，以及部份转账的功能，需要TransactionAttribute作为补充信息。
-
-
-### MinerTransaction
-
-
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
-|----|-----|-------|------|------|
-|  -  | - | - | -  | 	交易的公共字段  |
-| 4 | Nonce | 交易nonce | uint | 创世区块的Nonce的值与比特币的创世区块相同，为2083236893，而其他情况下为随机数值。 |
-|  -  | - | - | -  | 	交易的公共字段  |
-
-分配字节费的特殊交易。系统在创世块创建了第一个MinerTransaction，此后在创建新块的时候，由议长创建相应的MinerTransaction。
-
-
-### RegisterTransaction
-
-
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
-|----|-----|-------|------|------|
-|  -  | - | - | -  | 	交易的公共字段  |
-| 1 | AssetType | 资产类型 | byte |  |
-| ? | Name | 资产名字 | string |  |
-| 8 | Amount | 资产总量 | Fixed8 |  |
-| 1 | Precision | 精度 | byte |  |
-| ? | Owner | 所有者公钥 | ECPoint |  |
-| 20 | Admin | 管理员地址脚本hash | UInt160 |  |
-|  -  | - | - | -  | 	交易的公共字段  |
-
- 
-资产登记交易。系统在创世区块调用RegisterTransaction发行了两个资产种类：NEO Coin（旧称小蚁股，AntShare）和NEO Gas（旧称小蚁币，AntCoin）。注意，用户在GUI创建资产种类时，实际调用的是InvocationTransaction。
-
-
-Amount 为发行总量，共有2种模式：
-
-   1. **限量模式**：当Amount为正数时，表示当前资产的最大总量为Amount，且不可修改（股权在未来可能会支持扩股或增发，会考虑需要公司签名或一定比例的股东签名认可）。
-
-   2. **不限量模式**：当Amount等于-1时，表示当前资产可以由创建者无限量发行。这种模式的自由度最大，但是公信力最低，不建议使用。
-
-### IssueTransaction
-
-
-分发资产的特殊交易。完成资产注册后，就可以在资产创设所设定的总量上限范围内，向发行人指定的地址中发放该资产。分发后的资产可以用于转账和交易。分发资产需要消耗一定数量的 GAS 作为附加服务费，目前为1 GAS。
-
-注意，1） 当版本大于等于1时，手续费为0；2） 当输出列表中的元素的资产种类为NEO或GAS时，手续费为0；否则手续费为500GAS。
-
-
-### ClaimTransaction
-
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
-|----|-----|-------|------|------|
-|  -  | - | - | -  | 	交易的公共字段  |
-| 34*? | Claims | Claim已花费的交易 | CoinReference[] | 用于分配的 NEO |
-|  -  | - | - | -  | 	交易的公共字段  |
-
-
-提取NeoGas 的交易。可以通过CLI的claim gas指令或者在NEO GUI的提取GAS功能，调用ClaimTransaction完成提取GAS的操作。
-
-
-### EnrollmentTransaction
-
-
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
-|----|-----|-------|------|------|
-|  -  | - | - | -  | 	交易的公共字段  |
-| ? | PublicKey | 记账人的公钥 | ECPoint | 用于分配的 NEO |
-|  -  | - | - | -  | 	交易的公共字段  |
-
-报名成为共识候选人的特殊交易
-
-### StateTransaction
-
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
-|----|-----|-------|------|------|
-|  -  | - | - | -  | 	交易的公共字段  |
-| ?*? | Descriptors | 投票信息 | StateDescriptor[] |  |
-|  -  | - | - | -  | 	交易的公共字段  |
-
-申请见证人或共识节点投票的交易。用户可以在NEO GUI报名成为候选人，成为候选人后就可以根据投票数竞选成为共识节点。报名成为候选人需要花费手续费 1000 GAS。具体操作请参阅[选举与投票](./consensus/vote_validator.md)。
-
-
-### ContractTransaction
-
-合约交易，最常用的一种交易。ContractTransaction用于转账交易（NEO CLI, API 的send指令，以及GUI的send操作）。
-
-
-### PublishTransaction
-
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
-|----|-----|-------|------|------|
-|  -  | - | - | -  | 	交易的公共字段  |
-| ? | Script | 合约的脚本 | byte[] |  |
-| ? | ParameterList | 参数类型列表 | ContractParameterType |  |
-| 1 | ReturnType | 返回类型 | ContractParameterType |  |
-| 1 | NeedStorage | 是否需要存储空间 | bool |  |
-| ? | Name | 合约名称 | string |  |
-| ? | CodeVersion | 合约版本编号 | string |  |
-| ? | Author | 合约作者姓名 | string |  |
-| ? | Email | 电子邮箱 | string |  |
-| ? | Description | 合约描述 | string |  |
-|  -  | - | - | -  | 	交易的公共字段  |
-
-
-智能合约发布的特殊交易。注意, 用户在GUI发布智能合约时，实际调用的是InvocationTransaction。
-
-### InvocationTransaction
-
-
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
-|----|-----|-------|------|------|
-|  -  | - | - | -  | 	交易的公共字段  |
-| ? | Script | 合约的脚本 | byte[] |  |
-| 8 | Gas | 消耗的Gas | Fixed8 |  |
-|  -  | - | - | -  | 	交易的公共字段  |
-
-调用智能合约的特殊交易。用户可以通过NEO API的`invoke/invokefunction/invokescript`指令，或者NEO GUI，根据输入的智能合约信息创建InvocationTransaction对象并调用。z注，用户在GUI创建资产种类和发布智能合约时，实际调用的是InvocationTransaction。
-
-| InvokeTX用途 | 调用脚本 | Attributes | 包含属性 |
-|--------------|------------|--------------|
-| 执行智能合约 | 调用合约的脚本  |  空 |   | 
-| 发布合约 | Neo.Contract.Create  |   空  |   | 
-| 资产注册 | Neo.Asset.Create |  非空 | TransactionAttributeUsage.Script,资产所有者的地址脚本hash，数目 1 |
-| GUI 转账 | NEP-5资产时，调用合约transfer方法；<br/>全局资产时，空，走UTXO方式  |  非空 | TransactionAttributeUsage.Script，转账账户地址，数目若干 <br/> TransactionAttributeUsage.Remark，备注数据，数目 1 |
-| CLI 非“sendall”转账 | 同上  |  非空 |  TransactionAttributeUsage.Script, 转账账户地址，数目 若干 |  
-
-
-NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，分为部署费用和执行费用。部署费用是指开发者将一个智能合约部署到区块链上需要向区块链系统支付一定的费用（目前是 500 Gas）。执行费用是指每执行一条智能合约的指令都会向 NEO 系统支付一定的执行费用。具体收费标准请参阅[智能合约费用](http://docs.neo.org/zh-cn/sc/systemfees.html)。
-
-关于智能合约的相关信息，请查阅[智能合约介绍](http://docs.neo.org/zh-cn/sc/introduction.html)。
-
-&nbsp;
-&nbsp;
-
--------------------
-
-## 交易流程
+## 一般流程
 
 <p align="center"><img src="../images/tx_execution/tx_flow_graph.jpg" /><br></p>
 
@@ -281,22 +82,29 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
    - fee：系统费
 
 
-生成交易步骤：
+**钱包生成完整交易步骤**：
 
-1. 统计交易：将转账信息列表各对象按照其每个成员对象的（资产ID，地址）组合进行分组，每个分组即为一个独立的收款方；并求出每个分组的成员的Value之和。
+1. 计算总的GAS消耗，包括手续费 和 用户支付的网络费
 
-2. 账户信息：获取钱包中，非Lock且非WatchOnly状态的账户的余额信息
+2. 自动补全intput所需要的交易
 
-3. 生成交易：
+   1. 统计交易：将转账信息列表各对象按照其每个成员对象的（资产ID，地址）组合进行分组，每个分组即为一个独立的收款方；并求出每个分组的成员的Value之和。
 
-     1. 对于每个收款方，若其数额小于当前钱包各账户余额之和，返回；否则，按照“使用账户数目最少”规则生成交易：
+   2. 账户信息：获取钱包中，非Lock且非WatchOnly状态的账户的余额信息
 
-     2. 若存在余额大于转账金额的账户，则从满足条件的账户中余额最小的账户转账；否则，使用贪心法：将钱包各账户按照余额由高到低排序，依次调用各账户：
+   3. 生成交易：
+
+       1. 对于每个收款方，若其数额小于当前钱包各账户余额之和，返回；否则，按照“使用账户数目最少”规则生成交易：
+
+       2. 若存在余额大于转账金额的账户，则从满足条件的账户中余额最小的账户转账；否则，使用贪心法：将钱包各账户按照余额由高到低排序，依次调用各账户：
      
-     3. 若当前账户余额小于等于当前转账金额，将当前账户加入返回结果，并从转账金额中扣除当前账户的余额；
+       3. 若当前账户余额小于等于当前转账金额，将当前账户加入返回结果，并从转账金额中扣除当前账户的余额；
       
-     4. 否则，若此时转账金额不为零，则从剩下的账户中，选择余额大于等于当前转账金额的账户中，余额最小的账户加入返回结果；为零则直接返回。
+       4. 否则，若此时转账金额不为零，则从剩下的账户中，选择余额大于等于当前转账金额的账户中，余额最小的账户加入返回结果；为零则直接返回。
 
+3. 若有零钱剩余，则设置找零钱的output
+
+4. 若包含非全局资产，即NEP-5资产的转账时，转成InvocationTransaction交易进行转账操作
 
 
 ### （2）签名验证
@@ -375,13 +183,13 @@ public bool Sign(ContractParametersContext context);
 
 需要对交易进行验证地方：
 
-1. 节点收到一笔交易： LocalNode 从 AddTransactionLoop 收到新的交易时候，验证每一笔交易。
+1. 节点收到一笔交易时： LocalNode 从 AddTransactionLoop 收到新的交易时候，验证每一笔交易。
 
-2. 节点产生/转发一笔交易： LocalNode 从 Relay(tx) 的时候，验证一笔交易。
+2. 节点产生/转发一笔交易时： LocalNode 执行 Relay(tx) 的时候，验证该交易。
 
-3. 节点持久化block后对剩余待验证交易的验证： LocalNode：从 Blockchain_PersistCompleted 持久化block的后，验证每一笔内存池中待剩余验证的交易。
+3. 节点持久化block后对剩余待验证交易的验证： LocalNode在Blockchain_PersistCompleted 持久化block后，验证每一笔内存池中剩余待验证的交易。
 
-4. 共识过程中的新交易： ConsensusService 共识的过程中，对需要打包 AddTransaction 的新交易的验证。
+4. 共识过程中，对于尚未校验的待打包交易，进行校验
 
 
 
@@ -442,9 +250,9 @@ public bool Sign(ContractParametersContext context);
 
 随着对block的persist操作，每种交易的最终处理，也在该过程进行处理:
 
-1. 交易涉及到的 account进行更新操作（增，减）
+1. 交易涉及到的 account进行资产更新操作（增，减）
 
-2. 账户有参与见证人投票的话，更新 validators , validators_count
+2. 若账户有参与验证人投票的话，更新 validators , validators_count
 
 3. 添加 inputs 涉及到的交易到 spentcoins 列表中。 outputs 涉及到的交易到unspentcoins 列表中。
 
@@ -482,7 +290,347 @@ public bool Sign(ContractParametersContext context);
     1. 从未确认队列中，移除确认的新交易
 
 
+&nbsp;
+&nbsp;
 
+-------------------
+
+
+## 交易类型
+
+NEO中定义的交易类型如下所示：
+
+| 名称 | 交易手续费(单位GAS) | 描述 |
+| --------   | :-----:   | :----: |
+| MinerTransaction | 0 | 用于分配字节费的交易 |
+| RegisterTransaction | 10000/0 | (已弃用) 用于资产登记的交易
+| IssueTransaction | 500/0 | 用于分发资产的交易
+| ClaimTransaction | 0 | 用于分配 NeoGas 的交易
+| EnrollmentTransaction | 1000 | (已弃用) 用于报名成为共识候选人的特殊交易
+| StateTransaction | 1000/0 | 申请见证人或共识节点投票
+| ContractTransaction | 0 | 合约交易，这是最常用的一种交易
+| PublishTransaction | 500*n | (已弃用) 智能合约发布的特殊交易
+| InvocationTransaction | 0 | 调用智能合约的特殊交易
+
+&nbsp;
+
+
+### 共同特征
+
+所有的交易类型均派生自Neo.Core.Transaction类型。在该类型里，提供了一些共有的功能和特征，如：
+
+* **交易属性**
+
+交易的属性列表和最大属性数量16，交易类型（如前文所示），版本（默认为1），等等
+ 
+
+* **交易的功能性**
+
+ 输入/输出列表，验证该交易的脚本列表，网络/系统费用，每一个交易输入所引用的交易输出，获取需要校验的脚本散列值，获取交易后各资产的变化量，交易验证，等等
+
+其中，网络费用的计算方法如下：
+        
+每一个交易输入所引用的交易输出中，资产种类为GAS，计算其资产值之和input，并计算输出列表中，资产种类为GAS的资产之和output，则 `网络费 = input - output - 系统费`。
+
+* **交易的读写操作**
+
+ReflectionCache，Size，序列化/反序列化，等等
+
+* **TransactionAttribute**
+
+Attributes 是Transaction类别的一个变量，表示该交易所具备的额外特性。数据结构如下：
+
+| 尺寸 | 字段 | 类型 | 描述 |
+|---|-------|------|------|
+| 1 | Usage | TransactionAttributeUsage | 属性类型 |
+| 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
+| ? | Data | byte[length] | 特定于用途的外部数据 | 
+
+TransactionAttributeUsage，表示交易属性，数据结构如下：
+
+| 字段 | 值 | 描述 |
+|-------|-----|----|
+| ContractHash | 0x00 | 外部合同的散列值 |
+| ECDH02 | 0x02 | 用于ECDH密钥交换的公钥，该公钥的第一个字节为0x02 |
+| ECDH03 | 0x03 | 用于ECDH密钥交换的公钥，该公钥的第一个字节为0x03 |
+| Script | 0x20 | 用于对交易进行额外的验证, 如股权类转账，存放收款人的脚本hash |
+| Vote | 0x30 | 投票 |
+| DescriptionUrl | 0x81 | 外部介绍信息地址 |
+| Description | 0x90 | 简短的介绍信息 |
+| Hash1 - Hash15 | 0xa1-0xaf | 用于存放自定义的散列值 |
+| Remark-Remark15 | 0xf0-0xff | 备注 |
+
+
+目前实际使用到的TransactionAttributeUsage 有两个，TransactionAttributeUsage.Script（脚本）和TransactionAttributeUsage.Remark（备注），均用于InvocationTransaction。 因InvocationTransaction肩负资产注册，发布合约，以及部份转账的功能，需要TransactionAttribute作为补充信息。
+
+
+### MinerTransaction
+
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  -  | - | - | -  | 	交易的公共字段  |
+| 4 | Nonce | 交易nonce | uint | 创世区块的Nonce的值与比特币的创世区块相同，为2083236893，而其他情况下为随机数值。 |
+|  -  | - | - | -  | 	交易的公共字段  |
+
+分配字节费的特殊交易, 非用户创建类型的交易。系统在创世块创建了第一个MinerTransaction，此后在创建新块的时候，由议长创建相应的MinerTransaction，将所有交易的网络费作为出块奖励。
+
+**交易创建**
+
+1. 共识阶段时，议长将内存池交易，进行第三方插件过滤和排序
+
+2. 计算待打包交易的总网络费，作为 MinerTransaction 的output金额
+
+3. 装填 MinerTransaction 的output的收款地址为当前议长地址，其他字段：inputs, attrs, witnesses 均设置为空。注意，MinerTransaction属于资产发行操作，input 与 output之间金额不一致。
+
+4. 将上面交易打包到共识提案的block中，并进行广播。
+
+
+后续处理流程，与一般流程一致。
+
+
+### RegisterTransaction (已弃用)
+
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  -  | - | - | -  | 	交易的公共字段  |
+| 1 | AssetType | 资产类型 | byte |  |
+| ? | Name | 资产名字 | string |  |
+| 8 | Amount | 资产总量 | Fixed8 |  |
+| 1 | Precision | 精度 | byte |  |
+| ? | Owner | 所有者公钥 | ECPoint |  |
+| 20 | Admin | 管理员地址脚本hash | UInt160 |  |
+|  -  | - | - | -  | 	交易的公共字段  |
+
+ 
+资产登记交易。系统在创世区块调用RegisterTransaction发行了两个资产种类：NEO Coin（旧称小蚁股，AntShare）和NEO Gas（旧称小蚁币，AntCoin）。注意，用户在GUI创建资产种类时，实际调用的是InvocationTransaction。
+
+
+Amount 为发行总量，共有2种模式：
+
+   1. **限量模式**：当Amount为正数时，表示当前资产的最大总量为Amount，且不可修改（股权在未来可能会支持扩股或增发，会考虑需要公司签名或一定比例的股东签名认可）。
+
+   2. **不限量模式**：当Amount等于-1时，表示当前资产可以由创建者无限量发行。这种模式的自由度最大，但是公信力最低，不建议使用。
+
+
+处理流程与一般流程一致
+
+### IssueTransaction
+
+
+分发资产的特殊交易。完成资产注册后，就可以在资产创设所设定的总量上限范围内，向发行人指定的地址中发放该资产。分发后的资产可以用于转账和交易。分发资产需要消耗一定数量的 GAS 作为附加服务费，目前为1 GAS。
+
+注意，1） 当版本大于等于1时，手续费为0；2） 当输出列表中的元素的资产种类为NEO或GAS时，手续费为0；否则手续费为500GAS。
+
+
+**交易验证**
+
+1. **合法性验证**
+ 
+   1. 先进行一般交易的合法性验证
+
+   2. 计算资产输入，输出差值变化情况
+
+   3. 若资产变化增多情况等于0，则校验失败
+
+   4. 若发行的资产不存在，则校验失败
+
+   5. 若该交易的发行量加上内存池该资产的其他发行量，超过了发行总量，则校验失败
+
+2. **脚本验证**
+
+    1. 在进行一般交易的脚本验证时，会包含发行人的脚本验证
+
+
+其他处理流程，与一般流程一致。
+
+### ClaimTransaction
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  -  | - | - | -  | 	交易的公共字段  |
+| 34*? | Claims | Claim已花费的交易 | CoinReference[] | 用于分配的 NEO |
+|  -  | - | - | -  | 	交易的公共字段  |
+
+
+ GAS是通过持有NEO用户进行Claim提取Gas操作，进行系统自动增发Gas（并非每出一个块就立马奖励Gas到账户上），用户能够Claim到的Gas是与当前区块高度，起始NEO资产的高度，紧密相关。GAS总量上限是1亿，当区块高度到达 4600W后，每个区块不再有奖励。
+
+
+每一个笔NEO 的交易都有两种状态：unspent 和 spent。每一个未提取的 GAS 也有两种状态，available 和 unavailable。一个 NEO 的生命周期以转入地址起始，转出地址截止，转入时状态变为 unspent，转出时状态变为 spent。当 NEO 处于 unspent 状态时，所产生的 Gas 为 unavailable 状态，即不可提取。当 NEO 处于 spent 状态时，期间所产生的 GAS 变为 available，用户可以提取。（用户可通过转账的方式，将unspent的NEO变成spent状态的NEO，再进行Claim 提取GAS）
+
+
+用户进行Claim时，实际上是找到已花费但尚未Claim的NEO交易（系统维护了一份spentcoins集合——已花费尚未claim的交易），对其进行计算可以增发的Gas，并将Gas转账到用户钱包地址。
+
+
+
+
+**交易创建**
+
+1. 从spentcoins（已花费尚未claim的交易）中，选择要进行claim的output，并作为 ClaimTransaction的 claims值。
+
+2. 计算出这部分已花费尚未claim的交易所能提取到的Gas量，并作为 ClaimTransaction的output金额
+
+3. 设置  ClaimTransaction的output收款人为当前账户，并设置 inputs, attrs 为空，构建出完整的交易。
+
+4. 对交易进行签名并P2P广播
+
+
+其中，**一笔有NEO的tx.output产生的Gas计算**
+
+<p align="center"><img src="../images/tx_execution/tx_claim_gas.jpg" /><br></p>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+
+$$
+Gas = \sum_{h=M+1}^{N} (BlockBonus(h) + SystemFee(h)) * \frac{tx.output.NEO}{10^8}
+$$
+
+- Gas： 一笔持有NEO的tx.output能提取到的Gas数量
+- M： 交易的块高度， 起始高度
+- N: 交易被花费的块高度，引用这笔tx.output的交易的所在块高度, 即截止高度
+- `BlockBonus(h)`: 高度为h的区块所能得到的Gas奖励, 参考下表。
+- `SystemFee(h)`: 高度为h的区块的系统手续费，等于该块下所有交易的系统手续费之和。`amount_sysfee = block.Transactions.Sum(p => p.SystemFee)`
+- tx.output.NEO: 该交易的NEO数量
+- 10^8: NEO的总量一亿
+
+
+| 周期 |  区块高度范围 |   区块奖励GAS |
+|------|-------------|---------------|
+|  1   |  0 - (200W -1) |    8 |
+|  2   |  200W ~~ (400W -1) |    7 |
+|  3   |  400W ~~ (600W -1) |    6 |
+|  4   |  600W ~~ (800W -1) |    5 |
+|  5   |  800W ~~ (1000W -1) |    4 |
+|  6   |  1000W ~~ (1200W -1) |    3 |
+|  7   |  1200W ~~ (1400W -1) |    2 |
+|  8~22   |  1400W ~~ (4600W -1) |    1 |
+|  23~    |  4600W ~ |    0 |
+
+
+> [!NOTE]
+> 一笔交易产生的Gas，等于该交易从未花费到花费的区块高度差内，每个区块的奖励 + 区块系统手续费的之和 乘以该交易NEO的总量占比。
+
+
+
+**交易验证**
+
+1. **合法性验证**
+   
+   1. 先进行一般交易的合法性验证；
+
+   2. 若Claims包含重复交易时，返回false；
+
+   3. 若Claims与内存池交易存在重复时，返回false； 
+
+   4. 若ClaimTransaction的GAS的资产减少或者没有变化时，返回false；
+
+   5. 若根据Claims指向的交易，计算出可以提取的Gas不等于ClaimTransaction GAS的增发量时，返回false；
+
+
+2. **脚本验证**
+
+    1. 在进行一般交易的脚本验证时，会包含Claims交易的收款人地址脚本
+
+
+后续处理流程，与一般流程一致。
+
+### EnrollmentTransaction (已弃用)
+
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  -  | - | - | -  | 	交易的公共字段  |
+| ? | PublicKey | 记账人的公钥 | ECPoint | 用于分配的 NEO |
+|  -  | - | - | -  | 	交易的公共字段  |
+
+报名成为共识候选人的特殊交易，具体操作请参阅[选举与投票](./consensus/vote_validator.md)。
+
+### StateTransaction
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  -  | - | - | -  | 	交易的公共字段  |
+| ?*? | Descriptors | 投票信息 | StateDescriptor[] |  |
+|  -  | - | - | -  | 	交易的公共字段  |
+
+申请见证人或共识节点投票的交易。用户可以在NEO GUI报名成为候选人，成为候选人后就可以根据投票数竞选成为共识节点。报名成为候选人需要花费手续费 1000 GAS。具体操作请参阅[选举与投票](./consensus/vote_validator.md)。
+
+
+### ContractTransaction
+
+合约交易，最常用的一种交易，用于转账交易（NEO CLI, API 的send指令，以及GUI的send操作），处理流程与一般流程一致。
+
+
+### PublishTransaction (已弃用)
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  -  | - | - | -  | 	交易的公共字段  |
+| ? | Script | 合约的脚本 | byte[] |  |
+| ? | ParameterList | 参数类型列表 | ContractParameterType |  |
+| 1 | ReturnType | 返回类型 | ContractParameterType |  |
+| 1 | NeedStorage | 是否需要存储空间 | bool |  |
+| ? | Name | 合约名称 | string |  |
+| ? | CodeVersion | 合约版本编号 | string |  |
+| ? | Author | 合约作者姓名 | string |  |
+| ? | Email | 电子邮箱 | string |  |
+| ? | Description | 合约描述 | string |  |
+|  -  | - | - | -  | 	交易的公共字段  |
+
+智能合约发布的特殊交易，处理流程与一般流程一致。注意, 用户在GUI发布智能合约时，实际调用的是InvocationTransaction。
+
+
+### InvocationTransaction
+
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  -  | - | - | -  | 	交易的公共字段  |
+| ? | Script | 合约的脚本 | byte[] |  |
+| 8 | Gas | 消耗的Gas | Fixed8 |  |
+|  -  | - | - | -  | 	交易的公共字段  |
+
+调用智能合约的特殊交易。用户可以通过NEO API的`invoke/invokefunction/invokescript`指令，或者NEO GUI，根据输入的智能合约信息创建InvocationTransaction对象并调用。注意，用户在GUI创建资产和发布智能合约时，实际调用的是InvocationTransaction。
+
+| InvokeTX用途 | 调用脚本 | Attributes | 包含属性 |
+|--------------|------------|--------------|
+| 执行智能合约 | 调用合约的脚本  |  空 |   | 
+| 发布合约 | Neo.Contract.Create  |   空  |   | 
+| 资产注册 | Neo.Asset.Create |  非空 | TransactionAttributeUsage.Script,资产所有者的地址脚本hash，数目 1 |
+| GUI 转账 | NEP-5资产时，调用合约transfer方法；<br/>全局资产时，为空  |  非空 | TransactionAttributeUsage.Script，转账账户地址，数目若干 <br/> TransactionAttributeUsage.Remark，备注数据，数目 1 |
+| CLI 非“sendall”转账 | 同上  |  非空 |  TransactionAttributeUsage.Script, 转账账户地址，数目 若干 |  
+
+
+
+**交易创建**
+
+1. 根据用途，构建相应的执行脚本，并赋值给 InvocationTransaction 的Script字段
+
+2. 在本地NVM试运行（测试环境）上面脚本，计算需要消耗的GAS
+
+3. 将 `Math.max(0, GasConsumed - 10).Ceiling()` 赋值给 InvocationTransaction的Gas字段，并作为交易的系统手续费。（注，系统减免了10GAS的消耗, 并取上整数的GAS）
+
+4. 设置交易的其他字段，并进行签名和P2P广播。
+
+
+**交易验证**
+
+1. **合法性校验**
+
+    1. 若消耗的GAS不能整除10^8, 则返回false（即，GAS必须是整数单位形式的Fixed8，即不能包含有小数的GAS）
+
+    2. 交易的一般性校验
+
+
+后续处理流程，与一般流程一致。
+
+
+
+NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，分为部署费用和执行费用。部署费用是指开发者将一个智能合约部署到区块链上需要向区块链系统支付一定的费用（目前是 500 Gas）。执行费用是指每执行一条智能合约的指令都会向 NEO 系统支付一定的执行费用。具体收费标准请参阅[智能合约费用](http://docs.neo.org/zh-cn/sc/systemfees.html)。
+
+关于智能合约的相关信息，请查阅[智能合约介绍](http://docs.neo.org/zh-cn/sc/introduction.html)。
 
 
 
