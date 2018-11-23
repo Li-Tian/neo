@@ -130,3 +130,5 @@ Example：
 
 1. DB3钱包账户密码的存储、验证
 
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>
