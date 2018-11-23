@@ -63,9 +63,7 @@
 
 7. 任意一个节点收到该新块后，将上面交易从内存池中删除，并记录该区块内容。 若是共识节点收到新区块后，则进入下一轮共识。
 
-<p align="center"><img src="../../images/consensus/dbft_two_phase.jpg" /><br></p>
-
-
+[![dbft_two_phase](../../images/consensus/dbft_two_phase.jpg)](../../images/consensus/dbft_two_phase.jpg)
 
 算法可以划分为三阶段。1）`PRE-PREPARE`预准备阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。 2）`PREPARE`准备阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个节点收到不少于`2f+1`个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。3)`PERSIST`出块阶段， 负责向外广播新块，并进入下一轮共识。
 
@@ -81,8 +79,7 @@
 在开放的P2P网络环境共识过程中，可能会遇到网络延迟超时，恶意节点发送假数据等，议员可以发起更换视图消息，若收到不少于2f+1个更换视图消息时，则进入新的视图和新的议长，重新进行区块共识。
 
 
-<p align="center"><img src="../../images/consensus/dbft_state_graph.jpg" /><br></p>
-
+[![dbft_state_graph](../../images/consensus/dbft_state_graph.jpg)](../../images/consensus/dbft_state_graph.jpg)
 
 当节点 𝑖 在经过 2<sup>𝑣+1</sup> ⋅ 𝑡 的时间间隔后仍未达成共识，或接收到包含非法交易的提案后，开始进入视图更换流程： 
 

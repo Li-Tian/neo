@@ -9,14 +9,12 @@ NEO中的交易，也是采用比特币类似交易的设计，每一笔交易�
 
 ## 一般流程
 
-<p align="center"><img src="../images/tx_execution/tx_flow_graph.jpg" /><br></p>
-
+[![tx_flow_graph](../images/tx_execution/tx_flow_graph.jpg)](../images/tx_execution/tx_flow_graph.jpg)
 
 一笔交易，在Neo-Cli, Neo-RPC, 或 NEO-GUI 被创建，经钱包验证与签名，构建出完整的交易数据，并通过节点进行全网广播。
 共识节点收到该笔交易后，进行校验并放入到内存池，在某次共识阶段，打包该交易到新块中。最后，伴随着新块的全网广播，该交易被全网节点执行处理。 整个流程可以看简化成如下图：
 
-<p align="center"><img src="../images/tx_execution/tx_process_flow.jpg" /><br></p>
-
+[![tx_process_flow](../images/tx_execution/tx_process_flow.jpg)](../images/tx_execution/tx_process_flow.jpg)
 
 1. 交易构建： 用户发起一笔交易
 
@@ -478,10 +476,9 @@ Amount 为发行总量，共有2种模式：
 
 其中，**一笔有NEO的tx.output产生的Gas计算**
 
-<p align="center"><img src="../images/tx_execution/tx_claim_gas.jpg" /><br></p>
+[![tx_claim_gas](../images/tx_execution/tx_claim_gas.jpg)](../images/tx_execution/tx_claim_gas.jpg)
 
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-
 
 $$
 Gas = \sum_{h=M+1}^{N} (BlockBonus(h) + SystemFee(h)) * \frac{tx.output.NEO}{10^8}

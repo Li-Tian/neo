@@ -2,7 +2,7 @@
 
 　梅克尔树是一种二叉树，能快速检查和归纳大量数据，可用于验证区块中交易记录的完整性。NEO 使用梅克尔树来构建区块模型。不同于比特币，NEO 中每个区块的区块头都会保存一份该区块所有所有交易的梅克尔树根，区块的数据区存放的是交易数组。
 
-![MerkleTree01](../../images/blockchain_paradigm/MerkleTree01.png)
+[![MerkleTree01](../../images/blockchain_paradigm/MerkleTree01.png)](../../images/blockchain_paradigm/MerkleTree01.png)
 
 梅克尔树基本特点：
 

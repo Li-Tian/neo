@@ -75,8 +75,8 @@ ContractHash、ECDH02-03、Vote和Hash1-15的数据长度固定为 32 字节，�
 调用脚本进行压栈操作相关的指令，用于向验证脚本传递参数（如签名等）。脚本解释器会先执行栈脚本代码，然后执行验证脚本代码。
 
 `Block.NextConsensus`所代表的多方签名脚本，填充签名参数后的可执行脚本，如下图所示，[`Opt.CHECKMULTISIG`](../neo_vm.md#checkmultisig) 在NVM内部执行时，完成对签名以及公钥之间的多方签名校验。
-<p align="center"><img src="../../images/blockchain/nextconsensus_witness.jpg" /><br></p
 
+[![nextconsensus_witness](../../images/blockchain/nextconsensus_witness.jpg)](../../images/blockchain/nextconsensus_witness.jpg)
 
 ### **Transaction类型**
 

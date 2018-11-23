@@ -89,7 +89,7 @@
     3. 若投票人之前投过的投票人数 与 当前投票人数不一致时，则共识节点个数的票数，也做类似处理，旧的减少票数，新的增加票数。
 
 
-> [!Warning]
+> [!IMPORTANT]
 > 当一个投票用户的NEO资产发生变动时，相应的其投票数也做同样变动。
 
 
@@ -110,7 +110,8 @@
 根据用户的投票情况，共识节点个数的投票得到类似如下图形式
 
 
-<p align="center"><img src="../../images/consensus/calculate_consensus_count_0.jpg" /><br></p>
+[![calculate_consensus_count_0](../../images/consensus/calculate_consensus_count_0.jpg)](../../images/consensus/calculate_consensus_count_0.jpg)
+
 
 按照如下公式，转化成概率分布函数 F（离散函数）， 其中投票数的占比即为共识个数 i 的概率。
 
@@ -119,8 +120,7 @@ F_i = \frac{\sum_{j = 1}^i Vote_j }{\sum_{k = 1}^N Vote_k}
 $$
 
 
-<p align="center"><img src="../../images/consensus/calculate_consensus_count_1.jpg" /><br></p>
-
+[![calculate_consensus_count_1](../../images/consensus/calculate_consensus_count_1.jpg)](../../images/consensus/calculate_consensus_count_1.jpg)
 
 在概率分布函数上，截取[0.25, 0.75]覆盖到的共识节点个数，再对这些点求取期望值，最后与备用共识节点个数比较取最大值，得到最终的共识节点个数。公式如下：
 

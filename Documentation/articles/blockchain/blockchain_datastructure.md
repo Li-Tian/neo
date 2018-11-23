@@ -2,9 +2,7 @@
 
 区块链（Blockchain）本身是一种数据结构。每个区块都有上一个区块的hash值，从而形成了一种链式结构。在比特币系统中，可以存在多条链并存，即暂时分叉，但经过足够长的时间后最长的链条（提供了最多的工作量证明）成为确认的区块链。 Neo因为采用了dBFT共识算法，在系统正常运行时，不会同时出现一条以上的链。请参见共识部分的黄皮书。
 
-
-<p align="center"><img src="../../images/blockchain/blockchain.jpg" /><br></p
-
+[![../../images/blockchain/blockchain.jpg](../../images/blockchain/blockchain.jpg)](../../images/blockchain/blockchain.jpg)
 
 ### **区块头Header** 
 
@@ -26,7 +24,7 @@
 
 `NextConsensus` 是一个三分之二签名脚本的hash值,需要三分之二以上的共识节点的签名作为参数验证。示例脚本如下图。每一个区块，都会带有`NextConsensus`字段，锁定了参与下一块的共识节点。当前要生成的块（简称“当前块”）的验证人节点已经由上一个被确认的块决定了。在上一轮共识，当时的议长节点根据当时的投票结果计算出了哪些是下一块的验证人，再生成这个多方签名合约，将其地址放入了块里然后广播了出去，如果这个块最后通过了共识，成为了上一个被确认的块。那本轮的共识验证人就需要能满足上一个被确认的块里的多方签名合约。`ConsensusData`是一个随机值。不同于比特币，这个nonce是提供给智能合约需要时用的。
 
-<p align="center"><img src="../../images/blockchain/nextconsensus_script.jpg" /><br></p
+[![../../images/blockchain/nextconsensus_script.jpg](../../images/blockchain/nextconsensus_script.jpg)](../../images/blockchain/nextconsensus_script.jpg)
 
 ### **Block**
 
