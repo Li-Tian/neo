@@ -105,3 +105,5 @@ Example:
 
 1. <https://en.wikipedia.org/wiki/Scrypt>
 
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>

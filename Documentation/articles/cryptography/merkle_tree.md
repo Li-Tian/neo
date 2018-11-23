@@ -26,3 +26,6 @@
 参考文献：
 
 1. <https://en.wikipedia.org/wiki/Merkle_tree>
+
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>
