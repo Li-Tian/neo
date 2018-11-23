@@ -3,9 +3,6 @@
 &emsp;&emsp;交易，是区块链网络的交互操作的唯一方式，包括发布资产，转账，发布智能合约，合约调用等等，都是基于交易的方式进行操作处理。
 NEO中的交易，也是采用比特币类似交易的设计，每一笔交易都包含三个重要部分：input, output, scripts。 input代表资金来源，output代表资金流出，scripts是对input所引用交易的output的验证解锁，通过这种 input-output 组合方式，将资产的每一笔流动都形成了一条链条结构。
 
-&nbsp;
-&nbsp;
-
 
 ## 一般流程
 
@@ -35,13 +32,13 @@ NEO中的交易，也是采用比特币类似交易的设计，每一笔交易�
 用户可用通过Neo-CLI, NEO-RPC, 或NEO-GUI 创建交易，最后经钱包，构建出完整的交易。
 
 
-1. 通过CLI指令
+1、通过CLI指令
 
 ```bash
 send <id|alias> <address> <value>|all [fee=0]
 ```
 
-其中
+&emsp;&emsp;其中
 
  - id|alias：资产ID或名称
  - address：对方地址
@@ -49,7 +46,7 @@ send <id|alias> <address> <value>|all [fee=0]
  - fee：手续费，缺省值为0
 
 
-2. 通过RPC调用
+2、通过RPC调用
 
 
 + sendfrom：从指定地址，向指定地址转账。
@@ -58,13 +55,13 @@ send <id|alias> <address> <value>|all [fee=0]
 
 + sendmany：批量转账命令，并且可以指定找零地址。
 
-具体用法请参照[NEO Documentation: API 参考](http://docs.neo.org/zh-cn/node/cli/apigen.html)。 
+    
+&emsp;&emsp;具体用法请参照[NEO Documentation: API 参考](http://docs.neo.org/zh-cn/node/cli/apigen.html)。 
 
 
-3. 通过GUI界面
-
-具体操作请参照[NEO Documentation: NEO GUI 交易](http://docs.neo.org/zh-cn/node/gui/transc.html)。
-
+3、通过GUI界面
+    
+&emsp;&emsp;具体操作请参照[NEO Documentation: NEO GUI 交易](http://docs.neo.org/zh-cn/node/gui/transc.html)。
 
 
 钱包构建完整交易接口定义：
@@ -110,40 +107,39 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 ### （2）签名验证
 
 
-进行签名，加入到未处理队列，以及交易验证
+在前面的章节提到，一个账户地址，实际上代表的就是一段`OpCode.CHECKSIG`或者`OpCode.CHECKMULTISIG`合约代码，执行时需要提供签名参数。经典的UTXO交易转账时，实际上是对输入地址脚本进行执行解锁，执行成功则表示对交易的输入引用成功。在NEO交易验证时，也需要对涉及的脚本进行执行验证，故在执行前，需提供相应的脚本所需参数，如交易签名参数。这些参数与对应的脚本，最终被封装在交易的见证人(Witness)列表中。
 
-```c#
-public bool Sign(ContractParametersContext context);
-```
-
-其中
-
-   - context：将上一步生成的交易转换为ContractParametersContext类型，包含了交易的所有信息。
-
+交易签名，实际上是添加地址脚本的签名参数，构建完整可执行的见证人(Witness)，其签名步骤如下：
 
 **签名步骤**：
 
-1. 对于输入脚本的ScriptHashes的每个对象，取得相应的账户，若对应帐户为空，或该账户没有密钥串，则跳过；
+1. 封装交易为`ContractParametersContext`对象（`ContractParametersContext`是对要进行签名验证的对象包装，负责添加合约脚本参数，构建完整的见证人）。
 
-2. 否则，获取密钥串后，用该密钥串对输入协议的Verifiable签名，获取返回的byte数组；
+1. 对于交易待验证脚本的ScriptHashes的每个对象，取得相应的账户，若对应帐户为空，或该账户没有密钥串，则跳过；
 
-3. 进行加签，具体步骤如下：
+2. 用该密钥串对交易的未签名数据进行`ECDsa`方法签名；
 
-      1. 若输入脚本是多重签名，则根据输入的contract创建ContextItem。若创建失败或显示已经加签过，返回false；
- 
-      2. 否则，对contract.Script的内容，从第二字节跳过第一字节的数值个字节后，开始按照34byte的间隔依次解码生成List<ECPoint> points：每次检查当前字节是否为33，若是则读取下33字节进行解码操作，若非则退出循环。
-      
-      3. 若points中包含pubkey则返回false，否则将(pubkey, signature)键值对加入item.Signatures。
+3. 添加签名参数，存放到参数列表对应位置上，具体步骤如下：
+
+    1. 若输入脚本是多重签名，则根据输入的contract创建ContextItem。
         
-      4. 若创建的ContextItem的Signatures.Count == contract.ParameterList.Length，对于points中的每个点，以及ContextItem中的每个对象作join并按照PublicKey倒序排序，得到的二维字节数组包含了按照索引排序的签名。将这些签名以此添加到contract对应的Parameters中。
+        1. 若创建失败或显示已经加签过，返回false；
+        
+        2. 对contract.Script的内容，从第二字节跳过第一字节的数值个字节后，开始按照34byte的间隔依次解码生成List<ECPoint> points：每次检查当前字节是否为33，若是则读取下33字节进行解码操作，若非则退出循环。
+        
+        3. 若points中包含pubkey则返回false，否则将(pubkey, signature)键值对加入item.Signatures。
+        
+        4. 若创建的ContextItem的Signatures.Count == contract.ParameterList.Length，对于points中的每个点，以及ContextItem中的每个对象作join并按照PublicKey倒序排序，得到的二维字节数组包含了按照索引排序的签名。将这些签名以此添加到contract对应的Parameters中。
 
-      5. 若输入脚本不是多重签名，判断contract.ParameterList中是否存在唯一的0x00（类型ContractParameterType.Signature）：
+    2. 若输入脚本不是多重签名，判断contract.ParameterList中是否存在唯一的0x00（类型ContractParameterType.Signature）：
 
-      6. 若不存在，返回false；
+        1. 若不存在，返回false；
 
-      7. 若存在多个抛异常；否则记下这个位置index，将contract的Parameters的index位置赋值为signature
+        2. 若存在多个抛异常；
+        
+        3. 将contract的Parameters的index位置赋值为signature
 
-4. 对输入脚本的ScriptHashes的加签结果取或，并返回，作为加签成功与否的结果。
+4. 若脚本参数已齐全，则得到交易的见证人列表。（多重签名情况下，还需要别的账户地址进行签名，补充签名参数）
 
 
 
@@ -629,9 +625,6 @@ $$
 
 
 NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，分为部署费用和执行费用。部署费用是指开发者将一个智能合约部署到区块链上需要向区块链系统支付一定的费用（目前是 500 Gas）。执行费用是指每执行一条智能合约的指令都会向 NEO 系统支付一定的执行费用。具体收费标准请参阅[智能合约费用](http://docs.neo.org/zh-cn/sc/systemfees.html)。
-
-关于智能合约的相关信息，请查阅[智能合约介绍](http://docs.neo.org/zh-cn/sc/introduction.html)。
-
 
 
 > [!NOTE]
