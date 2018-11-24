@@ -45,7 +45,7 @@
 
    1. 加载内存池交易
 
-   2. 加载[`IPolicyPlugin`](https://github.com/neo-project/neo-plugins)插件，对交易进行排序和过滤
+   2. 加载[`IPolicyPlugin`插件](https://github.com/neo-project/neo-plugins)，对交易进行排序和过滤。(其中，每个区块500笔交易，免费20笔交易，是在插件中完成过滤)
    
    3. 计算总交易的网络手续费（`= input.GAS - output.GAS - 交易系统费 `)，将其作为当前议长的`MinerTransaction`奖励。
    
@@ -99,6 +99,7 @@
 [2] [共识机制图解](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
 [3] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
+[5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)
 
 
 
