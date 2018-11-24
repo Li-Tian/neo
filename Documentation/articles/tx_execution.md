@@ -1,15 +1,15 @@
 ﻿<center><h2> 交易流程 </h2></center>
 
 &emsp;&emsp;交易，是区块链网络交互操作的唯一方式，包括发布资产，转账，部署智能合约，合约调用等等，都是基于交易的方式进行操作处理。
-NEO中的交易，也是采用比特币类似交易的设计，每一笔交易都包含三个重要部分：input, output, scripts。 input代表资金来源，output代表资金流出，scripts是对input所引用交易的output的验证解锁，通过这种 input-output 组合方式，将资产的每一笔流动都形成了一条链条结构。
+NEO中的交易，也是采用类似比特币交易的设计，每一笔交易都包含三个重要部分：input, output, scripts。 input代表资金来源，output代表资金流出，scripts是对input所引用UTXO（Unspent Transaction Output）的解锁，通过这种 input-output 组合方式，将资产的每一笔流动都形成了一条链条结构。
 
 
 ## 一般流程
 
 [![tx_flow_graph](../images/tx_execution/tx_flow_graph.jpg)](../images/tx_execution/tx_flow_graph.jpg)
 
-一笔交易，在Neo-Cli, Neo-RPC, 或 NEO-GUI上被创建，经钱包签名与验证，构建出完整的交易数据，并通过节点进行全网广播。
-共识节点收到该笔交易后，进行校验并放入到内存池，在某次共识阶段，打包该交易到新块中。最后，伴随着新块的全网广播，该交易被全网节点执行处理。 整个流程可以看简化成如下图：
+一笔交易，在NEO-Cli, Neo-RPC, 或 NEO-GUI上被创建，经钱包签名，构建出完整的交易数据，并通过节点进行验证和全网广播。
+共识节点收到该笔交易后，校验并放入到内存池。在某次共识阶段，议长打包该交易到新块中。最后，伴随着新块的全网广播，该交易被全网节点执行处理。 整个流程可以看简化成如下图：
 
 [![tx_process_flow](../images/tx_execution/tx_process_flow.jpg)](../images/tx_execution/tx_process_flow.jpg)
 
@@ -110,7 +110,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 
 1. 对于交易待验证脚本的ScriptHashes的每个对象，取得相应的账户，若对应帐户为空，或该账户没有密钥串，则跳过；
 
-2. 用该密钥串对交易的未签名数据进行`ECDsa`方法签名；
+2. 用该密钥串对交易的未签名的序列化数据进行`ECDsa`方法签名；
 
 3. 添加签名参数，存放到参数列表对应位置上，具体步骤如下：
 
@@ -171,7 +171,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 
       3. Attributes中涉及到的`TransactionAttributeUsage.Script`脚本。
 
-   2. 获取交易的见证人列表。若对应脚本hash的见证人不存在，则hash指向的就是脚本地址，创建临时的`Opt.APPCALL hash` 脚本指令。
+   2. 获取交易的见证人列表。若对应脚本hash的见证人不存在，则hash指向的就是脚本地址，创建临时的`Opt.APPCALL hash` 脚本。
 
    3. 分别加载校验脚本，执行脚本，通过NVM进行执行，若执行返回False，则校验失败
 
@@ -188,7 +188,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 
 
 > [!NOTE]
-> 1. 对需要验证的脚本，提供好参数，最后通过NVM进行执行，是否都返回 True , 则脚本通过验证。
+> 1. 对需要验证的脚本，提供好参数，最后通过NVM进行执行，若都返回 True , 则脚本通过验证。
 > 2. 每一个地址，都是一段`OptCode.CHECKSIG`代码段，执行的时候，都需要签名参数。类似的多签合约地址，调用的是 `OptCode.CHECKMULTISIG` 方法，需要指定数量的签名参数。
 > 3. 每一笔交易的待验证脚本，都包括 input 所指向的tx.output.scriptHash 脚本（即，输入交易的收款人的地址脚本)，这样确保了，只有对应的钱包才能使用该笔UTXO。
 > 4. 当遇到自定义的地址脚本时，需要按照对方的脚本形参，提前准备好参数（不一定是签名参数）进行验证。
@@ -275,7 +275,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 
 * **Wallet 对 Block中的交易处理**
 
-钱包将启动一个线程，监听新来的block，对收到的新块，更新相关资产变动账户，交易状态，以及未确认交易队列。如下处理：
+钱包将启动一个线程，监听新来的block，更新相关资产变动账户，交易状态，以及未确认交易队列。处理如下：
 
 1. 处理 outputs, 更新钱包涉及到的交易状态和账户变动；
 
@@ -457,7 +457,7 @@ Amount 为发行总量，共有2种模式：
 |  -  | - | - | -  | 	交易的公共字段  |
 
 
- GAS是由持有NEO用户进行Claim操作，进行系统增发Gas（并非每出一个块就立马奖励Gas到账户上）。用户能够Claim到的Gas是与NEO资产的起始高度，截至高度，紧密相关。GAS总量上限是1亿，当区块高度到达 4600W后，每个区块不再有奖励。
+ GAS是由持有NEO用户进行Claim操作，进行系统增发Gas（并非每出一个块就立马奖励Gas到账户上）。用户能够Claim到的Gas是与NEO资产的起始高度，截止高度，紧密相关。GAS总量上限是1亿，当区块高度到达 4600W后，每个区块不再有奖励。
 
 
 每一个笔NEO 的交易都有两种状态：unspent 和 spent。每一个未提取的 GAS 也有两种状态，available 和 unavailable。一个 NEO 的生命周期以转入地址起始，转出地址截止，转入时状态变为 unspent，转出时状态变为 spent。当 NEO 处于 unspent 状态时，所产生的 Gas 为 unavailable 状态，即不可提取。当 NEO 处于 spent 状态时，期间所产生的 GAS 变为 available，用户可以提取。用户可通过转账的方式，将unspent的NEO变成spent状态的NEO，再进行Claim 提取GAS。
@@ -489,7 +489,7 @@ Gas = \sum_{h=M+1}^{N} (BlockBonus(h) + SystemFee(h)) * \frac{tx.output.NEO}{10^
 $$
 
 - Gas： 一笔持有NEO的tx.output能提取到的Gas数量
-- M：交易的块高度， 起始高度
+- M: 交易的块高度， 起始高度
 - N: 交易被花费的块高度，引用这笔tx.output的交易的所在块高度, 即截止高度
 - `BlockBonus(h)`: 高度为h的区块所能得到的Gas奖励, 参考下表。
 - `SystemFee(h)`: 高度为h的区块的系统手续费，等于该块下所有交易的系统手续费之和。`amount_sysfee = block.Transactions.Sum(p => p.SystemFee)`
