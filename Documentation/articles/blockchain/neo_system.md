@@ -1,6 +1,6 @@
 <center><h2>Neo区块链系统</h2></center>
 
-　资产是 Neo 系统中的核心。交易、合约、账户和钱包这些的存在都是为了服务于资产的生成、流动和管理。我们把这种关系用下面这张图来描述了一下。
+　资产是 Neo 系统中的核心。交易、合约、账户和钱包都是为了服务于资产的生成、流动和管理。其关系可以用下面这张图来描述。
 
 [![neo system](../../images/blockchain/system.jpg)](../../images/blockchain/system.jpg)
 
@@ -8,13 +8,13 @@
 
 　编写 Neo 智能合约的语言，比如 C# 和 Python 等，都是图灵完备的，可以满足现实世界中的丰富多彩的需要。而现实世界广泛采用的是账户余额模型(account)。比特币采用 UTXO 模型，以太坊采用账户余额模型。在 Neo 中，UTXO 模型和账户余额模型同时存在。UTXO 模型主要用于全局资产，账户余额模型主要用于智能合约支持的 NEP-5 资产。
 
-　Neo中的账户实际就是地址。这个地址可以是一个私钥对应的地址，用于 UTXO，也可以是智能合约的地址，用于调用执行智能合约。私钥对应的地址实际就是私钥通过一系列加密算法运算最后求得的一个 hash 值，过程见下图。智能合约的地址是如果算得得呢？也请见下图。
+<!-- 　Neo中的账户实际就是地址。这个地址可以是一个私钥对应的地址，用于 UTXO，也可以是智能合约的地址，用于调用执行智能合约。私钥对应的地址实际就是私钥通过一系列加密算法运算最后求得的一个 hash 值，过程见下图。智能合约的地址是如果算得得呢？也请见下图。
 
 [![address](../../images/blockchain/address.jpg)](../../images/blockchain/address.jpg)
 
 　在Neo钱包中存放了各种资产，包括 NEO、GAS和各种 NEP-5 资产。存放的形式其实就是 hash 地址。比如下图： 
 
-[![account gui](../../images/blockchain/account-gui.jpg)](../../images/blockchain/account-gui.jpg)
+[![account gui](../../images/blockchain/account-gui.jpg)](../../images/blockchain/account-gui.jpg) -->
 
 ### **UTXO模型**
 
@@ -33,19 +33,34 @@ UTXO进行转账时，实际上是对能解锁`Output.scriptHash`的output进行
 
 ### **账户模型**
 
-在智能合约部分详述。这里需要讨论一下与以太坊的区别。
+<!-- 在智能合约部分详述。这里需要讨论一下与以太坊的区别。 -->
+
+不同于UTXO模型，账户模型，直接地记录了账相关信息，包括资产余额。在NEO中，账户模型主要用在智能合约记录，选举投票，
+全局UTXO资产上主要用其作为备用存储。
 
 ### **合约Contract**
 
-这里介绍的是具体概念。设计的细节请见smart contract部分。
+<!-- 这里介绍的是具体概念。设计的细节请见smart contract部分。 -->
+
+智能合约，一种旨在以信息化方式传播、验证或执行合同的计算机协议。智能合约允许在没有第三方的情况下进行可信交易，这些交易可追踪且不可逆转[1]。NEO的智能合约包含三部分：`NeoVM`--通用区块链虚拟机，智能合约执行器。`InteropService `--互操作服务, 用于加载区块链账本、数字资产、数字身份、持久化存储区等底层服务。`DevPack`--编译器和 IDE 插件。用户可以通过智能合约发布资产，或者Dapp。
+
 
 ### **资产Asset**
 
-这里仅描述资产。具体数据结构请见asset部分。
+  <!-- 这里仅描述资产。具体数据结构请见asset部分。 -->
+
+数字资产是以电子数据的形式存在的可编程控制的资产。在NEO上，用户可以自行注册资产，发行资产，交易和流通。NEO上包括两种资产类型：全局资产，能够被记录在系统空间，UTXO记录方式，能被所有智能合约和客户端识别。另外一种是合约资产，记录在智能合约私有存储区中，可以通过合约变成的方式，拓展各种资产应用。
+
 
 ### **NEP5资产**
 
-这里介绍NEP5资产。与智能合约的关系。NEP5资产的具体设计请见nep5asset部分，而如何生成一个NEP5资产见transaction部分举例(例2)。
+NEP5资产，是合约资产的一种，采用的NEO第五号TOKEN规范协议，用户可参考该协议，发行自己的TOKEN资产。
+
+<!-- 这里介绍NEP5资产。与智能合约的关系。NEP5资产的具体设计请见nep5asset部分，而如何生成一个NEP5资产见transaction部分举例(例2)。 -->
 
 
+
+1、[Smart Contract](https://en.wikipedia.org/wiki/Smart_contract)
+
+2、[nep-5.mediawiki](https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki)
 

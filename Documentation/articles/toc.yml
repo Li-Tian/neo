@@ -28,8 +28,8 @@
       href: blockchain/transaction.md
     - name: 账户和资产
       href: blockchain/account_asset.md
-    - name: NEP5 资产
-      href: blockchain/nep5asset.md
+    # - name: NEP5 资产
+    #   href: blockchain/nep5asset.md
     - name: 验证人
       href: blockchain/validator.md
 - name: 钱包
