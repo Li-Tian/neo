@@ -1,5 +1,5 @@
 <center><h2>Neo区块链系统</h2></center>
-　资产是 Neo 系统中的核心。交易、合约、账户和钱包都是为了服务于资产的生成、流动和管理。其关系可以用下图描述。
+　资产是 Neo 系统中的核心，交易、合约、账户和钱包都是为了服务于资产的生成、流动和管理。其关系可以用下图描述。
 
 [![neo system](../../images/blockchain/system.jpg)](../../images/blockchain/system.jpg)
 
@@ -20,11 +20,11 @@
 [![utxo](../../images/blockchain/utxo.jpg)](../../images/blockchain/utxo.jpg)
 
 > [!IMPORTANT]
-> 1. 当交易有手续费时，input.GAS > output.GAS
-> 2. 当持有NEO提取GAS分红时 input.GAS < output.GAS
-> 3. 当发行资产时，input.Asset < output. Asset
+> 1. 当交易有手续费时，input.GAS > output.GAS。
+> 2. 当持有NEO提取GAS分红时 input.GAS < output.GAS。
+> 3. 当发行资产时，input.Asset < output. Asset。
 
-UTXO进行转账时，实际上是对能解锁`Output.scriptHash`的output进行消费，并在新交易的见证人上填充其签名参数。账户地址，实际上就是脚本hash的base58check处理，代表的是一段签名认证脚本，如下图。 [`Op.CheckSig`](../neo_vm.md#checksig) 执行需要公钥和签名两个参数，在地址脚本中，已经包含了公钥参数，故在交易中只需要补充签名参数。
+UTXO进行转账时，实际上是对能解锁`Output.scriptHash`的output进行消费，并在新交易的见证人上填充其签名参数。账户地址，实际上是脚本hash的base58check处理，代表的是一段签名认证脚本，如下图。 [`Op.CheckSig`](../neo_vm.md#checksig) 执行需要公钥和签名两个参数，在地址脚本中，已经包含了公钥参数，故在交易中只需要补充签名参数完成解锁。
 
 [![utxo](../../images/blockchain/account_scripthash.jpg)](../../images/blockchain/account_scripthash.jpg)
 
@@ -46,12 +46,12 @@ UTXO进行转账时，实际上是对能解锁`Output.scriptHash`的output进行
 
   <!-- 这里仅描述资产。具体数据结构请见asset部分。 -->
 
-数字资产是以电子数据的形式存在的可编程控制的资产。在NEO上，用户可以自行注册资产，发行资产，交易和流通。NEO上包括两种资产类型：全局资产，能够被记录在系统空间，UTXO记录方式，能被所有智能合约和客户端识别。另外一种是合约资产，记录在智能合约私有存储区中，可以通过合约变成的方式，拓展各种资产应用。
+数字资产是以电子数据的形式存在的可编程控制的资产。在NEO上，用户可以自行注册资产，发行资产，交易和流通。NEO上包括两种资产类型：全局资产，能够被记录在系统空间，以UTXO方式记录，能被所有智能合约和客户端识别。另外一种为合约资产，记录在智能合约私有存储区中，可通过智能合约编程的方式，拓展各种资产应用。
 
 
 ### **NEP5资产**
 
-NEP5资产，是合约资产的一种，采用的NEO第五号TOKEN规范协议，用户可参考该协议，发行自己的TOKEN资产。
+NEP5资产，是合约资产的一种，采用的NEO第五号TOKEN规范协议[2]，用户可参考该协议，发行自己的TOKEN资产。
 
 <!-- 这里介绍NEP5资产。与智能合约的关系。NEP5资产的具体设计请见nep5asset部分，而如何生成一个NEP5资产见transaction部分举例(例2)。 -->
 

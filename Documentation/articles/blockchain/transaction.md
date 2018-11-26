@@ -1,7 +1,7 @@
 <center><h2>交易</h2></center>
 
 
-一个普通的交易的数据结构如下：
+一个普通交易的数据结构如下：
 
 | 尺寸 | 字段 | 类型 | 描述 |
 |-----|-----|------|-------|
@@ -15,7 +15,7 @@
 
 ### Input
 
-每个交易中可以有多个Input，也可能没有Input。在下面提到的MinerTransaction中Input就为空。Input的数据结构如下： 
+每笔交易中可有若干个input，代表资金来源。在后面提到的MinerTransaction中Input为空。Input的数据结构如下： 
 
 
 | 尺寸 | 字段 | 类型 | 描述 |
@@ -26,7 +26,7 @@
 
 ### Output
 
-每个交易中最多只能包含 65536 个输出。Output的数据结构如下：
+每个交易中最多只能包含 65536 个输出，代表资金转出。Output的数据结构如下：
 
 
 | 尺寸 | 字段 | 类型 | 描述 |
@@ -43,7 +43,7 @@
 |---|-------|------|------|
 | 1 | Usage | byte | 属性类型 |
 | 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
-| ? | Data | byte[length] | 特定于用途的外部数据 | 
+| ? | Data | byte[length] | 特定用途的外部数据 | 
 
 TransactionAttributeUsage，交易属性使用表数据结构如下：
 
@@ -99,11 +99,11 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 <!-- 以上这9种交易并不能完成所有的功能实现，比如部署合约和生成NEO和GAS以外的NEP5新资产。这两种功能是通过系统调用来完成，但最后还是需要使用InvocationTransaction以交易的形式来将这个事情加入到区块链中。 -->
 
 
-下面给出2个例子。第一个例子是生成创世块，展示了只使用提供的交易类型生成资产；第二个例子是生成NEP5资产，展示了系统调用和合约的方式生成新资产。
+下面两个例子。第一个例子是生成创世块，展示了只使用提供的交易类型注册资产；第二个例子是生成NEP5资产。
 
 ### **例1：GenesisBlock**
 
-创世块，是默认已经定义在代码中不可修改的区块链的第一个区块，高度为0。在创世块中生成了NEO和GAS资产。注意，也只有NEO和GAS是使用MinerTransaction和RegisterTransaction生成了，其他的NEP5代币都是通过系统调用的方式生成的。
+创世块，是默认已经定义在代码中不可修改的区块链的第一个区块，高度为0。在创世块中注册了NEO和GAS资产。注意，也只有NEO和GAS是使用MinerTransaction和RegisterTransaction注册，其他的资产或NEP5代币都是通过系统调用的方式生成的。
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
@@ -119,7 +119,7 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 |  ?*? | **Transactions** | 交易 |  Transaction[] | 目前存了4笔交易， 见后续表 |
 
 
-第一笔交易是MinerTransaction，即“挖矿”交易。所有的block的第一笔交易，都必须是MinerTransaction。Neo中没有挖矿的概念。这里的MinerTransaction主要是在Outputs中记下所有的费用都归于哪里。
+第一笔交易，MinerTransaction，即“挖矿”交易。所有的block的第一笔交易，都必须是MinerTransaction。Neo中没有挖矿的概念。这里的MinerTransaction主要是在Outputs中记下所有的费用都归于哪里。
 
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
@@ -133,7 +133,7 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 | ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | 空 |
 
 
-第二笔交易是RegisterTransaction，用来注册NEO代币
+第二笔交易，RegisterTransaction，用来注册NEO代币
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
@@ -153,7 +153,7 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 `NEO`名称定义 = `[{"lang":"zh-CN","name":"小蚁股"},{"lang":"en","name":"AntShare"}]`
 
 
-第三笔交易也是RegisterTransaction，用来注册GAS代币
+第三笔交易，RegisterTransaction，用来注册GAS代币
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
@@ -172,7 +172,7 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 
 `GAS`名称定义 =  `[{"lang":"zh-CN","name":"小蚁币"},{"lang":"en","name":"AntCoin"}]`
 
-第四笔交易是IssueTransaction，用来把NEO发放到合约地址
+第四笔交易，IssueTransaction，用来把NEO发放到合约地址
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
@@ -183,7 +183,7 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 | 60 * ? | Outputs | tx_out[] | 输出 | 有一笔output，见下表 |
 | ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | `0x51`, 代表 `OpCode.PUSHT` |
 
-其中，Output定义了将所有的NEO代币，转移到共识节点多方签名地址上。而Scripts这里是空的，意思是这个交易因为是创世时做的，不需要验证了。
+其中，Output定义了将所有的NEO代币，转移到共识节点多方签名合约地址上。而Scripts为空，表示交易因为是创世块交易，不需要再验证。
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
