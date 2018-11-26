@@ -1,16 +1,16 @@
-<center><h2> dBFT算法介绍 </h2></center>
+﻿<center><h2> dBFT算法介绍 </h2></center>
 
-&emsp;&emsp;dBFT(Delegated Byzantine Fault Tolerant)[1]算法是在PBFT(Practical Byzantine Fault Tolerance)[3]算法上改良过来。PBFT算法能够有效解决分布式可信共识，但是当投票节点越来越多时，性能下降越厉害，其算法时间复杂度 O(n<sup>2</sup>), n是节点个数。 在此基础上，NEO提出结合POS模式特点的DBFT算法，利用区块链实时投票，决定下一轮共识节点，即授权少数节点出块，其他节点作为普通节点验证和接收区块信息。
+&emsp;&emsp;PBFT(Practical Byzantine Fault Tolerance)[1]算法能够有效解决分布式可信共识问题，但是当投票节点越来越多时，性能下降越厉害，其算法时间复杂度为 O(n<sup>2</sup>), n是节点个数。 NEO在PBFT算法的基础上改良，提出结合POS模式特点的DBFT(Delegated Byzantine Fault Tolerant)[3]算法，利用区块链实时投票，决定下一轮共识节点，即授权少数节点出块，其他节点作为普通节点验证和接收区块信息。
 
 
 ## 基本概念
 
 * 共识节点： 具有发起新块提案，提案投票权限的节点。
-* 普通节点： 具有转账，交易，全网账本，但不能发起区块提案与投票。
+* 普通节点： 具有转账，交易权限和全网账本，但不能发起区块提案与投票。
 * 议长：负责向其他节点，广播新块提案。
 * 议员：参与共识出块的节点，负责对新块提案进行投票，当票数不少于 N-𝑓 时，则提案通过。
-* 验证人： 被投票选举参与共识的节点, 共识候选节点。
-* 视图： 一轮共识从开始到结束所使用的数据集。视图编号 𝑣，从 0 开始，本轮共识失败时并逐渐递增，直到新的提案通过后清零。
+* 验证人： 被投票选举参与共识的节点，共识候选节点。
+* 视图： 一轮共识从开始到结束所使用的数据集。视图编号 v，从 0 开始，本轮共识失败时 v 逐渐递增，直到新的提案通过后清零。
 
 
 ## 算法流程
@@ -18,21 +18,21 @@
  
 ### 符号定义
 
-- N: 本轮共识节点总个数
-- f：最大容错节点个数， 不超过 ⌊(N-1)/3⌋。
+- N: 本轮共识节点总个数。
+- f：最大容错节点个数， 为 ⌊(N-1)/3⌋。
 - v: 视图编号，从0开始。
-- ℎ：当前共识的区块高度
-- p: 议长编号，`p = (h - v) mod N`
+- ℎ：当前共识的区块高度。
+- p: 议长编号，`p = (h - v) mod N`。
 - i：议员节点编号，等于本轮共识列表中的序号。
 - t: 出块时间。配置在文件`protocol.json`中的`SecondsPerBlock`值，默认15秒钟。
-- 𝑏𝑙𝑜𝑐𝑘： 提案的新块
+- 𝑏𝑙𝑜𝑐𝑘： 提案的新块。
 - 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: 第i个共识节点对𝑏𝑙𝑜𝑐𝑘的签名。
 
 
 ### 一般流程
 
 
-假设当前共识节点总数N, 最多 f 个容错节点。 刚开始时，至少具有 N-𝑓 个节点处于相同的视图编号v, 区块高度 ℎ = 当前区块高度。（若没有处在同一高度，可通过P2P之间区块同步，最终达成一致； 若视图编号不一致时，可通过更换视图最终达成一致），共识算法涉及到的流程如下：
+假设当前共识节点总数N, 最多 f 个容错节点。 刚开始时，至少具有 N-𝑓 个节点处于相同的视图编号v, 区块高度 ℎ = 当前区块高度。（若没有处在同一高度，可通过P2P之间区块同步，最终达成一致； 若视图编号不一致时，可通过更换视图最终达成一致）。共识算法的流程如下：
 
 1. 用户通过钱包发起一笔交易，如转账，发布智能合约，智能合约调用等。
 
@@ -45,7 +45,7 @@
 
    1. 加载内存池交易
 
-   2. 加载[`IPolicyPlugin`插件](https://github.com/neo-project/neo-plugins)，对交易进行排序和过滤。(其中，每个区块500笔交易，免费20笔交易，是在插件中完成过滤)
+   2. 加载[`IPolicyPlugin`插件](https://github.com/neo-project/neo-plugins)，对交易进行排序和过滤。(其中，每个区块500笔交易，免费20笔交易，在插件中完成过滤)
    
    3. 计算总交易的网络手续费（`= input.GAS - output.GAS - 交易系统费 `)，将其作为当前议长的`MinerTransaction`奖励。
    
@@ -65,7 +65,7 @@
 
 [![dbft_two_phase](../../images/consensus/dbft_two_phase.jpg)](../../images/consensus/dbft_two_phase.jpg)
 
-算法可以划分为三阶段。1）`PRE-PREPARE`预准备阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。 2）`PREPARE`准备阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个节点收到不少于`2f+1`个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。3)`PERSIST`出块阶段， 负责向外广播新块，并进入下一轮共识。
+算法可以划分为三阶段。1）`PRE-PREPARE`预准备阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。 2）`PREPARE`准备阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个共识节点收到不少于`2f+1`个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。3)`PERSIST`出块阶段， 负责向外广播新块，并进入下一轮共识。
 
 
 > [!Note]
@@ -95,9 +95,9 @@
 
 
 
-[1] [一种用于区块链的拜占庭容错算法](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
+[1] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
 [2] [共识机制图解](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
-[3] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
+[3] [一种用于区块链的拜占庭容错算法](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
 [5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)
 

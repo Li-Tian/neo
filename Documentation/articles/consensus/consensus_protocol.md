@@ -1,4 +1,4 @@
-<center><h2>共识协议</center></h2>
+﻿<center><h2>共识协议</center></h2>
 
 ## 一、共识消息格式
 
@@ -118,11 +118,11 @@
 
 ###  校验
 
-1. 检查`ConsensusPayload.BlockIndex`。若小于或等于当前高度，则忽略该消息
+1. 检查`ConsensusPayload.BlockIndex`。若小于或等于当前高度，则忽略该消息。
 
 2. 检查验证脚本是否通过，以及验证脚本的地址hash，是否等于`ConsensusPayload.ValidatorIndex`所在议员列表中，对应的地址签名脚本hash。
 
-3. 检查`ConsensusPayload.ValidatorIndex`。若等于当前节点的共识列表序号，则忽略该消息（自己发出的消息，不接收）
+3. 检查`ConsensusPayload.ValidatorIndex`。若等于当前节点的共识列表序号，则忽略该消息（自己发出的消息，不接收）。
 
 4. 检查共识版本号。若不等于当前共识协议版本号时，则忽略。
 
@@ -130,29 +130,29 @@
 
 6. 检查`ConsensusPayload.ValidatorIndex`，若超过当前议员总数时，则忽略。
 
-7. 检查`ConsensusMessage.ViewNumber`, 若不等于当前共识阶段上下文的`ViewNumber`且不是`ChangeView`消息时，则忽略
+7. 检查`ConsensusMessage.ViewNumber`, 若不等于当前共识阶段上下文的`ViewNumber`且不是`ChangeView`消息时，则忽略。
 
 
 ### 处理
 
 
-1. **PrepareRequest** 由一轮共识的议长发出，其中附带了`block`相关的数据。
+1. **PrepareRequest** 由一轮共识的议长发出，其中附带了`block`相关的数据：
 
-   1. 检查节点自身，是否在本轮共识是议员。如果不是议员，则忽略该消息。或者`PrepareRequest`已接收过。
+   1. 检查节点自身，是否在本轮共识是议员。如果不是议员，或者`PrepareRequest`已接收过，则忽略该消息。
 
    2. 根据`ConsensusPayload.ValidatorIndex` 确定对方是不是本轮的议长，若不是，则忽略。 
 
    3. 检查 `ConsensusPayload.Timestamp`， 若小于等于上一个区块的时间戳，或者超过了当前时间10分钟以上，则认为消息过期，忽略。
 
-   4. 检查对block的签名是否对
+   4. 检查对block的签名是否对。
 
-   5. 过滤在此之前收到的不合法签名（Prepare-Reponse 消息可能先到达）
+   5. 过滤在此之前收到的不合法签名（Prepare-Reponse 消息可能先到达）。
 
    6. 收集签名。
 
    7. 检查内存池已经包含的block所需的交易。若交易已经在区块链中，或者插件校验失败，则认为交易数据不对，发起`ChangeView`消息。
 
-   8. 检查未确认交易池中包含的block所需的交易，首先进行交易验证，再进行步骤 6）的检查
+   8. 检查未确认交易池中包含的block所需的交易，首先进行交易验证，再进行步骤 6）的检查。
 
    9. 检查block中第一笔交易，即挖矿交易，同步骤5检查，并进行交易自身验证。若验证失败，忽略该消息。
 
@@ -162,21 +162,21 @@
 
 
 
-2. **PrepareResponse** 议员对议长发的`PrepareRequest`消息回应，并附带了对block的签名
+2. **PrepareResponse** 议员对议长发的`PrepareRequest`消息回应，并附带了对block的签名：
   
-   1. 若对方签名已经收到过，则忽略
+   1. 若对方签名已经收到过，则忽略。
 
-   2. 若在此之前尚未收到 `PrepareRequest` 消息时，则先收下该签名（后续收到PrepareRequest时，进行过滤）。否则进入步骤 3）
+   2. 若在此之前尚未收到 `PrepareRequest` 消息时，则先收下该签名（后续收到PrepareRequest时，进行过滤）。否则进入步骤 3）。
 
    3. 校验对方的签名，若通过，则收下签名，否则忽略。
 
-   4. 检查签名数，若已经满足`2f+1`个签名，则出新块，向网络广播`block`.
+   4. 检查签名数，若已经满足`2f+1`个签名，则出新块，向网络广播`block`。
 
 
 
 3. **Changeview** 议员或者议长，在遇到超时（议长第一次超时例外，发送`PrepareRequest`消息），或者校验失败时，则发送`ChangeView`消息。议员，议长收到`ChangeView`消息做如下处理：
 
-   1. 若新视图编号，小于该议员之前的视图编号，则忽略
+   1. 若新视图编号，小于该议员之前的视图编号，则忽略。
    
    2. 若有不少于`2f+1`个议员的视图编号等于新视图编号时，则切换视图成功，当前议员重置共识流程，视图编号为新的视图编号。
 
@@ -191,18 +191,18 @@
 
 5. **NewBlock** 事件处理
  
-   1. 重置共识过程
+   1. 重置共识过程。
 
 6. **New Tx** 事件处理
 
-    1. 若是挖矿交易，则忽略。（挖矿交易是直接附在`PrepareRequest`消息中，不需要单独进行广播该交易）
+    1. 若是挖矿交易，则忽略。（挖矿交易是直接附在`PrepareRequest`消息中，不需要单独进行广播该交易）。
 
-    2. 若当前节点是议长，或已经发送过`PrepareRequset`或者`PrepareResponse`消息，或正在切换视图中，则忽略该交易
+    2. 若当前节点是议长，或已经发送过`PrepareRequset`或者`PrepareResponse`消息，或正在切换视图中，则忽略该交易。
 
-    3. 若已经收到过该交易，则忽略
+    3. 若已经收到过该交易，则忽略。
 
-    4. 若交易不在待打包block里面的，则忽略
+    4. 若交易不在待打包block里面的，则忽略。
 
-    5. 将交易收下，放到待打包的block里
+    5. 将交易收下，放到待打包的block里。
 
 <a name="6_tx_handler"/>
