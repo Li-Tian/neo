@@ -1,3 +1,9 @@
+<center><h2> 智能合约 </h2> </center>
+
+&emsp;&emsp;智能合约是一套以数字形式定义的承诺，包括合约参与方可以在上面执行这些承诺的协议。区块链技术给我们带来了一个去中心化的，不可篡改的，高可靠性的系统，在这种环境下，智能合约才大有用武之地。智能合约是区块链最重要的特性之一，也是区块链能够被称为颠覆性技术的主要原因。
+
+
+
 # 限制条件
 
 关于智能合约的基本类型限制可以参考: http://docs.neo.org/zh-cn/sc/quickstart/limitation.html
@@ -12,7 +18,7 @@
 
 所有支付的智能合约手续费将作为系统手续费，并在用户提取Gas时按比例重新分配给所有 NEO 的持有人。
 
-### 各指令的手续费标准：
+## 各指令的手续费标准：
 
 | 指令                           | 手续费(Gas) |
 | -------------------------------- | ----------- |
@@ -28,7 +34,7 @@
 | OpCode.CHECKMULTISIG（每个公钥） | 0.1         |
 | 其它（每行OpCode）         | 0.001       |
 
-### 系统调用的手续费标准：
+## 系统调用的手续费标准：
 
 | 系统调用                                | 手续费 [Gas] |
 | ------------------------------------------- | ------------ |
@@ -55,7 +61,7 @@
 | Storage.Delete                              | 0.1          |
 | 其它（每行OpCode）                    | 0.001        |
 
-\* 创建智能合约与迁移智能合约目前是根据合约所需功能进行收费。其中基础的费用为 100GAS，需要存储区 +400GAS，需要动态调用 +500GAS。
+* 创建智能合约与迁移智能合约目前是根据合约所需功能进行收费。其中基础的费用为 100GAS，需要存储区 +400GAS，需要动态调用 +500GAS。
 
 * 如果部署合约需要存储区、动态调用等时，请务必勾选对应选项，如果智能合约发布后由于未勾选而导致合约不能正常执行，后果由用户自行承担。未来会考虑添加相关检测机制。
 
@@ -69,9 +75,9 @@ Verification和Application使智能合约能够验证交易和改变区块链的
 
 VerificationR, ApplicationR则使智能合约能够拒绝一笔转账或者在接收到一笔转账时改变区块链的状态。
 
-相关介绍可以参考：http://docs.neo.org/zh-cn/sc/trigger.html
+相关介绍可以参考: http://docs.neo.org/zh-cn/sc/trigger.html
 
-### VerificationR
+## VerificationR
 
 验证触发器R的目的在于将该合约作为验证函数进行调用，因为它被指定为交易输出的目标。验证函数不接受参数，并且应返回有效的布尔值，标志着交易的有效性。
 
@@ -79,13 +85,13 @@ VerificationR, ApplicationR则使智能合约能够拒绝一笔转账或者在�
 
 `main("receiving", new object[0]);`
 
-`receiving`函数应具有以下签名:
+`receiving`函数应具有以下编程接口:
 
 `public bool receiving()`
 
 当智能合约从转账中收到一笔资产时，`receiving`函数将会自动被调用。
 
-### ApplicationR
+## ApplicationR
 
 应用触发器R指明了当智能合约被调用时的默认函数`received`，因为它被指定为交易输出的目标。`received`函数不接受参数，对区块链的状态进行更改，并返回任意类型的返回值。
 
@@ -93,7 +99,7 @@ VerificationR, ApplicationR则使智能合约能够拒绝一笔转账或者在�
 
 `main("received", new object[0]);`
 
-`received`函数应具有以下签名:
+`received`函数应具有以下编程接口:
 
 `public byte[] received()`
 
@@ -161,7 +167,7 @@ NeoContract 的 API 扩展了智能合约的功能，使其可以访问区块链
 | C\#函数：  | byte[] Serialize(this object source)                                                      |
 
 
-### System.Runtime.Deserialize
+### System.Runtime.Deserialize**
 
 | old api：  | "Neo.Runtime.Deserialize"                                             |
 |------------|-----------------------------------------------------------------------|
@@ -448,8 +454,8 @@ NeoContract 的 API 扩展了智能合约的功能，使其可以访问区块链
 
 ## StorageContext：存储上下文相关API
 
-System.StorageContext.AsReadOnly
---------------------------------
+### System.StorageContext.AsReadOnly
+
 
 | old api：  | "Neo.StorageContext.AsReadOnly"                                                                                                                           |
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -573,7 +579,6 @@ System.StorageContext.AsReadOnly
 | C\#函数：  | byte AssetType                                                                                        |
 
 ### Neo.Asset.GetAmount
--------------------
 
 | old api：  | "AntShares.Asset.GetAmount"                                                           |
 |------------|---------------------------------------------------------------------------------------|
@@ -622,7 +627,6 @@ System.StorageContext.AsReadOnly
 | C\#函数：  | byte[] Issuer                                                                          |
 
 ### Neo.Asset.Create
-----------------
 
 | old api：  | "AntShares.Asset.Create"                                                                                                                                                             |
 |------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -717,21 +721,18 @@ System.StorageContext.AsReadOnly
 | C\#函数：  | TValue Value                                                                                    |
 
 ### Neo.Enumerator.Concat
----------------------
 
 | 绑定函数： | Enumerator_Concat                                                                                                                                  |
 |------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
 | 功能描述： | 将两个迭代器连接起来                                                                                                                               |
 
 ### Neo.Iterator.Create
--------------------
 
 | 绑定函数： | Iterator_Create                                                                                  |
 |------------|--------------------------------------------------------------------------------------------------|
 | 功能描述： | 构建一个迭代器IIterator                                                                          |
 
 ### Neo.Iterator.Key
-----------------
 
 | 绑定函数： | Iterator_Key                                                                            |
 |------------|-----------------------------------------------------------------------------------------|
@@ -739,14 +740,12 @@ System.StorageContext.AsReadOnly
 | C\#函数：  | TKey Key                                                                                |
 
 ### Neo.Iterator.Keys
------------------
 
 | 绑定函数： | Iterator_Keys                                                                                                  |
 |------------|----------------------------------------------------------------------------------------------------------------|
 | 功能描述： | 获取迭代器的Keys值                                                                                                            |
 
 ### Neo.Iterator.Values
--------------------
 
 | 绑定函数： | Iterator_Values                                                                                                  |
 |------------|------------------------------------------------------------------------------------------------------------------|
@@ -794,41 +793,57 @@ NEP5协议是NEO补充协议中的第5号协议。其目的是为neo建立标准
 
 ​参照NEP5协议的要求，在NEP5资产智能合约时必需实现以下方法：
 
-### totalSupply
-    public static BigInteger totalSupply()
+**totalSupply**
+    
+```c#
+public static BigInteger totalSupply()
+```
 
 ​Returns 部署在系统内该token的总数。 
 
-### name
-    public static string name()
+**name**
+    
+```c#
+public static string name()
+```
 
 ​Returns token的名称. e.g. "MyToken"。
 该方法每次被调用时必需返回一样的值。
 
-### symbol
+**symbol**
 
-    public static string symbol()
+```c#
+public static string symbol()
+```
 
 ​Returns 合约所管理的token的短字符串符号 . e.g. "MYT"。
 该符号需要应该比较短小 (建议3-8个字符),  没有空白字符或换行符 ，并限制为大写拉丁字母 (26个英文字符)。 
 该方法每次被调用时必需返回一样的值。
 
-### decimals
+**decimals**
 
-    public static byte decimals()
+```c#
+public static byte decimals()
+```
 
 ​Returns token使用的小数位数 - e.g. 8，意味着把token数量除以100,000,000来获得它的表示值。
 该方法每次被调用时必需返回一样的值。 
 
-### balanceOf
-	public static BigInteger balanceOf(byte[] account)
+**balanceOf**
+
+```c#
+public static BigInteger balanceOf(byte[] account)
+```
+
 Returns 账户的token金额。
 参数账户必需是一个20字节的地址。如果不是，该方法会抛出一个异常。
 如果该账户是个未被使用的地址，该方法会返回0。
 
-### transfer
+**transfer**
 
-	public static bool transfer(byte[] from, byte[] to, BigInteger amount)
+```c#
+public static bool transfer(byte[] from, byte[] to, BigInteger amount)
+```
 
 ​从一个账户转移一定数量的token到另一个账户. 参数from和to必需是20字节的地址，否则，该方法会报错。
 ​参数amount必需大于等于0.否则，该方法会报错。
@@ -838,9 +853,11 @@ Returns 账户的token金额。
 ​如果to地址是一个部署合约，函数会检查其payable标志位来决定是否把token转移到该合约。
 ​如果转移没有被处理，函数会返回false。
 
-### 事件 transfer
+**事件 transfer**
 
-	public static event transfer(byte[] from, byte[] to, BigInteger amount)
+```c#
+public static event transfer(byte[] from, byte[] to, BigInteger amount)
+```
 
 ​会在token被转移时触发，包括零值转移。
 ​一个创建新token的token合约在创建token时会触发转移事件，并将from的地址设置为null。
@@ -848,22 +865,38 @@ Returns 账户的token金额。
 
 # 升级
 
-### 合约迁移/升级
+## 合约迁移/升级
 智能合约支持在发布之后进行升级操作，但需要在旧合约内预留升级接口。
 
 合约升级主要调用了Neo.Contract.Migrate方法:
-```
+
+```c#
 Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, ContractPropertyState contract_property_state, string name, string version, string author, string email, string description);
 ```
-其中script为新合约的脚本，parameter_list为新合约的参数列表，return_type为新合约的返回值类型，contract_property_state为新合约的属性，name为新合约的名称，version为新合约的版本，author为新合约的作者，email为新合约的电子邮件，description为新合约的说明。
+
+其中
+  - script: 新合约的脚本
+  - parameter_list:  新合约的参数列表
+  - return_type: 新合约的返回值类型
+  - contract_property_state: 新合约的属性
+  - name: 新合约的名称
+  - version: 新合约的版本
+  - author: 新合约的作者
+  - email: 新合约的电子邮件
+  - description: 新合约的说明。
 
 当在旧合约中调用升级接口时，方法将会根据传入的参数构建一个新的智能合约。如果旧合约有存储区，则会将旧合约的存储区转移至新合约中。升级完成后，旧合约将会被删除，如果旧合约有存储区，则存储区也将被删除。之后旧合约将不可用，需要使用新合约的Hash值。
 
-### 合约销毁
+## 合约销毁
 智能合约支持在发布之后进行销毁操作，但需要在旧合约内预留销毁接口。
 
 合约升级主要调用了Neo.Contract.Destroy方法:
-```
+
+```c#
 void Destroy();
 ```
+
 Destroy方法不需要参数，调用该方法后，合约将会被删除，如果合约有存储区，则存储区也将被删除。之后合约将不可用。
+
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>

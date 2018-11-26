@@ -1,12 +1,12 @@
-## MerkleTree
+<center><h2> 梅克尔树 </h2></center>
 
 　梅克尔树是一种二叉树，能快速检查和归纳大量数据，可用于验证区块中交易记录的完整性。NEO 使用梅克尔树来构建区块模型。不同于比特币，NEO 中每个区块的区块头都会保存一份该区块所有所有交易的梅克尔树根，区块的数据区存放的是交易数组。
 
-![MerkleTree01](../../images/blockchain_paradigm/MerkleTree01.png)
+[![MerkleTree01](../../images/blockchain_paradigm/MerkleTree01.png)](../../images/blockchain_paradigm/MerkleTree01.png)
 
-　梅克尔树基本特点：
+梅克尔树基本特点：
 
-  1. MT是一种树，大多数是二叉树（NEO采用二叉树形式），也可以多叉树，无论是几叉树，它都具有树结构的所有特点；
+  1. Merkle Tree 是一种树，大多数是二叉树（NEO采用二叉树形式），具有树结构的所有特点；
 
   2. Merkle Tree 的叶子节点的value是数据集合的单元数据或者单元数据 HASH。
 
@@ -26,3 +26,6 @@
 参考文献：
 
 1. <https://en.wikipedia.org/wiki/Merkle_tree>
+
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>

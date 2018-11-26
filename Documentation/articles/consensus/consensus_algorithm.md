@@ -16,10 +16,10 @@
 * **View**: The dataset used during one consensus activity. The view number start from 0 in each round, and increase number when reach a consensus failed in one round.
 
 
-### Algorithm Flow
+## Algorithm Flow
 
  
-**Symbolic Definition**
+### Symbolic Definition
 
 - N: The number of active consensus nodes.
 
@@ -39,7 +39,7 @@
 
 - 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: The block signature of the `i`th consensus node.
 
-**General Procedures**
+### General Procedures
 
 
 Assume the total number of active consensus nodes is `N`, up to `f` fault tolerance nodes. At the begin, the nodes have the same view number `v = 0`, and block height `h = current block height`. If not at the same height, it can be achieved by block synchronization between P2Ps. The process involved in the consensus algorithm is as follows:
@@ -75,8 +75,7 @@ Assume the total number of active consensus nodes is `N`, up to `f` fault tolera
 7. Any node, after receiving the full block, deletes all the full block's transactions in the memory pool. If the node is the consensus node, then enter the next round consensus.
 
 
-<p align="center"><img src="../../images/consensus/dbft_two_phase_en.jpg" /><br></p>
-
+[![dbft_two_phase](../../images/consensus/dbft_two_phase_en.jpg)](../../images/consensus/dbft_two_phase_en.jpg)
 
 The algorithm can be divided into three stages. 1) `PRE-PREPARE`, the speaker of this round is responsible for broadcasting `Prepare-request` message to the delegates and initiating the block proposal. 2) `PREPARE`, the delegates after receiving `PRE-PREPARE`, then broadcast `Prepare-Response` if the proposal verified successful. When a node receives at least `N-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>, it enters the third stage. 3) `PERSIST`, the consensus node publishes the full node and enter the next consensus round.
 
@@ -84,13 +83,11 @@ The algorithm can be divided into three stages. 1) `PRE-PREPARE`, the speaker of
 > 1. At the beigining of the blockchain network started, `StandbyValidators` are read from the configureation file `protocol.json` by default.
 > 2. Unlike ordinary block, genesis block is the first block in the blockchain by default, which is not published by consensus nodes. The `NextConsensus` in the genesis block specifies the conosensus nodes of the next block as the `StandbyValidators` nodes.
 
-
-**View Change**
+### View Change
 
 In the process of consensus on a open p2p network environment, there may be network delay, evil node sending illegal data, etc. The consensus nodes can initiate a `ChangeView` proposal. They enter a new view with new speaker, and restart consensus, after receiving at least `N-f` `ChangeView` messages with the same view number.
 
-<p align="center"><img src="../../images/consensus/dbft_state_graph.jpg" /><br></p>
-
+[![dbft_state_graph](../../images/consensus/dbft_state_graph.jpg)](../../images/consensus/dbft_state_graph.jpg)
 
 The View Change will take place, when one consensus node could not reach a consensus in `2<sub>v+1 </sub>*t` time interval, or received illegal proposals such as contain invalid transactions.
 
@@ -109,7 +106,12 @@ With the k increase, the overtime waiting time will increase exponentially, whic
 [2] [Consensus Diagram](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
 [3] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
+[5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)
+
 
 
 > [!NOTE]
 > 如果发现有死链接，请联系 <feedback@neo.org>
+
+
+

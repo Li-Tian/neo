@@ -1,9 +1,9 @@
 <center><h2>Consensus Protocol</center></h2>
 
-### 一、Consensus Message Format
+## 一、Consensus Message Format
 
 
-##### **P2p** message format
+### P2p message format
 
 | Size | Field | Type  | Description |
 |------|------|-------|------|
@@ -14,7 +14,7 @@
 | length  | Payload | byte[] | Content of message, all consensus messages' payload is `ConsensusPayload`  |
 
 
-##### **ConsensusPayload** 
+### ConsensusPayload
 
 | Size | Field | Type  | Description |
 |----|------|-------|------|
@@ -28,7 +28,7 @@
 | ? | Witness | Witness | Witness contains invokecation script and verificatioin script |
 
 
-##### **Changeview** 
+### Changeview
 
 | Size | Field | Type  | Description |
 |----|------|-----|-------|
@@ -37,8 +37,7 @@
 | 1 | NewViewNumber | byte |  New view number |
 
 
-##### **PrepareRequest**
-
+### PrepareRequest
 
 | Size | Field | Type  | Description |
 |----|------|-----|-------|
@@ -50,7 +49,7 @@
 | 78  | MinerTransaction | MinerTransaction |  It is used to reward all transaction fees of the current block to the speaker. |
 |  64 | Signature | byte[] |  Block signature |
 
-##### **PrepareResponse**
+### PrepareResponse
 
 | Size | Field | Type  | Description |
 |----|------|-----|-------|
@@ -60,12 +59,13 @@
 
 
 
-### 二、Transport Protocol
+## 二、Transport Protocol
 
 
 When consensus message enters the P2P network, it broadcasts and transmits like other data packets, becuase consensus nodes do not know each other's IP address. That is to say, ordinary nodes can receive consensus message. The broadcast flow of consensus messages is as follows.
 
-<p align="center"><img src="../../images/consensus/consensus_msg_seq.jpg" /><br></p>
+[![consensus_msg_seq](../../images/consensus/consensus_msg_seq.jpg)](../../images/consensus/consensus_msg_seq.jpg)
+
 
 
   1. Before send `consensus` message, send `inv` message attached with `consensus.payload.hash` first. 
@@ -79,7 +79,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
   5. After receiving the `consensus` message, the node triggers the consensus module to process the message.
 
 
-##### **inv message format** 
+### inv message format
 
 | Size | Field | Type  | Description |
 |------|------|-------|------|
@@ -97,7 +97,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 > 3. `0xe0`: Consensus. inv.payload is assigned to block's hash.
 
 
-##### **getdata message format** 
+### getdata message format
 
 | Size | Field | Type  | Description |
 |------|------|-------|------|
@@ -111,10 +111,9 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 > `getdata` message is mainly used to get the `inv` message with specific content hash.
 
 
+## 三、 Consensus Message Process
 
-### 三、 Consensus Message Process
-
-#####  **Verification**
+###  Verification
 
 1. If the `ConsensusPayload.BlockIndex` no more than current block height, then ignore.
 
@@ -130,8 +129,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 
 7. If the `ConsensusMessage.ViewNumber` not equal to the current node context's `ViewNumber` and the consensus message is not `ChangeView`, then ignore.
 
-##### **Process**
-
+### Process
 
 1. **PrepareRequest** was send by the speaker, attached with block proposal data.
 
@@ -150,7 +148,6 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
    7. Collect the signature in the `PrepareRequest` message.
 
    8. If there is a lack of transactions in `block`, send the `getdata` message with the hashes of those transactions. 
-
 
    9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-sign contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
 
@@ -186,7 +183,6 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
  
    1. resetting consensus process
 
-
 6. **New Transaction** 
 
     1. If the transaction is the `MinerTransaction`, then ignore. As the `PrepareRequest` contains the `MinerTransaction`.
@@ -198,3 +194,5 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
     4. If the transacion isn't in the propoal block, then ignore.
 
     5. Collect the transaction.
+
+<a name="6_tx_handler"/>

@@ -1,8 +1,10 @@
+<center> <h2> 编码算法 </h2> </center>
+
 ##  Base58
 
 　Base58是一种将非可视字符与可视化字符(ASCII)相互转化的编解码方法。实现了数据的压缩、便于阅读，适用于抗自动监视的传输系统的底层编码机制，但缺乏效验机制，无法检测出传输过程中字符串的遗漏，需要配合改进算法Base58Check使用。
 
-　采用数字、大写字母、小写字母（去除歧义字符 0 (零), O (大写字母O), I (大写的字母i) and l (小写的字母L) ），总计58个字符作为编码的字母表。
+　Base58采用数字、大写字母、小写字母（去除歧义字符 0 (零), O (大写字母O), I (大写的字母i) and l (小写的字母L) ），总计58个字符作为编码的字母表。
 
 　neo使用的字母表为：**123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz**
 
@@ -10,21 +12,21 @@
 
 1.  编码方法：把byte[]数据编码成Base58字符串String数据
 
-```
+```c#
 string Encode(byte[] input)
 ```
 
 
 2.  解码方法：Base58字符串String解码成byte[]数据
 
-```
+```c#
 byte[] Decode(string input)
 ```
 
 
 **编码步骤**：
 
-1.  把 byte[] 数据前添加一个0x00，生成一个新的byte数组，并将新数组做倒序排序
+1.  在 byte[] 数据前添加一个0x00，生成一个新的byte数组，并将新数组做倒序排序
 
 2.  把数组的数据转成10进制BigInteger数
 
@@ -63,13 +65,13 @@ Example:
 
 1. 编码方法：把 byte[] 数据编码成带效验功能 Base58 字符串 String 数据
 
-```
+```c#
 string Base58CheckEncode(byte[] input)
 ```
 
 2.  解码方法：把带效验功能 Base58 字符串 String 解码成 byte[] 数据
 
-```
+```c#
 byte[] Base58CheckDecode(string input)
 ```
 **编码步骤**：
@@ -86,7 +88,7 @@ byte[] Base58CheckDecode(string input)
 
 3.  把 data 做两次 sha256 得到的哈希值的前4字节作为版本前缀 checksum，与 byte[] 数据的后4字节比较是否相同，相同则返回data, 否则判定为数据无效。
 
-![Base58Check编解码](../../images/blockchain_paradigm/Base58CheckEncodeAndDecode.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/20)
+[![Base58Check编解码](../../images/blockchain_paradigm/Base58CheckEncodeAndDecode.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/20)](../../images/blockchain_paradigm/Base58CheckEncodeAndDecode.png)
 
 Example:
 

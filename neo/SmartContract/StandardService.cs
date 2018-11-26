@@ -16,54 +16,83 @@ using VMBoolean = Neo.VM.Types.Boolean;
 
 namespace Neo.SmartContract
 {
+    /// <summary>
+    /// 标准服务类，用于提供智能合约需要的互操作服务等
+    /// </summary>
     public class StandardService : InteropService, IDisposable
     {
+        /// <summary>
+        /// 通知事件委托
+        /// </summary>
         public static event EventHandler<NotifyEventArgs> Notify;
+        /// <summary>
+        /// 日志事件委托
+        /// </summary>
         public static event EventHandler<LogEventArgs> Log;
 
+        /// <summary>
+        /// 触发器类型
+        /// </summary>
         protected readonly TriggerType Trigger;
+        /// <summary>
+        /// 数据库快照
+        /// </summary>
         protected readonly Snapshot Snapshot;
+        /// <summary>
+        /// 释放资源列表
+        /// </summary>
         protected readonly List<IDisposable> Disposables = new List<IDisposable>();
+        /// <summary>
+        /// 已创建合约的字典
+        /// </summary>
         protected readonly Dictionary<UInt160, UInt160> ContractsCreated = new Dictionary<UInt160, UInt160>();
         private readonly List<NotifyEventArgs> notifications = new List<NotifyEventArgs>();
+        private readonly Dictionary<uint, long> prices = new Dictionary<uint, long>();
 
+        /// <summary>
+        /// 通知信息列表
+        /// </summary>
         public IReadOnlyList<NotifyEventArgs> Notifications => notifications;
-
+        /// <summary>
+        /// 标准服务构造函数
+        /// </summary>
+        /// <param name="trigger">触发器类型</param>
+        /// <param name="snapshot">数据库快照</param>
         public StandardService(TriggerType trigger, Snapshot snapshot)
         {
             this.Trigger = trigger;
             this.Snapshot = snapshot;
-            Register("System.Runtime.Platform", Runtime_Platform);
-            Register("System.Runtime.GetTrigger", Runtime_GetTrigger);
-            Register("System.Runtime.CheckWitness", Runtime_CheckWitness);
-            Register("System.Runtime.Notify", Runtime_Notify);
-            Register("System.Runtime.Log", Runtime_Log);
-            Register("System.Runtime.GetTime", Runtime_GetTime);
-            Register("System.Runtime.Serialize", Runtime_Serialize);
-            Register("System.Runtime.Deserialize", Runtime_Deserialize);
-            Register("System.Blockchain.GetHeight", Blockchain_GetHeight);
-            Register("System.Blockchain.GetHeader", Blockchain_GetHeader);
-            Register("System.Blockchain.GetBlock", Blockchain_GetBlock);
-            Register("System.Blockchain.GetTransaction", Blockchain_GetTransaction);
-            Register("System.Blockchain.GetTransactionHeight", Blockchain_GetTransactionHeight);
-            Register("System.Blockchain.GetContract", Blockchain_GetContract);
-            Register("System.Header.GetIndex", Header_GetIndex);
-            Register("System.Header.GetHash", Header_GetHash);
-            Register("System.Header.GetPrevHash", Header_GetPrevHash);
-            Register("System.Header.GetTimestamp", Header_GetTimestamp);
-            Register("System.Block.GetTransactionCount", Block_GetTransactionCount);
-            Register("System.Block.GetTransactions", Block_GetTransactions);
-            Register("System.Block.GetTransaction", Block_GetTransaction);
-            Register("System.Transaction.GetHash", Transaction_GetHash);
-            Register("System.Contract.Destroy", Contract_Destroy);
-            Register("System.Contract.GetStorageContext", Contract_GetStorageContext);
-            Register("System.Storage.GetContext", Storage_GetContext);
-            Register("System.Storage.GetReadOnlyContext", Storage_GetReadOnlyContext);
-            Register("System.Storage.Get", Storage_Get);
+            Register("System.Runtime.Platform", Runtime_Platform, 1);
+            Register("System.Runtime.GetTrigger", Runtime_GetTrigger, 1);
+            Register("System.Runtime.CheckWitness", Runtime_CheckWitness, 200);
+            Register("System.Runtime.Notify", Runtime_Notify, 1);
+            Register("System.Runtime.Log", Runtime_Log, 1);
+            Register("System.Runtime.GetTime", Runtime_GetTime, 1);
+            Register("System.Runtime.Serialize", Runtime_Serialize, 1);
+            Register("System.Runtime.Deserialize", Runtime_Deserialize, 1);
+            Register("System.Blockchain.GetHeight", Blockchain_GetHeight, 1);
+            Register("System.Blockchain.GetHeader", Blockchain_GetHeader, 100);
+            Register("System.Blockchain.GetBlock", Blockchain_GetBlock, 200);
+            Register("System.Blockchain.GetTransaction", Blockchain_GetTransaction, 200);
+            Register("System.Blockchain.GetTransactionHeight", Blockchain_GetTransactionHeight, 100);
+            Register("System.Blockchain.GetContract", Blockchain_GetContract, 100);
+            Register("System.Header.GetIndex", Header_GetIndex, 1);
+            Register("System.Header.GetHash", Header_GetHash, 1);
+            Register("System.Header.GetPrevHash", Header_GetPrevHash, 1);
+            Register("System.Header.GetTimestamp", Header_GetTimestamp, 1);
+            Register("System.Block.GetTransactionCount", Block_GetTransactionCount, 1);
+            Register("System.Block.GetTransactions", Block_GetTransactions, 1);
+            Register("System.Block.GetTransaction", Block_GetTransaction, 1);
+            Register("System.Transaction.GetHash", Transaction_GetHash, 1);
+            Register("System.Contract.Destroy", Contract_Destroy, 1);
+            Register("System.Contract.GetStorageContext", Contract_GetStorageContext, 1);
+            Register("System.Storage.GetContext", Storage_GetContext, 1);
+            Register("System.Storage.GetReadOnlyContext", Storage_GetReadOnlyContext, 1);
+            Register("System.Storage.Get", Storage_Get, 100);
             Register("System.Storage.Put", Storage_Put);
             Register("System.Storage.PutEx", Storage_PutEx);
-            Register("System.Storage.Delete", Storage_Delete);
-            Register("System.StorageContext.AsReadOnly", StorageContext_AsReadOnly);
+            Register("System.Storage.Delete", Storage_Delete, 100);
+            Register("System.StorageContext.AsReadOnly", StorageContext_AsReadOnly, 1);
         }
 
         internal bool CheckStorageContext(StorageContext context)
@@ -73,12 +102,16 @@ namespace Neo.SmartContract
             if (!contract.HasStorage) return false;
             return true;
         }
-
+        /// <summary>
+        /// 将修改后的快照提交
+        /// </summary>
         public void Commit()
         {
             Snapshot.Commit();
         }
-
+        /// <summary>
+        /// 释放Disposables中所有资源
+        /// </summary>
         public void Dispose()
         {
             foreach (IDisposable disposable in Disposables)
@@ -86,30 +119,65 @@ namespace Neo.SmartContract
             Disposables.Clear();
         }
 
+        public long GetPrice(uint hash)
+        {
+            prices.TryGetValue(hash, out long price);
+            return price;
+        }
+
+        protected void Register(string method, Func<ExecutionEngine, bool> handler, long price)
+        {
+            Register(method, handler);
+            prices.Add(method.ToInteropMethodHash(), price);
+        }
+
+        /// <summary>
+        /// 获得运行该智能合约的平台
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功返回true</returns>
         protected bool Runtime_Platform(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(Encoding.ASCII.GetBytes("NEO"));
             return true;
         }
-
+        /// <summary>
+        /// 获得该智能合约的触发条件（应用合约 or 鉴权合约）
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功返回true</returns>
         protected bool Runtime_GetTrigger(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push((int)Trigger);
             return true;
         }
-
+        /// <summary>
+        /// 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此哈希。
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <param name="hash">需要验证的哈希</param>
+        /// <returns>验证结果，如果包含则返回true，否则返回false</returns>
         protected bool CheckWitness(ExecutionEngine engine, UInt160 hash)
         {
             IVerifiable container = (IVerifiable)engine.ScriptContainer;
             UInt160[] _hashes_for_verifying = container.GetScriptHashesForVerifying(Snapshot);
             return _hashes_for_verifying.Contains(hash);
         }
-
+        /// <summary>
+        /// 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此公钥。
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <param name="pubkey">需要验证的公钥</param>
+        /// <returns>验证结果，如果包含则返回true，否则返回false</returns>
         protected bool CheckWitness(ExecutionEngine engine, ECPoint pubkey)
         {
             return CheckWitness(engine, Contract.CreateSignatureRedeemScript(pubkey).ToScriptHash());
         }
-
+        /// <summary>
+        /// 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此哈希/公钥。
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>验证结果，如果包含则返回true，否则返回false</returns>
         protected bool Runtime_CheckWitness(ExecutionEngine engine)
         {
             byte[] hashOrPubkey = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -123,7 +191,11 @@ namespace Neo.SmartContract
             engine.CurrentContext.EvaluationStack.Push(result);
             return true;
         }
-
+        /// <summary>
+        /// 在智能合约中向执行该智能合约的客户端发送通知
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>发送成功则返回true</returns>
         protected bool Runtime_Notify(ExecutionEngine engine)
         {
             StackItem state = engine.CurrentContext.EvaluationStack.Pop();
@@ -132,14 +204,22 @@ namespace Neo.SmartContract
             notifications.Add(notification);
             return true;
         }
-
+        /// <summary>
+        /// 在智能合约中向执行该智能合约的客户端发送日志
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>发送成功则返回true</returns>
         protected bool Runtime_Log(ExecutionEngine engine)
         {
             string message = Encoding.UTF8.GetString(engine.CurrentContext.EvaluationStack.Pop().GetByteArray());
             Log?.Invoke(this, new LogEventArgs(engine.ScriptContainer, new UInt160(engine.CurrentContext.ScriptHash), message));
             return true;
         }
-
+        /// <summary>
+        /// 获取当前时间
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>获取成功则返回true</returns>
         protected bool Runtime_GetTime(ExecutionEngine engine)
         {
             if (Snapshot.PersistingBlock == null)
@@ -205,7 +285,11 @@ namespace Neo.SmartContract
                 }
             }
         }
-
+        /// <summary>
+        /// 对数据流进行序列化
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Runtime_Serialize(ExecutionEngine engine)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -308,7 +392,11 @@ namespace Neo.SmartContract
             }
             return stack_temp.Peek();
         }
-
+        /// <summary>
+        /// 将数据反序列化
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Runtime_Deserialize(ExecutionEngine engine)
         {
             byte[] data = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -332,13 +420,21 @@ namespace Neo.SmartContract
             }
             return true;
         }
-
+        /// <summary>
+        /// 获得当前区块高度
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true</returns>
         protected bool Blockchain_GetHeight(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(Snapshot.Height);
             return true;
         }
-
+        /// <summary>
+        /// 通过区块高度或区块 Hash，查找区块头
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Blockchain_GetHeader(ExecutionEngine engine)
         {
             byte[] data = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -360,7 +456,11 @@ namespace Neo.SmartContract
             }
             return true;
         }
-
+        /// <summary>
+        /// 通过区块高度或区块 Hash，查找区块
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Blockchain_GetBlock(ExecutionEngine engine)
         {
             byte[] data = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -382,7 +482,11 @@ namespace Neo.SmartContract
             }
             return true;
         }
-
+        /// <summary>
+        /// 通过交易哈希查找交易
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true</returns>
         protected bool Blockchain_GetTransaction(ExecutionEngine engine)
         {
             byte[] hash = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -390,7 +494,11 @@ namespace Neo.SmartContract
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(tx));
             return true;
         }
-
+        /// <summary>
+        /// 通过交易哈希查找交易高度
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true</returns>
         protected bool Blockchain_GetTransactionHeight(ExecutionEngine engine)
         {
             byte[] hash = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -398,7 +506,11 @@ namespace Neo.SmartContract
             engine.CurrentContext.EvaluationStack.Push(height ?? -1);
             return true;
         }
-
+        /// <summary>
+        /// 根据合约哈希获取合约内容
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true</returns>
         protected bool Blockchain_GetContract(ExecutionEngine engine)
         {
             UInt160 hash = new UInt160(engine.CurrentContext.EvaluationStack.Pop().GetByteArray());
@@ -409,7 +521,11 @@ namespace Neo.SmartContract
                 engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(contract));
             return true;
         }
-
+        /// <summary>
+        /// 获得该区块的高度
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Header_GetIndex(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -421,7 +537,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得该区块的哈希
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Header_GetHash(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -433,7 +553,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得前一个区块的哈希
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Header_GetPrevHash(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -445,7 +569,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得区块的时间戳
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Header_GetTimestamp(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -457,7 +585,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得当前区块中交易的数量
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Block_GetTransactionCount(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -469,7 +601,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得当前区块中所有的交易
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Block_GetTransactions(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -483,7 +619,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得当前区块中指定索引的交易
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Block_GetTransaction(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -498,7 +638,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得当前交易的 Hash
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Transaction_GetHash(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -510,7 +654,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获取当前存储区上下文
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Storage_GetContext(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new StorageContext
@@ -520,7 +668,11 @@ namespace Neo.SmartContract
             }));
             return true;
         }
-
+        /// <summary>
+        /// 获取当前存储区上下文（只读）
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Storage_GetReadOnlyContext(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new StorageContext
@@ -530,7 +682,11 @@ namespace Neo.SmartContract
             }));
             return true;
         }
-
+        /// <summary>
+        /// 查询操作，在持久化存储区中通过 key 查询对应的 value
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Storage_Get(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -548,7 +704,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 将当前存储区上下文设为只读
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool StorageContext_AsReadOnly(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -565,7 +725,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 获得合约的存储上下文
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Contract_GetStorageContext(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -582,7 +746,11 @@ namespace Neo.SmartContract
             }
             return false;
         }
-
+        /// <summary>
+        /// 销毁合约，如果合约使用了存储区，则同时将合约的存储区删除。
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Contract_Destroy(ExecutionEngine engine)
         {
             if (Trigger != TriggerType.Application) return false;
@@ -614,7 +782,11 @@ namespace Neo.SmartContract
             item.IsConstant = flags.HasFlag(StorageFlags.Constant);
             return true;
         }
-
+        /// <summary>
+        /// 无存储标记插入操作，以 key-value 的形式向持久化存储区中插入数据
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Storage_Put(ExecutionEngine engine)
         {
             if (!(engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface))
@@ -624,7 +796,11 @@ namespace Neo.SmartContract
             byte[] value = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
             return PutEx(context, key, value, StorageFlags.None);
         }
-
+        /// <summary>
+        /// 有存储标记插入操作，以 key-value 的形式向持久化存储区中插入数据
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Storage_PutEx(ExecutionEngine engine)
         {
             if (!(engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface))
@@ -635,7 +811,11 @@ namespace Neo.SmartContract
             StorageFlags flags = (StorageFlags)(byte)engine.CurrentContext.EvaluationStack.Pop().GetBigInteger();
             return PutEx(context, key, value, flags);
         }
-
+        /// <summary>
+        /// 删除操作，在持久化存储区中通过 key 删除对应的 value
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功则返回true,否则返回false</returns>
         protected bool Storage_Delete(ExecutionEngine engine)
         {
             if (Trigger != TriggerType.Application && Trigger != TriggerType.ApplicationR)

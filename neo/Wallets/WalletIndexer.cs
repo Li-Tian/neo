@@ -13,8 +13,14 @@ using System.Threading;
 
 namespace Neo.Wallets
 {
+    /// <summary>
+    /// 钱包索引
+    /// </summary>
     public class WalletIndexer : IDisposable
     {
+        /// <summary>
+        /// 钱包交易的委托，在收到交易时，调用绑定的方法
+        /// </summary>
         public event EventHandler<WalletTransactionEventArgs> WalletTransaction;
 
         private readonly Dictionary<uint, HashSet<UInt160>> indexes = new Dictionary<uint, HashSet<UInt160>>();
@@ -25,7 +31,9 @@ namespace Neo.Wallets
         private readonly Thread thread;
         private readonly object SyncRoot = new object();
         private bool disposed = false;
-
+        /// <summary>
+        /// 索引的高度
+        /// </summary>
         public uint IndexHeight
         {
             get
@@ -37,7 +45,10 @@ namespace Neo.Wallets
                 }
             }
         }
-
+        /// <summary>
+        /// 构造方法
+        /// </summary>
+        /// <param name="path">数据库文件的路径</param>
         public WalletIndexer(string path)
         {
             path = Path.GetFullPath(path);
@@ -89,7 +100,9 @@ namespace Neo.Wallets
             };
             thread.Start();
         }
-
+        /// <summary>
+        /// 回收方法
+        /// </summary>
         public void Dispose()
         {
             disposed = true;
@@ -116,7 +129,11 @@ namespace Neo.Wallets
             }
             return groupId;
         }
-
+        /// <summary>
+        /// 查找数据库中与指定账户有关的交易的集合
+        /// </summary>
+        /// <param name="accounts">指定账户的地址的集合</param>
+        /// <returns>有关的交易的哈希的集合</returns>
         public IEnumerable<UInt256> GetTransactions(IEnumerable<UInt160> accounts)
         {
             ReadOptions options = new ReadOptions { FillCache = false };
@@ -265,7 +282,9 @@ namespace Neo.Wallets
                     Thread.Sleep(100);
             }
         }
-
+        /// <summary>
+        /// 重建钱包索引
+        /// </summary>
         public void RebuildIndex()
         {
             lock (SyncRoot)
@@ -296,7 +315,11 @@ namespace Neo.Wallets
                 db.Write(WriteOptions.Default, batch);
             }
         }
-
+        /// <summary>
+        /// 向钱包索引中注册账户
+        /// </summary>
+        /// <param name="accounts">需要注册的账户列表集合</param>
+        /// <param name="height">钱包高度</param>
         public void RegisterAccounts(IEnumerable<UInt160> accounts, uint height = 0)
         {
             lock (SyncRoot)

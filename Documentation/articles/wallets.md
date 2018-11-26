@@ -1,25 +1,26 @@
-# 钱包
+<center><h2> 钱包 </h2></center>
 
-​     钱包是NEO的基础组件，是用户接入NEO网络的载体，负责完成与之相关一系列的工作和任务。
+&emsp;&emsp;钱包是NEO的基础组件，是用户接入NEO网络的载体，负责完成与之相关一系列的工作和任务。
 
-NEO的钱包可以自行设计和修改，但需要满足以的规则和范式。
+&emsp;&emsp;NEO的钱包可以自行设计和修改，但需要满足以的规则和范式。
 
 ##  格式
-1、私钥
+
+### 1、私钥
 
   私钥是一个随机生成的位于1和n之间的任何数字（n是⼀个常数，略小于2的256次方），一般用一个256bit(32字节)数表示。
 
   在NEO中私钥主要采用两种编码格式：
 
-  a) hexstring格式
+1. **hexstring格式**
 
-  hexstring格式是将byte[]数据使用16进制字符表示的字符串。
+   hexstring格式是将byte[]数据使用16进制字符表示的字符串。
 
-  b) wif格式
+2. **wif格式**
 
-  wif格式是在原有32字节数据前后添加前缀0x80和后缀0x01,并做Base58Check编码的字符串
+    wif格式是在原有32字节数据前后添加前缀0x80和后缀0x01,并做Base58Check编码的字符串
 
-![Base58Check编解码](../images/wallets/privateKey-wif.png)
+[![Base58Check编解码](../images/wallets/privateKey-wif.png)](../images/wallets/privateKey-wif.png)
 
  Example: 
 
@@ -29,19 +30,17 @@ NEO的钱包可以自行设计和修改，但需要满足以的规则和范式�
 | hexstring | c7134d6fd8e73d819e82755c64c93788d8db0961929e025a53363c4cc02a6962 |
 | wif | L3tgppXLgdaeqSGSFw1Go3skBiy8vQAM7YMXvTHsKQtE16Dw58cV |
 
-2、公钥
+### 2、公钥
 
-​     公钥是通过ECC算法将私钥运算得到的一个点（x,y）。该点的x、y坐标都可以用32字节数据表示。neo与比特币稍有不同，neo选取了secp256r1曲线作为其ECC算法的参数。
+​     公钥是通过ECC算法将私钥运算得到的一个点（x,y）。该点的x、y坐标都可以用32字节数据表示。neo与比特币稍有不同，neo选取了secp256r1曲线作为其ECC算法的参数。在neo中公钥有两种编码格式：
 
-​    在neo中公钥有两种编码格式：
+1. **非压缩型公钥**
 
-   a)非压缩型公钥
+    0x04+x坐标（32字节）+y坐标（32字节）
 
-​      0x04+x坐标（32字节）+y坐标（32字节）
+2. **压缩型公钥**
 
-   b)压缩型公钥
-
-​      0x02/0x03+x坐标（32字节）
+    0x02/0x03+x坐标（32字节）
 
 Example:
 
@@ -51,21 +50,24 @@ Example:
 | 公钥（压缩型） | 035a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74faab3a2b61a |
 | 公钥（非压缩型） | 045a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74<br>faab3a2b61a35dfabcb79ac492a2a88588d2f2e73f045cd8af58059282e09d693dc340e113f  |
 
-3、地址
+<a name="3_address"/>
 
-   地址是由公钥经过一系列转换得到的一串由数字和字母构成的字符串。
+> [!NOTE]
+> 上面的公钥（非压缩型）因为太长而成为多行，实际数据是连接的。
 
-   在neo中，公钥到地址的转换步骤如下：
+### 3、地址
 
-1) 构建地址脚本合约(脚本合约格式：
+地址是由公钥经过一系列转换得到的一串由数字和字母构成的字符串。在neo中，公钥到地址的转换步骤如下：
 
-0x21(1字节,代表Opcode中PushBytes指令)+压缩型公钥(33字节)+0xac（1字节,代表Opcode中 CheckSig指令))
+1. 构建地址脚本合约(脚本合约格式：
 
-2) 计算地址脚本合约哈希(20字节，地址脚本合约做一次sha256和riplemd160得到)
+`0x21`(1字节,代表Opcode中PushBytes指令)+压缩型公钥(33字节) + `0xac`（1字节,代表Opcode中 CheckSig指令))
 
-3) 在地址脚本合约哈希前添加版本号（ 目前neo所使用的协议版本是23所以对应字节为0x17）
+2. 计算地址脚本合约哈希(20字节，地址脚本合约做一次sha256和riplemd160得到)
 
-4) 对字节数据做Base58Check编码
+3. 在地址脚本合约哈希前添加版本号（ 目前neo所使用的协议版本是23所以对应字节为0x17）
+
+4. 对字节数据做Base58Check编码
 
 ​    Example：
 
@@ -75,33 +77,33 @@ Example:
 | 压缩型公钥 | 035a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74faab3a2b61a |
 | 地址 | AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF  |
 
-4、数字证书
+### 4、数字证书
 数字证书是一个经证书授权中心数字签名的包含公开密钥拥有者信息以及公开密钥的文件。
 NEO使用X509格式的证书
+
+
+
 ## 钱包文件
-  1、db3钱包文件
 
-​        db3钱包文件是neo采用sqlite技术存储数据所使用存储文件，文件尾缀名：.db3。
+### db3钱包文件
 
-​        文件中主要存储以下四个属性：
+db3钱包文件是neo采用sqlite技术存储数据所使用存储文件，文件尾缀名：`.db3`。 文件中主要存储以下四个属性：
 
-​        PasswordHash：密码的哈希，由密码做sha256得到
+- `PasswordHash`：密码的哈希，由密码做sha256得到
 
-​        IV：AES的初始向量，随机生成
+- `IV`：AES的初始向量，随机生成
 
-​        MasterKey：加密密文，由PasswordHash、 IV对私钥做AES256加密得到
+- `MasterKey`：加密密文，由PasswordHash、 IV对私钥做AES256加密得到
 
-​        Version：版本
+- `Version`：版本
 
-​        db3钱包采用对称加密AES相关技术作为钱包的加密和解密方法。
+db3钱包采用对称加密AES相关技术作为钱包的加密和解密方法。
 
-  2、NEP6钱包文件
+### NEP6钱包文件
 
-​        NEP6钱包文件是neo满足NEP6标准的钱包存储数据所使用存储文件，文件尾缀名：.json。
+NEP6钱包文件是neo满足NEP6标准的钱包存储数据所使用存储文件，文件尾缀名：`.json`。 json文件格式如下：
 
-json文件格式如下：
-
-~~~
+```json
 {
 	"name": null,
 	"version": "1.0",
@@ -143,7 +145,7 @@ json文件格式如下：
 	}],
 	"extra": null
 }
-~~~
+```
 
 属性说明：
 
@@ -185,56 +187,50 @@ json文件格式如下：
 
 NEP6钱包采用了以scrypt为核心算法的相关技术作为钱包的加密和解密方法。
 
-加密过程：
+**加密过程**：
 
-1.由公钥计算地址，并获取SHA256(SHA256(Address))的前四个字节作为地址哈希。
+1. 由公钥计算地址，并获取SHA256(SHA256(Address))的前四个字节作为地址哈希。
 
-2.使用Scrypt算法算出一个derivedkey，并将其64个字节数据分成2半，作为derivedhalf1和derivedhalf2。Scrypt所使用参数如下：
+2. 使用Scrypt算法算出一个derivedkey，并将其64个字节数据分成2半，作为derivedhalf1和derivedhalf2。Scrypt所使用参数如下：
+ 
+	- 密文：输入的密码（UTF-8格式）
+	- 盐：地址哈希
+	- n：16384
+	- r：8
+	- p：8
+	- length：64
 
-​                  密文：输入的密码（UTF-8格式）
+3. 把私钥和derivedhalf1做异或，然后用derivedhalf2对其做AES256加密得到encryptedkey
 
-​                   盐：地址哈希
+4. 按照以下格式拼接数据，并对其做Base58Check编码得到NEP2Key
 
-​                   n：16384
+    `0x01` + `0x42` + `0xe0` + `地址哈希` + `encryptedkey`
 
-​                   r：8
 
-​                   p：8
+**解密过程**：
 
-​                   length：64
+1. 对NEP2key做Base58Check解码。
 
-3.把私钥和derivedhalf1做异或，然后用derivedhalf2对其做AES256加密得到encryptedkey
+2. 验证解码后数据长度为39，以及前3个字节（data[0-2]是否为0x01、0x42、0xe0）
 
-4.按照以下格式拼接数据，并对其做Base58Check编码得到NEP2Key
+3. 取data[3-6]作为addresshash
 
-0x01+0x42+0xe0+地址哈希+encryptedkey
+4. 把密码、addresshash代入Scrypt算法指定结果长度为64求出导出密钥Derivedkey
 
-解密过程：
+5. 把Derivedkey前32字节作为导出半数1 Derivedhalf1，后32字节作为导出半数2 Derivedhalf2
 
-1、对NEP2key做Base58Check解码。
-
-2、验证解码后数据长度为39，以及前3个字节（data[0-2]是否为0x01、0x42、0xe0）
-
-3、取data[3-6]作为addresshash
-
-4、把密码、addresshash代入Scrypt算法指定结果长度为64求出导出密钥Derivedkey
-
-5、把Derivedkey前32字节作为导出半数1 Derivedhalf1，后32字节作为导出半数2 Derivedhalf2
-
-6、取data[7-38]作为加密密钥Encryptedkey（32字节），并用
+6. 取data[7-38]作为加密密钥Encryptedkey（32字节），并用
 导出半数2 Derivedhalf2作为初始向量对其进行AES256解密
 
-7、把解密结果与导出半数1 Derivedhalf1做异或处理求得私钥
+7. 把解密结果与导出半数1 Derivedhalf1做异或处理求得私钥
 
-8、把该私钥做ECC求出公钥，并生成地址，对该地址做2次Sha256然后取结果的前四字节判断其是否与addresshash相同，相同则是正确的私钥。（参考NEP2）
+8. 把该私钥做ECC求出公钥，并生成地址，对该地址做2次Sha256然后取结果的前四字节判断其是否与addresshash相同，相同则是正确的私钥。（参考NEP2）
 
 相关详细技术请参照neo文档中的NEP2和NEP6提案。
 
 ​        NEP2提案：<https://github.com/neo-project/proposals/blob/master/nep-2.mediawiki>
 
 ​        NEP6提案：<https://github.com/neo-project/proposals/blob/master/nep-6.mediawiki>
-> [!NOTE]
-> 如果发现死链接，请联系 feedback@neo.org
 
 ## 钱包功能
 
@@ -265,13 +261,14 @@ NEP6钱包采用了以scrypt为核心算法的相关技术作为钱包的加密�
 
 
 ## 钱包软件
-  1、全节点钱包
+
+### 全节点钱包
 
 ​        全节点钱包是对区块链数据的完整备份，保存了链上的所有数据，同时也参与了P2P网络的构建，因此需要占用较大的存储空间。
 
 ​        neo-cli、neo-gui都是全节点钱包
 
-  2、SPV钱包
+### SPV钱包
 
 ​       SPV钱包不同于全节点钱包，它不存储全部区块的数据，只存储区块头数据，并通过使用布隆过滤器和梅克尔树等算法来实现相关数据的验证。能有效节约存储空间，多用在手机App端或轻客户端。
 
@@ -279,14 +276,15 @@ NEP6钱包采用了以scrypt为核心算法的相关技术作为钱包的加密�
 
 使用方式：
 
-​        1. SPV钱包向全节点发送布隆过滤器，并由全节点加载布隆过滤器
+   1. SPV钱包向全节点发送布隆过滤器，并由全节点加载布隆过滤器
 
-​        2. SPV钱包向全节点发送布隆过滤器参数，并由全节点加载相应布隆过滤器参数（可选）。
+   2. SPV钱包向全节点发送布隆过滤器参数，并由全节点加载相应布隆过滤器参数（可选）。
 
-​        3. SPV钱包向全节点用区块hash查询交易数据，全节点使用布隆过滤器过滤后返回交易数据以及构建的梅克
+   3. SPV钱包向全节点用区块hash查询交易数据，全节点使用布隆过滤器过滤后返回交易数据以及构建的梅克尔树路径（待确认）
+   
+   4. SPV钱包用梅克尔树路径验证交易数据有效性（待确认）
 
-​             尔树路径（待确认）
+   5. SPV钱包向全节点发送指令清除布隆过滤器，全节点清除过滤器。
 
-​        4. SPV钱包用梅克尔树路径验证交易数据有效性（待确认）
-
-​        5. SPV钱包向全节点发送指令清除布隆过滤器，全节点清除过滤器。
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>

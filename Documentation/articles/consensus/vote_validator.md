@@ -35,8 +35,7 @@
 > [!Warning]
 > Abandoned, replaced by `StateTransanction`, but the transaction processing is reserved for compatibility with the previous transactins.
 
-
-### StateTransanction
+### StateTransaction
 
 ##### **Structure**
 
@@ -96,13 +95,12 @@ From voting to consensus nodes, need 2 steps: one is to calculate the number of 
 
 ### The number of consensus nodes
 
-
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 
 
 According to the voting above, we can get the votes diagram of the number of consensus nodes like the following figure.
 
-<p align="center"><img src="../../images/consensus/calculate_consensus_count_0.jpg" /><br></p>
+[![calculate_consensus_count_0](../../images/consensus/calculate_consensus_count_0.jpg)](../../images/consensus/calculate_consensus_count_0.jpg)
 
 By using the following formula, get the probability distribution funnction F(discrete function), in which the probability of the `i`th consensus node equals its proportion of votes.
 
@@ -111,8 +109,7 @@ F_i = \frac{\sum_{j = 1}^i Vote_j }{\sum_{k = 1}^N Vote_k}
 $$
 
 
-<p align="center"><img src="../../images/consensus/calculate_consensus_count_1.jpg" /><br></p>
-
+[![calculate_consensus_count_1](../../images/consensus/calculate_consensus_count_1.jpg)](../../images/consensus/calculate_consensus_count_1.jpg)
 
 In the probability distribution function, we calculate the expected value from the points which are covered by the range [0.25, 0.75], then obtain the maximum value by comparing with the number of `StandbyValidators`.  The formula is as follows:
 
@@ -133,7 +130,6 @@ $$
 In the above steps, we calcuate the number of consensus nodes `Count`, and take the first `Count` validators from the validators ranked by votes in descending order. It will be supplemented from `StandbyValidators`, if the applicant is insufficient. Finally, the consensus nodes are selected.
 
 ## From Delegates to Speaker
-
 
 The list of consesus nodes is obtained from the above method, and the Speaker is determined by the formula `p = (h - v) mod N` in the dBFT algorithm. while, `h` -- the proposal block height, `v` - view number, start from 0, `N` -- the number of consensus nodes.
 

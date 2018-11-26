@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 namespace Neo.Cryptography
 {
     /// <summary>
-    /// 用来计算生成SCrypt key的类
+    /// SCrypt算法的实现类
     /// </summary>
     public static class SCrypt
     {

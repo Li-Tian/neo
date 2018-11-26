@@ -11,7 +11,17 @@
             "**/obj/**",
           ],
           "src": "../neo"
-        }
+        },
+        {
+          "files": [
+            "**/**.csproj"
+          ],
+          "exclude": [
+            "**/bin/**",
+            "**/obj/**",
+          ],
+          "src": "../src/neo-vm"
+        },
       ],
       "dest": "api",
       "disableGitFeatures": false,

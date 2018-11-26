@@ -1,3 +1,5 @@
+<center> <h2> 加密算法 </h2> </center>
+
 ## ECC椭圆曲线加密
 
 ​　ECC椭圆曲线加密算法是一种非对称加密算法。利用其 K=k*G 过程不可逆的特性（其中K为公钥，G为基点（常数点）），可以预防通过公钥暴力求解私钥。相较于 RSA 等其他加密算法，在相同密钥长度情况下，其具备更高的安全性，同时更节约算力。ECC 结合其他算法广泛应用于签名等领域，例如 ECDSA 数字签名。
@@ -48,29 +50,32 @@ Example:
 
 签名过程：
 
-​       1. 选择随机数r，计算点r·G(x, y)。
+   1. 选择随机数r，计算点r·G(x, y)。
 
-​       2. 根据随机数r、消息M的哈希h、私钥k，计算s = (h + k·x)/r。
-
-​       3. 将消息M、和签名{r·G, s}发给接收方。
+   2. 根据随机数r、消息M的哈希h、私钥k，计算s = (h + k·x)/r。
+    
+   3. 将消息M、和签名{r·G, s}发给接收方。
 
 验证过程：
 
-​       1. 接收方收到消息M、以及签名{r·G=(x,y), s}。
+   1. 接收方收到消息M、以及签名{r·G=(x,y), s}。
 
-​       2. 根据消息求哈希h。
-
-​       3. 使用发送方公钥K计算：h·G/s + x·K/s，并与r·G比较，如相等即验签成功。
+   2. 根据消息求哈希h。
+   
+   3. 使用发送方公钥K计算：h·G/s + x·K/s，并与r·G比较，如相等即验签成功。
 
 推导原理如下：
 
-```
-h·G/s + x·K/s 
-= h·G/s + x(k·G)/s
-= (h+x·k)G/s
-= r(h+x·k)G / (h+k·x) 
-= r·G
-```
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+$$
+h·G/s + x·K/s           \\\\
+= h·G/s + x(k·G)/s      \\\\
+= (h+x·k)G/s                  \\\\
+= r(h+x·k)G / (h+k·x)   \\\\
+= r·G                                  
+$$
+
 
 Example:
 
@@ -125,3 +130,5 @@ Example：
 
 1. DB3钱包账户密码的存储、验证
 
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>
