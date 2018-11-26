@@ -60,3 +60,8 @@ NEP5资产，是合约资产的一种，采用的NEO第五号TOKEN规范协议�
 1、[Smart Contract](https://en.wikipedia.org/wiki/Smart_contract) <br/>
 2、[nep-5.mediawiki](https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki)
 
+
+
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>
+
