@@ -37,9 +37,9 @@ namespace Neo.VM
                 stack.list.AddRange(list.Skip(list.Count - count));
         }
         /// <summary>
-        /// 获取循环访问list<T>的枚举数。
+        /// 获取循环访问list&lt;T&gt;的枚举数。
         /// </summary>
-        /// <returns>循环访问list<T>的枚举数。</returns>
+        /// <returns>循环访问list&lt;T&gt;的枚举数。</returns>
         public IEnumerator<T> GetEnumerator()
         {
             return list.GetEnumerator();
