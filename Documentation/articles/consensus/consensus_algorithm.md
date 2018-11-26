@@ -89,7 +89,7 @@ In the process of consensus on a open p2p network environment, there may be netw
 
 [![dbft_state_graph](../../images/consensus/dbft_state_graph.jpg)](../../images/consensus/dbft_state_graph.jpg)
 
-The View Change will take place, when one consensus node could not reach a consensus in `2<sub>v+1 </sub>*t` time interval, or received illegal proposals such as contain invalid transactions.
+The View Change will take place, when one consensus node could not reach a consensus in 2<sup>v+1</sup>⋅ 𝑡  time interval, or received illegal proposals such as contain invalid transactions.
 
 1. Given 𝑘 = 1, 𝑣<sub>𝑘 </sub>= 𝑣 + 𝑘； 
 
@@ -97,7 +97,7 @@ The View Change will take place, when one consensus node could not reach a conse
 
 3. When any one node received at least `N-f` `ChangeView` with the same 𝑣<sub>𝑘</sub> from different consensus nodes, the View Change will be completed. Set 𝑣 = 𝑣<sub>𝑘</sub> and start the consensus process.
 
-4. If the View Change is not completed in `2<sup>𝑣<sub>𝑘 </sub>+1</sup> ⋅ 𝑡` time interval, then increase k and back to step 2).
+4. If the View Change is not completed in 2<sup>𝑣<sub>𝑘 </sub>+1</sup> ⋅ 𝑡 time interval, then increase k and back to step 2).
 
 
 With the k increase, the overtime waiting time will increase exponentially, which can avoid frequent View Change and make the nodes reach agreement as soon as possible. The original view `v` is still valid until the completion of View Change, avoiding unnecessary View Change due to accidental network latency.

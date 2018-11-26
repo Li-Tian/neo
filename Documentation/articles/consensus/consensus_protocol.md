@@ -79,7 +79,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
   5. After receiving the `consensus` message, the node triggers the consensus module to process the message.
 
 
-### inv message format
+### Inv message format
 
 | Size | Field | Type  | Description |
 |------|------|-------|------|
@@ -97,7 +97,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 > 3. `0xe0`: Consensus. inv.payload is assigned to block's hash.
 
 
-### getdata message format
+### Getdata message format
 
 | Size | Field | Type  | Description |
 |------|------|-------|------|
