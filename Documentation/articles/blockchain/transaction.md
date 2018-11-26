@@ -1,4 +1,4 @@
-<center><h2>Transaction</h2></center>
+<center><h2>交易</h2></center>
 
 
 一个普通的交易的数据结构如下：
@@ -96,7 +96,10 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 |  9  | InvocationTransaction | 0xd1 | 0 | 合约调用交易 | 用来调用合约，部署合约后或生成新资产之后会使用 | 
 
 
-以上这9种交易并不能完成所有的功能实现，比如部署合约和生成NEO和GAS以外的NEP5新资产。这两种功能是通过系统调用来完成，但最后还是需要使用InvocationTransaction以交易的形式来将这个事情加入到区块链中。下面给出2个例子。第一个例子是生成创世块，展示了只使用提供的交易类型生成资产；第二个例子是生成NEP5资产，展示了系统调用和合约的方式生成新资产。
+<!-- 以上这9种交易并不能完成所有的功能实现，比如部署合约和生成NEO和GAS以外的NEP5新资产。这两种功能是通过系统调用来完成，但最后还是需要使用InvocationTransaction以交易的形式来将这个事情加入到区块链中。 -->
+
+
+下面给出2个例子。第一个例子是生成创世块，展示了只使用提供的交易类型生成资产；第二个例子是生成NEP5资产，展示了系统调用和合约的方式生成新资产。
 
 ### **例1：GenesisBlock**
 
@@ -134,13 +137,13 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x00` |
+| 1   | Type    | byte | 交易类型 | `0x40` |
 | 1 | Version | byte |  交易版本号 | `0` |
 | 1 | AssetType | byte | 资产类型  | `0x00` |
 | ? | Name | string | 资产名字  | `NEO` |
 | 8 | Amount | Fix8 | 总量  | `100000000` |
 | 1 | Precision | byte | 精度  | `0` |
-| ? | Owner | ECPoint | 所有者公钥  | todo |
+| ? | Owner | ECPoint | 所有者公钥  |  |
 | 32 | Admin | UInt160 | 管理者  | `0x51`.toScriptHash |
 | ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
 | 34*? | Inputs | tx_in[] | 输入 | 空 |
@@ -154,13 +157,13 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x00` |
+| 1   | Type    | byte | 交易类型 | `0x40` |
 | 1 | Version | byte |  交易版本号 | `0` |
 | 1 | AssetType | byte | 资产类型  | `0x01` |
 | ? | Name | string | 资产名字  | `GAS` |
 | 8 | Amount | Fix8 | 总量  | `100000000` |
 | 1 | Precision | byte | 精度  | `8` |
-| ? | Owner | ECPoint | 所有者公钥  | todo |
+| ? | Owner | ECPoint | 所有者公钥  | |
 | 32 | Admin | UInt160 | 管理者  | `0x00`.toScriptHash, 即 `OpCode.PUSHF`指令脚本 |
 | ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
 | 34*? | Inputs | tx_in[] | 输入 | 空 |
@@ -173,7 +176,7 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x00` |
+| 1   | Type    | byte | 交易类型 | `0x01` |
 | 1 | Version | byte |  交易版本号 | `0` |
 | ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
 | 34*? | Inputs | tx_in[] | 输入 | 空 |
@@ -184,9 +187,23 @@ Neo中一共定义了9种不同的交易，包括MinerTransaction、RegisterTran
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
-| 1   | AssetId    | byte | 资产类型 | `0x00`， NEO代币 |
+| 1   | AssetId    | byte | 资产类型 | `0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b`， NEO代币 |
 | 8 | Value | Fix8 |  转账总量 | `100000000` |
-| 20 | ScriptHash | UInt160 |  收款脚本hash |  备用共识节点的三分之二多方签名脚本hash |
+| 20 | ScriptHash | UInt160 |  收款脚本hash |  备用共识节点多方签名合约地址 |
 
 
-### **例2：生成新资产，即NEP5资产**
+### **例2：生成新资产，即NEP5资产**。
+
+
+<!-- | 尺寸 | 字段 | 名称  | 类型 | 值 |
+|----|-----|-------|------|------|
+| 1   | Type    | byte | 交易类型 | `0xd1` |
+| 1 | Version | byte |  交易版本号 | `0` |
+| ? | Script | byte[] | NEP-5合约代码  | todo `0x....` |
+| 8 | Gas | Fix8 | 手续费  |  |
+| ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
+| 34*? | Inputs | tx_in[] | 输入 | 空 |
+| 60 * ? | Outputs | tx_out[] | 输出 | 空 |
+| ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | 空 | -->
+
+请参考[NEP5协议](https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki) 进 [部署和调用智能合约](http://docs.neo.org/zh-cn/sc/quickstart/deploy-invoke.html)
