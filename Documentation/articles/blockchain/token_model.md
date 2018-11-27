@@ -17,7 +17,3 @@ Neo中原生定义了两种代币，NEO（缩写符号NEO）和NeoGas（缩写�
 |  7   |  1200W ~~ (1400W -1) |    2 |
 |  8~22   |  1400W ~~ (4600W -1) |    1 |
 |  23~    |  4600W ~ |    0 |
-
-### **收费**
-
-[![economic model](../../images/blockchain/economic_model.jpg)](../../images/blockchain/economic_model.jpg)
