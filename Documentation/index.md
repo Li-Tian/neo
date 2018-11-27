@@ -1,6 +1,6 @@
-# 欢迎阅读 NEO的 **黄皮书**.
+# Welcome to NEO's **Yellow Paper**.
 
-## 从哪里开始:
+## Where to start:
 
-1. 可以从[黄皮书](articles/introduction.md)开始阅读。
-2. 先浏览一下 [API文档](api/index.md)。
+1. You can start reading from [Yellow Paper](articles/introduction.md).
+2. Take a look at [API Documentation](api/index.md).

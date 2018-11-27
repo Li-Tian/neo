@@ -1,42 +1,42 @@
-- name: 阅读说明
+- name: Introduction
   href: introduction.md
-- name: 技术约定
+- name: Conventions
   href: conventions.md
-- name: Neo-cli 的结构
+- name: Neo-cli Structure
   href: neo_cli_structure.md
-- name: 密码学相关
+- name: The Blockchain Paradigm
   href: cryptography/encode_algorithm.md
   items:
-     - name: 编码算法
+     - name: Encoding Algorithm
        href: cryptography/encode_algorithm.md
-     - name: 哈希算法
+     - name: Hash Algorithm
        href: cryptography/hash_algorithm.md
-     - name: 加密算法
+     - name: Encryption Algorithm
        href: cryptography/encryption_algorithm.md
-     - name: 梅克尔树
+     - name: Merkel Tree
        href: cryptography/merkle_tree.md
-     - name: 布隆过滤器
+     - name: Bloom Filter
        href: cryptography/bloom_filter.md
-- name: 区块链系统
+- name: Blockchain System
   href: blockchain/neo_system.md
   items:
-    - name: 经济模型
+    - name: Economic Model
       href: blockchain/economic_model.md
-    - name: 区块链数据结构
+    - name: Blockchain Data Structure
       href: blockchain/blockchain_datastructure.md
-    - name: 交易
+    - name: Transaction
       href: blockchain/transaction.md
-    - name: 账户和资产
+    - name: Account and Asset
       href: blockchain/account_asset.md
-    - name: 智能合约和NEP5资产
+    - name: NEP-5 Asset
       href: blockchain/nep5asset.md
-    - name: 验证人
+    - name: Validator
       href: blockchain/validator.md
-- name: 钱包
+- name: Wallets
   href: wallets.md
-- name: 交易流程
+- name: Transaction Execution
   href: tx_execution.md
-- name: 网络协议
+- name: Network Protocol
   href: network_protocol.md
 - name: Consensus Mechanism
   href: consensus/readme.md

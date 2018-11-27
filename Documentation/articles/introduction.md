@@ -1,22 +1,22 @@
-# 阅读说明
+# Reading instructions
 
-　NEO 的目标是构建一个基于智能合约的经济生态系统。而黄皮书的定位是希望能给这个经济生态系统的主干 NEO 网络整理出面向技术人员的协议。开始黄皮书的工作以后发现这项工作比想象的要更加困难。 NEO 这个系统覆盖的细节太多，由于水平有限，很难在有限的篇幅描述到所有细节。因此，尽量更多地从不同的角度描述 NEO 的技术特点，希望读者能从零散的技术细节掌握 NEO 系统的整体构架。
+NEO's goal is to build an economic ecosystem based on smart contract. The positioning of this Yellow Paper is to hope to give a specification of the NEO network for technicians. After starting the work of the Yellow Paper, I found it is more challenging than I had expected. This system contains too many information, and due to the limited ability, it is difficult to cover all the details in a limited paragraph. Therefore, we tried to describe the technical characteristics of NEO from different angles as much as possible. We hope that readers can grasp the overall structure of NEO system from scattered technical details.
 
-# 面向的读者
+# Targeted Reader
 
-　这是一篇技术文档，面向的读者主要是非区块链方向的技术人员，或者其它区块链的技术人员，通过阅读本文档以后，能够理解掌握 NEO 的技术细节，从而可以快速的参与 NEO 的经济生态系统的建设。同时还提供了 NEO SDK 的 C# 版 [API 文档](../api/index.md)，以方便查阅。
+This is a technical document. The targeted readers are mainly non-blockchain technicians, or other blockchain technicians. After reading this document, I hope you can understand the technical details of NEO and you can quickly participate in the construction of NEO's economic ecosystem. By the way, the C# version of the NEO SDK [API Documentation](../api/index.md) is also provided for easy reference.
 
-　如果你不是技术人员，可以先阅读 [NEO的白皮书](http://docs.neo.org/en-us/whitepaper.html)，然后再回来阅读本文档，遇到技术性的细节可以跳过，希望也能理解一些 NEO 网络的设计理念。
+If you are not a technician, you can read [NEO's White Paper](http://docs.neo.org/en-us/whitepaper.html) and then come back to read this document. Technical details can be skipped. It will be good to get the design concepts of NEO networks.
 
-# 其它说明
+# Other instructions
 
-　本文档主要用来描述 NEO 网络节点的设计构造，但是没有涵盖 neo-cli 的命令行功能列表和 JSON-RPC 功能列表，以及 neo-gui 的用法。如果需要了解这些部分，可以参考下述链接。
+This document is mainly used to describe the design of NEO network nodes, but does not cover the list of command-line functions and JSON-RPC functions of neo-cli, and the usage of neo-gui. If you need to understand these parts, you can refer to the links below.
 
- * [NEO-CLI 的命令参考](http://docs.neo.org/en-us/node/cli/cli.html)
- * [NEO JSON-RPC API 参考](http://docs.neo.org/en-us/node/cli/2.9.0/api.html)
- * [NEO-GUI](http://docs.neo.org/en-us/node/gui/install.html)
+ - [NEO-CLI Command Reference](http://docs.neo.org/en-us/node/cli/cli.html)<BR>
+ - [NEO JSON-RPC API Reference](http://docs.neo.org/en-us/node/cli/2.9.0/api.html)<BR>
+ - [NEO-GUI](http://docs.neo.org/en-us/node/gui/install.html)<BR>
 
 > [!NOTE]
-> * 文档还在不断的更新中，如果发现有错误或遗漏，或者有改善的建议，发现链接404等问题，或者有意向合作翻译成其它语言，请写信到 <feedback@neo.org>。
-> * 黄皮书基于 NEO 2.9.1 写成。虽然希望写成不依赖于特定的编程语言，但是在类型定义等处还是少量引用了 C# 的语言习惯。
-> * API 文档是 NEO 2.9.1 C# 的编程接口文档。
+> - The documentation is constantly being updated. If you find errors or omissions, problems with links 404, or you have suggestions for improvement, or you are willing to translate it into other languages, please write to <feedback@neo.org>.
+> - The Yellow Paper is based on NEO 2.9.1.0. Although we intended to make it less dependent on a specific programming language, there is still a small amount of C# language habits referenced in type definitions and so on.
+> - The API documentation is the C# programming interface documentation for NEO 2.9.1.0.
