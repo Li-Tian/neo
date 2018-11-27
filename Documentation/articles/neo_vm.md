@@ -1,8 +1,8 @@
 <center> <h2> Neo Virtual Machine</h2> </center>
 
-&emsp;&emsp;NeoVM is a lightweight, general-purpose virtual machine which executes NEO smart contract code. The concept of virtual machine described in this paper is relatively narrow, it's not a simulation of physical machine by operating system. Unlike VMware or Hyper-V, it's mainly aimed at specific language.
+&emsp;&emsp;NeoVM is a lightweight, general-purpose virtual machine which executes NEO smart contract code. The concept of virtual machine described in the narrow sense in this paper, it's not a simulation of physical machine by operating system. Unlike VMware or Hyper-V, it's mainly aimed at specific language.
 
-&emsp;&emsp;For example, in JVM or CLR of .Net, the source code will be compiled into related bytecodes, and be executed on the corrresponding virtual machine. JVM or CLR will read instructions, decode, execute and write results back. Those steps are very similar to the concepts on real physical machines. However, the binary instructions are still running on the physical machine. It takes instructions from memory and transmits them to the CPU through the bus, then decodes, executes and stores the results.
+&emsp;&emsp;For example, in JVM or CLR of .Net, source code will be compiled into relevant bytecodes, and be executed on the corrresponding virtual machine. JVM or CLR will read instructions, decode, execute and write results back. Those steps are very similar to the concepts on real physical machines. However, the binary instructions are still running on the physical machine. It takes instructions from memory and transmits them to the CPU through the bus, then decodes, executes and stores the results.
 
 # Virtual Device
 [![../images/neo_vm/nvm.jpg](../images/neo_vm/nvm.jpg)](../images/neo_vm/nvm.jpg)
@@ -23,11 +23,11 @@ A complete operation process is as follows:
 
 ## Execution Engine
 
-The left part is the virtual machine execution engine(equivalent to CPU), which can execute common instructions such as process control, stack operation, bit operation, arithmetic operation, logical operation, cryptography, etc. It can also interact with the interoperable services through system call. NeoVM has four states: `NONE`, `HALT`, `FAULT`, `BREAK`.
+The left part is the virtual machine execution engine(equivalent to CPU), which can execute common instructions such as flow control, stack operation, bit operation, arithmetic operation, logical operation, cryptography, etc. It can also interact with the interoperable services through system call. NeoVM has four states: `NONE`, `HALT`, `FAULT`, `BREAK`.
 
 * `NONE` is normal state.
 
-* `HALT` is a stop satte. When the `InvocationStack` is empty, namely all scripts are executed, the virtual machine state will be set to `HALT`.
+* `HALT` is a stop state. When the `InvocationStack` is empty, namely all scripts are executed, the virtual machine state will be set to `HALT`.
 
 * `FAULT` is an error state. When the operation is wrong, the virtual machine state will be set to `FAULT`.
 
@@ -40,40 +40,38 @@ Each time before the virtual machine start, the execution engine will detect the
 
 NeoVM has four memorys: `InvocationStack`, `EvaluationStack`, `AltStack` and `ResultStack`.
 
-* `InvocationStack` is mainly used to store the running context data. Each running context has its own scripts, `EvaluationStack` and `AltStack`. Stacks are isolated from each other between different running contexts. Context switching is completed by relying on the `CurrentContext`, `CallingContext` and `EntryContext`. The `CurrentContext` points to the top element of the `InvocationStack`, which corresponds to `ExecutionContext_1` in the system architecture diagram. The `CallingContext` points to the second element of the `InvocationStack`, which corresponds to `ExecutionContext_2`. And the `EntryContext` points to the tail element of the `InvocationStack`, which corresponds to `ExecutionContext_3`.
+* `InvocationStack` is mainly used to store the running context data. Each running context has its own scripts, `EvaluationStack` and `AltStack`. Stacks are isolated from each other between different running contexts. Context switching is completed by relying on the `CurrentContext`, `CallingContext` and `EntryContext`. The `CurrentContext` points to the top element of the `InvocationStack`, which is `ExecutionContext_1` in the system architecture diagram. The `CallingContext` points to the second element of the `InvocationStack`, which is `ExecutionContext_2`. And the `EntryContext` points to the tail element of the `InvocationStack`, which is `ExecutionContext_3`.
 
 * Each running context has its own `EvaluationStack` and `AltStack`. `EvaluationStack` is mainly used to execute corresponding operations according to instructions, and `AltStack` is used to save temporary data in computing process.
 
 * After all scripts executed, the results will be saved in the `ResultStack`. 
 
 
-# InteropService
+# Interoperable service layer
 
-右侧部分是虚拟机的互操作服务层（相当于外设）。目前互操作服务层提供了智能合约所能访问区块链数据的一些 API，利用这些 API，可以访问区块信息、交易信息、合约信息、资产信息等。
+The right part is the virtual machine interoperable service layer, which provides some APIs for smart contract accessing the blockchain. Using these APIs block information, transaction information, contract information, and asset information and so on can be accessed.
 
-除此之外互操作服务层还为每个合约提供了一个持久化存储区的功能。NEO 的每个智能合约在创建的时候都可选地启用一个私有存储区，存储区是 key-value 形式的，NEO 智能合约由合约的被调用者决定持久化存储区的上下文，而非调用者来决定。当然，调用者需要将自己的存储上下文传给被调用者（即完成授权）后，被调用者才可以执行读写操作。
+In addition, the interoperable service layer provides a persistent storage for each contract.  Each NEO contract can set a private storage in form of key-value optionally when the contract created. The NEO contract's persistent storage is determined by the callee of the contract, not the caller. However, the caller needs to pass its own storage context to the callee (authorization) before the callee can perform the read-write operation.
 
-关于互操作服务的详细介绍在智能合约部分。
-
+The interoperable services are describled in detail in the "Smart Contract" section.
 
 # Built-in data types
 
-NeoVM内置的数据类型一共有7种：
+NeoVM has seven built-in data types:
 
-
-| 类型 | 描述 |
+| Type | Description |
 |------|------|
-| Boolean |  布尔类型，实现为一个bool值和两个字节数组TRUE和FALSE。|
-| Integer | 整型，实现为一个BigInteger值。 |
-| ByteArray | 字节数组，实现为一个byte[]。  |
-| Array |  数组，实现为一个List<StackItem>，StackItem是一个抽象类，NeoVM内置的数据类型均继承自StackItem。 |
-| Struct | 结构体，继承自Array。结构与Array相同，只是添加了Clone方法和重写了Equals方法。 |
-| Map |  实现为一个键值对为StackItem的字典类型Dictionary<StackItem, StackItem> 。 |
-| InteropInterface |  互操作接口 |
+| Boolean |  Implemented as two byte arrays, `TRUE` and `FALSE`.  |
+| Integer | Implemented as a `BigInteger` value.  |
+| ByteArray |Implemented as a byte array.  |
+| Array |  Implemented as a `List<StackItem>`, the `StackItem` is an abstract class, and all the built-in data types are inherited from it. |
+| Struct |  Inherited from Array, but the `Clone` method is added and `Equals` method is rewritten. |
+| Map | Implemented as a key-value pair `Dictionary<StackItem, StackItem>`.  |
+| InteropInterface |  Interoperability interface |
 
 
 ```c#
-// boolean 类型
+// boolean type
 private static readonly byte[] TRUE = { 1 };
 private static readonly byte[] FALSE = new byte[0];
 
@@ -83,41 +81,38 @@ private bool value;
 
 # Instructions
 
-Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指令），类别如下：
+NeoVM has implement 113 instructions (and four unrealized instructions). The categories are as follows:
 
-| 常数 | 流程控制 | 栈操作 | 字符串操作 | 逻辑运算 | 算术运算 | 密码学 | 高级数据结构 |栈隔离| 异常处理 |
+| Contrant | Flow Control | Stack Operation | String Operation | Logical Operation | Arithmetic Operation | Cryptography | Advanced Data Structure |Stack Isolation| Exception Processing |
 | ---- | -------- | ------ | ------ | -------- | -------- | ------ | -------- | ------ | ---- |
 | 25 | 9| 16| 5 | 5 | 25 | 7  | 14 | 5 | 2 |
 
-下面将分别介绍各个指令的详细内容。
 
+## 1. Contrant
 
-
-## 1.常数
-
-常数部分指令主要完成向计算栈中压入常数或者数组的功能。
+The constant part instructions mainly complete the function of pushing constants or arrays into the `EvaluationStack`.
 
 ### PUSH0
 
 | Instruction   | PUSH0                                 |
 |--------|----------|
 | Bytecode: | 0x00                                  |
-| Alias: | PUSHF是PUSH0的别名                    |
-| Function: | 向计算栈中压入一个长度为0的字节数组。 |
+| Alias: |   `PUSHF`                |
+| Function: | Push an empty array into the `EvaluationStack`  |
 
 ### PUSHBYTES
 
 | Instruction   | PUSHBYTES1\~PUSHBYTES75                                    |
 |----------|-----------------------------|
 | Bytecode: | 0x01\~0x4B                                                 |
-| Function:   | 向计算栈中压入一个字节数组，其长度等于本指令字节码的数值。 |
+| Function:   | Push a byte array into the `EvaluationStack`, the length of which is equal to the value of this instruction's bytecode. |
 
 ### PUSHDATA
 
 | Instruction   | PUSHDATA1, PUSHDATA2, PUSHDATA4                                   |
 |----------|---------------------------------------|
 | Bytecode: | 0x4C, 0x4D, 0x4E                                                  |
-| Function:   | 向计算栈中压入一个字节数组，其长度由本指令后的 1\|2\|4 字节指定。 |
+| Function:   | Push a byte array into the `EvaluationStack`, the length of which is specified by 1\|2\|4 bytes after this instruction.  |
 
 ### PUSHM1
 ------
@@ -125,7 +120,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | PUSHM1                                   |
 |----------|------------------------------------------|
 | Bytecode: | 0x4F                                     |
-| Function:   | 向计算栈中压入一个大整数，其数值等于-1。 |
+| Function:   | Push a BigInteger of `-1`  into the `EvaluationStack`. |
 
 ### PUSHN
 -----
@@ -133,105 +128,109 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | PUSH1\~PUSH16                               |
 |----------|---------------------------------------------|
 | Bytecode: | 0x51\~0x60                                  |
-| 别名：   | PUSHT是PUSH1的别名                          |
-| Function:   | 向计算栈中压入一个大整数，其数值等于1\~16。 |
+| Alias:   |  `PUSHT` is an alias for `PUSH1`      |
+| Function:   | Push a BigInteger into the `EvaluationStack`, the value of which is equal to 1\~16. |
 
-## 2.流程控制
-用于控制的虚拟机运行流程，包括跳转、调用等指令。
+## 2. Flow Control
+
+It's used to control the running process of NeoVM, including jump, call and other instructions.
 
 ### NOP
 
 | Instruction   | NOP                                         |
 |----------|---------------------------------------------|
 | Bytecode: | 0x61                                        |
-| Function:   | 空操作，但是会使指令计步器加1。 |
+| Function:   | Empty operation, but will add 1 to the instruction counter. |
 
 ### JMP
 
 | Instruction   | JMP                                                     |
 |----------|---------------------------------------------------------|
 | Bytecode: | 0x62                                                    |
-| Function:   | 无条件跳转到指定偏移位置，偏移量由本指令后的2字节指定。 |
+| Function:   | Jump to the specified offset uuconditionally, which is specified by 2 bytes after this instruction. |
 
 ### JMPIF
 
 | Instruction   | JMPIF                                                                                                                |
-|----------|----------------------------------------------------------------------------------------------------------------------|
-| Bytecode: | 0x63                                                                                                                 |
-| Function:   | 当计算栈栈顶元素不等于0时，跳转到指定偏移位置，</br>偏移量由本指令后的2字节指定。不论条件判断成功与否，栈顶元素将被移除。 |
+|----------|-------------------------------------------------------------|
+| Bytecode: | 0x63      |
+| Function:   | When the top element of the `EvaluationStack` isn't 0, then jump to the specified offset, which is specified by 2 bytes after this instruction. </br> Whether the condition determines true or not, the top element of the stack will be removed.  |
 
 ### JMPIFNOT
 
 | Instruction   | JMPIFNOT                                                           |
 |----------|--------------------------------------------------------------------|
 | Bytecode: | 0x64                                                               |
-| Function:   | 当计算栈栈顶元素等于0时，跳转到指定偏移位置，偏移量由本指令后的2字节指定 |
+| Function:   | When the top element of the `EvaluationStack` is 0, then jump to the specified offset, which is specified by 2 bytes after this instruction. |
 
 ### CALL
 
 | Instruction   | CALL                                                  |
 |----------|-------------------------------------------------------|
 | Bytecode: | 0x65                                                  |
-| Function:   | 调用指定偏移位置的函数，偏移量由本指令后的2字节指定。 |
+| Function:   | Call the function at the specified offset, which is specified by 2 bytes after this instruction.  |
 
 ### RET
 
 | Instruction   | RET                                                                                              |
 |----------|--------------------------------------------------------------------------------------------------|
 | Bytecode: | 0x66                                                                                             |
-| Function:   | 移除调用栈的顶部元素，并使程序在调用栈的下一帧中继续执行。</br>如果调用栈为空，则虚拟机进入停机状态。 |
+| Function:   | Remove the top element of the `InvocationStack` and set the instruction counter point to the next frame of the stack. </br> If the `InvocationStack` is empty, the virtual machine enters `HALT` state.  |
 
 ### APPCALL
 
 | Instruction   | APPCALL                                              |
 |----------|------------------------------------------------------|
 | Bytecode: | 0x67                                                 |
-| Function:   | 调用指定地址的函数，函数地址由本指令后的20字节指定。 |
+| Function:   | Call the function with the specified address, which is specified by 20 bytes after this instruction |
 
 ### SYSCALL
 
 | Instruction   | SYSCALL                                                |
 |----------|--------------------------------------------------------|
 | Bytecode: | 0x68                                                   |
-| Function:   | 调用指定的互操作函数，函数名称由本指令后的字符串指定。 |
+| Function:   | Call the specified interoperable function whose name is specified by the string after this instruction. |
 
 ### TAILCALL
 
 | Instruction   | TAILCALL                                                                                             |
 |----------|------------------------------------------------------------------------------------------------------|
 | Bytecode: | 0x69                                                                                                 |
-| Function:   | 以尾调用的方式(调用完后不再返回当前执行环境)，</br>调用指定的互操作函数，函数名称由本指令后的字符串指定。 |
+| Function:   | End call (no longer returning to the current execution environment after the call). </br>  Call the specified interoperable function whose name is specified by the string after this instruction. |
 
-## 3.栈操作
-实现对栈的元素做复制、移除、交换等功能。
+
+
+## 3. Stack Operation
+
+Copy, remove and exchange the elements of the stack.
 
 ### DUPFROMALTSTACK
 
-| 指令   | DUPFROMALTSTACK                          |
+| Instruction   | DUPFROMALTSTACK                          |
 |--------|------------------------------------------|
-| 字节码 | 0x6A                                     |
-| 功能   | 复制备用栈栈顶的元素，并将其压入计算栈。 |
+| Bytecode: | 0x6A                                     |
+| Function:   | Copy the top element of the `AltStack`, and push it into the `EvaluationStack `. |
 
 ### TOALTSTACK
 
 | Instruction   | TOALTSTACK                               |
 |----------|------------------------------------------|
 | Bytecode: | 0x6B                                     |
-| Function:   | 移除计算栈栈顶的元素，并将其压入备用栈。 |
+| Function:   | Remove the top element of the `EvaluationStack`, and push it into the `AltStack`. |
 
 ### FROMALTSTACK
 
 | Instruction   | FROMALTSTACK                             |
 |----------|------------------------------------------|
 | Bytecode: | 0x6C                                     |
-| Function:   | 移除备用栈栈顶的元素，并将其压入计算栈。 |
+| Function:   | Remove the top element of the `AltStack`, and push it into the `EvaluationStack`. |
 
 ### XDROP
 
 | Instruction   | XDROP                                              |
 |----------|----------------------------------------------------|
 | Bytecode: | 0x6D                                               |
-| Function:   | 移除计算栈栈顶的元素n，并移除剩余的索引为n的元素。 |
+| Function:   | Remove the element n at the top of the `EvaluationStack`, and remove the remaining element with index n. |
 | Input:   | Xn Xn-1 ... X2 X1 X0 n                             |
 | Output:   | Xn-1 ... X2 X1 X0                                  |
 
@@ -240,7 +239,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | XSWAP                                                                   |
 |----------|-------------------------------------------------------------------------|
 | Bytecode: | 0x72                                                                    |
-| Function:   | 移除计算栈栈顶的元素n，并将剩余的索引为0的元素和索引为n的元素交换位置。 |
+| Function:   | Remove the element n at the top of the `EvaluationStack`, and swap the remaining element with index 0 and the element with index n. |
 | Input:   | Xn Xn-1 ... X2 X1 X0 n                                                  |
 | Output:   | X0 Xn-1 ... X2 X1 Xn                                                    |
 
@@ -249,7 +248,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | XTUCK                                                                     |
 |----------|---------------------------------------------------------------------------|
 | Bytecode: | 0x73                                                                      |
-| Function:   | 移除计算栈栈顶的元素n，并将剩余的索引为0的元素复制并插入到索引为n的位置。 |
+| Function:   |  Remove the element n at the top of the `EvaluationStack`, copy the element with index 0, and insert to the index n.  |
 | Input:   | Xn Xn-1 ... X2 X1 X0 n                                                    |
 | Output:   | Xn X0 Xn-1 ... X2 X1 X0                                                   |
 
@@ -258,21 +257,21 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | DEPTH                                  |
 |----------|----------------------------------------|
 | Bytecode: | 0x74                                   |
-| Function:   | 将当前计算栈中的元素数量压入计算栈顶。 |
+| Function:   | Push the numbe of elements in the `EvaluationStack` into the top of the `EvaluationStack`. |
 
 ### DROP
 
 | Instruction   | DROP                   |
 |----------|------------------------|
 | Bytecode: | 0x75                   |
-| Function:   | 移除计算栈栈顶的元素。 |
+| Function:   | Remove the top element of the `EvaluationStack` |
 
 ### DUP
 
 | Instruction   | DUP                    |
 |----------|------------------------|
 | Bytecode: | 0x76                   |
-| Function:   | 复制计算栈栈顶的元素。 |
+| Function:   | Copy the top element of the `EvaluationStack`, and push it into the `EvaluationStack`. |
 | Input:   | X                      |
 | Output:   | X X                    |
 
@@ -281,7 +280,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | NIP                         |
 |----------|-----------------------------|
 | Bytecode: | 0x77                        |
-| Function:   | 移除计算栈栈顶的第2个元素。 |
+| Function:   | Remove the second top element of the `EvaluationStack` |
 | Input:   | X1 X0                       |
 | Output:   | X0                          |
 
@@ -290,7 +289,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | OVER                                     |
 |----------|------------------------------------------|
 | Bytecode: | 0x78                                     |
-| Function:   | 复制计算栈栈顶的第二个元素，并压入栈顶。 |
+| Function:   |  Copy the second top element of the `EvaluationStack`, and push it into the `EvaluationStack`. |
 | Input:   | X1 X0                                    |
 | Output:   | X1 X0 X1                                 |
 
@@ -299,7 +298,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | PICK                                                       |
 |----------|------------------------------------------------------------|
 | Bytecode: | 0x79                                                       |
-| Function:   | 移除计算栈栈顶的元素n，并将剩余的索引为n的元素复制到栈顶。 |
+| Function:   | Remove the element n at the top of the `EvaluationStack`, and copy the element with index n to the top. |
 | Input:   | Xn Xn-1 ... X2 X1 X0 n                                     |
 | Output:   | Xn Xn-1 ... X2 X1 X0 Xn                                    |
 
@@ -308,7 +307,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | ROLL                                                       |
 |----------|------------------------------------------------------------|
 | Bytecode: | 0x7A                                                       |
-| Function:   | 移除计算栈栈顶的元素n，并将剩余的索引为n的元素移动到栈顶。 |
+| Function:   | Remove the element n at the top of the `EvaluationStack`, and move the element with index n to the top.  |
 | Input:   | Xn Xn-1 ... X2 X1 X0 n                                     |
 | Output:   | Xn-1 ... X2 X1 X0 Xn                                       |
 
@@ -317,7 +316,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | ROT                                         |
 |----------|---------------------------------------------|
 | Bytecode: | 0x7B                                        |
-| Function:   | 移除计算栈栈顶的第3个元素，并将其压入栈顶。 |
+| Function:   | Move the third top element of the `EvaluationStack` to the top.  |
 | Input:   | X2 X1 X0                                    |
 | Output:   | X1 X0 X2                                    |
 
@@ -326,7 +325,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SWAP                           |
 |----------|--------------------------------|
 | Bytecode: | 0x7C                           |
-| Function:   | 交换计算栈栈顶两个元素的位置。 |
+| Function:   | Swap the two elements at the top of the `EvaluationStack` |
 | Input:   | X1 X0                          |
 | Output:   | X0 X1                          |
 
@@ -335,18 +334,21 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | TUCK                                  |
 |----------|---------------------------------------|
 | Bytecode: | 0x7D                                  |
-| Function:   | 复制计算栈栈顶的元素到索引为2的位置。 |
+| Function:   | Copy the top element of the `EvaluationStack`, and insert to the index 2. |
 | Input:   | X1 X0                                 |
 | Output:   | X0 X1 X0                              |
 
-## 4.字符串操作
+
+
+
+## 4. String Operation
 
 ### CAT
 
 | Instruction   | CAT                                              |
 |----------|--------------------------------------------------|
 | Bytecode: | 0x7E                                             |
-| Function:   | 移除计算栈栈顶的两个元素，并将其拼接后压入栈顶。 |
+| Function:   | Remove the two top elements of the `EvaluationStack`, concat them together and push it back to the `EvaluationStack` |
 | Input:   | X1 X0                                            |
 | Output:   | Concat(X1,X0)                                    |
 
@@ -355,7 +357,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SUBSTR                                       |
 |----------|----------------------------------------------|
 | Bytecode: | 0x7F                                         |
-| Function:   | 移除计算栈栈顶的三个元素，取子串后压入栈顶。 |
+| Function:   | Remove the three top elements of the `EvaluationStack`, calculate the substring and push it back. |
 | Input:   | X index len                                  |
 | Output:   | SubString(X,index,len)                       |
 
@@ -364,7 +366,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | LEFT                                         |
 |----------|----------------------------------------------|
 | Bytecode: | 0x80                                         |
-| Function:   | 移除计算栈栈顶的两个元素，取子串后压入栈顶。 |
+| Function:   | Remove the two top elements of the `EvaluationStack`, calculate the substring and push it back. |
 | Input:   | X len                                        |
 | Output:   | Left(X,len)                                  |
 
@@ -373,7 +375,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | RIGHT                                        |
 |----------|----------------------------------------------|
 | Bytecode: | 0x81                                         |
-| Function:   | 移除计算栈栈顶的两个元素，取子串后压入栈顶。 |
+| Function:   | Remove the two top elements of the `EvaluationStack`, calculate the substring and push it back. |
 | Input:   | X len                                        |
 | Output:   | Right(X,len)                                 |
 
@@ -382,18 +384,19 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SIZE                             |
 |----------|----------------------------------|
 | Bytecode: | 0x82                             |
-| Function:   | 将计算栈栈顶元素的长度压入栈顶。 |
+| Function:   | Push the length of the top element to the `EvaluationStack` top.  |
 | Input:   | X                                |
 | Output:   | X len(X)                         |
 
-## 5.逻辑运算
+
+## 5. Logical Operation
 
 ### INVERT
 
 | Instruction   | INVERT                       |
 |----------|------------------------------|
 | Bytecode: | 0x83                         |
-| Function:   | 对计算栈栈顶的元素按位取反。 |
+| Function:   | Remove the top element, inverse by bit, and push it back to the `EvaluationStack` top.  |
 | Input:   | X                            |
 | Output:   | \~X                          |
 
@@ -402,7 +405,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | AND                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0x84                                   |
-| Function:   | 对计算栈栈顶的两个元素执行按位与运算。 |
+| Function:   | Remove the two top elements, push the logic AND result of the two elements back to the `EvaluationStack` top. |
 | Input:   | AB                                     |
 | Output:   | A&B                                    |
 
@@ -411,7 +414,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | OR                                     |
 |----------|----------------------------------------|
 | Bytecode: | 0x85                                   |
-| Function:   | 对计算栈栈顶的两个元素执行按位或运算。 |
+| Function:   | Remove the two top elements, push the logic OR result of the two elements back to the `EvaluationStack` top.  |
 | Input:   | AB                                     |
 | Output:   | A\|B                                   |
 
@@ -420,7 +423,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | XOR                                      |
 |----------|------------------------------------------|
 | Bytecode: | 0x86                                     |
-| Function:   | 对计算栈栈顶的两个元素执行按位异或运算。 |
+| Function:   | Remove the two top elements, push the logic XOR result of the two elements back to the `EvaluationStack` top.  |
 | Input:   | AB                                       |
 | Output:   | A\^B                                     |
 
@@ -429,18 +432,18 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | EQUAL                                        |
 |----------|----------------------------------------------|
 | Bytecode: | 0x87                                         |
-| Function:   | 对计算栈栈顶的两个元素执行逐字节的相等判断。 |
+| Function:   | Determine the top two elements are equivalence bit-by-bit. |
 | Input:   | AB                                           |
 | Output:   | Equals(A,B)                                  |
 
-## 6.算术运算
+## 6. Arithmetic Operation
 
 ### INC
 
 | Instruction   | INC                                |
 |----------|------------------------------------|
 | Bytecode: | 0x8B                               |
-| Function:   | 对计算栈栈顶的大整数执行递增运算。 |
+| Function:   | Add 1 to the top element of the `EvaluationStack`.   |
 | Input:   | X                                  |
 | Output:   | X+1                                |
 
@@ -449,7 +452,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | DEC                                |
 |----------|------------------------------------|
 | Bytecode: | 0x8C                               |
-| Function:   | 对计算栈栈顶的大整数执行递减运算。 |
+| Function:   | Add -1 to the top element of the `EvaluationStack`. |
 | Input:   | X                                  |
 | Output:   | X-1                                |
 
@@ -458,7 +461,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SIGN                                         |
 |----------|----------------------------------------------|
 | Bytecode: | 0x8D                                         |
-| Function:   | 获取计算栈栈顶的大整数的符号（负、正或零）。 |
+| Function:   | Remove the top element and push the sign of it back to the `EvaluationStack`. |
 | Input:   | X                                            |
 | Output:   | X.Sign()                                     |
 
@@ -467,7 +470,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | NEGATE                         |
 |----------|--------------------------------|
 | Bytecode: | 0x8F                           |
-| Function:   | 求计算栈栈顶的大整数的相反数。 |
+| Function:   | Remove the top element and push the opposite number back to the `EvaluationStack`.  |
 | Input:   | X                              |
 | Output:   | \-X                            |
 
@@ -476,7 +479,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | ABS                            |
 |----------|--------------------------------|
 | Bytecode: | 0x90                           |
-| Function:   | 求计算栈栈顶的大整数的绝对值。 |
+| Function:   | Remove the top element and push the absolute number back to the `EvaluationStack`.  |
 | Input:   | X                              |
 | Output:   | Abs(X)                         |
 
@@ -485,7 +488,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | NOT                                |
 |----------|------------------------------------|
 | Bytecode: | 0x91                               |
-| Function:   | 对计算栈栈顶的元素执行逻辑非运算。 |
+| Function:   | Remove the top element and push the logic "negation" value back to the `EvaluationStack`.  |
 | Input:   | X                                  |
 | Output:   | !X                                 |
 
@@ -494,7 +497,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | NZ                                  |
 |----------|-------------------------------------|
 | Bytecode: | 0x92                                |
-| Function:   | 判断计算栈栈顶的大整数是否为非0值。 |
+| Function:   | Check whether the top element of the `EvaluationStack` is a non-zero value. |
 | Input:   | X                                   |
 | Output:   | X!=0                                |
 
@@ -503,7 +506,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | ADD                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0x93                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行加法运算。 |
+| Function:   | The addition operation is performed on the top two elments of the `EvaluationStack`.  |
 | Input:   | AB                                     |
 | Output:   | A+B                                    |
 
@@ -512,7 +515,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SUB                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0x94                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行减法运算。 |
+| Function:   | The subtraction operation is performed on the top two elments of the `EvaluationStack`.    |
 | Input:   | AB                                     |
 | Output:   | A-B                                    |
 
@@ -521,7 +524,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | MUL                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0x95                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行乘法运算。 |
+| Function:   | The multiplication operation is performed on the top two elments of the `EvaluationStack`.  |
 | Input:   | AB                                     |
 | Output:   | A\*B                                   |
 
@@ -530,7 +533,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | DIV                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0x96                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行除法运算。 |
+| Function:  | The division operation is performed on the top two elments of the `EvaluationStack`.   |
 | Input:   | AB                                     |
 | Output:   | A/B                                    |
 
@@ -539,7 +542,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | MOD                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0x97                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行求余运算。 |
+| Function:   | The redundancy operation is performed on the top two elments of the `EvaluationStack`.   |
 | Input:   | AB                                     |
 | Output:   | A%B                                    |
 
@@ -548,7 +551,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SHL                              |
 |----------|----------------------------------|
 | Bytecode: | 0x98                             |
-| Function:   | 对计算栈中的大整数执行左移运算。 |
+| Function:   | The left-shift operation is performed on the top elment of the `EvaluationStack`.  |
 | Instruction   | Xn                               |
 | Bytecode: | X\<\<n                           |
 
@@ -557,7 +560,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SHR                              |
 |----------|----------------------------------|
 | Bytecode: | 0x99                             |
-| Function:   | 对计算栈中的大整数执行右移运算。 |
+| Function:   | The right-shift operation is performed on the top elment of the `EvaluationStack`.  |
 | Input:   | Xn                               |
 | Output:   | X\>\>n                           |
 
@@ -566,7 +569,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | BOOLAND                                |
 |----------|----------------------------------------|
 | Bytecode: | 0x9A                                   |
-| Function:   | 对计算栈栈顶的两个元素执行逻辑与运算。 |
+| Function:   | The logic "and" operation is performed on the top two elments of the `EvaluationStack`. |
 | Input:   | AB                                     |
 | Output:   | A&&B                                   |
 
@@ -575,7 +578,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | BOOLOR                                 |
 |----------|----------------------------------------|
 | Bytecode: | 0x9D                                   |
-| Function:   | 对计算栈栈顶的两个元素执行逻辑或运算。 |
+| Function:   | The logic "or" operation is performed on the top two elments of the `EvaluationStack`.  |
 | Input:   | AB                                     |
 | Output:   | A\|\|B                                 |
 
@@ -584,7 +587,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | NUMEQUAL                               |
 |----------|----------------------------------------|
 | Bytecode: | 0x9C                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行相等判断。 |
+| Function:   | Check whether the top two Bitintegers of the `EvaluationStack` are equal.   |
 | Input:   | AB                                     |
 | Output:   | A==B                                   |
 
@@ -593,7 +596,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | NUMNOTEQUAL                              |
 |----------|------------------------------------------|
 | Bytecode: | 0x9E                                     |
-| Function:   | 对计算栈栈顶的两个大整数执行不相等判断。 |
+| Function:   | Check whether the top two Bitintegers of the `EvaluationStack` aren't equal.  |
 | Input:   | AB                                       |
 | Output:   | A!=B                                     |
 
@@ -602,7 +605,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | LT                                     |
 |----------|----------------------------------------|
 | Bytecode: | 0x9F                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行小于判断。 |
+| Function:   | Check whether the first top element is less than the second top element in the `EvaluationStack`.  |
 | Input:   | AB                                     |
 | Output:   | A\<B                                   |
 
@@ -611,7 +614,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | GT                                     |
 |----------|----------------------------------------|
 | Bytecode: | 0xA0                                   |
-| Function:   | 对计算栈栈顶的两个大整数执行大于判断。 |
+| Function:   | Check whether the first top element is more than the second top element in the `EvaluationStack`.   |
 | Input:   | AB                                     |
 | Output:   | A\>B                                   |
 
@@ -620,7 +623,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | LTE                                        |
 |----------|--------------------------------------------|
 | Bytecode: | 0xA1                                       |
-| Function:   | 对计算栈栈顶的两个大整数执行小于等于判断。 |
+| Function:   | Check whether the first top element isn't more than the second top element in the `EvaluationStack`.  |
 | Input:   | AB                                         |
 | Output:   | A\<=B                                      |
 
@@ -629,7 +632,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | GTE                                        |
 |----------|--------------------------------------------|
 | Bytecode: | 0xA2                                       |
-| Function:   | 对计算栈栈顶的两个大整数执行大于等于判断。 |
+| Function:   | Check whether the first top element isn't less than the second top element in the `EvaluationStack`. |
 | Input:   | AB                                         |
 | Output:   | A\>=B                                      |
 
@@ -638,7 +641,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | MIN                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0xA3                                   |
-| Function:   | 取出计算栈栈顶的两个大整数中的最小值。 |
+| Function:   | Calculate the minimum of the two top elements in the `EvaluationStack`.  |
 | Input:   | AB                                     |
 | Output:   | Min(A,B)                               |
 
@@ -647,7 +650,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | MAX                                    |
 |----------|----------------------------------------|
 | Bytecode: | 0xA4                                   |
-| Function:   | 取出计算栈栈顶的两个大整数中的最大值。 |
+| Function:   | Calculate the maximum of the two top elements in the `EvaluationStack`. |
 | Input:   | AB                                     |
 | Output:   | Max(A,B)                               |
 
@@ -656,19 +659,20 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | WITHIN                                       |
 |----------|----------------------------------------------|
 | Bytecode: | 0xA5                                         |
-| Function:   | 判断计算栈中的大整数是否在指定的数值范围内。 |
+| Function:   | Check whether the Biginteger value is within the specified range of vlaues.  |
 | Input:   | XAB                                          |
 | Output:   | A\<=X&&X\<B                                  |
 
-## 7.密码学
-实现了常用的哈希运算以及签名验证等。
+## 7. Cryptography
+
+It has implement hash operation and signature verification and so on.
 
 ### SHA1 
 
 | Instruction   | SHA1                             |
 |----------|----------------------------------|
 | Bytecode: | 0xA7                             |
-| Function:   | 对计算栈栈顶的元素执行SHA1运算。 |
+| Function:   |  Performs a built-in sha1 hash operation on the top element in the `EvaluationStack`.  |
 | Input:   | X                                |
 | Output:   | SHA1(X)                          |
 
@@ -677,7 +681,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SHA256                             |
 |----------|------------------------------------|
 | Bytecode: | 0xA8                               |
-| Function:   | 对计算栈栈顶的元素执行SHA256运算。 |
+| Function:   | Performs a built-in sha256 hash operation on the top element in the `EvaluationStack`.。 |
 | Input:   | X                                  |
 | Output:   | SHA256(X)                          |
 
@@ -686,7 +690,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | HASH160                                     |
 |----------|---------------------------------------------|
 | Bytecode: | 0xA9                                        |
-| Function:   | 对计算栈栈顶的元素执行内置的160位散列运算。 |
+| Function:   | Performs a built-in 160-bit hash operation on the top element in the `EvaluationStack`.  |
 | Input:   | X                                           |
 | Output:   | HASH160(X)                                  |
 
@@ -695,7 +699,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | HASH256                                     |
 |----------|---------------------------------------------|
 | Bytecode: | 0xAA                                        |
-| Function:   | 对计算栈栈顶的元素执行内置的256位散列运算。 |
+| Function:   |  Performs a built-in 256-bit hash operation on the top element in the `EvaluationStack`. |
 | Input:   | X                                           |
 | Output:   | HASH256(X)                                  |
 
@@ -704,7 +708,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | CHECKSIG                                                                       |
 |----------|--------------------------------------------------------------------------------|
 | Bytecode: | 0xAC                                                                           |
-| Function:   | 利用计算栈栈顶元素中的签名和公钥，对当前验证对象执行内置的非对称签名验证操作。 |
+| Function:   | Using the given signature and public-key in the `EvaluationStack`, the built-in asymmetric signaure verfication operation is performed on the current verification object.  |
 | Input:   | SK                                                                             |
 | Output:   | Verify(S,K)                                                                    |
 
@@ -713,7 +717,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | VERIFY                                                                     |
 |----------|----------------------------------------------------------------------------|
 | Bytecode: | 0xAD                                                                       |
-| Function:   | 利用计算栈栈顶元素中的签名、公钥和验证对象，执行内置的非对称签名验证操作。 |
+| Function:   | Using the given signature and public-key in the `EvaluationStack`, the built-in asymmetric signaure verfication operation is performed on the given verification object.  |
 | Input:   | MSK                                                                        |
 | Output:   | Verify(M,S,K)                                                              |
 
@@ -721,21 +725,22 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 
 | Instruction   | CHECKMULTISIG                                                                                  |
 |----------|------------------------------------------------------------------------------------------------|
-| Bytecode: | 0xAE                                                                                           |
-| Function:   | 利用计算栈栈顶元素中的多个签名和公钥，对当前验证对象执行内置的非对称多重签名验证操作。         |
-| Input:   | Sm-1 ... S2 S1 S0 m Kn-1 ... K2 K1 K0 n                                                        |
-| Output:   | V                                                                                              |
-| 备注：   | 对于任意的𝑆𝑖∈{𝑆0,…, 𝑆𝑚−1}，存在一个𝐾𝑗∈{𝐾0, … , 𝐾𝑛−1}</br>使得Verify(𝑆𝑖, 𝐾𝑗) ==1，则V=1；否则，V=0。 |
+| Bytecode: | 0xAE                                                                             |
+| Function:   | Using the given signatures and public-keys in the `EvaluationStack`, the built-in asymmetric multi-signaure verfication operation is performed on the current verification object.   |
+| Input:   | Sm-1 ... S2 S1 S0 m Kn-1 ... K2 K1 K0 n                              |
+| Output:   | Verify(Sm-1 ... S2 S1 S0 m Kn-1 ... K2 K1 K0 n)                             |
+| Note:   | For any 𝑆𝑖∈{𝑆0,…, 𝑆𝑚−1}, there exists a 𝐾𝑗∈{𝐾0, … , 𝐾𝑛−1}</br> makes Verify(𝑆𝑖, 𝐾𝑗) ==1, then V=1; otherwise, V=0. |
 
-## 8.高级数据结构
-实现对Array、Map、Struct等的常用操作。
+## 8. Advanced Data Structure
+
+It has impelment common operations for array, map, struct, etc.
 
 ### ARRAYSIZE
 
 | Instruction   | ARRAYSIZE                        |
 |----------|----------------------------------|
 | Bytecode: | 0xC0                             |
-| Function:   | 获取计算栈栈顶的数组的元素数量。 |
+| Function:   | Get the number of elements of the array at the top of the `EvaluationStack`. |
 | Input:   | [X0 X1 X2 ... Xn-1]              |
 | Output:   | n                                |
 
@@ -744,7 +749,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | PACK                              |
 |----------|-----------------------------------|
 | Bytecode: | 0xC1                              |
-| Function:   | 将计算栈栈顶的n个元素打包成数组。 |
+| Function:   | Pack the n elments at the top of the `EvaluationStack` into arrays. |
 | Input:   | Xn-1 ... X2 X1 X0 n               |
 | Output:   | [X0 X1 X2 ... Xn-1]               |
 
@@ -753,7 +758,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | UNPACK                             |
 |----------|------------------------------------|
 | Bytecode: | 0xC2                               |
-| Function:   | 将计算栈栈顶的数组拆包成元素序列。 |
+| Function:   | Get the number of elements of the array at the top of the `EvaluationStack`.  |
 | Input:   | [X0 X1 X2 ... Xn-1]                |
 | Output:   | Xn-1 ... X2 X1 X0 n                |
 
@@ -762,7 +767,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | PICKITEM                           |
 |----------|------------------------------------|
 | Bytecode: | 0xC3                               |
-| Function:   | 获取计算栈栈顶的数组中的指定元素。 |
+| Function:   | Get the specified element in the array at the top of the `EvaluationStack`. |
 | Input:   | [X0 X1 X2 ... Xn-1] i              |
 | Output:   | Xi                                 |
 
@@ -771,7 +776,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | SETITEM                                  |
 |----------|------------------------------------------|
 | Bytecode: | 0xC4                                     |
-| Function:   | 对计算栈栈顶的数组中的指定位置元素赋值。 |
+| Function:   | Assign a value to the specified location element in the array at the top of the `EvaluationStack`. |
 | Input:   | [X0 X1 X2 ... Xn-1] I V                  |
 | Output:   | [X0 X1 X2 Xi-1 V X i+1 ... Xn-1]         |
 
@@ -780,25 +785,25 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | NEWARRAY                           |
 |----------|------------------------------------|
 | Bytecode: | 0xC5                               |
-| Function:   | 在计算栈栈顶新建一个大小为n的Array |
+| Function:   | Create a new N-size array on the top of the `EvaluationStack`. |
 | Input:   | n                                  |
-| Output:   | Array(n)值全为fasle的Array         |
+| Output:   | Array(n) with all `false` elements.         |
 
 ### NEWSTRUCT
 
 | Instruction   | NEWSTRUCT                           |
 |----------|-------------------------------------|
 | Bytecode: | 0xC6                                |
-| Function:   | 在计算栈栈顶新建一个大小为n的Struct |
+| Function:   | Create a new N-size struct on the top of the `EvaluationStack`. |
 | Input:   | n                                   |
-| Output:   | Struct(n)值全为fasle的Struct        |
+| Output:   | Struct(n) with all `false` elements.        |
 
 ### NEWMAP
 
 | Instruction   | NEWMAP                  |
 |----------|-------------------------|
 | Bytecode: | 0xC7                    |
-| Function:   | 在计算栈栈顶新建一个Map |
+| Function:   | Create a new map on the top of the `EvaluationStack`.  |
 | Input:   | 无                      |
 | Output:   | Map()                   |
 
@@ -807,7 +812,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | APPEND                |
 |----------|-----------------------|
 | Bytecode: | 0xC8                  |
-| Function:   | 向Array中添加一个新项 |
+| Function:   | Add a new item to the array |
 | Input:   | Array item            |
 | Output:   | Array.add(item)       |
 
@@ -816,7 +821,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | REVERSE             |
 |----------|---------------------|
 | Bytecode: | 0xC9                |
-| Function:   | 将Array元素倒序排列 |
+| Function:   | Reverse the array. |
 | Input:   | [X0 X1 X2 ... Xn-1] |
 | Output:   | [Xn-1 ... X2 X1 X0] |
 
@@ -825,7 +830,7 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | REMOVE                            |
 |----------|-----------------------------------|
 | Bytecode: | 0xCA                              |
-| Function:   | 从Array或Map中移除指定元素        |
+| Function:   | Remove the specified element from the array or map.     |
 | Input:   | [X0 X1 X2 ... Xn-1] m             |
 | Output:   | [X0 X1 X2 ... Xm-1 Xm+1 ... Xn-1] |
 
@@ -834,16 +839,16 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | HASKEY                              |
 |----------|-------------------------------------|
 | Bytecode: | 0xCB                                |
-| Function:   | 判断Array或Map中是否包含Key指定元素 |
+| Function:   |  Check whether the array or the map contains a specified key element. |
 | Input:   | [X0 X1 X2 ... Xn-1] key             |
-| Output:   | true 或 false                       |
+| Output:   | true or false                       |
 
 ### KEYS
 
 | Instruction   | KEYS                                |
 |----------|-------------------------------------|
 | Bytecode: | 0xCC                                |
-| Function:   | 获取Map的所有Key，并放入新的Array中 |
+| Function:   | Get all the keys of the map, and put them into a new array. |
 | Input:   | Map                                 |
 | Output:   | [key1 key2 ... key n]               |
 
@@ -852,24 +857,25 @@ Neo.VM虚拟机一共实现了113个指令（另外有4个被注释未实现指�
 | Instruction   | VALUES                                  |
 |----------|-----------------------------------------|
 | Bytecode: | 0xCD                                    |
-| Function:   | 获取Array或Map所有值，并放入新的Array中 |
-| Input:   | Map或Array                              |
+| Function:   | Get all the values of the array or the map, and put them into a new array. |
+| Input:   | Map or Array                              |
 | Output:   | [Value1 Value2... Value n]              |
 
-## 9.异常处理
+## 9. Exception Processing
 
 ### THROW
 
 | Instruction   | THROW                 |
 |----------|-----------------------|
 | Bytecode: | 0xF0                  |
-| Function:   | 将虚拟机状态置为FAULT |
+| Function:   | Set the virtual machine state to `FAULT` |
 
 ### THROWIFNOT
 
 | Instruction   | THROWIFNOT                                                       |
 |----------|------------------------------------------------------------------|
 | Bytecode: | 0xF1                                                             |
-| Function:   | 从计算栈栈顶读取一个布尔值，如果为False，则将虚拟机状态置为FAULT |
+| Function:   | Read a boolean value from the top of the stack, and if it's False, then set the virtual machine state to `FAULT`. |
 
-注：带\*操作码表示该操作码的操作结果并未使用PUSH()放回计算栈。
+
+Note: The operation code with \* indicates that the result of the operation is not put back to the `EvaluationStack` by using `PUSH` method.
