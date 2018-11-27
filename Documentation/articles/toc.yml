@@ -38,7 +38,7 @@
   href: tx_execution.md
 - name: 网络协议
   href: network_protocol.md
-- name: 共识机制
+- name: Consensus Mechanism
   href: consensus/readme.md
   items:
     - name: The dBFT Algorithm
@@ -47,7 +47,7 @@
       href: consensus/consensus_protocol.md
     - name: Voting, Validator, Delegates, Speaker
       href: consensus/vote_validator.md
-- name: Neo 虚拟机
+- name: Neo Virtual Machine
   href: neo_vm.md
-- name: 智能合约
+- name: Smart Contract
   href: smart_contract.md
