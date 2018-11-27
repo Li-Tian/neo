@@ -32,7 +32,7 @@ PrevHash
 
 ### 2. 交易的输出
 
-每个交易中最多只能包含 65536 个输出。Output的数据结构如下：
+每个交易中最多只能包含 65536 个输出，代表资金转出。Output的数据结构如下：
 
 
 | 尺寸 | 字段 | 类型 | 描述 |
@@ -48,7 +48,7 @@ PrevHash
 |---|-------|------|------|
 | 1 | Usage | byte | 属性类型 |
 | 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
-| ? | Data | byte[length] | 特定于用途的外部数据 | 
+| ? | Data | byte[length] | 特定用途的外部数据 | 
 
 TransactionAttributeUsage，交易属性使用表数据结构如下：
 
@@ -397,7 +397,7 @@ NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，�
 |  ?*? | **Transactions** | 交易 |  Transaction[] | 目前存了4笔交易， 见后续表 |
 
 
-第一笔交易是MinerTransaction，即“挖矿”交易。所有的block的第一笔交易，都必须是MinerTransaction。Neo中没有挖矿的概念。这里的MinerTransaction主要是在Outputs中记下所有的费用都归于哪里。
+第一笔交易，MinerTransaction，即“挖矿”交易。所有的block的第一笔交易，都必须是MinerTransaction。Neo中没有挖矿的概念。这里的MinerTransaction主要是在Outputs中记下所有的费用都归于哪里。
 
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
@@ -411,17 +411,17 @@ NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，�
 | ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | 空 |
 
 
-第二笔交易是RegisterTransaction，用来注册NEO代币
+第二笔交易，RegisterTransaction，用来注册NEO代币
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x00` |
+| 1   | Type    | byte | 交易类型 | `0x40` |
 | 1 | Version | byte |  交易版本号 | `0` |
 | 1 | AssetType | byte | 资产类型  | `0x00` |
 | ? | Name | string | 资产名字  | `NEO` |
 | 8 | Amount | Fix8 | 总量  | `100000000` |
 | 1 | Precision | byte | 精度  | `0` |
-| ? | Owner | ECPoint | 所有者公钥  | todo |
+| ? | Owner | ECPoint | 所有者公钥  |  |
 | 32 | Admin | UInt160 | 管理者  | `0x51`.toScriptHash |
 | ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
 | 34*? | Inputs | tx_in[] | 输入 | 空 |
@@ -431,17 +431,17 @@ NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，�
 `NEO`名称定义 = `[{"lang":"zh-CN","name":"小蚁股"},{"lang":"en","name":"AntShare"}]`
 
 
-第三笔交易也是RegisterTransaction，用来注册GAS代币
+第三笔交易，RegisterTransaction，用来注册GAS代币
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x00` |
+| 1   | Type    | byte | 交易类型 | `0x40` |
 | 1 | Version | byte |  交易版本号 | `0` |
 | 1 | AssetType | byte | 资产类型  | `0x01` |
 | ? | Name | string | 资产名字  | `GAS` |
 | 8 | Amount | Fix8 | 总量  | `100000000` |
 | 1 | Precision | byte | 精度  | `8` |
-| ? | Owner | ECPoint | 所有者公钥  | todo |
+| ? | Owner | ECPoint | 所有者公钥  | |
 | 32 | Admin | UInt160 | 管理者  | `0x00`.toScriptHash, 即 `OpCode.PUSHF`指令脚本 |
 | ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
 | 34*? | Inputs | tx_in[] | 输入 | 空 |
@@ -450,24 +450,38 @@ NEO 智能合约在部署或者执行的时候都要缴纳一定的手续费，�
 
 `GAS`名称定义 =  `[{"lang":"zh-CN","name":"小蚁币"},{"lang":"en","name":"AntCoin"}]`
 
-第四笔交易是IssueTransaction，用来把NEO发放到合约地址
+第四笔交易，IssueTransaction，用来把NEO发放到合约地址
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x00` |
+| 1   | Type    | byte | 交易类型 | `0x01` |
 | 1 | Version | byte |  交易版本号 | `0` |
 | ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
 | 34*? | Inputs | tx_in[] | 输入 | 空 |
 | 60 * ? | Outputs | tx_out[] | 输出 | 有一笔output，见下表 |
 | ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | `0x51`, 代表 `OpCode.PUSHT` |
 
-其中，Output定义了将所有的NEO代币，转移到共识节点多方签名地址上。而Scripts这里是空的，意思是这个交易因为是创世时做的，不需要验证了。
+其中，Output定义了将所有的NEO代币，转移到共识节点多方签名合约地址上。而Scripts为空，表示交易因为是创世块交易，不需要再验证。
 
 | 尺寸 | 字段 | 名称  | 类型 | 值 |
 |----|-----|-------|------|------|
 | 1   | AssetId    | byte | 资产类型 | `0x00`， 即NEO代币 |
 | 8 | Value | Fix8 |  转账总量 | `100000000` |
-| 20 | ScriptHash | UInt160 |  收款脚本hash |  备用共识节点的三分之二多方签名脚本hash |
+| 20 | ScriptHash | UInt160 |  收款脚本hash |  备用共识节点多方签名合约地址 |
 
+
+### **例2：生成新资产，即NEP5资产**。
+
+
+<!-- | 尺寸 | 字段 | 名称  | 类型 | 值 |
+|----|-----|-------|------|------|
+| 1   | Type    | byte | 交易类型 | `0xd1` |
+| 1 | Version | byte |  交易版本号 | `0` |
+| ? | Script | byte[] | NEP-5合约代码  | todo `0x....` |
+| 8 | Gas | Fix8 | 手续费  |  |
+| ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
+| 34*? | Inputs | tx_in[] | 输入 | 空 |
+| 60 * ? | Outputs | tx_out[] | 输出 | 空 |
+| ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | 空 | -->
 
 ### 例2：生成新资产，即NEP5资产

@@ -1,4 +1,4 @@
-<center><h2>投票，验证人，议员，议长</h2></center>
+﻿<center><h2>投票，验证人，议员，议长</h2></center>
 
 
 &emsp;&emsp;NEO的POS模式，体现在 (1) 任何人都可以发起交易申请成为验证人，(2) 任何人都可以通过持有NEO对申请验证人进行投票，决定共识节点和个数。根据投票情况，按照本章介绍的算法，计算出共识节点。同时，投票是一个动态持续过程，若投票的账户发生NEO资产变动，之前被投票地址的投票数也会发生变动，共识节点也相应产生变动。
@@ -8,7 +8,7 @@
 ## 投票
 
 
-&emsp;&emsp;在NEO中，可以通过两种特殊类型交易发起投票。一是，`EnrollmentTransaction` 直接申请成为验证人。二是，`StateTransanction` 进行投票或申请成为验证人。 当用户选择了被投票人进行投票时，实际上包括两部分投票，一是共识节点个数（= 被投票人个数）的投票（= 持有NEO的个数），另外是被投票人的投票（ = 持有NEO的个数）。
+&emsp;&emsp;在NEO中，可以通过两种特殊类型交易发起投票。一是，`EnrollmentTransaction` 直接申请成为验证人。二是，`StateTransaction` 进行投票或申请成为验证人。 当用户选择了被投票人进行投票时，实际上包括两部分投票，一是共识节点个数（= 被投票人个数）的投票（= 持有NEO的个数），另外是被投票人的投票（ = 持有NEO的个数）。
 
 
 ### EnrollmentTransaction
@@ -36,10 +36,10 @@
 1. 登记该申请验证人信息
 
 > [!Warning]
-> 已弃用， 已被`StateTransanction` 所替代。 目前交易处理保留，为了兼容以前的交易，但是交易验证被设置为恒定`false`, 即不再接受新的`EnrollmentTransaction`交易。
+> 已弃用， 已被`StateTransaction` 所替代。 目前交易处理保留，为了兼容以前的交易，但是交易验证被设置为恒定`false`, 即不再接受新的`EnrollmentTransaction`交易。
 
 
-### StateTransanction
+### StateTransaction
 
 ##### **交易结构**
 
@@ -60,7 +60,7 @@
 | 1  | Type |  StateType | `0x40`--投票， `0x48`--申请验证人 |
 | 20/30 |  Key | byte[] |  当`Field = "Votes"`时， 存放投票人地址的脚本hash， `Key`代表投票人; 当`Field = "Registered"`时， 存放公钥， `Key`代表申请人  | 
 | ? | Field | string |  当`Type = 0x40`时， `Field = "Votes"`; <br/>当`Type = 0x48`时， `Field = "Registered"`; |
-| ? | Value | byte[] | 当`Type = 0x40`时， 代表投票地址列表； <br/> 当`Type = 0x48`时， 代表取消或申验证人的布尔值  |
+| ? | Value | byte[] | 当`Type = 0x40`时， 代表投票地址列表； <br/> 当`Type = 0x48`时， 代表验证人是否已注册的布尔值  |
 
 
 
@@ -70,9 +70,9 @@
    1. 检验 `StateDescriptor.Type` 与  `StateDescriptor.Field` 是否匹配
   
    2. 若`StateDescriptor.Type = 0x40`，即进行投票：
-       1. 检查投票账户`StateDescriptor.Key` 是否是非冻结账户，且持有NEO个数大于0.
+       1. 检查投票账户`StateDescriptor.Key` 是否是非冻结账户，且持有NEO个数大于0，否则返回false。
        
-       2. 被投票验证人地址，是否不在备用共识节点地址列表里，且被投票验证人必须已经申请注册。
+       2. 被投票验证人地址，若不在备用共识节点地址列表里，且被投票验证人未申请注册，则返回false。
 
 2. 交易的基本验证：合法性验证，和验证脚本的验证。其中验证脚本包括`StateDescriptor.Key`（注意，当`StateDescriptor.Field = "Votes"`时，需要对`StateDescriptor.Key`从公钥到地址脚本hash转化）， 即交易需要投票地址的账户签名。
 
@@ -97,7 +97,7 @@
 ## 验证人到议员
 
 
-从选举投到共识节点，需经2个步骤计算：一是根据被投票列表个数的票数，计算出共识节点个数；二是，根据被选举人的票数，计算出具体的共识节点。
+从选举投票到共识节点，需经2个步骤计算：一，根据被投票列表个数的票数，计算出共识节点个数；二，根据被选举人的票数，计算出具体的共识节点。
 
 
 ### 共识节点个数
@@ -107,7 +107,7 @@
 
 
 
-根据用户的投票情况，共识节点个数的投票得到类似如下图形式
+根据用户的投票情况，共识节点个数的投票得到类似如下图形式：
 
 
 [![calculate_consensus_count_0](../../images/consensus/calculate_consensus_count_0.jpg)](../../images/consensus/calculate_consensus_count_0.jpg)
@@ -122,7 +122,7 @@ $$
 
 [![calculate_consensus_count_1](../../images/consensus/calculate_consensus_count_1.jpg)](../../images/consensus/calculate_consensus_count_1.jpg)
 
-在概率分布函数上，截取[0.25, 0.75]覆盖到的共识节点个数，再对这些点求取期望值，最后与备用共识节点个数比较取最大值，得到最终的共识节点个数。公式如下：
+在概率分布函数上，截取F ∈ [0.25, 0.75]覆盖到的共识节点个数，再对这些点求取期望值，最后与备用共识节点个数比较取最大值，得到最终的共识节点个数。公式如下：
 
 $$
 Count = max( \sum_{i = \lceil A \rceil}^{\lceil B \rceil} i *  \frac{ min(0.75, F_i) - max( F_{i - 1}, 0.25 ) }{ 0.5 }, StandbyValidators.Length)
@@ -149,7 +149,7 @@ $$
 ## 议员到议长
 
 
-按照上面的方法，得到了参与本轮共识节点的议员列表，以及议员编号（即列表序号）。根据共识算法，议长由公式 `p = (h - v) mod N` 决定，其中 `h`是当前需要达成共识的块高度，`v`是视图编号，刚开始从0开始，N是议员总数。 
+按照上面的方法，得到了参与本轮共识节点的议员列表，以及议员编号（即列表序号）。根据共识算法，议长由公式 `p = (h - v) mod N` 决定，其中 `h`是当前需要达成共识的块高度；`v`是视图编号，刚开始从0开始；N是议员总数。 
 
 
 议长在共识阶段，将发送`PrepareRequest`消息，并附带上决定下一个区块共识节点的`NextConsensus`。议长结合打包Block中的交易（存在对投票数有影响交易：一是可能存在StateTransaction；二是，投票人的NEO资产可能发生转账变动），与之前的投票情况，计算出下一轮共识节点，再创建三分之二多方签名脚本的hash值作为`block.NextConsensus`，完成本轮交易对下一轮共识节点的锁定。

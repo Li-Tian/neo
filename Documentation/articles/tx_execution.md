@@ -108,11 +108,11 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 
 1. 封装交易为`ContractParametersContext`对象（`ContractParametersContext`是对要进行签名验证的对象包装，负责添加合约脚本参数，构建完整的见证人）。
 
-1. 对于交易待验证脚本的ScriptHashes的每个对象，取得相应的账户，若对应帐户为空，或该账户没有密钥串，则跳过；
+2. 对于交易待验证脚本的ScriptHashes的每个对象，取得相应的账户，若对应帐户为空，或该账户没有密钥串，则跳过；
 
-2. 用该密钥串对交易的未签名的序列化数据进行`ECDsa`方法签名；
+3. 用该密钥串对交易的未签名的序列化数据进行`ECDsa`方法签名；
 
-3. 添加签名参数，存放到参数列表对应位置上，具体步骤如下：
+4. 添加签名参数，存放到参数列表对应位置上，具体步骤如下：
 
     1. 若输入脚本是多重签名，则根据输入脚本合约Contract创建`ContextItem`（`ContextItem`是对一个脚本合约的参数封装）。
         
@@ -130,7 +130,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
         
         3. 将contract的Parameters的index位置赋值为signature
 
-4. 若所有的脚本参数已齐全，则得到交易的见证人列表。（如，多重签名情况下，还需要别的账户地址进行签名，补充签名参数）
+5. 若所有的脚本参数已齐全，则得到交易的见证人列表。（如，多重签名情况下，还需要别的账户地址进行签名，补充签名参数）
 
 
 

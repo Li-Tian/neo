@@ -33,7 +33,7 @@ NEO中资产包含两种：一种是用户发行的UTXO类型的全局资产，N
 | 4 | Expiration | 过期时间 | uint  |   |
 | 1 | IsFrozen | 是否冻结 | bool |   |
 
-> [注：]
+> [!NOTE]
 > 总量的模式有两种: 一种不限量，总量设置为` -Fixed8.Satoshi`，表示无穷大. 另外一种是限定不可修改的总量。
 
 ### **AssetType**
@@ -49,7 +49,7 @@ NEO中资产包含两种：一种是用户发行的UTXO类型的全局资产，N
 | Invoice | DutyFlag &#124; 0x18 |  |
 | Token | CreditFlag &#124; 0x20 | 普通token |
 
-> [注：]
+> [!NOTE]
 > 资产类型包含`DutyFlag`值时，都需要进行收款方签名。
 
 

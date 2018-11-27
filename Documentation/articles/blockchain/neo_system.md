@@ -10,8 +10,10 @@
 
 　在Neo钱包中以地址的形式存放了各种资产，包括 NEO、GAS和各种 NEP-5 资产。如下图： 
 
-[![account gui](../../images/blockchain/account-gui.jpg)](../../images/blockchain/account-gui.jpg)
+[![account gui](../../images/blockchain/account-gui.jpg)](../../images/blockchain/account-gui.jpg) -->
 
 　上图中的地址也被称为“账户”。一个地址可以由一个私钥通过一系列加密算法和代码转换算得，用于 UTXO；也可以是智能合约的地址，用于调用执行智能合约。计算地址的方法请见`钱包`中的`地址`部分。
 
+> [!NOTE]
+> 如果发现有死链接，请联系 <feedback@neo.org>
 
