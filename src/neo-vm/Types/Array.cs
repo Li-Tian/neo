@@ -42,7 +42,7 @@ namespace Neo.VM.Types
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">堆栈项集合</param>
         public Array(IEnumerable<StackItem> value)
         {
             this._array = value as List<StackItem> ?? value.ToList();
@@ -83,16 +83,16 @@ namespace Neo.VM.Types
                 array.SetValue(item, index++);
         }
         /// <summary>
-        /// 判断当前Array与指定Array是否相等
+        /// 判断当前Array与指定对象是否相等
         /// </summary>
-        /// <param name="other">指定Array，为堆栈项类型</param>
+        /// <param name="other">指定对象，为堆栈项类型</param>
         /// <returns>相等则返回true，否则返回false</returns>
         public override bool Equals(StackItem other)
         {
             return ReferenceEquals(this, other);
         }
         /// <summary>
-        /// 获取布尔值
+        /// 获取对应的布尔值
         /// </summary>
         /// <returns>返回true</returns>
         public override bool GetBoolean()
@@ -100,7 +100,7 @@ namespace Neo.VM.Types
             return true;
         }
         /// <summary>
-        /// 获取字节数组
+        /// 获取对应的字节数组
         /// </summary>
         /// <returns>抛出异常</returns>
         public override byte[] GetByteArray()

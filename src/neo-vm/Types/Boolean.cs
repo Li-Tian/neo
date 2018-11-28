@@ -43,7 +43,7 @@ namespace Neo.VM.Types
             return GetByteArray().SequenceEqual(bytes_other);
         }
         /// <summary>
-        /// 将Boolean转换为BigInteger类型，true为BigInteger.One，false为BigInteger.Zero
+        /// 获取对应的BigInteger，true为BigInteger.One，false为BigInteger.Zero
         /// </summary>
         /// <returns>转换后的值</returns>
         public override BigInteger GetBigInteger()
@@ -51,7 +51,7 @@ namespace Neo.VM.Types
             return value ? BigInteger.One : BigInteger.Zero;
         }
         /// <summary>
-        /// 获取Boolean值，true或者false
+        /// 获取对应的Boolean值
         /// </summary>
         /// <returns>Boolean对应的值</returns>
         public override bool GetBoolean()
