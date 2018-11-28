@@ -11,6 +11,8 @@ namespace Neo.VM.Types
         {
             throw new NotSupportedException();
         }
+
+        public abstract T GetInterface<T>() where T : class;
     }
     /// <summary>
     /// 
@@ -48,6 +50,12 @@ namespace Neo.VM.Types
         {
             return _object != null;
         }
+
+        public override I GetInterface<I>()
+        {
+            return _object as I;
+        }
+
         /// <summary>
         /// 隐式类型转换
         /// </summary>
