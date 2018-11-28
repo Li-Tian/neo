@@ -1,6 +1,5 @@
 ﻿using Neo.IO;
 using Neo.IO.Json;
-using Neo.VM;
 using System;
 using System.IO;
 
@@ -9,7 +8,7 @@ namespace Neo.Network.P2P.Payloads
     /// <summary>
     /// 交易输入
     /// </summary>
-    public class CoinReference : IEquatable<CoinReference>, IInteropInterface, ISerializable
+    public class CoinReference : IEquatable<CoinReference>, ISerializable
     {
         /// <summary>
         /// 交易输入指向的上一笔交易的hash值

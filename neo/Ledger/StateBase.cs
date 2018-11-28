@@ -1,6 +1,5 @@
 ﻿using Neo.IO;
 using Neo.IO.Json;
-using Neo.VM;
 using System;
 using System.IO;
 
@@ -9,7 +8,7 @@ namespace Neo.Ledger
     /// <summary>
     /// 状态基类
     /// </summary>
-    public abstract class StateBase : IInteropInterface, ISerializable
+    public abstract class StateBase : ISerializable
     {
         /// <summary>
         /// 状态版本号，固定为0
