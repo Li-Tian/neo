@@ -1,6 +1,6 @@
-# NEO C# SDK 2.9.1.0
+# NEO C# SDK 2.9.2.0
 
-Here is the NEO C# SDK 2.9.1.0. A brief description of a namespace is given below.
+Here is the NEO C# SDK 2.9.2.0. A brief description of a namespace is given below.
 
  - **Neo.*** : The underlying data structure used by Neo.
  - **Neo.Cryptography.*** : A tool set for the cryptographic algorithm used by Neo.

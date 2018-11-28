@@ -1,19 +1,4 @@
-<center><h2>账户和资产</h2></center>
-
-
-### **Account**
-
-
-NEO网络中，同样存在账户模型，记录了UTXO类型的全局资产的用户资金。
-
-
-| 尺寸 | 字段 | 名称 | 类型 | 描述 |
-|--|-------|-----|------|------|
-| 20  | ScriptHash | 地址脚本hash | UInt160 |   |
-| 1 | IsFrozen | 是否冻结 | bool |  冻结用户的资产不能转账  |
-| ? * ? | Votes | 投票地址 | ECPoint[] | 投票地址列表 |
-| ? | Balances | UTXO资产 |Dict<UInt256, Fixed8> | 资产Id -> 数量  |
-
+<center><h2>资产和账户</h2></center>
 
 ### **Asset**
 
@@ -56,9 +41,21 @@ NEO中资产包含两种：一种是用户发行的UTXO类型的全局资产，N
 > 资产类型包含`DutyFlag`值时，都需要进行收款方签名。
 
 
-
 | 资产名称 | 类型 | 值 |  总量 | 描述 |
 |-------|----|-----|-------|--------|
 | NEO |  AssetType.GoverningToken | 0x00 | 1亿 | 一次性发放，创世块中全部转移到备用共识节点多方签名合约地址上 | 
 | GAS | AssetType.UtilityToken | 0x01 | 1亿 | 按区块新增，持有NEO的用户通过`ClaimTransaction`提取GAS |
+
+
+
+### **Account**
+
+NEO网络中，账户(account)模型和UTXO模型并存。账户记录了UTXO类型的全局资产的用户资金，也记录了NEP5资产。
+
+| 尺寸 | 字段 | 名称 | 类型 | 描述 |
+|--|-------|-----|------|------|
+| 20  | ScriptHash | 地址脚本hash | UInt160 |   |
+| 1 | IsFrozen | 是否冻结 | bool |  冻结用户的资产不能转账  |
+| ? * ? | Votes | 投票地址 | ECPoint[] | 投票地址列表 |
+| ? | Balances | UTXO资产 |Dict<UInt256, Fixed8> | 资产Id -> 数量  |
 

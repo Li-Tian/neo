@@ -2,14 +2,26 @@
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// 继承Array类，定义了虚拟机Struct类型的相关方法
+    /// </summary>
     public class Struct : Array
     {
+        /// <summary>
+        /// 无参构造函数，新建一个堆栈项列表实例
+        /// </summary>
         public Struct() : this(new List<StackItem>()) { }
-
+        /// <summary>
+        /// 构造函数，调用Array的构造函数
+        /// </summary>
+        /// <param name="value">堆栈项集合</param>
         public Struct(IEnumerable<StackItem> value) : base(value)
         {
         }
-
+        /// <summary>
+        /// 复制Struct到另一个Struct
+        /// </summary>
+        /// <returns>复制得到的Struct</returns>
         public Struct Clone()
         {
             Struct @struct = new Struct();
@@ -37,7 +49,11 @@ namespace Neo.VM.Types
             }
             return @struct;
         }
-
+        /// <summary>
+        /// 判断当前Struct与指定的堆栈项是否相等
+        /// </summary>
+        /// <param name="other">指定的堆栈项</param>
+        /// <returns>相等则返回true，否则返回false</returns>
         public override bool Equals(StackItem other)
         {
             if (other is null) return false;
