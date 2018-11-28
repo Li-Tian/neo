@@ -64,6 +64,8 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 | Hash1 - Hash15 | 0xa1-0xaf | 用于存放自定义的散列值 |
 | Remark-Remark15 | 0xf0-0xff | 备注 |
 
+<a name="4_witness"/>
+
 &emsp;&emsp;ContractHash、ECDH02-03、Vote和Hash1-15的数据长度固定为 32 字节，所以省略length字段。Script必须明确给出数据长度，且长度不能超过 65535。而DescriptionUrl、Description和Remark1-15必须明确给出数据长度，且长度不能超过 255。
 
 
