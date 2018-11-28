@@ -34,8 +34,9 @@
       href: blockchain/wallets.md
     - name: 收费模型
       href: blockchain/charging_model.md
-- name: 钱包
-  href: wallets.md
+# “钱包”被移动到“区块链系统”下面
+#- name: 钱包
+#  href: wallets.md
 - name: 交易流程
   href: tx_execution.md
 - name: 网络协议

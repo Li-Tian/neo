@@ -1,6 +1,6 @@
-# NEO C# SDK 2.9.1.0
+# NEO C# SDK 2.9.2.0
 
-这里是 NEO C# SDK 2.9.1.0。下面给出一个 namespace 的简单描述。
+这里是 NEO C# SDK 2.9.2.0。下面给出一个 namespace 的简单描述。
 
  * **Neo.*** : Neo 所使用的基础数据结构。
  * **Neo.Cryptography.*** : Neo 所使用的密码算法的工具。
