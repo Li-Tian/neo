@@ -160,9 +160,9 @@ namespace Neo.VM
             return new Array(value);
         }
         /// <summary>
-        /// 隐式类型转换，将List<StackItem>类型转换为StackItem类型
+        /// 隐式类型转换，将List&lt;StackItem&gt;类型转换为StackItem类型
         /// </summary>
-        /// <param name="value">List<StackItem>类型值</param>
+        /// <param name="value">List&lt;StackItem&gt;类型值</param>
         public static implicit operator StackItem(List<StackItem> value)
         {
             return new Array(value);
