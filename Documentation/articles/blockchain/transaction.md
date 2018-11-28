@@ -7,7 +7,7 @@
 
 &emsp;&emsp;一个普通交易的数据结构如下：
 
-| 尺寸 | 字段 | 类型 | 描述 |
+| 字节数 | 字段 | 类型 | 描述 |
 |-----|-----|------|-------|
 | 1   | Type    | byte | 交易类型 |
 | 1 | Version | byte | 交易版本号，目前为0 |
@@ -22,8 +22,7 @@
 
 &emsp;&emsp;Input数组中存放了每一个输入的信息。每个交易中可以有多个Input，也可能没有Input。在之后会提到的MinerTransaction中Input就为空。Input的数据结构如下： 
 
-
-| 尺寸 | 字段 | 类型 | 描述 |
+| 字节数 | 字段 | 类型 | 描述 |
 |---|-------|------|------|
 | 32 | PrevHash | UInt256 | 被引用交易的散列值 |
 | 2 | PrevIndex | ushort | 被引用交易输出的索引 | 
@@ -35,7 +34,7 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 &emsp;&emsp;每个交易中最多只能包含 65536 个Output，代表资金转出。这也决定了多方签名合约中最多只能有65536方参与。Output的数据结构如下：
 
 
-| 尺寸 | 字段 | 类型 | 描述 |
+| 字节数 | 字段 | 类型 | 描述 |
 |---|-------|------|------|
 | 32 | AssetId | UIntBase | 资产Id |
 | ?  | Value | BigDecimal | 转账金额 | 
@@ -44,7 +43,7 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 ### 3. Attribute交易的属性
 
 
-| 尺寸 | 字段 | 类型 | 描述 |
+| 字节数 | 字段 | 类型 | 描述 |
 |---|-------|------|------|
 | 1 | Usage | byte | 属性类型 |
 | 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
@@ -74,7 +73,7 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 
 &emsp;&emsp;见证人，实际上是可执行的验证脚本。`InvocationScript` 脚本传递了`VerificationScript`脚本需要的补充参数。只有当脚本执行返回真时，验证成功。
 
-| 尺寸 | 字段 | 类型 | 描述 |
+| 字节数 | 字段 | 类型 | 描述 |
 |--|-------|------|------|
 | ?  | InvocationScript | byte[] |调用脚本，补全脚本参数 |
 | ?  | VerificationScript | byte[] | 验证脚本  | 
@@ -108,7 +107,7 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 ### 1. MinerTransaction
 
 
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+| 字节数 | 字段 | 名称  | 类型 | 描述 |
 |----|-----|-------|------|------|
 |  -  | - | - | -  | 	交易的公共字段  |
 | 4 | Nonce | 交易nonce | uint | 创世区块的Nonce的值与比特币的创世区块相同，为2083236893，其他情况下为随机数值。 |
@@ -132,7 +131,7 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 ### 2. RegisterTransaction (已弃用)
 
 
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+| 字节数 | 字段 | 名称  | 类型 | 描述 |
 |----|-----|-------|------|------|
 |  -  | - | - | -  | 	交易的公共字段  |
 | 1 | AssetType | 资产类型 | byte |  |
@@ -185,7 +184,7 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 
 ### 4. ClaimTransaction
 
-| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+| 字节数 | 字段 | 名称  | 类型 | 描述 |
 |----|-----|-------|------|------|
 |  -  | - | - | -  | 	交易的公共字段  |
 | 34*? | Claims | Claim已花费的交易 | CoinReference[] | 用于分配的 NEO |
@@ -335,7 +334,6 @@ $$
 | CLI 非“sendall”转账 | 同上  |  非空 |  TransactionAttributeUsage.Script, 转账账户地址，数目 若干 |  
 
 
-
 **交易创建**
 
 1. 根据用途，构建相应的执行脚本，并赋值给 InvocationTransaction 的Script字段
@@ -458,5 +456,5 @@ $$
 | 20 | ScriptHash | UInt160 |  收款脚本hash |  备用共识节点多方签名合约地址 |
 
 
-### 例2：生成新资产，即NEP5资产
+### 例2：生成新资产，即NEP-5资产
 
