@@ -1,28 +1,29 @@
-<center><h2> 智能合约 </h2> </center>
+<center><h2> Smart Contract </h2> </center>
 
-&emsp;&emsp;智能合约是一套以数字形式定义的承诺，包括合约参与方可以在上面执行这些承诺的协议。区块链技术给我们带来了一个去中心化的，不可篡改的，高可靠性的系统，在这种环境下，智能合约才大有用武之地。智能合约是区块链最重要的特性之一，也是区块链能够被称为颠覆性技术的主要原因。
+&emsp;&emsp;A smart contract is a set of commitments that are defined in digital form, including the agreement on how contract participants shall fulfill these commitments. Blockchain technology gives us a decentralized, non-tampering, highly reliable system in which smart contracts are extremely useful. Smart contracts is one of the most important characteristics of blockchain technologies and the reason why blockchains can be called disruptive technology. It is increasing the efficiency of our social structure by each passing day.
 
 
+# Restrictive Condition
 
-# 限制条件
+The basic type limitation of the smart contract can be referred to the link: <http://docs.neo.org/zh-cn/sc/quickstart/limitation.html>
 
-关于智能合约的基本类型限制可以参考: http://docs.neo.org/zh-cn/sc/quickstart/limitation.html
 
-同时出于安全因素考虑，防止不同节点从外部获取不相同的数据而导致网络出现问题，NEO暂时不支持包括访问 Internet上那些不能确定可靠性的信息来源,访问其他区块链数据等功能。
+Meanwhile, due to security considerations, to prevent different nodes from obtaining different data from the outside, NEO does not support the smart contract access the Internet and the other blockchain data currently.
 
-# 价格机制
+# Price Mechanism
 
-智能合约的每行指令都需要收取一定的Gas作为手续费，GUI在智能合约部署和调用的试运行过程中，会将智能合约编译出来的字节码在本地虚拟机中执行一次，并计算每条指令所需要的手续费。如果合约执行通过，则会显示需要的Gas总和。
+Each instruction of the smart contract needs to pay fee(Gas). In the procedure of deploying or invokeing the smart contract, the NEO-GUI will try to run the smart contract's bytecodes in test mode, and calculate the gas consumed. 
 
-每个智能合约在每次执行过程中有10 GAS 的免费额度，无论是开发者部署还是用户调用，因此，单次执行费用在 10 GAS 以下的智能合约是不需要支付手续费的。当单次执行费用超过10 GAS，会减免10 GAS 的手续费。
+The initial 10 GAS during each execution of every smart contract is always free, including smart contract deployment and invoking. That is, fees that sum up to 10 GAS or less will not require a service fee.
 
-所有支付的智能合约手续费将作为系统手续费，并在用户提取Gas时按比例重新分配给所有 NEO 的持有人。
+All Smart Contract fees are considered as Service fee to be put in a pool for re-distribution to all NEO holders. The distribution is proportional to amount of NEO.
 
-## 各指令的手续费标准：
 
-| 指令                           | 手续费(Gas) |
+## Fees for Instructions
+
+| Instruction                           | Fee(Gas) |
 | -------------------------------- | ----------- |
-| 所有PUSH指令（常数指令） | 0           |
+| OpCode.PUSH16 [or less]          | 0           |
 | OpCode.NOP                       | 0           |
 | OpCode.APPCALL                   | 0.01        |
 | OpCode.TAILCAL                   | 0.01        |
@@ -31,12 +32,12 @@
 | OpCode.HASH160                   | 0.02        |
 | OpCode.HASH256                   | 0.02        |
 | OpCode.CHECKSIG                  | 0.1         |
-| OpCode.CHECKMULTISIG（每个公钥） | 0.1         |
-| 其它（每行OpCode）         | 0.001       |
+| OpCode.CHECKMULTISIG（per public-key） | 0.1         |
+| (Default)         | 0.001       |
 
-## 系统调用的手续费标准：
+## Fees for System Calls
 
-| 系统调用                                | 手续费 [Gas] |
+| SysCall                                | Fee(Gas) |
 | ------------------------------------------- | ------------ |
 | Runtime.CheckWitness                        | 0.2          |
 | Blockchain.GetHeader                        | 0.1          |
@@ -52,746 +53,762 @@
 | Transaction.GetWitnesses                    | 0.2          |
 | Witness.GetVerificationScript               | 0.1          |
 | Account.IsStandard                          | 0.1          |
-| Asset.Create（系统资产）              | 5000         |
-| Asset.Renew（系统资产，每200万个块，约1年） | 5000         |
+| Asset.Create(system asset)               | 5000         |
+| Asset.Renew(system asset) [per year]     | 5000         |
 | Contract.Create*                            | 100~1000     |
 | Contract.Migrate*                           | 100~1000     |
 | Storage.Get                                 | 0.1          |
-| Storage.Put 、Storage.PutEx [每 KB]       | 1            |
+| Storage.Put, Storage.PutEx [per KB]       | 1            |
 | Storage.Delete                              | 0.1          |
-| 其它（每行OpCode）                    | 0.001        |
+| (Default)                                  | 0.001        |
 
-* 创建智能合约与迁移智能合约目前是根据合约所需功能进行收费。其中基础的费用为 100GAS，需要存储区 +400GAS，需要动态调用 +500GAS。
+* The cost of creating or migrating a smart contract is the basic 100 GAS plus fees of functions the contract requires. If the storage area is required, the function fee is 400 GAS, and if the dynamic call is needed, the function fee is 500 GAS.
 
-* 如果部署合约需要存储区、动态调用等时，请务必勾选对应选项，如果智能合约发布后由于未勾选而导致合约不能正常执行，后果由用户自行承担。未来会考虑添加相关检测机制。
+* When deploy the contract which requires storage, dynamic invocation, etc., be sure to check the corresponding options. In the future, we will consider adding detection mechanism.
 
-# 触发器
+# Trigger
 
-触发器是触发智能合约执行的机制，在 NEO 智能合约中，有 4 种触发器，`Verification`, `Application`， `VerificationR`, `ApplicationR`。其中`VerificationR`和`ApplicationR`为2.9版新增的触发器。
+A smart contract trigger is a mechanism that triggers the execution of smart contracts. There are four triggers introduced in the NEO smart contract, `Verification`, `Application`, `VerificationR` and `ApplicationR`, the `VerificationR` and `ApplicationR` are added in version 2.9.
 
-一个实现智能合约的区块链应该为其上运行的智能合约提供多种触发器，便其在不同的上下文中起作用。
+A blockchain that provides smart contract system should provide multiple triggers for the smart contracts running on it, makes them to function in different contexts.
 
-Verification和Application使智能合约能够验证交易和改变区块链的状态。
+`Verification` and `Application` enable smart contract to verify transiaction and change the state of the blockchain.
 
-VerificationR, ApplicationR则使智能合约能够拒绝一笔转账或者在接收到一笔转账时改变区块链的状态。
+`VerificationR` and `ApplicationR` enable smart contract to reject a transfer or change the state of the blockchain when a transfer received.
 
-相关介绍可以参考: http://docs.neo.org/zh-cn/sc/trigger.html
+For more information, please read: <http://docs.neo.org/zh-cn/sc/trigger.html>
+
 
 ## VerificationR
 
-验证触发器R的目的在于将该合约作为验证函数进行调用，因为它被指定为交易输出的目标。验证函数不接受参数，并且应返回有效的布尔值，标志着交易的有效性。
+The purpose of the `VerificationR` trigger is to call the contract as a verification function, which accepts no parameter, and should return a valid Boolean value, indicating the validity of the transaction or block, as it is specified as a target of an output of the transaction. 
 
-如果智能合约被验证触发器R触发了，则调用智能合约入口点:
+If the smart contract is triggered by `VerificationR`, the smart contract entry point will be invoked:
 
-`main("receiving", new object[0]);`
+```c#
+main("receiving", new object[0])
+```
 
-`receiving`函数应具有以下编程接口:
+The `receiving` function should have the following signature:
 
-`public bool receiving()`
+```c#
+public bool receiving()
+```
 
-当智能合约从转账中收到一笔资产时，`receiving`函数将会自动被调用。
+the `receiving` function will be invoked automatically when a contract is receiving assets from a transfer.
 
 ## ApplicationR
 
-应用触发器R指明了当智能合约被调用时的默认函数`received`，因为它被指定为交易输出的目标。`received`函数不接受参数，对区块链的状态进行更改，并返回任意类型的返回值。
+The `ApplicationR` trigger indicates that the default function `received` of the contract is being invoked because it is specified as a target of an output of the transaction. The `received` function accepts no parameter, changes the states of the blockchain, and returns any type of value.
 
-如果智能合约被应用触发器R触发了，则调用智能合约入口点:
+The entry point of the contract will be invoked if the contract is triggered by `ApplicationR`:
 
-`main("received", new object[0]);`
+```c#
+main("received", new object[0])
+```
 
-`received`函数应具有以下编程接口:
+The `received` function should have the following signature:
 
-`public byte[] received()`
+```c#
+public byte[] received()
+```
 
-当智能合约从转账中收到一笔资产时，`receiving`函数将会自动被调用。
-
-
-# 互操作服务
-
-NeoContract 的 API 扩展了智能合约的功能，使其可以访问区块链账本数据、操作持久化存储区、访问执行环境等。它是NEO虚拟机（NeoVM）互操作服务层的一部分。
+The `received` function will be invoked automatically when a contract is receiving assets from a transfer.
 
 
-## Runtime：运行时相关的 API
+# Interoperable service layer
 
+
+The interoperable service layer provides some APIs for accessing the chain-chain data of the smart contract. It can access block information, transaction information, contract information, asset information, and so on.
+
+## Runtime
 ### System.Runtime.GetTrigger
 
-| old api：  | "Neo.Runtime.GetTrigger",                                                                            |
-|------------|------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Runtime_GetTrigger                                                                                   |
-| 功能描述： | 获得该智能合约的触发条件（应用合约 or 鉴权合约）                                                     |
-| C\#函数：  | TriggerType Trigger;                                                                                 |
-| 说明：     | 其中Verification = 0x00, Application = 0x10。关于触发器详见上一节 |
+| old api：  | "Neo.Runtime.GetTrigger"   |
+|------------|------------------------------------------------------------------|
+| Binding Method: | Runtime_GetTrigger                             |
+| Function Description: | Get the trigger condition of the smart contract(Application or Verification) |
+| C\# Method：  | TriggerType Trigger;     |
+| Remark:     |  Verification = 0x00, Application = 0x10 |
 
 ### System.Runtime.CheckWitness
 
-| old api：  | "Neo.Runtime.CheckWitness", "AntShares.Runtime.CheckWitness"                                                                                                                                                                                                                                                                     |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Runtime_CheckWitness                                                                                                                                                                                                                                                                                                             |
-| 功能描述： | 验证调用该智能合约的交易/区块是否验证过所需的脚本散列。                                                                                                                                                                                                                                                                          |
-| C\#函数：  | bool CheckWitness(byte[] hashOrPubkey);                                                                                                                                                                                                                                                                                          |
-| 说明：     | 查找该笔交易需要验证的脚本Hash是否包含该Hash。
+| old api：  | "Neo.Runtime.CheckWitness", "AntShares.Runtime.CheckWitness"     |
+|------------|---------------------------------------------|
+| Binding Method: | Runtime_CheckWitness   |
+|  Function Description: | Verify the transaction/Whether the block contains the verification script's hash   |
+| C\# Method：  | bool CheckWitness(byte[] hashOrPubkey);      |
+| Remark:     | Check whether the transaction's verification scripts contain the hash.  |
 
 ### System.Runtime.Notify
 
-| old api：  | "Neo.Runtime.Notify", "AntShares.Runtime.Notify"                                                               |
-|------------|----------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Runtime_Notify                                                                                                 |
-| 功能描述： | 在智能合约中向执行该智能合约的客户端发送通知                                                                   |
-| C\#函数：  | void Notify(params object[] state)                                                                             |
-| 说明：     | 从计算栈中获取状态信息，根据状态信息新建一个notification,</br>调用Notify事件，并将notification加入notifications中。 |
+| old api：  | "Neo.Runtime.Notify", "AntShares.Runtime.Notify"       |
+|------------|----------------------------------------------------------------------|
+| Binding Method: | Runtime_Notify                    |
+|  Function Description: |  Send notifications to the clients that execute the smart contract.   |
+| C\# Method：  | void Notify(params object[] state)        |
+| Remark:     | Create a notifcation with the `EvaluationStack` state.</br>Trigger a notify event and add the notification into the `notifications` array. |
 
 ### System.Runtime.Log
 
 | old api：  | "Neo.Runtime.Log"， "AntShares.Runtime.Log"       |
 |------------|---------------------------------------------------|
-| 绑定函数： | Runtime_Log                                       |
-| 功能描述： | 在智能合约中向执行该智能合约的客户端发送日志      |
-| C\#函数：  | void Log(string message)                          |
-| 说明：     | 从计算栈中获取消息，调用log事件向客户端发送日志。 |
+| Binding Method: | Runtime_Log                                       |
+|  Function Description: | Send a log to the client executing the smart contract  |
+| C\# Method：  | void Log(string message)                          |
+| Remark:     | Get the message from the `EvaluationStack` and trigger `log` event to the client with the message. |
 
 ### System.Runtime.GetTime
 
-| old api：  | "Neo.Runtime.GetTime"                                                                            |
-|------------|--------------------------------------------------------------------------------------------------|
-| 绑定函数： | Runtime_GetTime                                                                                  |
-| 功能描述： | 获取当前时间                                                                                     |
-| C\#函数：  | uint Time                                                                                        |
-| 说明：     | 根据当前区块高度获取区块头信息。当前时间为区块头时间戳加上每个区块出块的时间 |
+| old api：  | "Neo.Runtime.GetTime"                                  |
+|------------|--------------------------------------------------------|
+| Binding Method: | Runtime_GetTime                                    |
+|  Function Description: | Get the current time                  |
+| C\# Method：  | uint Time                                         |
+| Remark:     |  Get block header by the current block height. The current time is the current block's timestamp plus the `block time`, which default is 15 seconds.  |
 
 ### System.Runtime.Serialize
 
-| old api：  | "Neo.Runtime.Serialize"                                                                   |
-|------------|-------------------------------------------------------------------------------------------|
-| 绑定函数： | Runtime_Serialize                                                                         |
-| 功能描述： | 对数据流进行序列化                                                                        |
-| C\#函数：  | byte[] Serialize(this object source)                                                      |
+| old api：  | "Neo.Runtime.Serialize"                                |
+|------------|---------------------------------------------------------|
+| Binding Method: | Runtime_Serialize                                  |
+|  Function Description: | Serialize the object                        |
+| C\# Method：  | byte[] Serialize(this object source)                                                      |
 
 
 ### System.Runtime.Deserialize**
 
-| old api：  | "Neo.Runtime.Deserialize"                                             |
-|------------|-----------------------------------------------------------------------|
-| 绑定函数： | Runtime_Deserialize                                                   |
-| 功能描述： | 将数据反序列化                                                        |
-| C\#函数：  | object Deserialize(this byte[] source)                                |
+| old api：  | "Neo.Runtime.Deserialize"                               |
+|------------|---------------------------------------------------------|
+| Binding Method: | Runtime_Deserialize                                |
+|  Function Description: | Deserialize data from the source            |
+| C\# Method：  | object Deserialize(this byte[] source)               |
 
-## Blockchain：区块链查询数据的 API
-
+## Blockchain
 
 ### System.Blockchain.GetHeight
 
-| old api：  | "Neo.Blockchain.GetHeight"， "AntShares.Blockchain.GetHeight"                                         |
-|------------|-------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetHeight                                                                                  |
-| 功能描述： | 获得当前区块高度                                                                                      |
-| C\#函数：  | uint GetHeight()                                                                                      |
+| old api：  | "Neo.Blockchain.GetHeight"， "AntShares.Blockchain.GetHeight"     |
+|------------|-------------------------------------------------------------------|
+| Binding Method: | Blockchain_GetHeight                                         |
+|  Function Description: | Get the current block height                          |
+| C\# Method：  | uint GetHeight()                                                |
 
 ### System.Blockchain. GetHeader
 
-| old api：  | " Neo.Blockchain.GetHeader"， " AntShares.Blockchain.GetHeader"                                                                                                                                                                    |
-|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetHeader                                                                                                                                                                                                               |
-| 功能描述： | 通过区块高度或区块 Hash，查找区块头                                                                                                                                                                                                |
-| C\#函数：  | Header GetHeader(uint height); </br> Header GetHeader(byte[] hash)                                                                                                                                                                       |
+| old api：  | " Neo.Blockchain.GetHeader"， " AntShares.Blockchain.GetHeader"   |
+|------------|-------------------------------------------------------------------|
+| Binding Method: | Blockchain_GetHeader                                         |
+| Function Description: | Get block header by block height or block hash           |
+| C\# Method：  | Header GetHeader(uint height); </br> Header GetHeader(byte[] hash)  |
 
 ### System.Blockchain.GetBlock
 
-| old api：  | "Neo.Blockchain.GetBlock"， "AntShares.Blockchain.GetBlock"                                                                                                                                                                      |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetBlock                                                                                                                                                                                                              |
-| 功能描述： | 通过区块高度或区块 Hash，查找区块                                                                                                                                                                                                |
-| C\#函数：  | Block GetBlock(uint height);</br> Block GetBlock(byte[] hash)                                                                                                                                                                         |
+| old api：  | "Neo.Blockchain.GetBlock"， "AntShares.Blockchain.GetBlock"      |
+|------------|------------------------------------------------------------------|
+| Binding Method: | Blockchain_GetBlock                                         |
+| Function Description: | Get block by block height or block hash               |
+| C\# Method：  | Block GetBlock(uint height);</br> Block GetBlock(byte[] hash)  |
 
 ### System.Blockchain.GetTransaction
 
-| old api：  | "Neo.Blockchain.GetTransaction"， "AntShares.Blockchain.GetTransaction"                                  |
-|------------|----------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetTransaction                                                                                |
-| 功能描述： | 通过交易 ID 查找交易                                                                                     |
-| C\#函数：  | Transaction GetTransaction(byte[] hash)                                                                  |
+| old api：  | "Neo.Blockchain.GetTransaction"， "AntShares.Blockchain.GetTransaction"  |
+|------------|--------------------------------------------------------------------------|
+| Binding Method: | Blockchain_GetTransaction                                           |
+| Function Description: | Get transaction by txid                                       |
+| C\# Method：  | Transaction GetTransaction(byte[] hash)                               |
+
 
 ### System.Blockchain.GetTransactionHeight
 
-| old api：  | "Neo.Blockchain.GetTransactionHeight"                                                                              |
-|------------|--------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetTransactionHeight                                                                                    |
-| 功能描述： | 通过交易hash查找交易高度                                                                                           |
+| old api：  | "Neo.Blockchain.GetTransactionHeight"                       |
+|------------|-------------------------------------------------------------|
+| Binding Method: | Blockchain_GetTransactionHeight                        |
+| Function Description: | Get transaction height by txid                   |
 
 ### System.Blockchain.GetContract
 
-| old api：  | "Neo.Blockchain.GetContract", "AntShares.Blockchain.GetContract"                        |
-|------------|-----------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetContract                                                                  |
-| 功能描述： | 根据合约散列获取合约内容                                                                |
-| C\#函数：  | Contract GetContract(byte[] script_hash)                                                |
+| old api：  | "Neo.Blockchain.GetContract", "AntShares.Blockchain.GetContract"    |
+|------------|---------------------------------------------------------------------|
+| Binding Method: | Blockchain_GetContract                                         |
+| Function Description: | Get contract by script hash                              |
+| C\# Method：  | Contract GetContract(byte[] script_hash)                         |
 
 ### Neo.Blockchain.GetAccount
 
-| old api：  | "AntShares.Blockchain.GetAccount"                                                                                                                                         |
-|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetAccount                                                                                                                                                     |
-| 功能描述： | 根据合约脚本的散列来获得一个账户                                                                                                                                          |
-| C\#函数：  | Account GetAccount(byte[] script_hash)                                                                                                                                    |
-| 说明：     | 如果script_hash对应的账户不存在，则由Hash新建一个AccountState account并加入Accounts,</br>最后返回account。 |
+| old api：  | "AntShares.Blockchain.GetAccount"                    |
+|------------|------------------------------------------------------|
+| Binding Method: | Blockchain_GetAccount                           |
+|  Function Description: | Get account by address script hash       |
+| C\# Method：  | Account GetAccount(byte[] script_hash)            |
+| Remark:     |  If the account is not exist, create a new AccountState with this script_hash, and add it into the accounts array. Finally, return the account.  |
 
 ### Neo.Blockchain.GetValidators
 
-| old api：  | "AntShares.Blockchain.GetValidators"                                                                      |
-|------------|-----------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetValidators                                                                                  |
-| 功能描述： | 获得共识人的公钥                                                                                          |
-| C\#函数：  | byte[][] GetValidators()                                                                                  |
+| old api：  | "AntShares.Blockchain.GetValidators"        |
+|------------|---------------------------------------------|
+| Binding Method: | Blockchain_GetValidators               |
+|  Function Description: | Get validators                  |
+| C\# Method：  | byte[][] GetValidators()                 |
 
 ### Neo.Blockchain.GetAsset
 
-| old api：  | "AntShares.Blockchain.GetAsset"                                                                                           |
-|------------|---------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Blockchain_GetAsset                                                                                                       |
-| 功能描述： | 根据资产 ID 查找资产                                                                                                      |
-| C\#函数：  | Asset GetAsset(byte[] asset_id)                                                                                           |
+| old api：  | "AntShares.Blockchain.GetAsset"             |
+|------------|---------------------------------------------|
+| Binding Method: | Blockchain_GetAsset                    |
+|  Function Description: | Get asset by id                 |
+| C\# Method：  | Asset GetAsset(byte[] asset_id)          |
 
-## Header：区块头相关API
+
+
+## Header
 
 ### System.Header.GetIndex
 
-| old api：  | "Neo.Header.GetIndex"                                                                 |
-|------------|---------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetIndex                                                                       |
-| 功能描述： | 获得该区块的高度                                                                      |
-| C\#函数：  | uint Index                                                                            |
+| old api：  | "Neo.Header.GetIndex"                      |
+|------------|--------------------------------------------|
+| Binding Method: | Header_GetIndex                       |
+| Function Description: | Get block index                |
+| C\# Method：  | uint Index                              |
 
 ### System.Header.GetHash
 
-| old api：  | "Neo.Header.GetHash"， "AntShares.Header.GetHash"                                    |
-|------------|--------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetHash                                                                       |
-| 功能描述： | 获得该区块的散列                                                                     |
-| C\#函数：  | byte[] Hash                                                                          |
+| old api：  | "Neo.Header.GetHash"， "AntShares.Header.GetHash"     |
+|------------|-------------------------------------------------------|
+| Binding Method: | Header_GetHash                                   |
+|  Function Description: | Get block hash                            |
+| C\# Method：  | byte[] Hash                                        |
+
 
 ### System.Header.GetPrevHash
 
-| old api：  | "Neo.Header.GetPrevHash"， "AntShares.Header.GetPrevHash"                                |
-|------------|------------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetPrevHash                                                                       |
-| 功能描述： | 获得前一个区块的散列                                                                     |
-| C\#函数：  | byte[] PrevHash                                                                          |
+| old api：  | "Neo.Header.GetPrevHash"， "AntShares.Header.GetPrevHash"     |
+|------------|---------------------------------------------------------------|
+| Binding Method: | Header_GetPrevHash                                       |
+|  Function Description: | Get the previous block hash                       |
+| C\# Method：  | byte[] PrevHash                                            |
 
 ### System.Header.GetTimestamp
 
-| old api：  | "Neo.Header.GetTimestamp"，"AntShares.Header.GetTimestamp"                                |
-|------------|-------------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetTimestamp                                                                       |
-| 功能描述： | 获得区块的时间戳                                                                          |
-| C\#函数：  | uint Timestamp                                                                            |
+| old api：  | "Neo.Header.GetTimestamp"，"AntShares.Header.GetTimestamp"   |
+|------------|--------------------------------------------------------------|
+| Binding Method: | Header_GetTimestamp                                     |
+|  Function Description: | Get the block timestamp                          |
+| C\# Method：  | uint Timestamp                                                                            |
 
 ### Neo.Header.GetVersion
 
-| old api：  | "AntShares.Header.GetVersion"                                                           |
-|------------|-----------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetVersion                                                                       |
-| 功能描述： | 获得区块版本号                                                                          |
-| C\#函数：  | uint Version                                                                            |
+| old api：  | "AntShares.Header.GetVersion"            |
+|------------|------------------------------------------|
+| Binding Method: | Header_GetVersion                   |
+|  Function Description: | Get the block version        |
+| C\# Method：  | uint Version                          |
 
 ### Neo.Header.GetMerkleRoot
 
-| old api：  | "AntShares.Header.GetMerkleRoot"                                                           |
-|------------|--------------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetMerkleRoot                                                                       |
-| 功能描述： | 获得该区块中所有交易的 Merkle Tree 的根                                                    |
-| C\#函数：  | byte[] MerkleRoot                                                                          |
+| old api：  | "AntShares.Header.GetMerkleRoot"           |
+|------------|--------------------------------------------|
+| Binding Method: | Header_GetMerkleRoot                  |
+| Function Description: | Get the merkle tree root        |
+| C\# Method：  | byte[] MerkleRoot                       |
 
 ### Neo.Header.GetConsensusData
 
-| old api：  | "AntShares.Header.GetConsensusData"                                                           |
-|------------|-----------------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetConsensusData                                                                       |
-| 功能描述： | 获得该区块的共识数据（共识节点生成的伪随机数）                                                |
+| old api：  | "AntShares.Header.GetConsensusData"         |
+|------------|---------------------------------------------|
+| Binding Method: | Header_GetConsensusData                |
+| Function Description: | Get the ConsensusData            |
 
 ### Neo.Header.GetNextConsensus
 
-| old api：  | "AntShares.Header.GetNextConsensus"                                                           |
-|------------|-----------------------------------------------------------------------------------------------|
-| 绑定函数： | Header_GetNextConsensus                                                                       |
-| 功能描述： | 获得下一个记账合约的散列值                                                                    |
-| C\#函数：  | ulong ConsensusData                                                                           |
+| old api：  | "AntShares.Header.GetNextConsensus"          |
+|------------|----------------------------------------------|
+| Binding Method: | Header_GetNextConsensus                 |
+|  Function Description: | Get the script hash of the next round validators' multi-signature contract  |
+| C\# Method： | ulong ConsensusData                        |
 
-## Block：区块相关API
+## Block
 
 ### System.Block.GetTransactionCount
 
-| old api：  | "Neo.Block.GetTransactionCount"，"AntShares.Block.GetTransactionCount"                        |
-|------------|-----------------------------------------------------------------------------------------------|
-| 绑定函数： | Block_GetTransactionCount                                                                     |
-| 功能描述： | 获得当前区块中交易的数量                                                                      |
-| C\#函数：  | int GetTransactionCount()                                                                     |
+| old api：  | "Neo.Block.GetTransactionCount"，"AntShares.Block.GetTransactionCount" |
+|------------|-----------------------------------------------------------------------|
+| Binding Method: | Block_GetTransactionCount                                        |
+| Function Description: | Get the number of the current block's transactions         |
+| C\# Method：  | int GetTransactionCount()                                          |
 
 ### System.Block.GetTransactions
 
-| old api：  | "Neo.Block.GetTransactions"                                                                  |
-|------------|----------------------------------------------------------------------------------------------|
-| 绑定函数： | Block_GetTransactions                                                                        |
-| 功能描述： | 获得当前区块中所有的交易                                                                     |
-| C\#函数：  | Transaction[] GetTransactions()                                                              |
+| old api：  | "Neo.Block.GetTransactions"                        |
+|------------|----------------------------------------------------|
+| Binding Method: | Block_GetTransactions                         |
+| Function Description: | Get transactions of the current block   |
+| C\# Method：  | Transaction[] GetTransactions()                 |
 
 ### System.Block.GetTransaction
 
-| old api：  | "Neo.Block.GetTransaction"， "AntShares.Block.GetTransaction"                                                                     |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Block_GetTransaction                                                                                                              |
-| 功能描述： | 获得当前区块中指定的交易                                                                                                          |
-| C\#函数：  | Transaction GetTransaction(int index)                                                                                             |
-| 说明：     | index为交易在区块中的索引。 |
+| old api：  | "Neo.Block.GetTransaction"， "AntShares.Block.GetTransaction"  |
+|------------|----------------------------------------------------------------|
+| Binding Method: | Block_GetTransaction                                      |
+| Function Description: | Get the specified index transaction in the current block  |
+| C\# Method：  | Transaction GetTransaction(int index)                        |
 
-## Transaction：交易相关API
+
+
+## Transaction
 
 ### System.Transaction.GetHash
 
-| old api：  | "Neo.Transaction.GetHash"，"AntShares.Transaction.GetHash"                     |
-|------------|--------------------------------------------------------------------------------|
-| 绑定函数： | Transaction_GetHash                                                            |
-| 功能描述： | 获得当前交易的 Hash                                                            |
-| C\#函数：  | byte[] Hash                                                                    |
+| old api：  | "Neo.Transaction.GetHash"，"AntShares.Transaction.GetHash"  |
+|------------|-------------------------------------------------------------|
+| Binding Method: | Transaction_GetHash                                    |
+| Function Description: | Get the current transaction hash                 |
+| C\# Method：  | byte[] Hash                                              |
 
 ### Neo.Transaction.GetType
 
-| old api：  | "AntShares.Transaction.GetType"                                                 |
-|------------|---------------------------------------------------------------------------------|
-| 绑定函数： | Transaction_GetType                                                             |
-| 功能描述： | 获得当前交易的类型                                                              |
-| C\#函数：  | byte Type                                                                       |
+| old api：  | "AntShares.Transaction.GetType"                            |
+|------------|------------------------------------------------------------|
+| Binding Method: | Transaction_GetType                                   |
+|  Function Description: | Get the type of the current transaction        |
+| C\# Method：  | byte Type                                               |
 
 ### Neo.Transaction.GetAttributes
 
-| old api：  | "AntShares.Transaction.GetAttributes"                                                      |
-|------------|--------------------------------------------------------------------------------------------|
-| 绑定函数： | Transaction_GetAttributes                                                                  |
-| 功能描述： | 查询当前交易的所有属性                                                                     |
-| C\#函数：  | TransactionAttribute[] GetAttributes()                                                     |
+| old api：  | "AntShares.Transaction.GetAttributes"                       |
+|------------|-------------------------------------------------------------|
+| Binding Method: | Transaction_GetAttributes                              |
+|  Function Description: | Get the attributes of the current transaction   |
+| C\# Method：  | TransactionAttribute[] GetAttributes()                   |
+
 
 ### Neo.Transaction.GetInputs
 
-| old api：  | "AntShares.Transaction.GetInputs"                                                      |
-|------------|----------------------------------------------------------------------------------------|
-| 绑定函数： | Transaction_GetInputs                                                                  |
-| 功能描述： | 查询当前交易的所有交易输入                                                             |
-| C\#函数：  | TransactionInput[] GetInputs()                                                         |
+| old api：  | "AntShares.Transaction.GetInputs"                           |
+|------------|-------------------------------------------------------------|
+| Binding Method: | Transaction_GetInputs                                  |
+|  Function Description: | Get all the inputs of the current transaction   |
+| C\# Method：  | TransactionInput[] GetInputs()                           |
+
 
 ### Neo.Transaction.GetOutputs
 
-| old api：  | "AntShares.Transaction.GetOutputs"                                                      |
-|------------|-----------------------------------------------------------------------------------------|
-| 绑定函数： | Transaction_GetOutputs                                                                  |
-| 功能描述： | 查询当前交易的所有交易输出                                                              |
-| C\#函数：  | TransactionOutput[] GetOutputs()                                                        |
+| old api：  | "AntShares.Transaction.GetOutputs"                           |
+|------------|--------------------------------------------------------------|
+| Binding Method: | Transaction_GetOutputs                                  |
+| Function Description: | Get all the outputs of the current transaction    |
+| C\# Method：  | TransactionOutput[] GetOutputs()                          |
 
 ### Neo.Transaction.GetReferences
 
-| old api：  | "AntShares.Transaction.GetReferences"                                                            |
-|------------|--------------------------------------------------------------------------------------------------|
-| 绑定函数： | Transaction_GetReferences                                                                        |
-| 功能描述： | 查询当前交易的所有输入所引用的交易输出                                                           |
-| C\#函数：  | TransactionOutput[] GetReferences()                                                              |
+| old api：  | "AntShares.Transaction.GetReferences"                      |
+|------------|------------------------------------------------------------|
+| Binding Method: | Transaction_GetReferences                             |
+| Function Description: | Get all the outputs which the current transaction's inputs referenced |
+| C\# Method：  | TransactionOutput[] GetReferences()                     |
 
 ### Neo.Transaction.GetUnspentCoins
 
-| 绑定函数： | Transaction_GetUnspentCoins                                                                          |
-|------------|------------------------------------------------------------------------------------------------------|
-| 功能描述： | 查询当前交易的所有未花费输出                                                                         |
-| C\#函数：  | TransactionOutput[] GetUnspentCoins()                                                                |
+| Binding Method: | Transaction_GetUnspentCoins                   |
+|------------|----------------------------------------------------|
+| Function Description: | Get all the UTXOs of the current transaction |
+| C\# Method：  | TransactionOutput[] GetUnspentCoins()           |
 
-## Storage：存储相关API
+## Storage
 
 ### System.Storage.GetContext
 
-| old api：  | "Neo.Storage.GetContext"， "AntShares.Storage.GetContext"                                                 |
-|------------|-----------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Storage_GetContext                                                                                        |
-| 功能描述： | 获取当前存储区上下文                                                                                      |
-| C\#函数：  | StorageContext CurrentContext                                                                             |
-| 说明：     |获取的StorageContext中IsReadOnly = false|
+| old api：  | "Neo.Storage.GetContext"， "AntShares.Storage.GetContext"  |
+|------------|------------------------------------------------------------|
+| Binding Method: | Storage_GetContext                                    |
+| Function Description: |Get the current storage context                  |
+| C\# Method：  | StorageContext CurrentContext                           |
+| Remark:     | The StorageContext's `IsReadOnly` must be equal to false   |
 
 ### System.Storage.GetReadOnlyContext
 
-| old api：  | "Neo.Storage.GetReadOnlyContext"                                                                         |
-|------------|----------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Storage_GetReadOnlyContext                                                                               |
-| 功能描述： | 获取当前存储区上下文                                                                                     |
-| 说明：     | 获取的StorageContext中IsReadOnly = true|
+| old api：  | "Neo.Storage.GetReadOnlyContext"                           |
+|------------|------------------------------------------------------------|
+| Binding Method: | Storage_GetReadOnlyContext                            |
+| Function Description: | Get the current readonly storage context        |
+| Remark:     | The StorageContext's  IsReadOnly equals true              |
 
 ### System.Storage.Get
 
-| old api：  | "Neo.Storage.Get"， "AntShares.Storage.Get"                                                                                                                                                                                       |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Storage_Get                                                                                                                                                                                                                       |
-| 功能描述： | 查询操作，在持久化存储区中通过 key 查询对应的 value                                                                                                                                                                               |
-| C\#函数：  | byte[] Get(StorageContext context, byte[] key); </br> byte[] Get(StorageContext context, string key);                                                                                                                                   |
-| 说明：     | 如果结果不存在，则返回空字节数组。 |
+| old api：  | "Neo.Storage.Get"， "AntShares.Storage.Get"   |
+|------------|-----------------------------------------------|
+| Binding Method: | Storage_Get                              |
+|  Function Description: | Get value by key, stored the private stroage   |
+| C\# Method：  | byte[] Get(StorageContext context, byte[] key); </br> byte[] Get(StorageContext context, string key);                                                 |
+| Remark:     | If not exist, return empty byte array.       |
 
 ### System.Storage.Put
 
-| old api：  | "Neo.Storage.Put"，"AntShares.Storage.Put"                                                                                                                                                                                                                                                                                                                                      |
-|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Storage_Put                                                                                                                                                                                                                                                                                                                                                                     |
-| 功能描述： | 插入操作，以 key-value 的形式向持久化存储区中插入数据                                                                                                                                                                                                                                                                                                                           |
-| C\#函数：  | void Put(StorageContext context, byte[] key, byte[] value); </br>void Put(StorageContext context, byte[] key, BigInteger value); </br>void Put(StorageContext context, byte[] key, string value);</br> void Put(StorageContext context, string key, byte[] value); </br>void Put(StorageContext context, string key, BigInteger value); </br>void Put(StorageContext context, string key, string value); |
-| 说明：     | 首先判断context是否为只读，为只读时返回false;</br>当context对应的合约不存在，或者合约没有存储区时，返回false;</br> key的长度不能大于1024。 |
+| old api：  | "Neo.Storage.Put"，"AntShares.Storage.Put"   |
+|------------|----------------------------------------------|
+| Binding Method: | Storage_Put                             |
+| Function Description: | put key-value pair                |
+| C\# Method：  | void Put(StorageContext context, byte[] key, byte[] value); </br>void Put(StorageContext context, byte[] key, BigInteger value); </br>void Put(StorageContext context, byte[] key, string value);</br> void Put(StorageContext context, string key, byte[] value); </br>void Put(StorageContext context, string key, BigInteger value); </br>void Put(StorageContext context, string key, string value); |
+| Remark:     | If the context is readonly, return false;</br>If the contract is not exist or has no storage, return false;</br> The length of the `key` cannot more than 1024. |
 
 ### System.Storage.Delete
 
-| old api：  | "Neo.Storage.Delete"， "AntShares.Storage.Delete"                                                                                                                                                                                     |
-|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Storage_Delete                                                                                                                                                                                                                        |
-| 功能描述： | 删除操作，在持久化存储区中通过 key 删除对应的 value                                                                                                                                                                                   |
-| C\#函数：  | void Delete(StorageContext context, byte[] key); void Delete(StorageContext context, string key);                                                                                                                                     |
-| 说明：     |首先判断context是否为只读，为只读时返回false;</br>当context对应的合约不存在，或者合约没有存储区时，返回false。|
+| old api：  | "Neo.Storage.Delete"， "AntShares.Storage.Delete"   |
+|------------|-----------------------------------------------------|
+| Binding Method: | Storage_Delete                                 |
+| Function Description: |Delete the value by key in the private storage  |
+| C\# Method：  | void Delete(StorageContext context, byte[] key); void Delete(StorageContext context, string key);                                                        |
+| Remark:     | If the context is readonly, return false;</br>If the contract is not exist or has no storage, return false;                                             |
 
 ### Neo.Storage.Find
 
-| 绑定函数： | Storage_Find                                                                                                                                                                                                       |
-|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 功能描述： | 在当前存储器上下文中查找指定前缀的内容                                                                                                                                                                             |
-| C\#函数：  | Iterator < byte[], byte[] \> Find(StorageContext context, byte[] prefix); </br> Iterator < string, byte[] \> Find(StorageContext context, string prefix);                                                                    |
+| Binding Method: | Storage_Find                                |
+|------------|-------------------------------------------------------------------------------|
+|  Function Description: | Get the contents of the specified prefix in the current storage   |
+| C\# Method：  | Iterator < byte[], byte[] \> Find(StorageContext context, byte[] prefix); </br> Iterator < string, byte[] \> Find(StorageContext context, string prefix);   |
 
-## StorageContext：存储上下文相关API
+
+
+## StorageContext
 
 ### System.StorageContext.AsReadOnly
 
 
-| old api：  | "Neo.StorageContext.AsReadOnly"                                                                                                                           |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | StorageContext_AsReadOnly                                                                                                                                 |
-| 功能描述： | 将当前存储区上下文设为只读                                                                                                                                |
-| 说明：     | 将StorageContext的IsReadOnly=true。 |
+| old api：  | "Neo.StorageContext.AsReadOnly"               |
+|------------|-----------------------------------------------|
+| Binding Method: | StorageContext_AsReadOnly                |
+| Function Description: | Set the current storage readonly  |
 
-## InvocationTransaction：合约交易相关API
+## InvocationTransaction
 
 ### Neo.InvocationTransaction.GetScript
 
-| 绑定函数： | InvocationTransaction_GetScript                                                            |
-|------------|--------------------------------------------------------------------------------------------|
-| 功能描述： | 查询当前合约交易对应的脚本                                                                 |
-| C\#函数：  | byte[] Script                                                                              |
+| Binding Method: | InvocationTransaction_GetScript           |
+|------------|------------------------------------------------|
+| Function Description: | Get script of the current contract  |
+| C\# Method：  | byte[] Script                               |
 
-## Attribute：交易特性相关API
+## Attribute
 
 ### Neo.Attribute.GetUsage
 
-| old api：  | "AntShares.Attribute.GetUsage"                                                                              |
-|------------|-------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Attribute_GetUsage                                                                                          |
-| 功能描述： | 获得该交易特性中的用途                                                                                      |
-| C\#函数：  | byte Usage                                                                                                  |
+| old api：  | "AntShares.Attribute.GetUsage"           |
+|------------|------------------------------------------|
+| Binding Method: | Attribute_GetUsage                  |
+| Function Description: | Get usage of the transaction's attribute |
+| C\# Method：  | byte Usage                             |
 
 ### Neo.Attribute.GetData
 
-| old api：  | "AntShares.Attribute.GetData"                                                               |
-|------------|---------------------------------------------------------------------------------------------|
-| 绑定函数： | Attribute_GetData                                                                           |
-| 功能描述： | 获得该交易特性中用途之外的额外数据                                                          |
-| C\#函数：  | byte[] Data                                                                                 |
+| old api：  | "AntShares.Attribute.GetData"          |
+|------------|----------------------------------------|
+| Binding Method: | Attribute_GetData                 |
+|  Function Description: | Get data of the transaction's attribute |
+| C\# Method：  | byte[] Data                         |
 
-## Input：交易输入相关API
+
+## Input
 
 ### Neo.Input.GetHash
 
-| old api：  | "AntShares.Input.GetHash"                                                                            |
-|------------|------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Input_GetHash                                                                                        |
-| 功能描述： | 所引用的交易的交易散列                                                                               |
-| C\#函数：  | byte[] PrevHash                                                                                      |
+| old api：  | "AntShares.Input.GetHash"              |
+|------------|----------------------------------------|
+| Binding Method: | Input_GetHash                     |
+| Function Description: |  Get transaction's hash of the input referenced   |
+| C\# Method：  | byte[] PrevHash                     |
 
 ### Neo.Input.GetIndex
 
-| old api：  | "AntShares.Input.GetIndex"                                                                                  |
-|------------|-------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Input_GetIndex                                                                                              |
-| 功能描述： | 所引用的交易输出在其全部交易输出列表中的索引                                                                |
-| C\#函数：  | ushort PrevIndex                                                                                            |
+| old api：  | "AntShares.Input.GetIndex"             |
+|------------|----------------------------------------|
+| Binding Method: | Input_GetIndex                    |
+| Function Description: | Get the index of the output referenced the current input   |
+| C\# Method：  | ushort PrevIndex                    |
 
-## Output：交易输出相关API
+## Output
 
 ### Neo.Output.GetAssetId
 
-| old api：  | "AntShares.Output.GetAssetId"                                                                   |
-|------------|-------------------------------------------------------------------------------------------------|
-| 绑定函数： | Output_GetAssetId                                                                               |
-| 功能描述： | 获得交易输出的资产 ID                                                                           |
-| C\#函数：  | byte[] AssetId                                                                                  |
+| old api：  | "AntShares.Output.GetAssetId"               |
+|------------|---------------------------------------------|
+| Binding Method: | Output_GetAssetId                      |
+| Function Description: |  Get the `AssetId` of the transaction's output |
+| C\# Method：  | byte[] AssetId                           |
 
 ### Neo.Output.GetValue
 
-| old api：  | "AntShares.Output.GetValue"                                                                   |
-|------------|-----------------------------------------------------------------------------------------------|
-| 绑定函数： | Output_GetValue                                                                               |
-| 功能描述： | 获得交易输出金额                                                                              |
-| C\#函数：  | long Value                                                                                    |
+| old api：  | "AntShares.Output.GetValue"                  |
+|------------|----------------------------------------------|
+| Binding Method: | Output_GetValue                         |
+| Function Description: | Get the `Amount` of the transaction's output  |
+| C\# Method：  | long Value                                |
 
 ### Neo.Output.GetScriptHash
 
-| old api：  | "AntShares.Output.GetScriptHash"                                                                   |
-|------------|----------------------------------------------------------------------------------------------------|
-| 绑定函数： | Output_GetScriptHash                                                                               |
-| 功能描述： | 获得交易输出的脚本散列                                                                             |
-| C\#函数：  | byte[] ScriptHash                                                                                  |
+| old api：  | "AntShares.Output.GetScriptHash"             |
+|------------|----------------------------------------------|
+| Binding Method: | Output_GetScriptHash                    |
+|  Function Description: | Get the `ScriptHash` of the transaction's output |
+| C\# Method：  | byte[] ScriptHash                         |
 
-## Account：账户相关API
+## Account
 
 ### Neo.Account.GetScriptHash
 
-| old api：  | "AntShares.Account.GetScriptHash"                                                               |
-|------------|-------------------------------------------------------------------------------------------------|
-| 绑定函数： | Account_GetScriptHash                                                                           |
-| 功能描述： | 获得该合约账户的脚本散列                                                                        |
-| C\#函数：  | byte[] ScriptHash;                                                                              |
+| old api：  | "AntShares.Account.GetScriptHash"             |
+|------------|-----------------------------------------------|
+| Binding Method: | Account_GetScriptHash                    |
+| Function Description: | Get the  `ScriptHash` of the account's contract  |
+| C\# Method：  | byte[] ScriptHash;                         |
+
 
 ### Neo.Account.GetVotes
 
-| old api：  | "AntShares.Account.GetVotes"                                                                                               |
-|------------|----------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Account_GetVotes                                                                                                           |
-| 功能描述： | 获得该合约账户投给其它人的的投票信息                                                                                       |
-| C\#函数：  | byte[][] Votes;                                                                                                            |
+| old api：  | "AntShares.Account.GetVotes"                |
+|------------|---------------------------------------------|
+| Binding Method: | Account_GetVotes                       |
+|  Function Description: |  Get the votes of the account   |
+| C\# Method：  | byte[][] Votes;                          |
 
 ### Neo.Account.GetBalance
 
-| old api：  | "AntShares.Account.GetBalance"                                                                                                                                  |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Account_GetBalance                                                                                                                                              |
-| 功能描述： | 通过资产 ID 获得该账户中这种资产的余额                                                                                                                          |
-| C\#函数：  | long GetBalance(byte[] asset_id);                                                                                                                               |
+| old api：  | "AntShares.Account.GetBalance"              |
+|------------|---------------------------------------------|
+| Binding Method: | Account_GetBalance                     |
+|  Function Description: | Get balance of the account by asset id  |
+| C\# Method：  | long GetBalance(byte[] asset_id);        |
 
-## Asset：资产相关API
+## Asset
 
 ### Neo.Asset.GetAssetId
 
-| old api：  | "AntShares.Asset.GetAssetId"                                                           |
-|------------|----------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetAssetId                                                                       |
-| 功能描述： | 获得该资产的 ID                                                                        |
-| C\#函数：  | byte[] AssetId                                                                         |
+| old api：  | "AntShares.Asset.GetAssetId"              |
+|------------|-------------------------------------------|
+| Binding Method: | Asset_GetAssetId                     |
+| Function Description: | Get asset id                   |
 
 ### Neo.Asset.GetAssetType
 
-| old api：  | "AntShares.Asset.GetAssetType"                                                                        |
-|------------|-------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetAssetType                                                                                    |
-| 功能描述： | 获得该资产的类别                                                                                      |
-| C\#函数：  | byte AssetType                                                                                        |
+| old api：  | "AntShares.Asset.GetAssetType"            |
+|------------|-------------------------------------------|
+| Binding Method: | Asset_GetAssetType                   |
+|  Function Description: | Get asset type                |
+| C\# Method：  | byte AssetType                         |
 
 ### Neo.Asset.GetAmount
 
-| old api：  | "AntShares.Asset.GetAmount"                                                           |
-|------------|---------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetAmount                                                                       |
-| 功能描述： | 获得该资产的总量                                                                      |
-| C\#函数：  | long Amount                                                                           |
+| old api：  | "AntShares.Asset.GetAmount"                |
+|------------|--------------------------------------------|
+| Binding Method: | Asset_GetAmount                       |
+|  Function Description: | Get asset amount               |
+| C\# Method：  | long Amount                             |
 
 ### Neo.Asset.GetAvailable
 
-| old api：  | "AntShares.Asset.GetAvailable"                                                           |
-|------------|------------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetAvailable                                                                       |
-| 功能描述： | 获得该资产的已经发行出去的数量                                                           |
-| C\#函数：  | long Available                                                                           |
+| old api：  | "AntShares.Asset.GetAvailable"            |
+|------------|-------------------------------------------|
+| Binding Method: | Asset_GetAvailable                   |
+| Function Description: | Get the avaiable amount of the asset |
+| C\# Method：  | long Available                         |
 
 ### Neo.Asset.GetPrecision
 
-| old api：  | "AntShares.Asset.GetPrecision"                                                                        |
-|------------|-------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetPrecision                                                                                    |
-| 功能描述： | 获得该资产的精度（最小分割数量），单位为小数点之后的位数                                              |
-| C\#函数：  | byte Precision                                                                                        |
+| old api：  | "AntShares.Asset.GetPrecision"             |
+|------------|--------------------------------------------|
+| Binding Method: | Asset_GetPrecision                    |
+|  Function Description: | Get the percision of the asset |
+| C\# Method：  | byte Precision                          |
 
 ### Neo.Asset.GetOwner
 
-| old api：  | "AntShares.Asset.GetOwner"                                                                           |
-|------------|------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetOwner                                                                                       |
-| 功能描述： | 获得该资产的所有人（公钥）                                                                           |
-| C\#函数：  | byte[] Owner                                                                                         |
+| old api：  | "AntShares.Asset.GetOwner"                 |
+|------------|--------------------------------------------|
+| Binding Method: | Asset_GetOwner                        |
+|  Function Description: | Get the owner of the asset     |
+| C\# Method：  | byte[] Owner                            |
 
 ### Neo.Asset.GetAdmin
 
-| old api：  | "AntShares.Asset.GetAdmin"                                                           |
-|------------|--------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetAdmin                                                                       |
-| 功能描述： | 获得该资产的管理员（合约地址），有权对资产的属性（如总量，名称等）进行修改           |
-| C\#函数：  | byte[] Admin                                                                         |
+| old api：  | "AntShares.Asset.GetAdmin"                |
+|------------|-------------------------------------------|
+| Binding Method: | Asset_GetAdmin                       |
+|  Function Description: | Get the admin of the asset    |
+| C\# Method：  | byte[] Admin                           |
 
 ### Neo.Asset.GetIssuer
 
-| old api：  | "AntShares.Asset.GetIssuer"                                                            |
-|------------|----------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_GetIssuer                                                                        |
-| 功能描述： | 获得该资产的发行人（合约地址），有权进行资产的发行                                     |
-| C\#函数：  | byte[] Issuer                                                                          |
+| old api：  | "AntShares.Asset.GetIssuer"               |
+|------------|-------------------------------------------|
+| Binding Method: | Asset_GetIssuer                      |
+|  Function Description: | Get the issuer of the asset   |
+| C\# Method：  | byte[] Issuer                          |
 
 ### Neo.Asset.Create
 
-| old api：  | "AntShares.Asset.Create"                                                                                                                                                             |
-|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_Create                                                                                                                                                                         |
-| 功能描述： | 注册一种资产                                                                                                                                                                         |
-| C\#函数：  | Asset Create(byte asset_type, string name, long amount, </br> byte precision, byte[] owner, byte[] admin, byte[] issuer);                                                                  |
+| old api：  | "AntShares.Asset.Create"                 |
+|------------|------------------------------------------|
+| Binding Method: | Asset_Create                        |
+|  Function Description: | Register a asset             |
+| C\# Method：  | Asset Create(byte asset_type, string name, long amount, </br> byte precision, byte[] owner, byte[] admin, byte[] issuer);                    |
 
 ### Neo.Asset.Renew
 
-| old api：  | "AntShares.Asset.Renew"                                                                                                                                                                                                                        |
-|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Asset_Renew                                                                                                                                                                                                                                    |
-| 功能描述： | 为资产续费                                                                                                                                                                                                                                     |
-| C\#函数：  | uint Renew(byte years);                                                                                                                                                                                                                        |
-| 说明：     |续费按区块数量计算，1year为200万个区块，</br>即新的到期时间为到期时间加上2000000\*years块。 |
+| old api：  | "AntShares.Asset.Renew"                    |
+|------------|--------------------------------------------|
+| Binding Method: | Asset_Renew                           |
+|  Function Description: | Renewal of the asset           |
+| C\# Method：  | uint Renew(byte years);                 |
+| Remark:     | The renewal fee is calculated by the number of blocks, 1 year being 2 million blocks |
 
-## Contract：合约相关API
+## Contract
 
 ### Neo.Contract.GetScript
 
-| old api：  | "AntShares.Contract.GetScript"                                                                     |
-|------------|----------------------------------------------------------------------------------------------------|
-| 绑定函数： | Contract_GetScript                                                                                 |
-| 功能描述： | 获得该合约的脚本                                                                                   |
-| C\#函数：  | byte[] Script                                                                                      |
+| old api：  | "AntShares.Contract.GetScript"              |
+|------------|---------------------------------------------|
+| Binding Method: | Contract_GetScript                     |
+|  Function Description: | Get script hash of the contract |
+| C\# Method：  | byte[] Script                            |
 
 ### Neo.Contract.IsPayable
 
-| old api：  | "Neo.Contract.IsPayable"                                                                            |
-|------------|-----------------------------------------------------------------------------------------------------|
-| 绑定函数： | Contract_IsPayable                                                                                  |
-| 功能描述： | 获取该合约是否可被支付                                                                                |
-| C\#函数：  | bool IsPayable                                                                                      |
+| old api：  | "Neo.Contract.IsPayable"                    |
+|------------|---------------------------------------------|
+| Binding Method: | Contract_IsPayable                     |
+|  Function Description: | Whether the contract is payable |
+| C\# Method：  | bool IsPayable                           |
 
 ### System.Contract.GetStorageContext
 
-| old api：  | "Neo.Contract.GetStorageContext", "AntShares.Contract.GetStorageContext"                                                                                                                                                |
-|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Contract_GetStorageContext                                                                                                                                                                                              |
-| 功能描述： | 获得合约的存储上下文                                                                                                                                                                                                    |
-| C\#函数：  | StorageContext StorageContext                                                                                                                                                                                           |
-| 说明：     | StorageContext 的 IsReadOnly = false |
+| old api：  | "Neo.Contract.GetStorageContext", "AntShares.Contract.GetStorageContext"  |
+|------------|---------------------------------------------|
+| Binding Method: | Contract_GetStorageContext             |
+|  Function Description: | Get the storage context of the contract  |
+| C\# Method：  | StorageContext StorageContext            |
+| Remark:     | The StorageContext's IsReadOnly = false    |
 
 ### System.Contract.Destroy
 
-| old api：  | "Neo.Contract.Destroy", "AntShares.Contract.Destroy"                                                                                                                                                    |
-|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Contract_Destroy                                                                                                                                                                                        |
-| 功能描述： | 销毁合约                                                                                                                                                                                                |
-| C\#函数：  | void Destroy();                                                                                                                                                                                         |
-| 说明：     | 销毁合约，如果合约使用了存储区，则同时将合约的存储区删除。 |
+| old api：  | "Neo.Contract.Destroy", "AntShares.Contract.Destroy" |
+|------------|------------------------------------------------------|
+| Binding Method: | Contract_Destroy                                |
+|  Function Description: | Destory contract                         |
+| C\# Method：  | void Destroy();                                   |
+| Remark:     | The storage will be destory also.                   |
 
 ### Neo.Contract.Create
 
-| old api：  | "AntShares.Contract.Create"                                                                                                                                                                           |
-|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Contract_Create                                                                                                                                                                                       |
-| 功能描述： | 发布智能合约                                                                                                                                                                                          |
-| C\#函数：  | Contract Create(byte[] script, byte[] parameter_list, byte return_type, </br> ContractPropertyState contract_property_state, string name, </br> string version, string author, string email, string description); |
+| old api：  | "AntShares.Contract.Create"                  |
+|------------|----------------------------------------------|
+| Binding Method: | Contract_Create                         |
+|  Function Description: | Publish a contract               |
+| C\# Method：  | Contract Create(byte[] script, byte[] parameter_list, byte return_type, </br> ContractPropertyState contract_property_state, string name, </br> string version, string author, string email, string description);                                 |
 
 ### Neo.Contract.Migrate
 
-| old api：  | "AntShares.Contract.Migrate"                                                                                                                                                                                                      |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 绑定函数： | Contract_Migrate                                                                                                                                                                                                                  |
-| 功能描述： | 迁移 / 更新智能合约                                                                                                                                                                                                               |
-| C\#函数：  | Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, </br> ContractPropertyState contract_property_state, string name, </br> string version, string author, string email, string description);                            |
-| 说明：     | 详见本章“升级” 部分|
+| old api：  | "AntShares.Contract.Migrate"                |
+|------------|---------------------------------------------|
+| Binding Method: | Contract_Migrate                       |
+|  Function Description: | Migrate/Upgrade the contract    |
+| C\# Method：  | Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, </br> ContractPropertyState contract_property_state, string name, </br> string version, string author, string email, string description);                                |
 
-## Enumerator：迭代器相关API
+## Enumerator
 
 ### Neo.Enumerator.Create
 
-| 绑定函数： | Enumerator_Create                                                                           |
-|------------|---------------------------------------------------------------------------------------------|
-| 功能描述： | 构建一个迭代器                                                                              |
+| Binding Method: | Enumerator_Create                     |
+|------------|--------------------------------------------|
+|  Function Description: | Create an enumerator           |
 
 ### Neo.Enumerator.Next
 
-| Aliases：  | "Neo.Iterator.Next"                                                                            |
-|------------|------------------------------------------------------------------------------------------------|
-| 绑定函数： | Enumerator_Next                                                                                |
-| 功能描述： | 获取迭代器的下一个元素                                                                         |
-| C\#函数：  | bool Next();                                                                                   |
+| Aliases：  | "Neo.Iterator.Next"                        |
+|------------|--------------------------------------------|
+| Binding Method: | Enumerator_Next                       |
+|  Function Description: | Get the next element           |
+| C\# Method：  | bool Next();                            |
 
 ### Neo.Enumerator.Value
 
-| Aliases：  | "Neo.Iterator.Value"                                                                            |
-|------------|-------------------------------------------------------------------------------------------------|
-| 绑定函数： | Enumerator_Value                                                                                |
-| 功能描述： | 获取迭代器的值                                                                                  |
-| C\#函数：  | TValue Value                                                                                    |
+| Aliases：  | "Neo.Iterator.Value"                       |
+|------------|--------------------------------------------|
+| Binding Method: | Enumerator_Value                      |
+|  Function Description: | Get the current value          |
+| C\# Method：  | TValue Value                            |
 
 ### Neo.Enumerator.Concat
 
-| 绑定函数： | Enumerator_Concat                                                                                                                                  |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| 功能描述： | 将两个迭代器连接起来                                                                                                                               |
+| Binding Method: | Enumerator_Concat                     |
+|------------|--------------------------------------------|
+|  Function Description: | Concat the two enumerators     |
 
 ### Neo.Iterator.Create
 
-| 绑定函数： | Iterator_Create                                                                                  |
-|------------|--------------------------------------------------------------------------------------------------|
-| 功能描述： | 构建一个迭代器IIterator                                                                          |
+| Binding Method: | Iterator_Create                       |
+|------------|--------------------------------------------|
+|  Function Description: | Create a iterator              |
 
 ### Neo.Iterator.Key
 
-| 绑定函数： | Iterator_Key                                                                            |
-|------------|-----------------------------------------------------------------------------------------|
-| 功能描述： | 获取迭代器的Key值                                                                       |
-| C\#函数：  | TKey Key                                                                                |
+| Binding Method: | Iterator_Key                                |
+|------------|--------------------------------------------------|
+|  Function Description: | Get the current key of the iterator  |
+| C\# Method：  | TKey Key                                      |
 
 ### Neo.Iterator.Keys
 
-| 绑定函数： | Iterator_Keys                                                                                                  |
-|------------|----------------------------------------------------------------------------------------------------------------|
-| 功能描述： | 获取迭代器的Keys值                                                                                                            |
+| Binding Method: | Iterator_Keys                               |
+|------------|--------------------------------------------------|
+|  Function Description: | Get all thee keys of the iterator    |
 
 ### Neo.Iterator.Values
 
-| 绑定函数： | Iterator_Values                                                                                                  |
-|------------|------------------------------------------------------------------------------------------------------------------|
-| 功能描述： | 获取迭代器的Values值                                                                                                                 |
-| C\#函数：  | TValue Value                                                                                                     |
+| Binding Method: | Iterator_Values                             |
+|------------|--------------------------------------------------|
+|  Function Description: | Get all the values of the iterator   |
+| C\# Method：  | TValue Value                                  |
 
-## ExecutionEngine:智能合约执行引擎相关API
+## ExecutionEngine
 
 ### System.ExecutionEngine.GetScriptContainer
 
-| 绑定函数： | GetScriptContainer                         |
-|------------|--------------------------------------------|
-| 功能描述： | 获得该智能合约的脚本容器（最开始的触发者） |
-| C\#函数：  | IScriptContainer ScriptContainer           |
-| 说明：     | 获取engine.ScriptContainer    |
+| Binding Method: | GetScriptContainer                               |
+|------------|-------------------------------------------------------|
+|  Function Description: |  Get the script container of the contract |
+| C\# Method：  | IScriptContainer ScriptContainer                   |
 
 ### System.ExecutionEngine.GetExecutingScriptHash
 
-| 绑定函数： | GetExecutingScriptHash                           |
-|------------|--------------------------------------------------|
-| 功能描述： | 获得该智能合约执行的脚本散列                     |
-| C\#函数：  | byte[] ExecutingScriptHash                       |
-| 说明：     | 获取engine.CurrentContext.ScriptHash |
+| Binding Method: | GetExecutingScriptHash                           |
+|------------|-------------------------------------------------------|
+|  Function Description: | Get the current executing scrit hash      |
+| C\# Method：  | byte[] ExecutingScriptHash                         |
+| Remark:     | Get the engine.CurrentContext.ScriptHash             |
 
 ### System.ExecutionEngine.GetCallingScriptHash
 
-| 绑定函数： | GetScriptContainer                               |
-|------------|--------------------------------------------------|
-| 功能描述： | 获得该智能合约的调用者的脚本散列                 |
-| C\#函数：  | byte[] CallingScriptHash                         |
-| 说明：     | 获取engine.CallingContext.ScriptHash |
+| Binding Method: | GetScriptContainer                               |
+|------------|-------------------------------------------------------|
+|  Function Description: | Get the script hash of the caller, which invoked the current script  |
+| C\# Method：  | byte[] CallingScriptHash                           |
+| Remark:     | Get the engine.CallingContext.ScriptHash             |
 
 ### System.ExecutionEngine.GetEntryScriptHash
 
-| 绑定函数： | GetEntryScriptHash                                   |
-|------------|------------------------------------------------------|
-| 功能描述： | 获得该智能合约的入口点（合约调用链的起点）的脚本散列 |
-| C\#函数：  | byte[] EntryScriptHash                               |
-| 说明：     | 获取engine.EntryContext.ScriptHash       |
+| Binding Method: | GetEntryScriptHash                                 |
+|------------|---------------------------------------------------------|
+|  Function Description: | Get the entry point of the current contract |
+| C\# Method：  | byte[] EntryScriptHash                               |
+| Remark:     | Get the engine.EntryContext.ScriptHash                 |
 
 
 # NEP-5
 
-NEP5协议是NEO补充协议中的第5号协议。其目的是为neo建立标准的token化智能合约通用交互机 制。NEP5资产与UTXO不同，它没有采用UTXO模型，而是在合约存储区内记账，通过对存储区内不同账户 hash所记录余额数值的变化，完成交易。
+The NEP-5 Proposal outlines a token standard for the NEO blockchain that will provide systems with a generalized interaction mechanism for tokenized Smart Contracts. 
 
-​参照NEP5协议的要求，在NEP5资产智能合约时必需实现以下方法：
+Different from UTXO, the NEP5 assets are recorded in the contract storage area, through the operation of account balance in the storage area, to complete the transaction.
+
+In the method definitions below, we provide both the definitions of the functions as they are defined in the contract as well as the invoke parameters.
 
 **totalSupply**
     
@@ -799,7 +816,7 @@ NEP5协议是NEO补充协议中的第5号协议。其目的是为neo建立标准
 public static BigInteger totalSupply()
 ```
 
-​Returns 部署在系统内该token的总数。 
+Returns the total token supply deployed in the system.
 
 **name**
     
@@ -807,8 +824,9 @@ public static BigInteger totalSupply()
 public static string name()
 ```
 
-​Returns token的名称. e.g. "MyToken"。
-该方法每次被调用时必需返回一样的值。
+Returns the name of the token. e.g. "MyToken".
+
+This method MUST always return the same value every time it is invoked.
 
 **symbol**
 
@@ -816,9 +834,7 @@ public static string name()
 public static string symbol()
 ```
 
-​Returns 合约所管理的token的短字符串符号 . e.g. "MYT"。
-该符号需要应该比较短小 (建议3-8个字符),  没有空白字符或换行符 ，并限制为大写拉丁字母 (26个英文字符)。 
-该方法每次被调用时必需返回一样的值。
+Returns a short string symbol of the token managed in this contract. e.g. "MYT". This symbol SHOULD be short (3-8 characters is recommended), with no whitespace characters or new-lines and SHOULD be limited to the uppercase latin alphabet (i.e. the 26 letters used in English).
 
 **decimals**
 
@@ -826,8 +842,9 @@ public static string symbol()
 public static byte decimals()
 ```
 
-​Returns token使用的小数位数 - e.g. 8，意味着把token数量除以100,000,000来获得它的表示值。
-该方法每次被调用时必需返回一样的值。 
+Returns the number of decimals used by the token - e.g. 8, means to divide the token amount by 100,000,000 to get its user representation.
+
+This method MUST always return the same value every time it is invoked.
 
 **balanceOf**
 
@@ -835,9 +852,11 @@ public static byte decimals()
 public static BigInteger balanceOf(byte[] account)
 ```
 
-Returns 账户的token金额。
-参数账户必需是一个20字节的地址。如果不是，该方法会抛出一个异常。
-如果该账户是个未被使用的地址，该方法会返回0。
+Returns the token balance of the `account`.
+
+The parameter `account` SHOULD be a 20-byte address. If not, this method SHOULD throw an exception.
+
+If the `account` is an unused address, this method MUST return 0.
 
 **transfer**
 
@@ -845,58 +864,51 @@ Returns 账户的token金额。
 public static bool transfer(byte[] from, byte[] to, BigInteger amount)
 ```
 
-​从一个账户转移一定数量的token到另一个账户. 参数from和to必需是20字节的地址，否则，该方法会报错。
-​参数amount必需大于等于0.否则，该方法会报错。
-​如果账户没有足够的支付金额，该函数会返回false。
-​如果方法执行成功，会触发转移事件，并返回true，即使数量为0或者from和to是同一个地址。
-​函数会检查from的地址是否等于调用合约的hash.如果是，则转移会被处理；否则，函数会调用SYSCALL `Neo.Runtime.CheckWitness`来确认转移。
-​如果to地址是一个部署合约，函数会检查其payable标志位来决定是否把token转移到该合约。
-​如果转移没有被处理，函数会返回false。
+Transfers an amount of tokens from the from account to the to account.<br/>
+The parameters from and to SHOULD be 20-byte addresses. If not, this method SHOULD throw an exception.<br/>
+The parameter amount MUST be greater than or equal to 0. If not, this method SHOULD throw an exception.<br/>
+The function MUST return false if the from account balance does not have enough tokens to spend.<br/>
+If the method succeeds, it MUST fire the transfer event, and MUST return true, even if the amount is 0, or from and to are the same address.<br/>
+The function SHOULD check whether the from address equals the caller contract hash. If so, the transfer SHOULD be processed; If not, the function SHOULD use the SYSCALL `Neo.Runtime.CheckWitness` to verify the transfer.<br/>
+If the to address is a deployed contract, the function SHOULD check the payable flag of this contract to decide whether it should transfer the tokens to this contract.<br/>
+If the transfer is not processed, the function SHOULD return false.
 
-**事件 transfer**
+
+**Transfer Event**
 
 ```c#
 public static event transfer(byte[] from, byte[] to, BigInteger amount)
 ```
 
-​会在token被转移时触发，包括零值转移。
-​一个创建新token的token合约在创建token时会触发转移事件，并将from的地址设置为null。
-​一个销毁token的token合约在销毁token时会触发转移事件，并将to的地址设置为null。
+MUST trigger when tokens are transferred, including zero value transfers.<br/>
+A token contract which creates new tokens MUST trigger a `transfer` event with the from address set to null when tokens are created.<br/>
+A token contract which burns tokens MUST trigger a `transfer` event with the to address set to null when tokens are burned.
 
-# 升级
+# Upgrade
 
-## 合约迁移/升级
-智能合约支持在发布之后进行升级操作，但需要在旧合约内预留升级接口。
+## Contract Migrate
 
-合约升级主要调用了Neo.Contract.Migrate方法:
+Smart contract support upgrade operations after release, but upgrade interfacess need to be reserved in the old contract.<br/>
+The contract upgrade mainly calls the `Neo.Contract.Migrate` method:
 
 ```c#
 Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, ContractPropertyState contract_property_state, string name, string version, string author, string email, string description);
 ```
 
-其中
-  - script: 新合约的脚本
-  - parameter_list:  新合约的参数列表
-  - return_type: 新合约的返回值类型
-  - contract_property_state: 新合约的属性
-  - name: 新合约的名称
-  - version: 新合约的版本
-  - author: 新合约的作者
-  - email: 新合约的电子邮件
-  - description: 新合约的说明。
+When the upgrade interface is invoked in the old contract, it will create a new contract based on the parameters passed in. If the old contract has a storage area, it will move the new contract. After upgrade, the old contract and storage will be deleted. 
 
-当在旧合约中调用升级接口时，方法将会根据传入的参数构建一个新的智能合约。如果旧合约有存储区，则会将旧合约的存储区转移至新合约中。升级完成后，旧合约将会被删除，如果旧合约有存储区，则存储区也将被删除。之后旧合约将不可用，需要使用新合约的Hash值。
+## Contract Destory
 
-## 合约销毁
-智能合约支持在发布之后进行销毁操作，但需要在旧合约内预留销毁接口。
+Smart contract support destruction operations after release, but need to reserve the destruction interfaces in the old contract.
 
-合约升级主要调用了Neo.Contract.Destroy方法:
+
+The contract destruction mainly calls the `Neo.Contract.Destroy方法` method:
 
 ```c#
 void Destroy();
 ```
 
-Destroy方法不需要参数，调用该方法后，合约将会被删除，如果合约有存储区，则存储区也将被删除。之后合约将不可用。
+The `Destory` method accepts no parameters, and it will delete contract and the storage area.
 
 > [!NOTE]
 > 如果发现有死链接，请联系 <feedback@neo.org>

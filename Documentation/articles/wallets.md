@@ -1,22 +1,22 @@
-<center><h2> 钱包 </h2></center>
+<center><h2> Wallet </h2></center>
 
 &emsp;&emsp;钱包是NEO的基础组件，是用户接入NEO网络的载体，负责完成与之相关一系列的工作和任务。
 
 &emsp;&emsp;NEO的钱包可以自行设计和修改，但需要满足以的规则和范式。
 
-##  格式
+##  Format
 
-### 1、私钥
+### 1. Private Key
 
   私钥是一个随机生成的位于1和n之间的任何数字（n是⼀个常数，略小于2的256次方），一般用一个256bit(32字节)数表示。
 
   在NEO中私钥主要采用两种编码格式：
 
-1. **hexstring格式**
+1. **hexstring format**
 
    hexstring格式是将byte[]数据使用16进制字符表示的字符串。
 
-2. **wif格式**
+2. **wif format**
 
     wif格式是在原有32字节数据前后添加前缀0x80和后缀0x01,并做Base58Check编码的字符串
 
@@ -24,13 +24,13 @@
 
  Example: 
 
-| 格式 | 数值 |
+| Format | Value |
 |---|---|
 | byte[] | [0xc7,0x13,0x4d,0x6f,0xd8,0xe7,0x3d,0x81,0x9e,0x82,0x75,<br>0x5c,0x64,0xc9,0x37,0x88,0xd8,0xdb,0x09,0x61,0x92,0x9e,<br>0x02,0x5a,0x53,0x36,0x3c,0x4c,0xc0,0x2a,0x69,0x62] |
 | hexstring | c7134d6fd8e73d819e82755c64c93788d8db0961929e025a53363c4cc02a6962 |
 | wif | L3tgppXLgdaeqSGSFw1Go3skBiy8vQAM7YMXvTHsKQtE16Dw58cV |
 
-### 2、公钥
+### 2. Public Key
 
 ​     公钥是通过ECC算法将私钥运算得到的一个点（x,y）。该点的x、y坐标都可以用32字节数据表示。neo与比特币稍有不同，neo选取了secp256r1曲线作为其ECC算法的参数。在neo中公钥有两种编码格式：
 
@@ -55,7 +55,7 @@ Example:
 > [!NOTE]
 > 上面的公钥（非压缩型）因为太长而成为多行，实际数据是连接的。
 
-### 3、地址
+### 3. Address
 
 地址是由公钥经过一系列转换得到的一串由数字和字母构成的字符串。在neo中，公钥到地址的转换步骤如下：
 
@@ -77,7 +77,8 @@ Example:
 | 压缩型公钥 | 035a928f201639204e06b4368b1a93365462a8ebbff0b8818151b74faab3a2b61a |
 | 地址 | AXaXZjZGA3qhQRTCsyG5uFKr9HeShgVhTF  |
 
-### 4、数字证书
+### 4. Digital Certificate
+
 数字证书是一个经证书授权中心数字签名的包含公开密钥拥有者信息以及公开密钥的文件。
 NEO使用X509格式的证书
 
