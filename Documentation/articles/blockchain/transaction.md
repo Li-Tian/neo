@@ -456,5 +456,9 @@ $$
 | 20 | ScriptHash | UInt160 |  收款脚本hash |  备用共识节点多方签名合约地址 |
 
 
-### 例2：生成新资产，即NEP-5资产
+### 例2：生成NEP-5资产
+
+&emsp;&emsp;ICO_template
+
+&emsp;&emsp;应用合约触发器Application Trigger，就是通过
 
