@@ -1,6 +1,6 @@
 <center> <h2> Neo Virtual Machine</h2> </center>
 
-&emsp;&emsp;NeoVM is a lightweight, general-purpose virtual machine which executes NEO smart contract code. The concept of virtual machine described in the narrow sense in this paper, it's not a simulation of physical machine by operating system. Unlike VMware or Hyper-V, it's mainly aimed at specific language.
+&emsp;&emsp;NeoVM is a lightweight, general-purpose virtual machine which executes NEO smart contract code. The concept of virtual machine described in narrow sense in this paper, it's not a simulation of physical machine by operating system. Unlike VMware or Hyper-V, it's mainly aimed at specific language.
 
 &emsp;&emsp;For example, in JVM or CLR of .Net, source code will be compiled into relevant bytecodes, and be executed on the corrresponding virtual machine. JVM or CLR will read instructions, decode, execute and write results back. Those steps are very similar to the concepts on real physical machines. However, the binary instructions are still running on the physical machine. It takes instructions from memory and transmits them to the CPU through the bus, then decodes, executes and stores the results.
 
@@ -25,13 +25,13 @@ A complete operation process is as follows:
 
 The left part is the virtual machine execution engine(equivalent to CPU), which can execute common instructions such as flow control, stack operation, bit operation, arithmetic operation, logical operation, cryptography, etc. It can also interact with the interoperable services through system call. NeoVM has four states: `NONE`, `HALT`, `FAULT`, `BREAK`.
 
-* `NONE` is normal state.
+* `NONE` is a normal state.
 
 * `HALT` is a stop state. When the `InvocationStack` is empty, namely all scripts are executed, the virtual machine state will be set to `HALT`.
 
 * `FAULT` is an error state. When the operation is wrong, the virtual machine state will be set to `FAULT`.
 
-* `BREAK` is an interrupt state and used in the debugging process of smart contracts generally.
+* `BREAK` is an interrupt state and used in the debugging process of smart contract generally.
 
 Each time before the virtual machine start, the execution engine will detect the virtual machine state, and only when the state is `NONE`, can it start running.
 
@@ -81,7 +81,7 @@ private bool value;
 
 # Instructions
 
-NeoVM has implement 113 instructions (and four unrealized instructions). The categories are as follows:
+NeoVM has implemented 113 instructions (and four unrealized instructions). The categories are as follows:
 
 | Contrant | Flow Control | Stack Operation | String Operation | Logical Operation | Arithmetic Operation | Cryptography | Advanced Data Structure |Stack Isolation| Exception Processing |
 | ---- | -------- | ------ | ------ | -------- | -------- | ------ | -------- | ------ | ---- |
@@ -90,7 +90,7 @@ NeoVM has implement 113 instructions (and four unrealized instructions). The cat
 
 ## 1. Contrant
 
-The constant part instructions mainly complete the function of pushing constants or arrays into the `EvaluationStack`.
+The constant instructions mainly complete the function of pushing constants or arrays into the `EvaluationStack`.
 
 ### PUSH0
 
@@ -147,7 +147,7 @@ It's used to control the running process of NeoVM, including jump, call and othe
 | Instruction   | JMP                                                     |
 |----------|---------------------------------------------------------|
 | Bytecode: | 0x62                                                    |
-| Function:   | Jump to the specified offset uuconditionally, which is specified by 2 bytes after this instruction. |
+| Function:   | Jump to the specified offset unconditionally, which is specified by 2 bytes after this instruction. |
 
 ### JMPIF
 
@@ -196,13 +196,13 @@ It's used to control the running process of NeoVM, including jump, call and othe
 | Instruction   | TAILCALL                                                                                             |
 |----------|------------------------------------------------------------------------------------------------------|
 | Bytecode: | 0x69                                                                                                 |
-| Function:   | End call (no longer returning to the current execution environment after the call). </br>  Call the specified interoperable function whose name is specified by the string after this instruction. |
+| Function:   | Tail call (no longer returning back to the current execution environment after the call). </br>  Call the specified interoperable function whose name is specified by the string after this instruction. |
 
 
 
 ## 3. Stack Operation
 
-Copy, remove and exchange the elements of the stack.
+Copy, remove and swap the elements of the stack.
 
 ### DUPFROMALTSTACK
 
@@ -366,7 +366,7 @@ Copy, remove and exchange the elements of the stack.
 | Instruction   | LEFT                                         |
 |----------|----------------------------------------------|
 | Bytecode: | 0x80                                         |
-| Function:   | Remove the two top elements of the `EvaluationStack`, calculate the substring and push it back. |
+| Function:   | Remove the two top elements of the `EvaluationStack`, calculate the left-side substring and push it back. |
 | Input:   | X len                                        |
 | Output:   | Left(X,len)                                  |
 
@@ -375,7 +375,7 @@ Copy, remove and exchange the elements of the stack.
 | Instruction   | RIGHT                                        |
 |----------|----------------------------------------------|
 | Bytecode: | 0x81                                         |
-| Function:   | Remove the two top elements of the `EvaluationStack`, calculate the substring and push it back. |
+| Function:   | Remove the two top elements of the `EvaluationStack`, calculate the right-side substring and push it back. |
 | Input:   | X len                                        |
 | Output:   | Right(X,len)                                 |
 
@@ -384,7 +384,7 @@ Copy, remove and exchange the elements of the stack.
 | Instruction   | SIZE                             |
 |----------|----------------------------------|
 | Bytecode: | 0x82                             |
-| Function:   | Push the length of the top element to the `EvaluationStack` top.  |
+| Function:   | Push the length of the top string element to the `EvaluationStack` top.  |
 | Input:   | X                                |
 | Output:   | X len(X)                         |
 
@@ -432,7 +432,7 @@ Copy, remove and exchange the elements of the stack.
 | Instruction   | EQUAL                                        |
 |----------|----------------------------------------------|
 | Bytecode: | 0x87                                         |
-| Function:   | Determine the top two elements are equivalence bit-by-bit. |
+| Function:   | Check whether the top two elements are equivalence bit-by-bit. |
 | Input:   | AB                                           |
 | Output:   | Equals(A,B)                                  |
 
@@ -623,7 +623,7 @@ Copy, remove and exchange the elements of the stack.
 | Instruction   | LTE                                        |
 |----------|--------------------------------------------|
 | Bytecode: | 0xA1                                       |
-| Function:   | Check whether the first top element isn't more than the second top element in the `EvaluationStack`.  |
+| Function:   | Check whether the first top element ls less than or equal to the second top element in the `EvaluationStack`.  |
 | Input:   | AB                                         |
 | Output:   | A\<=B                                      |
 
@@ -632,7 +632,7 @@ Copy, remove and exchange the elements of the stack.
 | Instruction   | GTE                                        |
 |----------|--------------------------------------------|
 | Bytecode: | 0xA2                                       |
-| Function:   | Check whether the first top element isn't less than the second top element in the `EvaluationStack`. |
+| Function:   | Check whether the first top element is more than or equal to the second top element in the `EvaluationStack`. |
 | Input:   | AB                                         |
 | Output:   | A\>=B                                      |
 
@@ -659,20 +659,20 @@ Copy, remove and exchange the elements of the stack.
 | Instruction   | WITHIN                                       |
 |----------|----------------------------------------------|
 | Bytecode: | 0xA5                                         |
-| Function:   | Check whether the Biginteger value is within the specified range of vlaues.  |
+| Function:   | Check whether the Biginteger value is within the specified range.  |
 | Input:   | XAB                                          |
 | Output:   | A\<=X&&X\<B                                  |
 
 ## 7. Cryptography
 
-It has implement hash operation and signature verification and so on.
+It has implemented hash operation and signature verification and so on.
 
 ### SHA1 
 
 | Instruction   | SHA1                             |
 |----------|----------------------------------|
 | Bytecode: | 0xA7                             |
-| Function:   |  Performs a built-in sha1 hash operation on the top element in the `EvaluationStack`.  |
+| Function:   |  Performs a built-in SHA1 hash operation on the top element in the `EvaluationStack`.  |
 | Input:   | X                                |
 | Output:   | SHA1(X)                          |
 
@@ -681,7 +681,7 @@ It has implement hash operation and signature verification and so on.
 | Instruction   | SHA256                             |
 |----------|------------------------------------|
 | Bytecode: | 0xA8                               |
-| Function:   | Performs a built-in sha256 hash operation on the top element in the `EvaluationStack`.。 |
+| Function:   | Performs a built-in SHA256 hash operation on the top element in the `EvaluationStack`.。 |
 | Input:   | X                                  |
 | Output:   | SHA256(X)                          |
 
@@ -708,7 +708,7 @@ It has implement hash operation and signature verification and so on.
 | Instruction   | CHECKSIG                                                                       |
 |----------|--------------------------------------------------------------------------------|
 | Bytecode: | 0xAC                                                                           |
-| Function:   | Using the given signature and public-key in the `EvaluationStack`, the built-in asymmetric signaure verfication operation is performed on the current verification object.  |
+| Function:   | Using the given signature and public key in the `EvaluationStack`, the built-in asymmetric signaure verfication operation is performed on the current verification object.  |
 | Input:   | SK                                                                             |
 | Output:   | Verify(S,K)                                                                    |
 
@@ -717,7 +717,7 @@ It has implement hash operation and signature verification and so on.
 | Instruction   | VERIFY                                                                     |
 |----------|----------------------------------------------------------------------------|
 | Bytecode: | 0xAD                                                                       |
-| Function:   | Using the given signature and public-key in the `EvaluationStack`, the built-in asymmetric signaure verfication operation is performed on the given verification object.  |
+| Function:   | Using the given signature and public key in the `EvaluationStack`, the built-in asymmetric signaure verfication operation is performed on the given verification object.  |
 | Input:   | MSK                                                                        |
 | Output:   | Verify(M,S,K)                                                              |
 
@@ -726,14 +726,14 @@ It has implement hash operation and signature verification and so on.
 | Instruction   | CHECKMULTISIG                                                                                  |
 |----------|------------------------------------------------------------------------------------------------|
 | Bytecode: | 0xAE                                                                             |
-| Function:   | Using the given signatures and public-keys in the `EvaluationStack`, the built-in asymmetric multi-signaure verfication operation is performed on the current verification object.   |
+| Function:   | Using the given signatures and public keys in the `EvaluationStack`, the built-in asymmetric multi-signaure verfication operation is performed on the current verification object.   |
 | Input:   | Sm-1 ... S2 S1 S0 m Kn-1 ... K2 K1 K0 n                              |
 | Output:   | Verify(Sm-1 ... S2 S1 S0 m Kn-1 ... K2 K1 K0 n)                             |
 | Note:   | For any 𝑆𝑖∈{𝑆0,…, 𝑆𝑚−1}, there exists a 𝐾𝑗∈{𝐾0, … , 𝐾𝑛−1}</br> makes Verify(𝑆𝑖, 𝐾𝑗) ==1, then V=1; otherwise, V=0. |
 
 ## 8. Advanced Data Structure
 
-It has impelment common operations for array, map, struct, etc.
+It has implemented common operations for array, map, struct, etc.
 
 ### ARRAYSIZE
 
@@ -749,7 +749,7 @@ It has impelment common operations for array, map, struct, etc.
 | Instruction   | PACK                              |
 |----------|-----------------------------------|
 | Bytecode: | 0xC1                              |
-| Function:   | Pack the n elments at the top of the `EvaluationStack` into arrays. |
+| Function:   | Pack the n elments at the top of the `EvaluationStack` into array. |
 | Input:   | Xn-1 ... X2 X1 X0 n               |
 | Output:   | [X0 X1 X2 ... Xn-1]               |
 
@@ -776,7 +776,7 @@ It has impelment common operations for array, map, struct, etc.
 | Instruction   | SETITEM                                  |
 |----------|------------------------------------------|
 | Bytecode: | 0xC4                                     |
-| Function:   | Assign a value to the specified location element in the array at the top of the `EvaluationStack`. |
+| Function:   | Assign a value to the specified index element in the array at the top of the `EvaluationStack`. |
 | Input:   | [X0 X1 X2 ... Xn-1] I V                  |
 | Output:   | [X0 X1 X2 Xi-1 V X i+1 ... Xn-1]         |
 
@@ -804,7 +804,7 @@ It has impelment common operations for array, map, struct, etc.
 |----------|-------------------------|
 | Bytecode: | 0xC7                    |
 | Function:   | Create a new map on the top of the `EvaluationStack`.  |
-| Input:   | 无                      |
+| Input:   |                       |
 | Output:   | Map()                   |
 
 ### APPEND\*

@@ -12,7 +12,7 @@ Meanwhile, due to security considerations, to prevent different nodes from obtai
 
 # Price Mechanism
 
-Each instruction of the smart contract needs to pay fee(Gas). In the procedure of deploying or invokeing the smart contract, the NEO-GUI will try to run the smart contract's bytecodes in test mode, and calculate the gas consumed. 
+Each instruction of the smart contract needs to pay fee (Gas). In the procedure of deploying or invokeing the smart contract, the NEO-GUI will try to run the smart contract's bytecodes in test mode, and calculate the gas consumed. 
 
 The initial 10 GAS during each execution of every smart contract is always free, including smart contract deployment and invoking. That is, fees that sum up to 10 GAS or less will not require a service fee.
 
@@ -64,7 +64,7 @@ All Smart Contract fees are considered as Service fee to be put in a pool for re
 
 * The cost of creating or migrating a smart contract is the basic 100 GAS plus fees of functions the contract requires. If the storage area is required, the function fee is 400 GAS, and if the dynamic call is needed, the function fee is 500 GAS.
 
-* When deploy the contract which requires storage, dynamic invocation, etc., be sure to check the corresponding options. In the future, we will consider adding detection mechanism.
+* When deploy the contract which requires storage, dynamic invocation, etc., be sure to check the corresponding options. In the future, we will consider detection mechanism.
 
 # Trigger
 
@@ -119,7 +119,7 @@ The `received` function will be invoked automatically when a contract is receivi
 # Interoperable service layer
 
 
-The interoperable service layer provides some APIs for accessing the chain-chain data of the smart contract. It can access block information, transaction information, contract information, asset information, and so on.
+The interoperable service layer provides some APIs for accessing the blockchain data of the smart contract. It can access block information, transaction information, contract information, asset information, and so on.
 
 ## Runtime
 ### System.Runtime.GetTrigger
@@ -127,7 +127,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "Neo.Runtime.GetTrigger"   |
 |------------|------------------------------------------------------------------|
 | Binding Method: | Runtime_GetTrigger                             |
-| Function Description: | Get the trigger condition of the smart contract(Application or Verification) |
+| Function Description: | Get trigger of the smart contract(Application or Verification) |
 | C\# Method：  | TriggerType Trigger;     |
 | Remark:     |  Verification = 0x00, Application = 0x10 |
 
@@ -145,7 +145,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "Neo.Runtime.Notify", "AntShares.Runtime.Notify"       |
 |------------|----------------------------------------------------------------------|
 | Binding Method: | Runtime_Notify                    |
-|  Function Description: |  Send notifications to the clients that execute the smart contract.   |
+|  Function Description: |  Send notification to the client that execute the smart contract.   |
 | C\# Method：  | void Notify(params object[] state)        |
 | Remark:     | Create a notifcation with the `EvaluationStack` state.</br>Trigger a notify event and add the notification into the `notifications` array. |
 
@@ -268,7 +268,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "Neo.Header.GetIndex"                      |
 |------------|--------------------------------------------|
 | Binding Method: | Header_GetIndex                       |
-| Function Description: | Get block index                |
+| Function Description: | Get current block index         |
 | C\# Method：  | uint Index                              |
 
 ### System.Header.GetHash
@@ -370,7 +370,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Transaction.GetType"                            |
 |------------|------------------------------------------------------------|
 | Binding Method: | Transaction_GetType                                   |
-|  Function Description: | Get the type of the current transaction        |
+|  Function Description: | Get type of the current transaction        |
 | C\# Method：  | byte Type                                               |
 
 ### Neo.Transaction.GetAttributes
@@ -378,7 +378,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Transaction.GetAttributes"                       |
 |------------|-------------------------------------------------------------|
 | Binding Method: | Transaction_GetAttributes                              |
-|  Function Description: | Get the attributes of the current transaction   |
+|  Function Description: | Get attributes of the current transaction   |
 | C\# Method：  | TransactionAttribute[] GetAttributes()                   |
 
 
@@ -387,7 +387,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Transaction.GetInputs"                           |
 |------------|-------------------------------------------------------------|
 | Binding Method: | Transaction_GetInputs                                  |
-|  Function Description: | Get all the inputs of the current transaction   |
+|  Function Description: | Get all inputs of the current transaction   |
 | C\# Method：  | TransactionInput[] GetInputs()                           |
 
 
@@ -396,7 +396,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Transaction.GetOutputs"                           |
 |------------|--------------------------------------------------------------|
 | Binding Method: | Transaction_GetOutputs                                  |
-| Function Description: | Get all the outputs of the current transaction    |
+| Function Description: | Get all outputs of the current transaction    |
 | C\# Method：  | TransactionOutput[] GetOutputs()                          |
 
 ### Neo.Transaction.GetReferences
@@ -404,14 +404,14 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Transaction.GetReferences"                      |
 |------------|------------------------------------------------------------|
 | Binding Method: | Transaction_GetReferences                             |
-| Function Description: | Get all the outputs which the current transaction's inputs referenced |
+| Function Description: | Get all outputs which the current transaction's inputs referenced |
 | C\# Method：  | TransactionOutput[] GetReferences()                     |
 
 ### Neo.Transaction.GetUnspentCoins
 
 | Binding Method: | Transaction_GetUnspentCoins                   |
 |------------|----------------------------------------------------|
-| Function Description: | Get all the UTXOs of the current transaction |
+| Function Description: | Get all UTXOs of the current transaction |
 | C\# Method：  | TransactionOutput[] GetUnspentCoins()           |
 
 ## Storage
@@ -438,9 +438,9 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "Neo.Storage.Get"， "AntShares.Storage.Get"   |
 |------------|-----------------------------------------------|
 | Binding Method: | Storage_Get                              |
-|  Function Description: | Get value by key, stored the private stroage   |
+|  Function Description: | Get value by key, stored in the private stroage   |
 | C\# Method：  | byte[] Get(StorageContext context, byte[] key); </br> byte[] Get(StorageContext context, string key);                                                 |
-| Remark:     | If not exist, return empty byte array.       |
+| Remark:     | If not exist, return an empty byte array.       |
 
 ### System.Storage.Put
 
@@ -464,7 +464,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 
 | Binding Method: | Storage_Find                                |
 |------------|-------------------------------------------------------------------------------|
-|  Function Description: | Get the contents of the specified prefix in the current storage   |
+|  Function Description: | Get contents of the specified prefix in the current storage   |
 | C\# Method：  | Iterator < byte[], byte[] \> Find(StorageContext context, byte[] prefix); </br> Iterator < string, byte[] \> Find(StorageContext context, string prefix);   |
 
 
@@ -522,7 +522,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Input.GetIndex"             |
 |------------|----------------------------------------|
 | Binding Method: | Input_GetIndex                    |
-| Function Description: | Get the index of the output referenced the current input   |
+| Function Description: | Get the index of the output referenced by the current input   |
 | C\# Method：  | ushort PrevIndex                    |
 
 ## Output
@@ -532,7 +532,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Output.GetAssetId"               |
 |------------|---------------------------------------------|
 | Binding Method: | Output_GetAssetId                      |
-| Function Description: |  Get the `AssetId` of the transaction's output |
+| Function Description: |  Get `AssetId` of the transaction's output |
 | C\# Method：  | byte[] AssetId                           |
 
 ### Neo.Output.GetValue
@@ -540,7 +540,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Output.GetValue"                  |
 |------------|----------------------------------------------|
 | Binding Method: | Output_GetValue                         |
-| Function Description: | Get the `Amount` of the transaction's output  |
+| Function Description: | Get `Amount` of the transaction's output  |
 | C\# Method：  | long Value                                |
 
 ### Neo.Output.GetScriptHash
@@ -548,7 +548,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Output.GetScriptHash"             |
 |------------|----------------------------------------------|
 | Binding Method: | Output_GetScriptHash                    |
-|  Function Description: | Get the `ScriptHash` of the transaction's output |
+|  Function Description: | Get `ScriptHash` of the transaction's output |
 | C\# Method：  | byte[] ScriptHash                         |
 
 ## Account
@@ -558,7 +558,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Account.GetScriptHash"             |
 |------------|-----------------------------------------------|
 | Binding Method: | Account_GetScriptHash                    |
-| Function Description: | Get the  `ScriptHash` of the account's contract  |
+| Function Description: | Get `ScriptHash` of the account's contract  |
 | C\# Method：  | byte[] ScriptHash;                         |
 
 
@@ -567,7 +567,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Account.GetVotes"                |
 |------------|---------------------------------------------|
 | Binding Method: | Account_GetVotes                       |
-|  Function Description: |  Get the votes of the account   |
+|  Function Description: |  Get votes of the account   |
 | C\# Method：  | byte[][] Votes;                          |
 
 ### Neo.Account.GetBalance
@@ -608,7 +608,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Asset.GetAvailable"            |
 |------------|-------------------------------------------|
 | Binding Method: | Asset_GetAvailable                   |
-| Function Description: | Get the avaiable amount of the asset |
+| Function Description: | Get avaiable amount of the asset |
 | C\# Method：  | long Available                         |
 
 ### Neo.Asset.GetPrecision
@@ -616,7 +616,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Asset.GetPrecision"             |
 |------------|--------------------------------------------|
 | Binding Method: | Asset_GetPrecision                    |
-|  Function Description: | Get the percision of the asset |
+|  Function Description: | Get percision of the asset |
 | C\# Method：  | byte Precision                          |
 
 ### Neo.Asset.GetOwner
@@ -624,7 +624,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Asset.GetOwner"                 |
 |------------|--------------------------------------------|
 | Binding Method: | Asset_GetOwner                        |
-|  Function Description: | Get the owner of the asset     |
+|  Function Description: | Get owner of the asset     |
 | C\# Method：  | byte[] Owner                            |
 
 ### Neo.Asset.GetAdmin
@@ -632,7 +632,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Asset.GetAdmin"                |
 |------------|-------------------------------------------|
 | Binding Method: | Asset_GetAdmin                       |
-|  Function Description: | Get the admin of the asset    |
+|  Function Description: | Get admin of the asset    |
 | C\# Method：  | byte[] Admin                           |
 
 ### Neo.Asset.GetIssuer
@@ -640,7 +640,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Asset.GetIssuer"               |
 |------------|-------------------------------------------|
 | Binding Method: | Asset_GetIssuer                      |
-|  Function Description: | Get the issuer of the asset   |
+|  Function Description: | Get issuer of the asset   |
 | C\# Method：  | byte[] Issuer                          |
 
 ### Neo.Asset.Create
@@ -656,7 +656,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "AntShares.Asset.Renew"                    |
 |------------|--------------------------------------------|
 | Binding Method: | Asset_Renew                           |
-|  Function Description: | Renewal of the asset           |
+|  Function Description: | Renewal the asset           |
 | C\# Method：  | uint Renew(byte years);                 |
 | Remark:     | The renewal fee is calculated by the number of blocks, 1 year being 2 million blocks |
 
@@ -683,7 +683,7 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 | old api：  | "Neo.Contract.GetStorageContext", "AntShares.Contract.GetStorageContext"  |
 |------------|---------------------------------------------|
 | Binding Method: | Contract_GetStorageContext             |
-|  Function Description: | Get the storage context of the contract  |
+|  Function Description: | Get storage context of the contract  |
 | C\# Method：  | StorageContext StorageContext            |
 | Remark:     | The StorageContext's IsReadOnly = false    |
 
@@ -752,20 +752,20 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 
 | Binding Method: | Iterator_Key                                |
 |------------|--------------------------------------------------|
-|  Function Description: | Get the current key of the iterator  |
+|  Function Description: | Get current key of the iterator  |
 | C\# Method：  | TKey Key                                      |
 
 ### Neo.Iterator.Keys
 
 | Binding Method: | Iterator_Keys                               |
 |------------|--------------------------------------------------|
-|  Function Description: | Get all thee keys of the iterator    |
+|  Function Description: | Get all keys of the iterator    |
 
 ### Neo.Iterator.Values
 
 | Binding Method: | Iterator_Values                             |
 |------------|--------------------------------------------------|
-|  Function Description: | Get all the values of the iterator   |
+|  Function Description: | Get all values of the iterator   |
 | C\# Method：  | TValue Value                                  |
 
 ## ExecutionEngine
@@ -804,9 +804,9 @@ The interoperable service layer provides some APIs for accessing the chain-chain
 
 # NEP-5
 
-The NEP-5 Proposal outlines a token standard for the NEO blockchain that will provide systems with a generalized interaction mechanism for tokenized Smart Contracts. 
+The NEP-5 proposal outlines a token standard for the NEO blockchain that will provide systems with a generalized interaction mechanism for tokenized Smart Contracts. 
 
-Different from UTXO, the NEP5 assets are recorded in the contract storage area, through the operation of account balance in the storage area, to complete the transaction.
+Different from UTXO, the NEP5 assets are recorded in the contract storage area, through updating account balance in the storage area, to complete the transaction.
 
 In the method definitions below, we provide both the definitions of the functions as they are defined in the contract as well as the invoke parameters.
 
@@ -888,21 +888,21 @@ A token contract which burns tokens MUST trigger a `transfer` event with the to 
 
 ## Contract Migrate
 
-Smart contract support upgrade operations after release, but upgrade interfacess need to be reserved in the old contract.<br/>
+Smart contract support upgrade operations after release, but upgrade interfaces need to be reserved in the old contract.<br/>
 The contract upgrade mainly calls the `Neo.Contract.Migrate` method:
 
 ```c#
 Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, ContractPropertyState contract_property_state, string name, string version, string author, string email, string description);
 ```
 
-When the upgrade interface is invoked in the old contract, it will create a new contract based on the parameters passed in. If the old contract has a storage area, it will move the new contract. After upgrade, the old contract and storage will be deleted. 
+When the upgrade interface invoked in the old contract, it will create a new contract based on the parameters passed in. If the old contract has a storage area, it will move to the new contract. After upgrade, the old contract and storage will be deleted. 
 
 ## Contract Destory
 
 Smart contract support destruction operations after release, but need to reserve the destruction interfaces in the old contract.
 
 
-The contract destruction mainly calls the `Neo.Contract.Destroy方法` method:
+The contract destruction mainly calls the `Neo.Contract.Destroy` method:
 
 ```c#
 void Destroy();
