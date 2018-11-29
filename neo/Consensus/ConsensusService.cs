@@ -487,63 +487,62 @@ namespace Neo.Consensus
         //    sc.Verifiable.Witnesses = sc.GetWitnesses();
         //    system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = payload });
         //}
-        //}
+    }
 
-        internal class ConsensusServiceMailbox : PriorityMailbox
+    internal class ConsensusServiceMailbox : PriorityMailbox
+    {
+        /// <summary>
+        /// Register consensus service mailbox
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <param name="config"></param>
+        public ConsensusServiceMailbox(Akka.Actor.Settings settings, Config config)
+            : base(settings, config)
         {
-            /// <summary>
-            /// Register consensus service mailbox
-            /// </summary>
-            /// <param name="settings"></param>
-            /// <param name="config"></param>
-            public ConsensusServiceMailbox(Akka.Actor.Settings settings, Config config)
-                : base(settings, config)
-            {
-            }
+        }
 
-            /// <summary>
-            /// Check if the message is high priority
-            /// <list type="bullet">
-            /// <item>
-            /// <term>ConsensusPayload</term>
-            /// <description>high priority</description>
-            /// </item>
-            /// <item>
-            /// <term>SetViewNumber</term>
-            /// <description>high priority</description>
-            /// </item>
-            /// <item>
-            /// <term>Timer</term>
-            /// <description>high priority</description>
-            /// </item>
-            /// <item>
-            /// <term>Blockchain.PersistCompleted </term>
-            /// <description>high priority</description>
-            /// </item>
-            /// <item>
-            /// <term>Start</term>
-            /// <description>low priority</description>
-            /// </item>
-            /// <item>
-            /// <term>Transaction</term>
-            /// <description>low priority</description>
-            /// </item>
-            /// </list>
-            /// </summary>
-            /// <param name="message"></param>
-            /// <returns></returns>
-            protected override bool IsHighPriority(object message)
+        /// <summary>
+        /// Check if the message is high priority
+        /// <list type="bullet">
+        /// <item>
+        /// <term>ConsensusPayload</term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>SetViewNumber</term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Timer</term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Blockchain.PersistCompleted </term>
+        /// <description>high priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Start</term>
+        /// <description>low priority</description>
+        /// </item>
+        /// <item>
+        /// <term>Transaction</term>
+        /// <description>low priority</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        protected override bool IsHighPriority(object message)
+        {
+            switch (message)
             {
-                switch (message)
-                {
-                    case ConsensusPayload _:
-                    case ConsensusService.SetViewNumber _:
-                    case ConsensusService.Timer _:
-                    case Blockchain.PersistCompleted _:
-                        return true;
-                    default:
-                        return false;
-                }
+                case ConsensusPayload _:
+                case ConsensusService.SetViewNumber _:
+                case ConsensusService.Timer _:
+                case Blockchain.PersistCompleted _:
+                    return true;
+                default:
+                    return false;
             }
         }
     }

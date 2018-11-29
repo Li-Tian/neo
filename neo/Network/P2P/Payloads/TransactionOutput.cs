@@ -1,6 +1,5 @@
 ﻿using Neo.IO;
 using Neo.IO.Json;
-using Neo.VM;
 using Neo.Wallets;
 using System;
 using System.IO;
@@ -10,7 +9,7 @@ namespace Neo.Network.P2P.Payloads
     /// <summary>
     /// 交易输出
     /// </summary>
-    public class TransactionOutput : IInteropInterface, ISerializable
+    public class TransactionOutput : ISerializable
     {
         /// <summary>
         /// 资产Id

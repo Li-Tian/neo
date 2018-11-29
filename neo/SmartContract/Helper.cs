@@ -3,6 +3,8 @@ using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.VM;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Neo.SmartContract
 {
@@ -11,6 +13,8 @@ namespace Neo.SmartContract
     /// </summary>
     public static class Helper
     {
+        private static readonly Dictionary<string, uint> method_hashes = new Dictionary<string, uint>();
+
         /// <summary>
         /// 判断脚本是否为多签脚本,主要是根据多签脚本的结构来判断。
         /// </summary>
@@ -84,6 +88,16 @@ namespace Neo.SmartContract
         {
             return script.IsSignatureContract() || script.IsMultiSigContract();
         }
+
+        public static uint ToInteropMethodHash(this string method)
+        {
+            if (method_hashes.TryGetValue(method, out uint hash))
+                return hash;
+            hash = BitConverter.ToUInt32(Encoding.ASCII.GetBytes(method).Sha256(), 0);
+            method_hashes[method] = hash;
+            return hash;
+        }
+
         /// <summary>
         /// 获取脚本的哈希值，对脚本做Hash160
         /// </summary>

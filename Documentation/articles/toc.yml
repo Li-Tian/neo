@@ -20,20 +20,23 @@
 - name: Blockchain System
   href: blockchain/neo_system.md
   items:
-    - name: Economic Model
-      href: blockchain/economic_model.md
+    - name: Token Model
+      href: blockchain/token_model.md
     - name: Blockchain Data Structure
       href: blockchain/blockchain_datastructure.md
     - name: Transaction
       href: blockchain/transaction.md
+    - name: UTXO
+      href: blockchain/utxo.md
     - name: Account and Asset
       href: blockchain/account_asset.md
-    - name: NEP-5 Asset
-      href: blockchain/nep5asset.md
-    - name: Validator
-      href: blockchain/validator.md
-- name: Wallets
-  href: wallets.md
+    - name: Wallets
+      href: blockchain/wallets.md
+    - name: Charging Model
+      href: blockchain/charging_model.md
+# "wallets.md" is moved to "blockchain/wallets.md"
+#- name: Wallets
+#  href: wallets.md
 - name: Transaction Execution
   href: tx_execution.md
 - name: Network Protocol

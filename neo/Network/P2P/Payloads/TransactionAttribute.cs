@@ -10,7 +10,7 @@ namespace Neo.Network.P2P.Payloads
     /// <summary>
     /// 交易属性
     /// </summary>
-    public class TransactionAttribute : IInteropInterface, ISerializable
+    public class TransactionAttribute : ISerializable
     {
 
         /// <summary>

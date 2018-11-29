@@ -99,7 +99,7 @@ where,
 ### (2) Signing verification
 
 
-It has been mentioned in previous chapters that, an account address, actually stands for a piece of `OpCode.CHECKSIG` or `OpCode.CHECKMULTISIG`[contract code](./wallets.md#3_address), and signature parameters are needed upon execution. A classic UTXO transferring transaction is actually unlocking input address script. Unlocking successfully means transaction introducing is successfully accomplished. Upon NEO transaction verification, corresponding scripts need to be verified as well. Therefore, corresponding script parameters, such as transaction signature parameters, are needed for script execution. These parameters as well as related scripts are eventually encapsulated into transaction's [Witness](./blockchain/transaction.md#witness) list.
+It has been mentioned in previous chapters that, an account address, actually stands for a piece of `OpCode.CHECKSIG` or `OpCode.CHECKMULTISIG`[contract code](./blockchain/wallets.md#3_address), and signature parameters are needed upon execution. A classic UTXO transferring transaction is actually unlocking input address script. Unlocking successfully means transaction introducing is successfully accomplished. Upon NEO transaction verification, corresponding scripts need to be verified as well. Therefore, corresponding script parameters, such as transaction signature parameters, are needed for script execution. These parameters as well as related scripts are eventually encapsulated into transaction's [Witness](./blockchain/transaction.md#4_witness) list.
 
 Transaction signature is actually, adding address scripts' singature parameters, to construct completed executable witness. Steps are as follows:
 
