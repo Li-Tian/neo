@@ -4,19 +4,40 @@ using System.Linq;
 
 namespace Neo.IO.Caching
 {
+    /// <summary>
+    /// 数据缓存类，抽象类。定义了数据缓存需要实现的相关方法
+    /// </summary>
+    /// <typeparam name="TKey">泛型键</typeparam>
+    /// <typeparam name="TValue">泛型值</typeparam>
     public abstract class DataCache<TKey, TValue>
         where TKey : IEquatable<TKey>, ISerializable
         where TValue : class, ICloneable<TValue>, ISerializable, new()
     {
+        /// <summary>
+        /// 可追踪类
+        /// </summary>
         public class Trackable
         {
+            /// <summary>
+            /// 泛型键
+            /// </summary>
             public TKey Key;
+            /// <summary>
+            /// 泛型值
+            /// </summary>
             public TValue Item;
+            /// <summary>
+            /// 追踪状态
+            /// </summary>
             public TrackState State;
         }
 
         private readonly Dictionary<TKey, Trackable> dictionary = new Dictionary<TKey, Trackable>();
-
+        /// <summary>
+        /// 定义一个索引器
+        /// </summary>
+        /// <param name="key">索引器参数</param>
+        /// <returns>索引对应的TValue</returns>
         public TValue this[TKey key]
         {
             get
@@ -42,7 +63,11 @@ namespace Neo.IO.Caching
                 }
             }
         }
-
+        /// <summary>
+        /// 向dictionary中新增一对键值对，如果trackable已存在则会修改状态
+        /// </summary>
+        /// <param name="key">泛型键</param>
+        /// <param name="value">泛型值</param>
         public void Add(TKey key, TValue value)
         {
             lock (dictionary)
@@ -57,9 +82,15 @@ namespace Neo.IO.Caching
                 };
             }
         }
-
+        /// <summary>
+        /// 把键值对添加至内部
+        /// </summary>
+        /// <param name="key">泛型键</param>
+        /// <param name="value">泛型值</param>
         protected abstract void AddInternal(TKey key, TValue value);
-
+        /// <summary>
+        /// 提交所有更改
+        /// </summary>
         public void Commit()
         {
             foreach (Trackable trackable in GetChangeSet())
@@ -76,12 +107,18 @@ namespace Neo.IO.Caching
                         break;
                 }
         }
-
+        /// <summary>
+        /// 创建快照
+        /// </summary>
+        /// <returns>CloneCache类型快照</returns>
         public DataCache<TKey, TValue> CreateSnapshot()
         {
             return new CloneCache<TKey, TValue>(this);
         }
-
+        /// <summary>
+        /// 删除dictionary中指定键对应的项
+        /// </summary>
+        /// <param name="key"></param>
         public void Delete(TKey key)
         {
             lock (dictionary)
@@ -106,9 +143,15 @@ namespace Neo.IO.Caching
                 }
             }
         }
-
+        /// <summary>
+        /// 内部删除
+        /// </summary>
+        /// <param name="key">泛型键</param>
         public abstract void DeleteInternal(TKey key);
-
+        /// <summary>
+        /// 按条件删除
+        /// </summary>
+        /// <param name="predicate">键值对需要满足的条件</param>
         public void DeleteWhere(Func<TKey, TValue, bool> predicate)
         {
             lock (dictionary)
@@ -117,7 +160,11 @@ namespace Neo.IO.Caching
                     trackable.State = TrackState.Deleted;
             }
         }
-
+        /// <summary>
+        /// 根据指定前缀查找键值对
+        /// </summary>
+        /// <param name="key_prefix">键的前缀</param>
+        /// <returns>满足条件的键值对</returns>
         public IEnumerable<KeyValuePair<TKey, TValue>> Find(byte[] key_prefix = null)
         {
             lock (dictionary)
@@ -130,9 +177,16 @@ namespace Neo.IO.Caching
                         yield return new KeyValuePair<TKey, TValue>(pair.Key, pair.Value.Item);
             }
         }
-
+        /// <summary>
+        /// 内部查找
+        /// </summary>
+        /// <param name="key_prefix">key的前缀</param>
+        /// <returns>满足前缀的IEnumerable类型键值对</returns>
         protected abstract IEnumerable<KeyValuePair<TKey, TValue>> FindInternal(byte[] key_prefix);
-
+        /// <summary>
+        /// 获取dictionary中所有状态不为None的trackable
+        /// </summary>
+        /// <returns>状态不为None的trackable</returns>
         public IEnumerable<Trackable> GetChangeSet()
         {
             lock (dictionary)
@@ -141,9 +195,18 @@ namespace Neo.IO.Caching
                     yield return trackable;
             }
         }
-
+        /// <summary>
+        /// 内部查询指定键
+        /// </summary>
+        /// <param name="key">需要查询的泛型键</param>
+        /// <returns>对应的值</returns>
         protected abstract TValue GetInternal(TKey key);
-
+        /// <summary>
+        /// 根据键获取对应trackable，并执行相应操作
+        /// </summary>
+        /// <param name="key">需要查询的键</param>
+        /// <param name="factory">需要执行的操作</param>
+        /// <returns>对应操作完成的值</returns>
         public TValue GetAndChange(TKey key, Func<TValue> factory = null)
         {
             lock (dictionary)
@@ -183,7 +246,12 @@ namespace Neo.IO.Caching
                 return trackable.Item;
             }
         }
-
+        /// <summary>
+        /// 根据键获取对应trackable，并执行相应操作。如果对应的trackable不存在，则新建一个trackable并执行相应操作
+        /// </summary>
+        /// <param name="key">需要查询的键</param>
+        /// <param name="factory">需要执行的操作</param>
+        /// <returns>对应操作完成的值</returns>
         public TValue GetOrAdd(TKey key, Func<TValue> factory)
         {
             lock (dictionary)
@@ -217,7 +285,11 @@ namespace Neo.IO.Caching
                 return trackable.Item;
             }
         }
-
+        /// <summary>
+        /// 根据键获取对应trackable，如果dictionary查找不到则会调用TryGetInternal查找
+        /// </summary>
+        /// <param name="key">需要查询的键</param>
+        /// <returns>查询到的值</returns>
         public TValue TryGet(TKey key)
         {
             lock (dictionary)
@@ -238,9 +310,17 @@ namespace Neo.IO.Caching
                 return value;
             }
         }
-
+        /// <summary>
+        /// 尝试从内部查询键对应的值
+        /// </summary>
+        /// <param name="key">需要查询的键</param>
+        /// <returns>查询到的值</returns>
         protected abstract TValue TryGetInternal(TKey key);
-
+        /// <summary>
+        /// 更新内部键值对
+        /// </summary>
+        /// <param name="key">需要更新的键</param>
+        /// <param name="value">需要更新的值</param>
         protected abstract void UpdateInternal(TKey key, TValue value);
     }
 }
