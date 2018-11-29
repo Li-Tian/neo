@@ -91,7 +91,7 @@ Example:
 | Hello World | key:"I love code"<br>N:16384<br>p:8<br>r:8 | 17b94895fab004e035b3630a718b498f6<br>647458351f04b84b4a2c0bf1db963630fa<br>7bfd1c29663c7bf3556fd7ba6131e5ddfd6<br>40b9f6a2a9ad75d3d59b65f932 |
 
 > [!NOTE]
-> The hash value above is in one line.
+> The hash value above is in single line.
 
 
 
