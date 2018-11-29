@@ -1,6 +1,3 @@
-"钱包"这篇内容整段移动到“区块链系统”下
-<!--
-
 <center><h2> Wallet </h2></center>
 
 &emsp;&emsp;Wallet is a basic component of NEO and the carrier for users to access NEO network. It's responsible for transaction operations such as transfer, contract deployment, asset registration, etc.
@@ -264,5 +261,3 @@ Usage:
 
 > [!NOTE]
 > 如果发现有死链接，请联系 <feedback@neo.org>
-
--->
