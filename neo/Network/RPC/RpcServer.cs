@@ -29,6 +29,9 @@ using System.Threading.Tasks;
 
 namespace Neo.Network.RPC
 {
+    /// <summary>
+    /// RPC服务器类
+    /// </summary>
     public sealed class RpcServer : IDisposable
     {
         private readonly NeoSystem system;
@@ -36,6 +39,12 @@ namespace Neo.Network.RPC
         private IWebHost host;
         private Fixed8 maxGasInvoke;
 
+        /// <summary>
+        /// 创建一个RPC服务器,设置所用的NeoSystem, 钱包, 和能够调用的最大Gas
+        /// </summary>
+        /// <param name="system">所使用的Neo系统实例</param>
+        /// <param name="wallet">钱包引用</param>
+        /// <param name="maxGasInvoke">最大能够调用的Gas</param>
         public RpcServer(NeoSystem system, Wallet wallet = null, Fixed8 maxGasInvoke = default(Fixed8))
         {
             this.system = system;
@@ -62,6 +71,9 @@ namespace Neo.Network.RPC
             return response;
         }
 
+        /// <summary>
+        ///  释放RpcServer中的Webhost资源
+        /// </summary>
         public void Dispose()
         {
             if (host != null)
@@ -131,6 +143,10 @@ namespace Neo.Network.RPC
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="wallet">钱包引用</param>
         public void OpenWallet(Wallet wallet)
         {
             this.wallet = wallet;
@@ -659,6 +675,14 @@ namespace Neo.Network.RPC
             return response;
         }
 
+        /// <summary>
+        /// 启动一个RPC服务, 绑定相应的ip和端口和SSl证书.
+        /// </summary>
+        /// <param name="bindAddress">RPC服务器的接口</param>
+        /// <param name="port">端口号</param>
+        /// <param name="sslCert">ssl证书</param>
+        /// <param name="password">用来访问SSL证书的密码</param>
+        /// <param name="trustedAuthorities">可信任的机构</param>
         public void Start(IPAddress bindAddress, int port, string sslCert = null, string password = null, string[] trustedAuthorities = null)
         {
             host = new WebHostBuilder().UseKestrel(options => options.Listen(bindAddress, port, listenOptions =>
