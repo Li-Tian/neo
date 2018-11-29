@@ -1,31 +1,31 @@
-<center><h2> 梅克尔树 </h2></center>
+﻿<center><h2> Merkle Tree </h2></center>
 
-　梅克尔树是一种二叉树，能快速检查和归纳大量数据，可用于验证区块中交易记录的完整性。NEO 使用梅克尔树来构建区块模型。不同于比特币，NEO 中每个区块的区块头都会保存一份该区块所有所有交易的梅克尔树根，区块的数据区存放的是交易数组。
+　Merkle tree is such a kind of binary tree: it's able to quickly check & induce massive data, and verify the completeness of block transaction records. NEO uses Merkle tree to construct block model. Different from Bitcoin, NEO's block head stores the Merkle root of all transactions within the block. Block data area stores transaction array.
 
 [![MerkleTree01](../../images/blockchain_paradigm/MerkleTree01.png)](../../images/blockchain_paradigm/MerkleTree01.png)
 
-梅克尔树基本特点：
+Attribute of Merkle tree：
 
-  1. Merkle Tree 是一种树，大多数是二叉树（NEO采用二叉树形式），具有树结构的所有特点；
+  1. Merkle tree is majorily binary tree, with all features of tree structure.
 
-  2. Merkle Tree 的叶子节点的value是数据集合的单元数据或者单元数据 HASH。
+  2. Merkle tree's leaf nodes' value is unit data of data set, or unit data HASH.
 
-  3. 非叶子节点的 value 是根据它下面所有的叶子节点值，然后按照哈希法计算而得出的。
+  3. Non-leaf nodes' value is computed by Hash method according to all child nodes' value.
 
-交易验证原理：
+Transaction verification deduction:
 
-　通过Transcation001、Transcation002、Hash1 计算 Top Hash 与原本的 Top Hash 比对，即可验证 Transcation001 的有效性。
+　Transcation001's validity can be verified by comparing original Top Hash value with the value computed from Transcation001, Transcation002 and Hash1.
 
 
-应用场景：
+Scenarios：
 
-1. 构建区块头时会维护一个 MerkleTree 根
+1. A Merkle tree root is maintained upon block head creating.
 
-2. 使用 SPV 钱包，验证区块数据
+2. Use SPV wallet to verify block data.
 
-参考文献：
+Reference:
 
 1. <https://en.wikipedia.org/wiki/Merkle_tree>
 
 > [!NOTE]
-> 如果发现有死链接，请联系 <feedback@neo.org>
+> In case of dead links, please contact <feedback@neo.org>
