@@ -1,6 +1,6 @@
 <center><h2>Consensus Protocol</center></h2>
 
-## 一、Consensus Message Format
+## Consensus Message Format
 
 
 ### P2p message format
@@ -59,7 +59,7 @@
 
 
 
-## 二、Transport Protocol
+## Transport Protocol
 
 
 When consensus message enters the P2P network, it broadcasts and transmits like other data packets, becuase consensus nodes do not know each other's IP address. That is to say, ordinary nodes can receive consensus message. The broadcast flow of consensus messages is as follows.
@@ -111,7 +111,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 > `getdata` message is mainly used to get the `inv` message with specific content hash.
 
 
-## 三、 Consensus Message Process
+## Consensus Message Process
 
 ###  Verification
 
