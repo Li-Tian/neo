@@ -1,109 +1,109 @@
-<center><h2> 哈希算法 </h2></center>
+﻿<center><h2> Hash Algorithm </h2></center>
 
-　哈希函数，又称散列算法，是一种从任何一种数据中创建数字“指纹”的方法。散列函数把消息或数据压缩成摘要，使得数据量变小，将数据的格式固定下来。该函数将数据打乱混合，重新创建一个叫做散列值（或哈希值）的指纹。散列值通常用一个短的随机字母和数字组成的字符串来代表。
+　Hash function, or hash algorithm, is a method creating digital finger print from any kind data. Hash function compresses message or data  into abstract to shrink data size & fix data size. This function disorgnizes & remixes data, rebuilding a finger print with the name Hash value. Hash value is always represented by a short string consisted of random letters and digits.
 
 ### RIPEMD160 
 
-​　  RIPEMD是一种加密哈希函数，由鲁汶大学 Hans Dobbertin, Antoon Bosselaers 和 Bart Prenee组成的COSIC 研究小组发布于1996年。 
+​　RIPEMD is an encryption hash function published by Hans Dobbertin, Antoon Bosselaers Bart Prenee from COSIC research team, University of Leuven in 1996.
 
-　RIPEMD160是基于RIPEMD改进的160位元版本，会产生一个160bit长的哈希值(可用16进制字符串表示)。其能表现出理想的雪崩效应(例如将d改成c，即微小的变化就能产生一个完全不同的哈希值)。
+　RIPEMD160 is a 160-bit improvement based on RIPEMD. This algorithm produces a 160-bit hash, which can be presented in hexadecimal format. One feature of this algorithm is avalanche effect, i.e. any slight changes can result in a totally different hash value.
 
-​　NEO使用RIPEMD160来生成合约脚本160bit的哈希值。
+​　NEO generates 160-bit hash of contract script with RIPEMD160.
 
 Example:
 
-| 字符串      | 哈希值                                   |
+| String value | Hash value                                   |
 | ----------- | ---------------------------------------- |
 | Hello World | 98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f |
 
 
-应用场景：
+Scenarios：
 
-1. 生成合约的哈希
+1. Generate contract hash.
 
 
 
 ### SHA256 
 
-　 SHA256是SHA-2下细分出的一种算法。SHA-2：一种密码散列函数算法标准，由美国国家安全局研发，属于SHA算法之一，是SHA-1的后继者。SHA-2下又可再分为六个不同的算法标准，包括了：SHA-224、SHA-256、SHA-384、SHA-512、SHA-512/224、SHA-512/256。
+　SHA256 is a kind of SHA-2 algorithm. SHA-2 is an encryption hash function algorithm standard produced by NSA. It belongs to SHA family & is a successor of SHA-1. SHA-2 has 6 different algorithm standards, including SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224 and SHA-512/256.
 
-　对于任意长度的消息，SHA256都会产生一个256bit长的哈希值(可用16进制字符串表示)。
+　SHA256 produces a 256-bit hash, which can be shown in hexadecimal format, for ang message length.
 
 Example:
 
-| 字符串      | 哈希值                                                       |
+| String value | Hash value                                                       |
 | ----------- | ------------------------------------------------------------ |
 | Hello World | a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e |
 
-应用场景：
+Scenarios:
 
-1. 计算合约的哈希
+1. Compute contract hash.
 
-2. 签名和确认签名
+2. Signing & Signing validation.
 
-3. Base58Check编解码
+3. Base58Check encoding / decoding.
 
-4. db3、NEP6钱包的密钥的存储、导出、验证
+4. db3、NEP6 wallet secret key storation, export & validation.
 
 
 
 ### Murmur3 
 
-　  Murmur 是一种非加密型哈希函数，适用于一般的哈希检索操作。由 Austin Appleby 在 2008 年发明，并出现了多个变种，都已经发布到了公有领域。与其它流行的哈希函数相比，对于规律性较强的 key，Murmur 的随机分布特征表现更良好。
+　  Murmur is kind of non-encryption hash algorithm and suits general hash indexing. It is proposed by Austin Appleby in 2008. These has been several derived variants published to public domain. Murmur's random distribution feature works better for key with strong regularity compared to other popular hash algorithms.
 
-其特点是：
+Features：
 
-   1. 碰撞率低
+   1. Low collision probability.
    
-   2. 计算速度快
+   2. Fast computing rate.
 
-   3. 擅长大文件的哈希
+   3. Good peformance for large files.
 
 Example:
 
-| 字符串 | 哈希值  |
+| String | Hash value |
 | ---|---|
 | Hello World |ce837619 |
 
 
-应用场景：
+Scenarios：
 
-1. 布隆过滤器
+1. Bloom filter
 
-2. leveldb存储
+2. leveldb storage
 
 ### Scrypt
 
-　  Scrypt算法是基于 PBKDF2-HMAC-SHA-256 算法之上的安全加密算法。由著名的 FreeBSD 黑客 Colin Percival 为他的备份服务 Tarsnap 开发的，当初的设计是为了降低 CPU 负荷，尽量少的依赖 cpu 计算，利用 CPU 闲置时间进行计算，因此 scrypt 不仅计算所需时间长，而且占用的内存也多，使得并行计算多个摘要异常困难，因此利用 rainbow table 进行暴力攻击更加困难。
+　  Scrypt is a kind of secure-encryption algorithm based on PBKDF2-HMAC-SHA-256 algorithm. It's developed by Colin Percival, a famous FreeBSD hacker, for his backup service Tarsnap. Original designing intention is computing during CPU idle time to reduce CPU load and the rely upon CPU computing. Scrypt's long computing time & heavy RAM cost makes parallel computing very difficult, which results in Scrypt's decent defensibility against rainbow table attacks.
 
-​　Neo中使用主要使用 SCRYPT 算法来生成满足 NEP-2 规范的加密型密钥，使用的参数为：
+​　Neo mainly use SCRYPT algorithm to generate encryption secret key satisfying NEP-2 standard. Parameters are defined as follows:
 
-　　N: CPU/内存消耗指数，一般取值为2的若干次方, 值 16384
+　　N: CPU/RAM cost，usually 2 ^ N. Default value is 16384.
 
-　　p: 并行计算参数，理论上取值范围为1-255，值越大越依赖于并发计算, 值 8
+　　p: Parallelization parameter, a positive integer ranges from 1 to 255. Bigger value represents heavier rely upon concurrent computation. Default value is 8.
 
-　　r：表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽， 值 8
+　　r: Block size，theoretically ranges from 1 to 255. Bigger value represents heavier rely upon RAM & bandwidth. Default value is 8.
 
 Example:
 
-| 数据 | 参数  | 哈希值  |
+| Data | Parameters  | Hash value  |
 |---|---|---|
 | Hello World | key:"I love code"<br>N:16384<br>p:8<br>r:8 | 17b94895fab004e035b3630a718b498f6<br>647458351f04b84b4a2c0bf1db963630fa<br>7bfd1c29663c7bf3556fd7ba6131e5ddfd6<br>40b9f6a2a9ad75d3d59b65f932 |
 
 > [!NOTE]
-> 上面的哈希值因为太长而成为多行，实际数据是连接的。
+> The hash value above is in one line.
 
 
 
-应用场景：
+Scenarios：
 
-1. NEP2格式密钥的导出。
+1. NEP2 format secret key export.
 
-2. NEP6钱包的密码效验。
+2. Password verification for NEP6 wallet.
 
-参考
+Reference
 
 1. <https://en.wikipedia.org/wiki/Scrypt>
 
 > [!NOTE]
-> 如果发现有死链接，请联系 <feedback@neo.org>
+> In case of dead links, please contact <feedback@neo.org>
