@@ -26,7 +26,7 @@ namespace Neo.Cryptography
         public uint Tweak { get; private set; }
 
         /// <summary>
-        /// 初始化Bloom filter
+        /// 初始化Bloom filter. 0xFBA4C795 in decimal is 4221880213. 
         /// </summary>
         /// <param name="m">位阵列的长度</param>
         /// <param name="k">互相独立的哈希函数的个数</param>
