@@ -1,61 +1,62 @@
-<center><h2>资产和账户</h2></center>
+<center><h2>Asset and Account</h2></center>
 
 ### **Asset**
 
 NEO中资产包含两种：一种是用户发行的UTXO类型的全局资产，NEO与GAS在创世块中被定义发行。另外一种是，用户通过智能合约发布的如NEP-5资产。前者信息记录在资产账户信息中，见下表，后者存储在合约的存储空间。
 
-| 尺寸 | 字段 | 名称 | 类型 | 描述 |
-|--|-------|-----|------|------|
-| 32  | AssetId | 资产Id | UInt256 | `assetid = tx.hash` |
-| 1 | AssetType | 类型 | AssetType | |
-| ? | Name | 资产名字 | string | 存放的是公钥列表 |
-| 8 | Amount | 总量 |Fixed8 |  `amount = -Fixed8.Satoshi = -1 = 无穷大`  |
-| 8 | Available | 剩余量 | Fixed8 |   |
-| 1 | Precision | 精度 | byte |   |
-|1 | FeeMode | 费用模式 | const byte |   |
-| 8 | Fee | 费用 | Fixed8 |   |
-| 20 | FeeAddress |  | UInt160 | 默认null   |
-| ? | Owner | 所有者 | ECPoint |   |
-| 20 | Admin | 管理员 | UInt160  |   |
-| 20 | Issuer | 发行者 | UInt160 |   |
-| 4 | Expiration | 过期时间 | uint  |   |
-| 1 | IsFrozen | 是否冻结 | bool |   |
+There are two kinds of assets in NEO, 
+
+| Size | Field  | Type | Description |
+|--|-------|------|------|
+| 32  | AssetId | UInt256 | `assetid = tx.hash` |
+| 1 | AssetType | AssetType | |
+| ? | Name | string | |
+| 8 | Amount  |Fixed8 |  `amount = -Fixed8.Satoshi = -1 = infinity`  |
+| 8 | Available | Fixed8 |   |
+| 1 | Precision | byte |   |
+|1 | FeeMode | const byte |   |
+| 8 | Fee  | Fixed8 |   |
+| 20 | FeeAddress | UInt160 | default `null`   |
+| ? | Owner  | ECPoint |   |
+| 20 | Admin  | UInt160  |   |
+| 20 | Issuer  | UInt160 |   |
+| 4 | Expiration  | uint  |   |
+| 1 | IsFrozen  | bool | Frozen assets, cannot be transferred  |
 
 > [!NOTE]
-> 总量的模式有两种: 一种不限量，总量设置为` -Fixed8.Satoshi`，表示无穷大. 另外一种是限定不可修改的总量。
+> There are two models of `Amount`: One is unlimited, the amount is set to `-Fixed8.Satoshi`, means infinity. The other is to fixed amount cannot be modified currently.
 
 ### **AssetType**
 
-| 字段 | 值 | 描述 |
+| Type | Value | Description |
 |-------|-----|----|
 | CreditFlag | 0 |  |
 | DutyFlag | 0x80 |  |
 | GoverningToken | 0x00 | Neo |
 | UtilityToken | 0x01 | Gas |
 | Currency | 0x08 |  |
-| Share | DutyFlag &#124; 0x10 | 股权类 |
+| Share | DutyFlag &#124; 0x10 | Equity-like assets |
 | Invoice | DutyFlag &#124; 0x18 |  |
-| Token | CreditFlag &#124; 0x20 | 普通token |
+| Token | CreditFlag &#124; 0x20 | Normal token |
 
 > [!NOTE]
-> 资产类型包含`DutyFlag`值时，都需要进行收款方签名。
+>  Asset with `DutyFlag`, needs the signature of the payee. 
 
-
-| 资产名称 | 类型 | 值 |  总量 | 描述 |
+| Asset Name | Type | Value |  Amount | Description |
 |-------|----|-----|-------|--------|
-| NEO |  AssetType.GoverningToken | 0x00 | 1亿 | 一次性发放，创世块中全部转移到备用共识节点多方签名合约地址上 | 
-| GAS | AssetType.UtilityToken | 0x01 | 1亿 | 按区块新增，持有NEO的用户通过`ClaimTransaction`提取GAS |
+| NEO |  AssetType.GoverningToken | 0x00 | 100 million | All of which are transferred to the address of the standby consensus nodes' multi-signature contract in Genesis Block | 
+| GAS | AssetType.UtilityToken | 0x01 | 100 million | By block release, NEO holders claim GAS through `ClaimTransacion`. |
 
 
 
 ### **Account**
 
-NEO网络中，账户(account)模型和UTXO模型并存。账户记录了UTXO类型的全局资产的用户资金，也记录了NEP5资产。
+In NEO, the account model and UTXO model coexist. Accounts record the UTXO-type global assets, and NEP5 TOKEN-type assets also.
 
-| 尺寸 | 字段 | 名称 | 类型 | 描述 |
-|--|-------|-----|------|------|
-| 20  | ScriptHash | 地址脚本hash | UInt160 |   |
-| 1 | IsFrozen | 是否冻结 | bool |  冻结用户的资产不能转账  |
-| ? * ? | Votes | 投票地址 | ECPoint[] | 投票地址列表 |
-| ? | Balances | UTXO资产 |Dict<UInt256, Fixed8> | 资产Id -> 数量  |
+| Size | Field  | Type | Descriptoin |
+|--|-------|-----|------|
+| 20  | ScriptHash  | UInt160 | The hash of account's script contract.  |
+| 1 | IsFrozen  | bool |  Fronzen accounts cannot transfer.  |
+| ? * ? | Votes  | ECPoint[] | the voted address list |
+| ? | Balances  |Dict<UInt256, Fixed8> | UTXO assets, mapping from assetId to amount.  |
 
