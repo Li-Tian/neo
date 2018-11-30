@@ -4,7 +4,7 @@
   href: conventions.md
 - name: Neo-cli Structure
   href: neo_cli_structure.md
-- name: The Blockchain Paradigm
+- name: Cryptography
   href: cryptography/encode_algorithm.md
   items:
      - name: Encoding Algorithm
@@ -17,32 +17,32 @@
        href: cryptography/merkle_tree.md
      - name: Bloom Filter
        href: cryptography/bloom_filter.md
-- name: 区块，交易，账户等模型
+- name: Blockchain Model
   href: blockchain/neo_system.md
   items:
     - name: Token Model
       href: blockchain/token_model.md
-    - name: 收费模型
+    - name: Charging Model
       href: blockchain/charging_model.md
-    - name: UTXO模型
+    - name: UTXO
       href: blockchain/utxo.md
-    - name: 区块
+    - name: Block
       href: blockchain/blockchain_datastructure.md
     - name: Transaction
       href: blockchain/transaction.md
-    - name: 账户和资产
+    - name: Asset and Account
       href: blockchain/account_asset.md
-    - name: 验证人
+    - name: Validator
       href: blockchain/validator.md
     # - name: 钱包
     #   href: blockchain/wallets.md
 
 # “钱包”被移动到“区块链系统”下面
-- name: 交易流程
+- name: Transaction Execution
   href: tx_execution.md
-- name: 钱包
+- name: Wallets
   href: wallets.md
-- name: 网络协议
+- name: Network Protocol
   href: network_protocol.md
 - name: Consensus Mechanism
   href: consensus/readme.md
