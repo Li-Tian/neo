@@ -3,14 +3,14 @@
 namespace Neo.IO.Data.LevelDB
 {
     /// <summary>
-    /// LevelDB分装的DB操作类，提供基本的 Get, Delete, Put, BatchWrite, Snapshot等操作
+    /// LevelDB封装的DB操作类，提供基本的 Get, Delete, Put, BatchWrite, Snapshot等操作
     /// </summary>
     public class DB : IDisposable
     {
         private IntPtr handle;
 
         /// <summary>
-        /// 若有没有获取到合法的句柄时, 返回Ture
+        /// 若没有获取到合法的句柄时, 返回Ture
         /// </summary>
         public bool IsDisposed => handle == IntPtr.Zero;
 
@@ -92,7 +92,7 @@ namespace Neo.IO.Data.LevelDB
         ///  打开数据库
         /// </summary>
         /// <param name="name">数据库路径</param>
-        /// <returns></returns>
+        /// <returns>DB实例</returns>
         public static DB Open(string name)
         {
             return Open(name, Options.Default);
@@ -103,7 +103,7 @@ namespace Neo.IO.Data.LevelDB
         /// </summary>
         /// <param name="name">数据库路径</param>
         /// <param name="options">数据库打开相关设置</param>
-        /// <returns></returns>
+        /// <returns>DB实例</returns>
         /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
         public static DB Open(string name, Options options)
         {
