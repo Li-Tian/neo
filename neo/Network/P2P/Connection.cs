@@ -7,20 +7,36 @@ using System.Threading;
 
 namespace Neo.Network.P2P
 {
+    /// <summary>
+    /// 一个抽象类，用于描述本地节点与远端节点建立的一个连接。
+    /// </summary>
     public abstract class Connection : UntypedActor
     {
         internal class Timer { public static Timer Instance = new Timer(); }
         internal class Ack : Tcp.Event { public static Ack Instance = new Ack(); }
-
+        /// <summary>
+        /// 远端节点的IP和端口
+        /// </summary>
         public IPEndPoint Remote { get; }
+        /// <summary>
+        /// 本地节点的IP和端口
+        /// </summary>
         public IPEndPoint Local { get; }
+        /// <summary>
+        /// 监听的端口
+        /// </summary>
         public abstract int ListenerPort { get; }
 
         private ICancelable timer;
         private readonly IActorRef tcp;
         private readonly WebSocket ws;
         private bool disconnected = false;
-
+        /// <summary>
+        /// 构造方法
+        /// </summary>
+        /// <param name="connection">一个TCP连接对象</param>
+        /// <param name="remote">远端节点的IP和端口</param>
+        /// <param name="local">本地节点的IP和端口</param>
         protected Connection(object connection, IPEndPoint remote, IPEndPoint local)
         {
             this.Remote = remote;
@@ -58,7 +74,10 @@ namespace Neo.Network.P2P
                 },
                 failure: ex => new Tcp.ErrorClosed(ex.Message));
         }
-
+        /// <summary>
+        /// 断开连接
+        /// </summary>
+        /// <param name="abort">是否直接停止</param>
         public void Disconnect(bool abort = false)
         {
             disconnected = true;
@@ -72,13 +91,26 @@ namespace Neo.Network.P2P
             }
             Context.Stop(Self);
         }
-
+        /// <summary>
+        /// 接收到TCP连接传递的ACK信号时的处理方法
+        /// </summary>
         protected virtual void OnAck()
         {
         }
-
+        /// <summary>
+        /// 处理从网络上的接收到的数据
+        /// </summary>
+        /// <param name="data">从网络上的接收到的数据</param>
         protected abstract void OnData(ByteString data);
-
+        /// <summary>
+        /// 接收到Akka框架传递的消息时的处理方法
+        /// 主要处理的消息类型有：
+        /// 1、超时
+        /// 2、TCP的ACK回应
+        /// 3、接收到tcp数据
+        /// 3、tcp连接关闭
+        /// </summary>
+        /// <param name="message">Akka框架传递的消息</param>
         protected override void OnReceive(object message)
         {
             switch (message)
@@ -111,7 +143,9 @@ namespace Neo.Network.P2P
                 Disconnect(true);
             }
         }
-
+        /// <summary>
+        /// 停止连接和数据发送
+        /// </summary>
         protected override void PostStop()
         {
             if (!disconnected)
@@ -120,7 +154,10 @@ namespace Neo.Network.P2P
             ws?.Dispose();
             base.PostStop();
         }
-
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        /// <param name="data">待发送的数据</param>
         protected void SendData(ByteString data)
         {
             if (tcp != null)
