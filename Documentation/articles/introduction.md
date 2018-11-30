@@ -12,9 +12,9 @@ If you are not a technician, you can read [NEO's White Paper](http://docs.neo.or
 
 This document is mainly used to describe the design of NEO network nodes, but does not cover the list of command-line functions and JSON-RPC functions of neo-cli, and the usage of neo-gui. If you need to understand these parts, you can refer to the links below.
 
- - [NEO-CLI Command Reference](http://docs.neo.org/en-us/node/cli/cli.html)<BR>
- - [NEO JSON-RPC API Reference](http://docs.neo.org/en-us/node/cli/2.9.0/api.html)<BR>
- - [NEO-GUI](http://docs.neo.org/en-us/node/gui/install.html)<BR>
+ - [NEO-CLI Command Reference](http://docs.neo.org/en-us/node/cli/cli.html)<BR>
+ - [NEO JSON-RPC API Reference](http://docs.neo.org/en-us/node/cli/2.9.0/api.html)<BR>
+ - [NEO-GUI](http://docs.neo.org/en-us/node/gui/install.html)<BR>
 
 > [!NOTE]
 > - The documentation is constantly being updated. If you find errors or omissions, problems with links 404, or you have suggestions for improvement, or you are willing to translate it into other languages, please write to <feedback@neo.org>.
