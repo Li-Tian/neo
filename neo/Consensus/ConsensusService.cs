@@ -43,7 +43,7 @@ namespace Neo.Consensus
         /// </summary>
         private readonly ConsensusContext context;
         private readonly NeoSystem system;
-
+        private ICancelable timer_token;
         /// <summary>
         /// The latest block received time
         /// </summary>
@@ -106,7 +106,8 @@ namespace Neo.Consensus
         /// <param name="delay">`delay` seconds timeout</param>
         private void ChangeTimer(TimeSpan delay)
         {
-            Context.System.Scheduler.ScheduleTellOnce(delay, Self, new Timer
+            timer_token.CancelIfNotNull();
+            timer_token = Context.System.Scheduler.ScheduleTellOnceCancelable(delay, Self, new Timer
             {
                 Height = context.BlockIndex,
                 ViewNumber = context.ViewNumber
