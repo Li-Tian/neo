@@ -1,46 +1,46 @@
-# NEO 系统中的技术约定
+# Conventions
 
-　NEO 网络系统在传输和存储上，使用了下述基本的技术约定。
+　The NEO network system uses the following basic technical conventions for transmission and storage.
 
-## 字节序
+## Byte Order
 
-　NEO 系统中所有的整数类型都是采用小端序 (Little Endian) 编码，只有在传输 IP 地址和端口号采用大端序 (Big Endian) 编码。
+　All integer types of NEO are Little Endian except for IP address and port number, these 2 are Big Endian.
 
-## 散列(哈希算法)
+## Hash Algorithm
 
-　NEO 系统中主要会用到 2 种不同的散列函数：SHA256 和 RIPEMD160。前者用于生成较长的散列值(32字节)，而后者用于生成较短的散列值(20字节)。通常生成一个对象的散列值时，会运用两次散列函数，例如要生成区块或交易的散列时，会计算两次 SHA256；生成合约地址时，会先计算脚本的 SHA256 散列，然后再计算上一个散列的 RIPEMD160 散列。
+　Two different hash functions are used in the NEO system: SHA256 and RIPEMD160. The former is used to generate a longer hash value (32 bytes) and the latter is used to generate a shorter hash value (20 bytes). Usually when a hash value of an object is generated, hash functions are used twice. For example, when a hash of a block or transaction is generated, SHA256 is calculated twice; when a contract address is generated, the SHA256 hash of the script is calculated, then the NSPEMD160 hash of the previous hash is calculated.
 
-　此外，区块中还会用到一种散列树 (Merkle Tree) 的结构，它将每一笔交易的散列两两相接后再计算一次散列，并重复以上过程直到只剩下一个根散列 (Merkle Root)。
+　In addition, the block will also use a hash structure called a Merkle Tree. It computes the hash of each transaction and combines one with the next and then hash again. Repeats this process until there is only one root hash (Merkle Root).
 
-　细节将在后续章节中描述。
+　Details will be described in subsequent chapters.
 
-## 变长类型
+## Variable Length Types
 
-### varint：变长整数，可以根据表达的值进行编码以节省空间。
+ * varint: A variable-length integer that can be encoded differently based on the value to save space.
 
-| 值            | 长度 | 格式          |
-| ------------- | ---- | ------------- |
-| < 0xfd        | 1    | uint8         |
-| <= 0xffff     | 3    | 0xfd + uint16 |
-| <= 0xffffffff | 5    | 0xfe + uint32 |
-| > 0xffffffff  | 9    | 0xff + uint64 |
+      |Value|Length|Format|
+      |---|---|---|
+      |< 0xfd|1|uint8|
+      |<= 0xffff|3|0xfd + uint16|
+      |<= 0xffffffff|5|0xfe + uint32|
+      |> 0xffffffff|9|0xff + uint64|
 
-### varstr：变长字符串，由一个变长整数后接字符串构成。字符串采用 UTF8 编码。
+ * varstr: A variable-length string consisting of a variable-length integer followed by a string. The string is encoded in UTF8.
 
-| 尺寸   | 字段   | 数据类型      | 说明          |
-| ------ | ------ | ------------- | ------------- |
-| ?      | length | varint        | 字符串的长度，以字节为单位 |
-| length | string | uint8[length] | 字符串本身    |
+      |Size|Field|DataType|Description|
+      |---|---|---|---|
+      |?|length|varint|The length of the string in bytes|
+      |length|string|uint8[length]|string itself|
 
-### array：数组，由一个变长整数后接元素序列构成。
+ * Array: An array consisting of a variable-length integer followed by a sequence of elements.
 
-| 尺寸   | 字段   | 数据类型      | 说明          |
-| ------ | ------ | ------------- | ------------- |
-| ?      | length | varint        | 数组的长度，以数组成员数量为单位 |
-| ?      | data   | 数组元素类型  | 数组成员 |
-| ?      | data   | 数组元素类型  | 数组成员 |
-| ...    | ...    | ...           | ...      |
+      | Size | Field | Data Type | Description |
+      | ---- | ----- | --------- | ----------- |
+      | ?    | length | varint | The length of the array, in number of array members |
+      | ?    | data | Array Element Type | Array Members |
+      | ?    | data | Array Element Type | Array Members |
+      | ... | ... | ... | ... |
 
-## 定点数(Fixed8)
+## Fixed-point Number(Fixed8)
 
-　NEO 系统中的金额、价格等数据，统一采用 64 位定点数，小数部分精确到 10<sup>-8</sup>，可表示的范围是：[-2<sup>63</sup>/10<sup>8</sup>, +2<sup>63</sup>/10<sup>8</sup>)
+　Data in NEO such as amount or price are 64 bit fixed-point number and the precision of decimal part is 10<sup>-8</sup>，range：[-2<sup>63</sup>/10<sup>8</sup>, +2<sup>63</sup>/10<sup>8</sup>)

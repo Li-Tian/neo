@@ -1,44 +1,44 @@
 <center><h2> NEO-CLI </h2></center>
 
-　neo 是一个基于点对点网络的区块链系统。它提供基于 UTXO 模型的数字资产记账功能，以及一个基于 neo 虚拟机的智能合约的执行环境。 本章将描述网络中节点程序 neo-cli 的整体结构和基本行为。
+　Neo is a blockchain system based on a peer-to-peer network. It provides digital asset accounting based on the UTXO model and an execution environment for smart contracts based on the neo virtual machine. This chapter describes the overall structure and basic behavior of the node program neo-cli in the network.
 
-## 整个网络
+## Whole Network
 
 [![neo p2p network](../images/neo_cli_structure/neo-p2p-network.png)](../images/neo_cli_structure/neo-p2p-network.png)
 
-　网络中的每个节点运行一个 neo-cli 程序或者协议兼容程序。其中参与共识的是共识节点。不参与共识的是非共识节点。关于共识将在后续章节中描述。
+　Each node in the network runs a neo-cli program or a protocol-compatible program. Among them, the consensus nodes involve in the consensus. Non-consensus nodes are not involved in the consensus. The consensus will be described in subsequent chapters.
 
 ## neo-cli
 
-　neo-cli 的结构如下图。（由于版本升级，部分结构可能会有变化 ）
+　The structure of neo-cli is shown below. (Some structures may change due to version upgrade)
 
 [![neo-cli structure](../images/neo_cli_structure/neo-cli.png)](../images/neo_cli_structure/neo-cli.png)
 
-### neo-cli命令行
-　neo-cli 是一个命令行程序。通过命令行控制台提供与区块链交互的基本功能。可以通过下述链接找到 neo-cli 的命令的详细说明。
+### neo-cli command line tools
+　Neo-cli is a command line program. Provides basic functionality for interacting with the blockchain through the command line console. A detailed description of the neo-cli command can be found at the link below.
 
 <http://docs.neo.org/en-us/node/cli/cli.html>
 
 
-### 账本 API
+### Ledger API
 
-　账本API定义了UTXO模型的基本数据类型，包括交易，区块，记账人等基础数据结构，细节在后续章节中介绍。或者请查看API文档了解细节。
+　The ledger API defines the basic data types of the UTXO model, including basic data structures such as transaction, block, and validator. The details are described in subsequent chapters. Or check the API documentation for details.
 
-### 钱包
+### Wallets
 
-　neo的官方实现提供两种格式的钱包，一种是sqlite数据库格式的钱包，另一种是NEP-6钱包。sqlite格式钱包的优点是性能相对较好，缺点是适用的平台不如 NEP-6 钱包更广泛。
+　The official implementation of neo provides two types of wallets, one is the sqlite database format wallet, and the other is the NEP-6 wallet. The advantage of the sqlite format wallet is that the performance is relatively better. The disadvantage is that the applicable platform is not as wide as the NEP-6 wallet.
 
 ### LevelDBStore / Blockchain
 
-　基于leveldb实现的区块链数据管理模块。向其它部分提供区块链数据的存储和查询服务。
+　Blockchain data management module based on leveldb. Provide storage and query services of blockchain data for other parts.
 
 ### LocalNode
 
-　节点的网络通信的模块。负责与网络中的其它节点交换信息。细节将在后续章节中介绍。
+　It is the module for network communication between nodes. It is responsible for exchanging information with other nodes in the network. Details will be covered in subsequent chapters.
 
 ### RpcServer
 
-　一个向外提供 RPC 调用接口的模块。可以通过下述链接查看 RPC 编程接口的细节。
+　A module that provides an RPC interface to outer system. The details of the RPC programming interface can be found at the link below.
 
 <http://docs.neo.org/en-us/node/cli/2.9.0/api.html>
 
@@ -47,6 +47,7 @@
 ### ConsensusService
 
 　在 neo 的网络中，只有共识节点需要启动共识服务。共识节点通过点对点网络与其它共识节点交换信息，完成区块链中生成新的区块的过程。
+　In neo's network, only consensus nodes need to start consensus service. The consensus node exchanges information with other consensus nodes through the peer-to-peer network to complete the process of generating new blocks in the blockchain.
 
 　细节将在后续章节中介绍。
 
