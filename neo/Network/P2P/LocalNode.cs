@@ -13,23 +13,50 @@ using System.Threading;
 
 namespace Neo.Network.P2P
 {
+    /// <summary>
+    /// 描述本地节点的类，是Peer类的子类
+    /// </summary>
     public class LocalNode : Peer
     {
-        public class Relay { public IInventory Inventory; }
+        /// <summary>
+        /// 定义的接收Akka传递的消息类型，描述需要转发的数据
+        /// </summary>
+        public class Relay {
+            /// <summary>
+            /// Inventory数据
+            /// </summary>
+            public IInventory Inventory;
+        }
         internal class RelayDirectly { public IInventory Inventory; }
         internal class SendDirectly { public IInventory Inventory; }
-
+        /// <summary>
+        /// 协议版本
+        /// </summary>
         public const uint ProtocolVersion = 0;
 
         private readonly NeoSystem system;
         internal readonly ConcurrentDictionary<IActorRef, RemoteNode> RemoteNodes = new ConcurrentDictionary<IActorRef, RemoteNode>();
-
+        /// <summary>
+        /// 已连接节点数量
+        /// </summary>
         public int ConnectedCount => RemoteNodes.Count;
+        /// <summary>
+        /// 备用节点数量
+        /// </summary>
         public int UnconnectedCount => UnconnectedPeers.Count;
+        /// <summary>
+        /// 本地节点的一个随机数
+        /// </summary>
         public static readonly uint Nonce;
+        /// <summary>
+        /// 节点软件的名称和版本的描述信息
+        /// </summary>
         public static string UserAgent { get; set; }
 
         private static LocalNode singleton { get; set; }
+        /// <summary>
+        /// LocalNode的单例
+        /// </summary>
         public static LocalNode Singleton
         {
             get
@@ -45,7 +72,10 @@ namespace Neo.Network.P2P
             Nonce = (uint)rand.Next();
             UserAgent = $"/{Assembly.GetExecutingAssembly().GetName().Name}:{Assembly.GetExecutingAssembly().GetVersion()}/";
         }
-
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="system">NeoSystem系统对象</param>
         public LocalNode(NeoSystem system)
         {
             lock (GetType())
@@ -84,7 +114,11 @@ namespace Neo.Network.P2P
             if (ipAddress == null) return null;
             return new IPEndPoint(ipAddress, port);
         }
-
+        /// <summary>
+        /// 从种子节点列表中读取指定个数个备用节点
+        /// </summary>
+        /// <param name="seedsToTake">读取个数</param>
+        /// <returns>选区的备用节点</returns>
         private static IEnumerable<IPEndPoint> GetIPEndPointsFromSeedList(int seedsToTake)
         {
             if (seedsToTake > 0)
@@ -109,17 +143,28 @@ namespace Neo.Network.P2P
                 }
             }
         }
-
+        /// <summary>
+        /// 获取远端节点
+        /// </summary>
+        /// <returns>远端节点</returns>
         public IEnumerable<RemoteNode> GetRemoteNodes()
         {
             return RemoteNodes.Values;
         }
-
+        /// <summary>
+        /// 获取未连接备用节点列表
+        /// </summary>
+        /// <returns>未连接备用节点列表</returns>
         public IEnumerable<IPEndPoint> GetUnconnectedPeers()
         {
             return UnconnectedPeers;
         }
-
+        /// <summary>
+        /// 获取更多的种子节点
+        /// 1、当本地节点与其他节点有连接时，会向其请求备用节点列表
+        /// 2、当本地节点未与其他节点有连接时，会从配置文件中读取备用节点列表
+        /// </summary>
+        /// <param name="count">需求的数量</param>
         protected override void NeedMorePeers(int count)
         {
             count = Math.Max(count, 5);
@@ -132,7 +177,10 @@ namespace Neo.Network.P2P
                 AddPeers(GetIPEndPointsFromSeedList(count));
             }
         }
-
+        /// <summary>
+        /// 用于LocalNode对象接收和处理其他对象通过Akkak框架传来的消息
+        /// </summary>
+        /// <param name="message">消息</param>
         protected override void OnReceive(object message)
         {
             base.OnReceive(message);
@@ -171,12 +219,22 @@ namespace Neo.Network.P2P
         {
             Connections.Tell(inventory);
         }
-
+        /// <summary>
+        /// 创建一个本地节点对象
+        /// </summary>
+        /// <param name="system">NEO系统对象</param>
+        /// <returns>本地节点对象</returns>
         public static Props Props(NeoSystem system)
         {
             return Akka.Actor.Props.Create(() => new LocalNode(system));
         }
-
+        /// <summary>
+        /// 创建一个远端节点对象
+        /// </summary>
+        /// <param name="connection">一个连接对象</param>
+        /// <param name="remote">远端节点的IP和端口</param>
+        /// <param name="local">本地节点的IP和端口</param>
+        /// <returns>远端节点对象</returns>
         protected override Props ProtocolProps(object connection, IPEndPoint remote, IPEndPoint local)
         {
             return RemoteNode.Props(system, connection, remote, local);

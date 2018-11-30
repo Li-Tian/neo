@@ -67,10 +67,10 @@ namespace Neo.Wallets.SQLite
         ///                      钱包文件内相关信息构建钱包对象</param>
         /// <remarks>
         /// 钱包内存储的相关字段：
-        /// IV：
-        /// PasswordHash：
-        /// MasterKey：
-        /// Version：
+        /// IV：AES使用的初始向量
+        /// PasswordHash：密码的哈希，密码做SHA256生成
+        /// MasterKey：AES加密后的密文
+        /// Version：版本号
         /// </remarks>
         private UserWallet(WalletIndexer indexer, string path, byte[] passwordKey, bool create)
         {
@@ -178,7 +178,10 @@ namespace Neo.Wallets.SQLite
                     ctx.SaveChanges();
                 }
         }
-
+        /// <summary>
+        /// 发送交易，将交易添加进未确认交易列表，并发出通知触发委托
+        /// </summary>
+        /// <param name="tx">交易对象</param>
         public override void ApplyTransaction(Transaction tx)
         {
             lock (unconfirmed)
@@ -409,7 +412,11 @@ namespace Neo.Wallets.SQLite
                     yield return account;
             }
         }
-
+        /// <summary>
+        /// 获取指定账户集合所持有的Coin的集合
+        /// </summary>
+        /// <param name="accounts">指定账户集合</param>
+        /// <returns>持有的Coin的集合</returns>
         public override IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts)
         {
             if (unconfirmed.Count == 0)

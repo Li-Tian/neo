@@ -1,4 +1,4 @@
-﻿<center><h2> Network Structure: P2P </h2></center>
+<center><h2> Network Structure: P2P </h2></center>
 
 &emsp;&emsp;NEO uses P2P network structure and TCP/IP protocol for transamission.
 There are 2 node types in network, ordinary node & consensus node. The former can perform transaction/block broadcasting, receiving and relaying, while the later can furthermore perform block construction.
@@ -57,6 +57,7 @@ Message's basic format is as follows:
 | pong |  |  | 〇 | To do |
 | reject |  |  | 〇 | To do |
 | others |  |  | 〇 | Neglected |
+
 
 > [!NOTE]
 > * Uniqueness：Only one such message in message queue at the same time.
