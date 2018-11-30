@@ -496,7 +496,7 @@ namespace Neo.IO.Data.LevelDB
       
         #region Cache 
         /// <summary>
-        /// 创建LRC缓存
+        /// 创建LRU缓存
         /// </summary>
         /// <param name="capacity">缓存大小</param>
         /// <returns>LRU缓存</returns>

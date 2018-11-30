@@ -21,6 +21,9 @@ namespace Neo.IO.Data.LevelDB
             NativeHelper.CheckError(error);
         }
 
+        /// <summary>
+        /// 释放资源，包括Leveldbd迭代器以及句柄释放
+        /// </summary>
         public void Dispose()
         {
             if (handle != IntPtr.Zero)
@@ -89,7 +92,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 检查句柄是否合法
         /// </summary>
-        /// <returns></returns>
+        /// <returns>合法则返回true,否则返回false</returns>
         public bool Valid()
         {
             return Native.leveldb_iter_valid(handle);
