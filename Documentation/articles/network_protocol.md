@@ -1,122 +1,122 @@
-<center><h2> 网络架构：P2P </h2></center>
+﻿<center><h2> Network Structure: P2P </h2></center>
 
-&emsp;&emsp;在网络结构上，NEO 采用点对点网络结构，并使用 TCP/IP 协议进行通讯。
-网络中存在两种节点类型，分别是普通节点和共识节点。普通节点可以广播、接收和转发交易、区块等，而共识节点可以创建区块。
-NEO 的网络协议规范与比特币的协议大致类似，但在区块、交易等的数据结构上有很大的不同。
+&emsp;&emsp;NEO uses P2P network structure and TCP/IP protocol for transamission.
+There are 2 node types in network, ordinary node & consensus node. The former can perform transaction/block broadcasting, receiving and relaying, while the later can furthermore perform block construction.
+Neo's network protocol standard is similiar to that of Bitcoin, but varies a lot in block / transaction data structure .
 
 > [!NOTE]
-> ・NEO 网络中的种子节点不是共识节点，它们是普通节点的一种，向其它节点提供询问节点列表的服务。<BR>
-> ・NEO 网络还支持 WebSocket 链接，以及通过 UPnP 协议来实现在局域网提供节点服务(Optional)。
+> ・In NEO network, seed node is not equal to consensus node. It's a kind of ordinary node which providse node list requiring service to other nodes. <BR>
+> ・NEO network also supports WebSocket connection and LAN node service by UPnP protocol(Optional).
 
-## 通讯协议和端口：
+## Transamission Protocol and Port:
 
-| 协议 | 端口(主网) | 端口(测试网) |
+| Protocol | Port (Main net) | Port (Test net) |
 | --- | --- |
 | TCP/IP | 10333 | 20333 |
 | WebSocket | 10334 | 20334 |
 
 > [!TIP]
-> 搭建 NEO 私有链时，可以设置端口为任意未使用的端口。节点之间也可以使用不同的端口。
+> Port can be set to any unused one when building NEO private chain. Ports of nodes can also be different.
 
-## 报文：Message
+## Message
 
-报文(Message)的基本格式如下
+Message's basic format is as follows:
 
-| 类型 | 名称 | 说明 |
+| Type | Name | Description |
 | --- | --- | --- |
-| uint | Magic | 魔法数字用来避免网络冲突 |
-| string(12) | Command | 字符串报文名称(不足12个字节时补零) |
-| int | Payload length | Payload 长度 |
-| uint | Payload Checksum | Payload 校验，避免篡改和传输错误 |
-| byte[] | Payload | 报文的正文内容，根据报文种类不同而不同 |
+| uint | Magic | Magic number to avoid network conflict |
+| string(12) | Command | String message name (Fill with zeros if shorter than 12 byte) |
+| int | Payload length | Payload length |
+| uint | Payload Checksum | Payload verification to avoid falsification and transmission errors |
+| byte[] | Payload | Message text, varying by message type |
 
-## 命令列表(Command List)：
+## Command List:
 
-| <nobr>名称</nobr> | <nobr>唯一性</nobr> | <nobr>高优先级</nobr> | <nobr>保留</nobr> | 说明 |
+| <nobr>Name</nobr> | <nobr>Uniqueness</nobr> | <nobr>High priority</nobr> | <nobr>Reserved</nobr> | Description |
 | --- | --- | --- | --- | --- |
-| addr | 〇 |  |  | 应答 getaddr 消息。发送最多不超过200条成功连接的节点地址和端口号。|
-| block |  |  |  | 应答 getdata 消息。返回指定哈希值的Block。 |
-| consensus |  | 〇 |  | 应答 getdata 消息。返回指定哈希值的共识数据。 |
-| filteradd |  | 〇 |  | 向bloom_filter添加数据。用与轻量级钱包。 |
-| filterclear |  | 〇 |  | 清空bloom_filter。用与轻量级钱包。 |
-| filterload |  | 〇 |  | 初始化bloom_filter。用与轻量级钱包。 |
-| getaddr | 〇 | 〇 |  | 询问其它节点的地址和端口号。 |
-| getblocks | 〇 |  |  | 指定开始和结尾的哈希值，获取若干连续区块的详细信息。 |
-| getdata |  |  |  | 询问其它节点获取指定种类和哈希的Inventory对象。<br>目前有以下场景发送getdata消息。<br>1)共识过程中发送获取交易(Transaction)的请求。<br>2)收到inv消息以后发送getdata消息。 |
-| getheaders | 〇 |  |  | 在两个节点创建连接以后，少的一方向多的一方请求区块头。 |
-| headers |  |  |  | 应答 getheaders 消息。最多发送不超过2000条区块头。 |
-| inv |  |  |  | 发送指定种类和哈希值的若干个Inventory的哈希值数组（只有哈希值，没有完整数据）。Inventory的种类包括区块(Block)、交易(Transaction)、共识(Concensus)。目前有以下场景发送inv消息。<br>1)共识过程中发送交易。<br>2)应答 getblocks 消息。发送少于500个区块。<br>3)应答 mempool 消息。发送整个内存池中的交易。<br>4)传递(Relay)一个Inventory。<br>5)传递(Relay)一批交易。 |
-| mempool | 〇 | 〇 |  | 请求对方节点整个内存池中的交易。 |
-| tx |  |  |  | 应答 getdata 消息。返回指定哈希值的Transaction。 |
-| verack | - | 〇 | - | 第二个指令：握手应答Version。 |
-| version | - | 〇 | - | 第一个指令：携带区块头高度等信息。 |
-| alert |  | 〇 | 〇 | 未实现 |
-| merkleblock |  |  | 〇 | 发送已经实现，接收未实现。用于轻量级钱包。 |
-| notfound |  |  | 〇 | 未实现 |
-| ping |  |  | 〇 | 未实现 |
-| pong |  |  | 〇 | 未实现 |
-| reject |  |  | 〇 | 未实现 |
-| 其它 |  |  | 〇 | 忽略 |
+| addr | 〇 |  |  | Answers getaddr message with at most 200 succesfully connected node address and port number. |
+| block |  |  |  | Answers getdata message with Block of specified hash. |
+| consensus |  | 〇 |  | Answers getdata message with consensus data of specified hash. |
+| filteradd |  | 〇 |  | Adds data to bloom_filter for light-class wallet. |
+| filterclear |  | 〇 |  | Remove bloom_filter for light-class wallet. |
+| filterload |  | 〇 |  | Initialize bloom_filter for light class wallet. |
+| getaddr | 〇 | 〇 |  | Queries address and port numer of other nodes. |
+| getblocks | 〇 |  |  | Get detailed information of continuous nodes between specifid start and end hash. |
+| getdata |  |  |  | Queries other nodes for Inventory objects od specified tyoe and hash. <br>Current usage: <br>1)Sending get-Transaction query during cnsensus process. <br>2)Sending getdata message upon receiving inv message. |
+| getheaders | 〇 |  |  | Node with fewer information queries for block head after two nodes establish connection. |
+| headers |  |  |  | Answers getheaders message with at most 2000 block header items. |
+| inv |  |  |  | Send Inventory hash array of specified type & hash (only hash value rather than complete information). Inventory types include Block, Transaction, Consensus)。Currenty inv message is used these scenarios: <br>1)Sending transaction in consensus process. <br>2)Replying getblocks message with no more than 500 blocks. <br>3) Replying mempool message with all transactions in memory pool. <br>4) Relaying an Inventory. <br>5) Relaying a batch of transactions. |
+| mempool | 〇 | 〇 |  | Queries for all transactions in the other side's memory pool. |
+| tx |  |  |  | Answering getdata message with transaction with specified hash. |
+| verack | - | 〇 | - | Sencond instruction: handshake Version |
+| version | - | 〇 | - | First instruction: with information like block header height, etc. |
+| alert |  | 〇 | 〇 | To do |
+| merkleblock |  |  | 〇 | Sending has been realized while receving not. For light-class wallet. |
+| notfound |  |  | 〇 | To do |
+| ping |  |  | 〇 | To do |
+| pong |  |  | 〇 | To do |
+| reject |  |  | 〇 | To do |
+| others |  |  | 〇 | Neglected |
 
 > [!NOTE]
-> * 唯一性：同一时间在消息队列中只有一条此消息在排队。
-> * 高优先级：系统需要保证高优先级的消息在网络中优先传播，优先处理。
+> * Uniqueness：Only one such message in message queue at the same time.
+> * High priority：System need to guarantee higher priority message transamitted with higher priority.
 
-## 对话协议
+## Conversation protocol
 
-1. 首先 neo 节点会与种子节点连接。
+1. Firstly neo node tries connecting with seed nodes.
 
-2. 节点连接成功后，首先会发送 version 消息，并等待接收 version 消息。version中携带区块高度。
+2. Sends firstly version message upon connecting successfully and waits for version message. Local block height is contained in version message.
 
-3. 然后会发送 verack 消息，并等待接收 verack 消息，完成握手。
+3. Sends verack message and waits for verack message to complete handshake.
 
-4. 如果自己的区块头高度小于对方的区块高度，则向对方发送 getheaders 消息。
+4. If local block height is lower than the other side, send getheaders message.
 
-5. 对方收到 getheaders 消息后，通过 headers 消息应答发送不超过2000个区块头。
+5. The other side will send headers message which contains no more than 2000 block heads upon receiving getheaders message.
 
-6. 如果区块头已经同步完成，而区块高度低于对方，则向对方发送 getblocks 消息。
+6. If block head information has been synchronized and local block height is lower than tho other side, send getblocks message.
 
-7. 对方收到 getblocks 消息后，通过 inv 消息应答发送不超过500个区块的哈希值。
+7. The other side will send inv message which contains no more than 500 block hashes upon receiving getblocks message.
 
-8. 收到 inv 消息后，通过哈希值判定本地是否需要。如果需要则发送 getdata 消息申请区块。
+8. Determine whether received inv message is needed upon receiving. If so, send getdata message querying for block information.
 
-9. 对方收到 getdata 消息之后，发送 block 消息发送区块的完整内容。
+9. The other side sends block message which contains complete block information upon receiving getdata message.
 
-10. neo 节点每5秒检查一次连接数，如果连接数不足10个，会主动去连接后备连接节点。后备连接节点不足时，会向已经连接的节点发送 getaddr 消息询问网络中的其它节点的信息。
+10. Neo node check the number of connections every 5 seconds. Connect backup nodes initiatively if connection is lower than 10. Will send getaddr message to connected nodes querying information about other nodes in network if backup nodes are not enough.
 
-11. 对方节点收到 getaddr 消息后，通过 addr 消息应答发送不超过200个节点的地址和端口号。
+11. The other side sends addr message which contains address & port information of no more than 200 nodes upon receiving getaddr message.
 
-12. 对于共识信息、区块、交易这些较大的数据，通过哈希值管理来避免同时从不同节点获取多分重复的数据。
+12. Use hash to manage relatively big information like consensus messages / block / transaction data, to avoid receiving duplicate message from different nodes.
 
-13. 节点有义务将收到的共识信息、区块、交易这些信息通过 inv 消息转发给其它节点。
+13. Nodes is responsible for relaying received consensus messages / block / transaction data to other nodes by inv message.
 
-## 对话序列实例
+## Conversation Sequence Instance
 
-| 消息方向 | 消息种类 | 说明 |
+| Message direction | Message type | Description |
 | --- | --- | --- |
-| send | version | 发送 version 进行第一次握手 |
-| receive | version | 接收 version 进行第一次握手 |
-| send | verack | 发送 verack 进行第二次握手 |
-| receive | verack | 接收 verack 进行第二次握手 |
-| send | getheaders | 发送 getheaders 获取区块头 |
-| receive | headers | 接收 区块头 |
-| send | getblocks | 发送 getblocks 获取区块 |
-| receive | inv(blocks) | 收到 inv 若干区块的哈希值 |
-| send | getdata(blocks) | 发送 getdata 获取若干区块的完整区块 |
-| receive | inv(consensus) | 收到 inv 一个共识数据的哈希值 |
-| send | getdata(consensus) | 发送 getdata 获取指定哈希值的共识数据 |
-| receive | consensus | 收到一个完整的共识数据 |
-| send | inv(consensus) | 将收到的共识的哈希值转发给其它节点 |
-| receive | block | 收到一个完整的区块 |
-| send | inv(block) | 转发区块的哈希 |
-| receive | block | 收到一个完整的区块 |
-| send | inv(block) | 转发区块的哈希 |
-| receive | block | 收到一个完整的区块 |
-| send | inv(block) | 转发区块的哈希 |
+| send | version | Send version & perform 1st handshake |
+| receive | version | Receive verack & perform 1st handshake |
+| send | verack | Send verack & perform 2nd handshake |
+| receive | verack | Receive verack & perform 2nd handshake |
+| send | getheaders | Send getheaders & receives block head |
+| receive | headers | Receive block headers |
+| send | getblocks | Send getblocks & get blocks |
+| receive | inv(blocks) | Receive inv hash of some blocks |
+| send | getdata(blocks) | Send getdata & receive some complete block |
+| receive | inv(consensus) | Receive inv hash of consensus data |
+| send | getdata(consensus) | Send getdata & receive consensus data of specified hash |
+| receive | consensus | Receive complete consensus data |
+| send | inv(consensus) | Relay received consensus data's hash to other nodes |
+| receive | block | Receive a complete block |
+| send | inv(block) | Relay block hash |
+| receive | block | Receive a complete block |
+| send | inv(block) | Relay block hash |
+| receive | block | Receive a complete block |
+| send | inv(block) | Relay block hash |
 | ... | ... | ... |
 
 
-参考阅读：<http://docs.neo.org/en-us/network/network-protocol.html#network-message>
+Referrence: <http://docs.neo.org/en-us/network/network-protocol.html#network-message>
 
 > [!NOTE]
-> 如果发现有死链接，请联系 <feedback@neo.org>
+> In case of dead links, please contact <feedback@neo.org>
