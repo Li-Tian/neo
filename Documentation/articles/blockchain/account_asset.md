@@ -2,9 +2,7 @@
 
 ### **Asset**
 
-NEO中资产包含两种：一种是用户发行的UTXO类型的全局资产，NEO与GAS在创世块中被定义发行。另外一种，用户通过智能合约发布的如NEP-5资产。前者信息记录在资产账户信息中，见下表，后者存储在合约的存储空间。
-
-There are two kinds of assets in NEO, 
+There are two kinds of assets in NEO: one is UTXO-type global assets issued by users, such as NEO, GAS defined in Genesis Block. Another is published by smart contract, such as NEP5 assets. The former are recorded in transactoin and users' account, while the latter are stored in the contracts' storage space.
 
 | Size | Field  | Type | Description |
 |--|-------|------|------|
