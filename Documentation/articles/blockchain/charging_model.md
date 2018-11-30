@@ -1,28 +1,28 @@
-<center><h2>收费模型</h2></center>
+﻿<center><h2>Charging Model</h2></center>
 
-&emsp;&emsp;NEO生态的各参与方，在使用NEO网络时，需要支付网络费(Network Fee)和系统费(System Fee)，数量单位GAS。网络费将作为选举的共识节点出块奖励，而系统费和GAS的区块奖励，将作为持有NEO的用户权益分红，可通过`ClaimTransaction`交易提取相应GAS到对应账户。费用分配如下图描述。
+&emsp;&emsp;Participants in NEO ecology need to pay network fee and system fee by GAS when using NEO network. Network fee is paid to consensus node as new block excitation. System fee and UTXO, which can be claimed by corresponding account with `ClaimTransaction`, are shares of NEO holders. Fee distribution rule is as follows:
 
 [![economic model](../../images/blockchain/economic_model.jpg)](../../images/blockchain/economic_model.jpg)
 
-&emsp;&emsp;参照"交易"部分，一笔交易的inputs和outputs的数据信息中给出了相关地址上交易前后的GAS数量。总手续费可由其差值得出：
+&emsp;&emsp;According to "Transaction" chapter, inputs and outputs data of a transaction reveals GAS amount change before & after transaction. Total fee can be calculated from GAS change:
 
-&emsp;&emsp;&emsp;&emsp;总手续费 = 网络费 + 系统费 = sum(inputs 中的 GAS) - sum(outputs 中的 GAS)
+&emsp;&emsp;&emsp;&emsp;Total fee = Network fee + System fee = sum(GAS in inputs) - sum(GAS in outputs)
 
-### **网络费**
+### **Network Fee**
 
-&emsp;&emsp;网络费，作为支付交易被打包确认的费用，用户可自行设定网络费。理论上，每单位字节的网络费越高，越容易被打包确认。在当前主网上，一个块最多支持500笔交易，其中提供最多20笔免费交易。
+&emsp;&emsp;Network fee is the fee for transaction encapsultion. User can define the amount of network fee. Theoretically the higher network fee per byte is, corresponding transaction is easier to be encapsulated. A block supports at most 500 transactions, in which at most 20 free ones, in current main net.
 
-### **系统费**
-&emsp;&emsp;系统费，作为支付交易被NEO网络执行消耗的资源费用。由两部分计算。首先，在系统配置文件`protocol.json`中设置的特殊交易的系统费，包括如下： 
+### **System Fee**
+&emsp;&emsp;System fee is the fee for consumed network resources in NEO network. It can be divided in 2 parts. Firstly, system fee of special transactions can be set in configuration file `protocol.json`, including: 
 
-| 交易类型               |     系统费    |
+| Transaction Type          |  System Fee |
 |-----------------------|---------------|
 | EnrollmentTransaction |      1000     |
 | IssueTransaction      |       500     |
 | PublishTransaction    |       500     |
 | RegisterTransaction   |     10000     | 
 
-&emsp;&emsp;其次，运行智能合约时，产生的系统调用或虚拟机对指令的执行，都将产生费用。该费用也被归入到系统费中。具体收费标准参见"智能合约"部分。
+&emsp;&emsp;Besides, system invoking / VM command execution occured in smart contract execution produce fee. Such fee is also sorted as system fee. About detailed fee standard please refer to "Smart Contract" chapter.
 
 
 

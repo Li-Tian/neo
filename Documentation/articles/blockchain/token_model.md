@@ -1,17 +1,17 @@
-<center><h2>代币模型</h2></center>
+﻿<center><h2>Token Model</h2></center>
 
-### **原生代币**
+### **Native Token**
 
-&emsp;&emsp;Neo系统中定义了两种原生代币，NEO 和 NeoGas（缩写符号GAS）。
+&emsp;&emsp;There are 2 kinds of native token defined in Neo system: NEO and NeoGas (GAS).
 
-&emsp;&emsp;NEO是治理代币（Governing Token）。持有NEO可以参与NEO网络的治理，包括投票选举共识节点和修改网络参数等。NEO的总量为1亿，最小单位为1，且不可分割。在创世块中注册了NEO资产，并存放在备用共识节点（StandbyValidators）的多方签名合约地址上。
+&emsp;&emsp;NEO is Governing Token. Neo holders can take part in NEO network management, including voting for consensus nodes, network parameter modification, etc. NEO's total amount is 100 million. Its minimum unit is 1 and cannt be divided. It's registered in Genisis block, and stored in standby validators' muti-signature addresses.
 
-&emsp;&emsp;GAS是功能代币（Utility Token），也叫网络燃料代币。NEO网络上的各种交易操作和共识节点激励均以GAS来支付。GAS的总量也是1亿，可以分割到最小单位0.00000001。Gas在创始块中注册，但未分发，而是通过每个区块能提取的奖励分发。
+&emsp;&emsp;GAS is utility token, or network fuel token. Operations and consensus node excitation in NEO network is paid in GAS. GAS's total amount is also 100 million and can be divided to 0.00000001 unit. Gas is registered in Genisis block and issued afterwards as block excitation.
 
-&emsp;&emsp; 按照系统设定，约15秒钟能够确认一个区块。一年约生成200万个区块。我们通过一个衰减算法在约22年的时间内逐步生成一亿个GAS。之后将不再有区块奖励。
+&emsp;&emsp;A new block is certified about every 15 seconds according to system design. Thus 2 million new blocks are created every year. 100 million GAS is issued gradually in 22 years according to a attenuation algorithm. No block exitation is issued afterwards.
 
 
-| 周期 |  区块高度范围    |   区块奖励GAS  |
+| Cycle |  Block Height Range | Block excitation GAS  |
 |-----|-------------     |---------------|
 | 1   |0 - (200W -1)     |    8          |
 | 2   |200W ~ (400W -1)  |    7          |
@@ -26,6 +26,6 @@
 
 [![gas distribution](../../images/blockchain/gas-distribution.jpg)](../../images/blockchain/gas-distribution.jpg)
 
-### **NEP5资产（代币）**
+### **NEP5 Asset (Token)**
 
-&emsp;&emsp;NEP5代币需要通过智能合约生成和管理，使用智能合约的存储区来存储信息，使用了账户模型。具体信息请见`智能合约`的`NEP5`部分。
+&emsp;&emsp;NEP5 token needs to be issued & managed through smart contract. It's information is stored in smart contract's storage. Account model is used. Detailed inforamtion please refer to `NEP5` part in chapter `Smart Contract`.
