@@ -1,21 +1,21 @@
-<center><h2> 布隆过滤器 </h2></center>
+﻿<center><h2> Bloom Filter </h2></center>
 
-　布隆过滤器（Bloom Filter）是1970年由布隆提出的。它实际上是一个很长的二进制向量和一系列随机映射函数。布隆过滤器可以用于检索一个元素是否在一个集合中。它的优点是空间效率和查询时间都比一般的算法要好的多，缺点是有一定的误识别率和删除困难。
+　Bloom filter is proposed by Bloom in 1970. It's actually a wide binary vector and a series of random mapping functions. Bloom filter can be used to check whether an item is within a set. Its effectiveness and query time is much better than common algorithms, though it suffers from trouble in deleting & misrecognition to some extent.
 
-　NEO 使用布隆过滤器为SPV钱包验证交易服务
+　NEO uses Bloom filter to verify transactions for SPV wallet.
 
-使用方式：
+Steps:
 
-  1. SPV钱包向全节点发送布隆过滤器，并由全节点加载布隆过滤器
+  1. SPV wallet broadcasts Bloom filter to all nodes, which will load this Bloom filter.
 
-  2. SPV钱包向全节点发送布隆过滤器参数，并由全节点加载相应布隆过滤器参数（可选）
+  2. SPV wallet broadcasts Bloom filter parameters to all nodes, which will load these parameters (optional).
 
-  3. SPV钱包向全节点用区块hash查询交易数据，全节点使用布隆过滤器过滤后返回交易数据以及构建的梅克尔树路径
+  3. SPV wallet requests transaction data with block hash from all nodes, which will return transaction data & constructed Merkle tree path after filtering with Bloom filter.
 
-  4. SPV钱包用梅克尔树路径验证交易数据正确性
+  4. SPV wallet verifies transaction data with Merkle tree path.
 
-  5. SPV钱包向全节点发送指令清除布隆过滤器，全节点清除过滤器
+  5. SPV wallet sends removing Bloom filter command to all nodes, which will remove specified filter.
 
-应用场景：
+Scenarios：
 
-  1. SPV钱包验证交易数据
+  1. Transaction data verification for SPV wallet
