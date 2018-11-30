@@ -38,7 +38,10 @@ namespace Neo.Wallets
         /// 钱包高度
         /// </summary>
         public abstract uint WalletHeight { get; }
-
+        /// <summary>
+        /// 发送交易，将交易添加进未确认交易列表，并发出通知触发委托
+        /// </summary>
+        /// <param name="tx">交易对象</param>
         public abstract void ApplyTransaction(Transaction tx);
         /// <summary>
         /// 判断钱包内是否存在某个脚本哈希对应的账户
@@ -365,14 +368,14 @@ namespace Neo.Wallets
         }
 
         /// <summary>
-        /// 
+        /// 构建指定交易类型的交易
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="tx"></param>
-        /// <param name="from"></param>
+        /// <typeparam name="T">指定交易类型</typeparam>
+        /// <param name="tx">交易对象</param>
+        /// <param name="from">付款账户</param>
         /// <param name="change_address">找零地址</param>
-        /// <param name="fee"></param>
-        /// <returns></returns>
+        /// <param name="fee">网络手续费</param>
+        /// <returns>构建的交易对象</returns>
         public T MakeTransaction<T>(T tx, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8)) where T : Transaction
         {
             if (tx.Outputs == null) tx.Outputs = new TransactionOutput[0];
@@ -433,14 +436,14 @@ namespace Neo.Wallets
         }
 
         /// <summary>
-        ///  通过钱包发起一笔交易
+        ///  构建一笔交易
         /// </summary>
-        /// <param name="attributes"></param>
-        /// <param name="outputs">交易输出地址</param>
-        /// <param name="from">交易的提交发</param>
+        /// <param name="attributes">交易的参数列表</param>
+        /// <param name="outputs">交易输出</param>
+        /// <param name="from">交易的付款地址</param>
         /// <param name="change_address">找零地址</param>
-        /// <param name="fee">交易费用</param>
-        /// <returns>交易的Transaction</returns>
+        /// <param name="fee">网络费用</param>
+        /// <returns>交易对象</returns>
         public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnumerable<TransferOutput> outputs, UInt160 from = null, UInt160 change_address = null, Fixed8 fee = default(Fixed8))
         {
             var cOutputs = outputs.Where(p => !p.IsGlobalAsset).GroupBy(p => new
