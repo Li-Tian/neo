@@ -42,7 +42,7 @@ There are two kinds of assets in NEO: one is UTXO-type global assets issued by u
 
 | Asset Name | Type | Value |  Amount | Description |
 |-------|----|-----|-------|--------|
-| NEO |  AssetType.GoverningToken | 0x00 | 100 million | All of which are transferred to the address of the standby consensus nodes' multi-signature contract in Genesis Block | 
+| NEO |  AssetType.GoverningToken | 0x00 | 100 million | All of which are transferred to the address of the standby consensus nodes' multi-parity signature contract in Genesis Block | 
 | GAS | AssetType.UtilityToken | 0x01 | 100 million | By block release, NEO holders claim GAS through `ClaimTransacion`. |
 
 

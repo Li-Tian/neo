@@ -1,208 +1,205 @@
-<center><h2>交易</h2></center>
+<center><h2>Transaction</h2></center>
 
+&emsp;&emsp;Transaction is the basic operation model of the whole NEO network. Wallets, smart contracts and accounts interact with NEO network through transactions. The most basic function of transaction is transfer. Through different transaction types and transaction attributes, expands the application scenarios of transactions, such as deploying smart contracts, issuing assets, voting and so on.
 
-&emsp;&emsp;Neo区块去掉区块头部分就是一串交易构成的区块主体，故交易是整个NEO系统的基础部件。钱包、智能合约、账户和交易相互作用但最终都转化成交易被记入区块链中。在Neo的P2P网络传输中，信息被打包成InvPayload信息包来传送（Inv即Inventory）。不同信息包有自己需要的特定数据，因此衍生出三种类型的数据包。`InventoryType = 0x01`来标定网络中的InvPayload信息包内装的是交易数据。除交易数据包之外，还有块数据包(`InventoryType = 0x02`)和共识数据包(`InventoryType = 0xe0`)。
+## **Structure**
 
-## **数据结构**
+&emsp;&emsp; The basic data structure of transaction as following:
 
-&emsp;&emsp;一笔普通交易的数据结构如下：
-
-| 字节数 | 字段 | 类型 | 描述 |
+| Size | Field | Type | Description |
 |-----|-----|------|-------|
-| 1   | Type    | byte | 交易类型 |
-| 1 | Version | byte | 交易版本号，目前为0 |
-| ? | - | - | 特定交易的数据 |
-| ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |
-| 34*? | Inputs | tx_in[] | 输入 |
-| 60 * ? | Outputs | tx_out[] | 输出 |
-| ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 |
+| 1   | Type    | byte | Type of transaction |
+| 1 | Version | byte | Trading version, currently 0 |
+| ? | - | - | Data specific to transaction types |
+| ?*? | Attributes | tx_attr[] | Additional features that the transaction has |
+| 34*? | Inputs | tx_in[] | Input |
+| 60 * ? | Outputs | tx_out[] | Output |
+| ?*? | Scripts | Witness[] | List of scripts used to validate the transaction |
 
 
 ### Input
 
-&emsp;&emsp;Input数组中存放了每一个输入的信息。每笔交易中可以有多个Input，也可能没有Input。在之后会提到的MinerTransaction中Input就为空。Input的数据结构如下： 
+&emsp;&emsp;Input specifies the source of assets. there may be serveral Inputs in each transaction, the Inputs of `MinerTransaction` is empty. The data structure of Input as follows: 
 
-| 字节数 | 字段 | 类型 | 描述 |
+| Size | Field | Type | Description |
 |---|-------|------|------|
-| 32 | PrevHash | UInt256 | 被引用交易的散列值 |
-| 2 | PrevIndex | ushort | 被引用交易输出的索引 | 
+| 32 | PrevHash | UInt256 | Previous transaction's hash |
+| 2 | PrevIndex | ushort | Previous transaction's indexPrevious transaction's index | 
 
-PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的第几个Output。从而Input和Output之间可以连接起来，构成了UTXO模型的基础。UTXO模型的具体信息请参见`UTXO模型`部分。
+`PreHash` and `PreIndex` describle the previous transaction's output. Using the input-output model form the basis of UTXO. For more details, read "UTXO" section.
+
 
 ### Output
 
-&emsp;&emsp;每个交易中最多只能包含 65536 个Output，代表资金转出。Output的数据结构如下：
+&emsp;&emsp;Each transaction can have outputs up to 65536, and the output representing the transfer of assets. The data structure of output as follows:
 
-| 字节数 | 字段 | 类型 | 描述 |
+| Size | Field | Type | Description |
 |---|-------|------|------|
-| 32 | AssetId | UIntBase | 资产Id |
-| ?  | Value | BigDecimal | 转账金额 | 
-| 20 | ScriptHash | UInt160 | 地址，即账户地址或合约地址 |
+| 32 | AssetId | UIntBase | 	Asset id |
+| ?  | Value | BigDecimal | Value | 
+| 20 | ScriptHash | UInt160 |	Address of remittee |
 
 ### Attribute
 
-| 字节数 | 字段 | 类型 | 描述 |
+| Size | Field | Type | Description |
 |---|-------|------|------|
-| 1 | Usage | byte | 属性类型 |
-| 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
-| ? | Data | byte[length] | 特定用途的外部数据 | 
+| 1 | Usage | byte | Usage |
+| 0|1 | length | uint8 | 	Length of data(Specific circumstances will be omitted) |
+| ? | Data | byte[length] | External dataExternal data | 
 
-&emsp;&emsp;TransactionAttributeUsage，交易属性使用表数据结构如下：
+&emsp;&emsp;TransactionAttributeUsage, each transaction attribute has different usages:
 
-| 字段 | 值 | 描述 |
+| Field | Value | Description |
 |-------|-----|----|
-| ContractHash | 0x00 | 外部合同的散列值 |
-| ECDH02 | 0x02 | 用于ECDH密钥交换的公钥，该公钥的第一个字节为0x02 |
-| ECDH03 | 0x03 | 用于ECDH密钥交换的公钥，该公钥的第一个字节为0x03 |
-| Script | 0x20 | 用于对交易进行额外的验证, 如股权类转账，存放收款人的脚本hash |
-| Vote | 0x30 |  |
-| DescriptionUrl | 0x81 | 外部介绍信息地址 |
-| Description | 0x90 | 简短的介绍信息 |
-| Hash1 - Hash15 | 0xa1-0xaf | 用于存放自定义的散列值 |
-| Remark-Remark15 | 0xf0-0xff | 备注 |
+| ContractHash | 0x00 | Hash value of contract |
+| ECDH02 | 0x02 | 	Public key for ECDH key exchange |
+| ECDH03 | 0x03 | 	Public key for ECDH key exchange |
+| Script | 0x20 |Additional validation of transactions |
+| Vote | 0x30 | For voting  |
+| DescriptionUrl | 0x81 | Url address of description |
+| Description | 0x90 | Brief description |
+| Hash1 - Hash15 | 0xa1-0xaf | 	Used to store custom hash values |
+| Remark-Remark15 | 0xf0-0xff | Remarks |
 
-<a name = "4_witness"/>
 
-&emsp;&emsp;ContractHash、ECDH02-03、Vote和Hash1-15的数据长度固定为 32 字节，所以省略length字段。Script必须明确给出数据长度，且长度不能超过 65535。而DescriptionUrl、Description和Remark1-15必须明确给出数据长度，且长度不能超过 255。
+&emsp;&emsp;For ContractHash, ECDH series, Hash series, data length is fixed to 32 bytes and length field is omitted; <br/>
+&emsp;&emsp; For DescriptionUrl, Description, Remark series, the data length must be clearly defined, and the length should not exceed 255;
+
 
 ### Witness
 
+&emsp;&emsp;Before each transaction add in block, it needs to be digitally signed to ensure that it can be verified. NEO uses ECDSA digital signature method. The scriptHash of the transaction output is a public key used for ECDSA signature. NEO dose not use SegWit in Bitcoin. Each transaction contains its own `Script.Witness`, while the `Script.Witness` is a contract.
 
-&emsp;&emsp;每笔交易(transaction，tx)对象在被放进block时，需经过数字签名，确保在后续传输和处理中能随时验证交易是否被篡改。Neo采用的ECDSA数字签名方法。交易的转帐转出方地址，为ECDSA签名时所用的公钥publicKey。Neo系统没有使用比特币中的SegWit，每笔交易都包含自己的Script.witness，而Script.Witness使用的是智能合约。
 
-&emsp;&emsp;见证人，实际上是可执行的验证脚本。`InvocationScript` 脚本传递了`VerificationScript`脚本所需要的参数。只有当脚本执行返回真时，验证成功。
+&emsp;&emsp; Witness is a executable verification script. The `InvocationScript` provides the parameters for the `VerificationScript` to execute.  Verification succeeds only when the script execution returns true.
 
-| 字节数 | 字段 | 类型 | 描述 |
+| Size | Field | Type | Description |
 |--|-------|------|------|
-| ?  | InvocationScript | byte[] |调用脚本，补全脚本参数 |
-| ?  | VerificationScript | byte[] | 验证脚本  | 
+| ?  | InvocationScript | byte[] |Invocation script |
+| ?  | VerificationScript | byte[] | Verificatoin script  | 
 
 
-&emsp;&emsp;调用脚本进行压栈操作相关的指令，用于向验证脚本传递参数（如签名等）。脚本解释器会先执行调用脚本代码，然后再执行验证脚本代码。
+&emsp;&emsp; Invocation script performs stack operation instructions, provides parameters for verification script (eg, signaures). The script interpreter executes the invocation script code first, and then the verification script code.
 
-&emsp;&emsp;`Block.NextConsensus`所代表的多方签名脚本，填充签名参数后的可执行脚本，如下图所示，[`Opt.CHECKMULTISIG`](../neo_vm.md#checkmultisig) 在NVM内部执行时，完成对签名以及公钥之间的多方签名校验。
+&emsp;&emsp;`Block.NextConsensus` representing the script hash of multi-party signature contract ([`Opt.CHECKMULTISIG`](../neo_vm.md#checkmultisig)), which needs the signatures of the consensus nodes, shown in the following figure.  When executed in NVM internally, it completes the verification of signatures and public keys.
+
 
 [![nextconsensus_witness](../../images/blockchain/nextconsensus_witness.jpg)](../../images/blockchain/nextconsensus_witness.jpg)
 
 
-## **交易类型**
+## **Transaction Type**
 
-&emsp;&emsp;Neo中一共定义了9种不同类型的交易，包括MinerTransaction、RegisterTransaction、IssueTransaction和ContractTransaction等。
+&emsp;&emsp; In NEO, there are 9 types of transaction, includes MinerTransaction, RegisterTransaction,IssueTransaction and ContractTransaction and so on.
 
-
-| 编号 | 类型名 | 值  | 系统费用 |用途 |  解释  |
+| Index | Type | Value  | Fee | Usage |  Description  |
 |------|--------|-----|----------|-------|----------|
-|  1  | MinerTransaction | 0x00 | 0 | 创建“矿工”交易 | 块的第一条交易，用于分配字节费的交易 |
-|  2  | RegisterTransaction | 0x40 | 10000/0 | 注册资产，仅用于NEO和GAS | 已弃用 |
-|  3  | IssueTransaction | 0x01 | 500/0 | 分发资产 |
-|  4  | ClaimTransaction | 0x02 | 0 | 提取GAS | 每个区块的奖励分发 |
-|  5  | StateTransaction | 0x90 | *  | 验证人选举统计选票时使用 | 
-|  6  | EnrollmentTransaction | 0x20 | 1000 | 报名成为验证人 | 已弃用 |
-|  7  | ContractTransaction | 0x80 | 0 | 转账时用 | 最常用的交易类型 |
-|  8  | PublishTransaction | 0xd0 | 500*n |应用合约发布交易 | 已弃用 |
-|  9  | InvocationTransaction | 0xd1 | 0 | 合约调用交易 | 用来调用合约，部署合约后或生成新资产之后会使用 | 
+|  1  | MinerTransaction | 0x00 | 0 | Assign byte fees |
+|  2  | RegisterTransaction | 0x40 | 10000/0 | Assets register | Abort |
+|  3  | IssueTransaction | 0x01 | 500/0 | Inssuance of asset |
+|  4  | ClaimTransaction | 0x02 | 0 | Assign GAS | |
+|  5  | StateTransaction | 0x90 | *  | Apply or vote validators | 
+|  6  | EnrollmentTransaction | 0x20 | 1000 | Enrollment for validator | Abort |
+|  7  | ContractTransaction | 0x80 | 0 | Contract transaction | The most commonly used transaction |
+|  8  | PublishTransaction | 0xd0 | 500*n |(Not usable) Special Transactions for Smart Contracts | Abort |
+|  9  | InvocationTransaction | 0xd1 | 0 | Special transactions for calling Smart Contracts |  | 
 
 
-详细交易处理流程，见“交易流程”章节。
+The details of transaction processing, please read "Transaction Execution" section.
 
 
-## **如何使用交易**
-
-&emsp;&emsp;以上这9种交易并不能完成所有的功能实现，比如部署合约和生成NEO和GAS以外的NEP5新资产时，通过系统调用来完成，以InvocationTransaction交易的形式来将这个事情加入到区块链中。下面给出的创世块的生成例子，展示了使用提供的交易类型完成资产注册。
+## **How to use transaction**
 
 <!-- 第二个例子是生成NEP5资产，展示了系统调用和合约的方式生成新资产。 -->
 
-### 例1：生成创始块
+&emsp;&emsp;The following example of Genesis Block generation shows the usage of transaction.
 
-&emsp;&emsp;创世块（GenesisBlock）是默认已经定义在代码中不可修改的区块链的第一个区块，高度为0。在创世块中注册了NEO和GAS资产，并分发了NEO资产。注意，只有NEO和GAS是使用RegisterTransaction完成注册，其他全局资产和NEP5代币都是通过系统调用的方式生成。
+### Eg-1. Create Genesis Block
 
-创始块的区块头信息如下：
+&emsp;&emsp; Genesis Block is the first block in the blockchain by default in hard code, and the block index is 0. NEO and GAS assets are registered in Genesis Block, and NEO asset are distributed. Note that only NEO and GAS used `RegisterTransaction`, and the other global UTXO assets and NEP5 tokens are generated through `InvocationTransaction`.
 
-| 尺寸 | 字段 | 名称  | 类型 | 值 |
+The block heade of Genesis block as follows:
+
+| Size | Field  | Type | Value  |
+|----|-----|-------|------|
+|  4  | Version  | uint | Version is `0` |
+| 32   | PrevHash | UInt256 |  `0x0000000000000000000000000000000000000000000000000000000000000000` |
+|  32  | MerkleRoot | uint256 |`0x803ff4abe3ea6533bcc0be574efa02f83ae8fdc651c879056b0d9be336c01bf4`  |
+| 4  | Timestamp  | uint | `1531667301` |
+| 4   | Index  | uint | `0` |
+|  8  | ConsensusData  | ulong | `2083236893`, the nonce value of the Bitcoin Genesis Block, as a respect to Bitcoin  |
+| 20  | NextConsensus  | UInt160 | The script hash of consensus nodes' multi-party signature contract in the next round.   |
+| 1  | -- | uint8 | 	 It's fiex 1  |
+|  ?   | Witness  |  Witness |  `0x51`, respresenting `OptCode.PUSHT`, always return TRUE. |
+|  ?*? | **Transactions**  |  Transaction[] | It stored four txs as following. |
+
+The first transaction of each block must be `MinerTransaction`, which is used for distribution of transaction's network fees in the block.
+
+| Size | Field  | Type | Value  |
 |----|-----|-------|------|------|
-|  4  | Version | 区块版本 | uint | `0` |
-| 32   | PrevHash | 上一个区块Hash | UInt256 |  `0x0000000000000000000000000000000000000000000000000000000000000000` |
-|  32  | MerkleRoot | Merkle树Root | uint256 |`0x803ff4abe3ea6533bcc0be574efa02f83ae8fdc651c879056b0d9be336c01bf4`  |
-| 4  | Timestamp |  创世时间 | uint | 创世时间为：`2016-07-15 | 23:08:21` |
-| 4   | Index | 创世块高度 | uint | `0` |
-|  8  | ConsensusData | Nonce | ulong | `2083236893`, 比特币创世块nonce值，向比特币致敬  |
-| 20  | NextConsensus | 下一个共识地址 | UInt160 | 参与下一轮出块的共识节点的多方签名合约地址   |
-| 1  | - | - | uint8 | 	固定为 1   |
-|  ?   | Witness | 见证人 |  Witness |  `0x51`, 代表`PUSHT`指令，返回永真 |
-|  ?*? | **Transactions** | 交易 |  Transaction[] | 目前存了4笔交易， 见后续表 |
+| 1   | Type    | uint8 | `0x00` |
+| 1 | Version | uint8  | `0` |
+| 8 | Nonce | ulong  | `2083236893` |
+| ?*? | Attributes | tx_attr[] |    Empty |
+| 34*? | Inputs | tx_in[]  | Empty |
+| 60 * ? | Outputs | tx_out[]  | Empty |
+| ?*? | Scripts | Witness[]  | Empty |
 
+The second transaction is `RegisterTransaction`, registers NEO asset.
 
-第一笔交易，MinerTransaction，即“挖矿”交易。所有的block的第一笔交易，都必须是MinerTransaction。Neo中没有挖矿的概念，这里主要记录一个区块的网络费奖励。
-
-
-| 尺寸 | 字段 | 名称  | 类型 | 值 |
+| Size | Field | Type | Value  |
 |----|-----|-------|------|------|
-| 1   | Type    | uint8 | 交易类型 | `0x00` |
-| 1 | Version | uint8 |  交易版本号 | `0` |
-| 8 | Nonce | ulong | nonce  | `2083236893` |
-| ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
-| 34*? | Inputs | tx_in[] | 输入 | 空 |
-| 60 * ? | Outputs | tx_out[] | 输出 | 空 |
-| ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | 空 |
+| 1   | Type    | byte  | `0x40` |
+| 1 | Version | byte  | `0` |
+| 1 | AssetType | byte   | `0x00` |
+| ? | Name | string   | The name of `NEO` |
+| 8 | Amount | Fix8   | `100000000` |
+| 1 | Precision | byte   | `0` |
+| ? | Owner | ECPoint  |  |
+| 32 | Admin | UInt160   | `0x51`.toScriptHash |
+| ?*? | Attributes | tx_attr[]  |    Empty |
+| 34*? | Inputs | tx_in[]  | Empty |
+| 60 * ? | Outputs | tx_out[]  | Empty |
+| ?*? | Scripts | Witness[]  | Empty |
 
+The name of `NEO`  = `[{"lang":"zh-CN","name":"小蚁股"},{"lang":"en","name":"AntShare"}]`
 
-第二笔交易，RegisterTransaction，注册NEO代币
+The third transaction is `RegisterTransaction`, registers GAS asset.
 
-| 尺寸 | 字段 | 名称  | 类型 | 值 |
+| Size | Field  | Type | Value  |
+|----|-----|-----|------|
+| 1   | Type    | byte  | `0x40` |
+| 1 | Version | byte | `0` |
+| 1 | AssetType | byte  | `0x01` |
+| ? | Name | string   | The name of`GAS` |
+| 8 | Amount | Fix8   | `100000000` |
+| 1 | Precision | byte   | `8` |
+| ? | Owner | ECPoint   | |
+| 32 | Admin | UInt160   | `0x00`.toScriptHash, representing `OpCode.PUSHF` script |
+| ?*? | Attributes | tx_attr[]  |    Empty |
+| 34*? | Inputs | tx_in[]  | Empty |
+| 60 * ? | Outputs | tx_out[]  | Empty |
+| ?*? | Scripts | Witness[]  | Empty |
+
+The name of `GAS` =  `[{"lang":"zh-CN","name":"小蚁币"},{"lang":"en","name":"AntCoin"}]`
+
+The fourth transaction is `IssueTransaction`, issues NEO to contract address.
+
+| Size | Field  | Type | Value  |
 |----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x40` |
-| 1 | Version | byte |  交易版本号 | `0` |
-| 1 | AssetType | byte | 资产类型  | `0x00` |
-| ? | Name | string | 资产名字  | `NEO` |
-| 8 | Amount | Fix8 | 总量  | `100000000` |
-| 1 | Precision | byte | 精度  | `0` |
-| ? | Owner | ECPoint | 所有者公钥  |  |
-| 32 | Admin | UInt160 | 管理者  | `0x51`.toScriptHash |
-| ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
-| 34*? | Inputs | tx_in[] | 输入 | 空 |
-| 60 * ? | Outputs | tx_out[] | 输出 | 空 |
-| ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | 空 |
+| 1   | Type    | byte  | `0x01` |
+| 1 | Version | byte  | `0` |
+| ?*? | Attributes | tx_attr[] |    Empty |
+| 34*? | Inputs | tx_in[]  | Empty |
+| 60 * ? | Outputs | tx_out[] | has one output, see the below table |
+| ?*? | Scripts | Witness[]  | `0x51`, representing `OpCode.PUSHT` |
 
-`NEO`名称定义 = `[{"lang":"zh-CN","name":"小蚁股"},{"lang":"en","name":"AntShare"}]`
+TThe output defines the transfer of all NEO tokens to the multi-parity signature contract address of the standby consensus nodes. The scripts are empty, meaning that the transactions dose not need to be validated because it is a Genesis block transaction.
 
-
-第三笔交易，RegisterTransaction，注册GAS代币
-
-| 尺寸 | 字段 | 名称  | 类型 | 值 |
-|----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x40` |
-| 1 | Version | byte |  交易版本号 | `0` |
-| 1 | AssetType | byte | 资产类型  | `0x01` |
-| ? | Name | string | 资产名字  | `GAS` |
-| 8 | Amount | Fix8 | 总量  | `100000000` |
-| 1 | Precision | byte | 精度  | `8` |
-| ? | Owner | ECPoint | 所有者公钥  | |
-| 32 | Admin | UInt160 | 管理者  | `0x00`.toScriptHash, 即 `OpCode.PUSHF`指令脚本 |
-| ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
-| 34*? | Inputs | tx_in[] | 输入 | 空 |
-| 60 * ? | Outputs | tx_out[] | 输出 | 空 |
-| ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | 空 |
-
-`GAS`名称定义 =  `[{"lang":"zh-CN","name":"小蚁币"},{"lang":"en","name":"AntCoin"}]`
-
-第四笔交易，IssueTransaction，发放NEO到合约地址
-
-| 尺寸 | 字段 | 名称  | 类型 | 值 |
-|----|-----|-------|------|------|
-| 1   | Type    | byte | 交易类型 | `0x01` |
-| 1 | Version | byte |  交易版本号 | `0` |
-| ?*? | Attributes | tx_attr[] | 该交易所具备的额外特性 |    空 |
-| 34*? | Inputs | tx_in[] | 输入 | 空 |
-| 60 * ? | Outputs | tx_out[] | 输出 | 有一笔output，见下表 |
-| ?*? | Scripts | Witness[] | 用于验证该交易的脚本列表 | `0x51`, 代表 `OpCode.PUSHT` |
-
-其中，Output定义了将所有的NEO代币，转移到共识节点多方签名合约地址上。而Scripts为空，表示交易因为是创世块交易，不需要再验证。
-
-| 尺寸 | 字段 | 名称  | 类型 | 值 |
-|----|-----|-------|------|------|
-| 1   | AssetId    | byte | 资产类型 | `0x00`， 即NEO代币 |
-| 8 | Value | Fix8 |  转账总量 | `100000000` |
-| 20 | ScriptHash | UInt160 |  收款脚本hash |  备用共识节点多方签名合约地址 |
+| Size | Field  | Type | Value  |
+|----|-----|-------|------|
+| 1   | AssetId    | byte  | `0x00`, representing `NEO` token. |
+| 8 | Value | Fix8  | `100000000` |
+| 20 | ScriptHash | UInt160 |   The script hash of standby consensus nodes' multi-party signature contract. |
 
 
 <!-- ### 例2：生成NEP-5资产

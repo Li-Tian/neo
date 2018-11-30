@@ -226,7 +226,7 @@ More details about NEP2 and NEP6 proposals are in the NEO document.
 | Cliam Gas          | Withdraw the gas allocated by holding NEO                  |
 | Get balance         |                                                  	      |
 | Get transaction         |                                                  	  |
-| Construct multi-signature contract |                                  		  |
+| Construct multi-parity signature contract |                                  		  |
 | Extend         |                                                                |
 | Deploy smart contract     |                                                 	  |
 | Test smart contract     |                                                 	  |

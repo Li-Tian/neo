@@ -113,7 +113,7 @@ Transaction signature is actually, adding address scripts' singature parameters,
 
 4. Add signature parameters to corresponding position in parameter list as follows:
 
-    1. If input script is multi-signature, construct corresponding `ContextItem` object according to input script contract (`ContextItem` is an encapsultion of script contract parameters).
+    1. If input script is multi-parity signature, construct corresponding `ContextItem` object according to input script contract (`ContextItem` is an encapsultion of script contract parameters).
         
         1. Check to be verified address public key in address script byte code. If signature address in not included, signature fails.
 

@@ -324,7 +324,7 @@ The interoperable service layer provides some APIs for accessing the blockchain 
 | old api：  | "AntShares.Header.GetNextConsensus"          |
 |------------|----------------------------------------------|
 | Binding Method: | Header_GetNextConsensus                 |
-|  Function Description: | Get the script hash of the next round validators' multi-signature contract  |
+|  Function Description: | Get the script hash of the next round validators' multi-parity signature contract  |
 | C\# Method： | ulong ConsensusData                        |
 
 ## Block

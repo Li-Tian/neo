@@ -27,7 +27,7 @@
     - name: UTXO
       href: blockchain/utxo.md
     - name: Block
-      href: blockchain/blockchain_datastructure.md
+      href: blockchain/block.md
     - name: Transaction
       href: blockchain/transaction.md
     - name: Asset and Account
