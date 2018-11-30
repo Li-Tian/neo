@@ -9,7 +9,7 @@ Validator, the candidate of consensus node, decided by the voting of the holders
 | Size | Field  | Type | Descriptoin |
 |--|-------|-----|------|------|
 | ?  | PublicKey  | ECPoint | Validator's public key |
-| 1 | Registered  | bool |Check registered. Only registerd validators can be vote |
+| 1 | Registered  | bool |Check registered. Only registerd validators can be voted |
 | 8 | Votes | Fixed8 |  |
 
 

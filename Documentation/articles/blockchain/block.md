@@ -37,7 +37,7 @@
 &emsp;&emsp;`Witness` is the verification script of the block, it contains `InvocationScript` and `VerificationScript`. The `InvocationScript` provides the parameters for the `VerificationScript` to execute. 
 
 
-[![../../images/blockchain/nextconsensus_script.jpg](../../images/blockchain/nextconsensus_script.jpg)](../../images/blockchain/nextconsensus_script.jpg)
+[![../../images/blockchain/nextconsensus_script_en.jpg](../../images/blockchain/nextconsensus_script_en.jpg)](../../images/blockchain/nextconsensus_script_en.jpg)
 
 ### **Block Body**
 
