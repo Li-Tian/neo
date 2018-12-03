@@ -294,7 +294,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 -------------------
 
 
-## 交易类型
+## 特殊交易的处理
 
 NEO中定义的交易类型如下所示：
 

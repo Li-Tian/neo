@@ -1,7 +1,7 @@
 <center><h2>交易</h2></center>
 
 
-&emsp;&emsp;Neo区块去掉区块头部分就是一串交易构成的区块主体，故交易是整个NEO系统的基础部件。钱包、智能合约、账户和交易相互作用但最终都转化成交易被记入区块链中。在Neo的P2P网络传输中，信息被打包成InvPayload信息包来传送（Inv即Inventory）。不同信息包有自己需要的特定数据，因此衍生出三种类型的数据包。`InventoryType = 0x01`来标定网络中的InvPayload信息包内装的是交易数据。除交易数据包之外，还有块数据包(`InventoryType = 0x02`)和共识数据包(`InventoryType = 0xe0`)。
+&emsp;&emsp;Neo区块去掉区块头部分就是一串交易构成的区块主体，因而交易是整个NEO系统的基础部件。钱包、智能合约、账户和交易相互作用但最终都转化成交易被记入区块链中。在Neo的P2P网络传输中，信息被打包成InvPayload信息包来传送（Inv即Inventory）。不同信息包有自己需要的特定数据，因此衍生出三种类型的数据包。`InventoryType = 0x01`来标定网络中的InvPayload信息包内装的是交易数据。除交易数据包之外，还有块数据包(`InventoryType = 0x02`)和共识数据包(`InventoryType = 0xe0`)。
 
 ## **数据结构**
 
@@ -47,7 +47,7 @@ PrevHash和PrevIndex合起来就可以找到这个Input对应于哪个交易的�
 | 0|1 | length | uint8 | 	数据长度（特定情况下会省略） |
 | ? | Data | byte[length] | 特定用途的外部数据 | 
 
-&emsp;&emsp;TransactionAttributeUsage，交易属性使用表数据结构如下：
+TransactionAttributeUsage，交易属性使用表数据结构如下：
 
 | 字段 | 值 | 描述 |
 |-------|-----|----|
