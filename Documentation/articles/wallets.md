@@ -260,4 +260,4 @@ Usage:
 
 
 > [!NOTE]
-> 如果发现有死链接，请联系 <feedback@neo.org>
+> In case of dead links, please contact <feedback@neo.org>

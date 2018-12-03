@@ -911,4 +911,4 @@ void Destroy();
 The `Destory` method accepts no parameters, and it will delete contract and the storage area.
 
 > [!NOTE]
-> 如果发现有死链接，请联系 <feedback@neo.org>
+> In case of dead links, please contact <feedback@neo.org>
