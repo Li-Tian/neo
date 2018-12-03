@@ -1,19 +1,19 @@
 <center><h2> The dBFT Algorithm </h2></center>
 
-&emsp;&emsp;dBFT(Delegated Byzantine Fault Tolerant) algorithm is based on PBFT(Practical Byzantine Fault Tolerance) algorithm, more suitable in blockchain. PBFT algorithm can solve distributed network consensus effectively, but the more nodes join, the faster the performance drops, as the time complexity is O(n<sup>2</sup>) . On this basis, NEO proposes a dBFT algorithm which combines the characteristics of PoS mode. By voting on the blockchain, it decides the next round of consensus nodes, namely authorizing a few nodes to create block, and the other nodes as ordinary nodes to receive and verify block.
+&emsp;&emsp;The  dBFT(Delegated Byzantine Fault Tolerant) algorithm is based on PBFT(Practical Byzantine Fault Tolerance) algorithm, more suitable in blockchain. PBFT algorithm can solve distributed network consensus effectively, but the more nodes join, the faster the performance drops, as the time complexity is O(n<sup>2</sup>) . On this basis, NEO proposes a dBFT algorithm which combines the characteristics of PoS mode. By voting on the blockchain, it decides the next round of consensus nodes, namely authorizing a few nodes to create block, and the other nodes as ordinary nodes to receive and verify block.
 
 
 * **Consensus Node**: This node participates in the consensus activity, make a block proposal and vote.
 
 * **Ordinary Node**: This node can transfer, make a transaction, but not participate in the consensus activity.
 
-* **Speaker(One)**: The Speaker is responsible for transmitting a block proposal to the system.
+* **Speaker(One)**: The Speaker is responsible for transmitting a proposal block to the system.
 
-* **Delegates(Multiple)**: Delegates are responsible for voting on the block proposal. The proposal will be accepted, if more than `2f+1` consensus nodes vote it.
+* **Delegates(Multiple)**: Delegates are responsible for voting on the proposal block. The proposal will be accepted, if more than `2f+1` consensus nodes vote it.
 
 * **Validator**: Nodes participating in elections, namely consensus candidate nodes.
 
-* **View**: The dataset used during one consensus activity. The view number start from 0 in each round, and increase number when reach a consensus failed in one round.
+* **View**: The dataset used during one consensus activity. The view number start from 0 in each round, and increase number when reach on a consensus failed in one round.
 
 
 ## Algorithm Flow
@@ -37,7 +37,7 @@
 
 - 𝑏𝑙𝑜𝑐𝑘：The proposal block
 
-- 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: The block signature of the `i`th consensus node.
+- 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>: The block's signature of the `i`th consensus node.
 
 ### General Procedures
 
@@ -46,28 +46,28 @@ Assume the total number of active consensus nodes is `N`, up to `f` fault tolera
 
 1. Users initate a transaction through wallet, such as transfer, deploy intelligent contract, release assets, etc.
 
-2. The wallet signs the transaction data, and broadcasts to the entire networks.
+2. The wallet signs the transaction data, and broadcasts to the p2p network.
 
-3. The consensus node received the transaction, and put into the memory pool.
+3. The consensus nodes received the transaction, and put into the memory pool.
 
-4. In one consensus round, the Speaker package the transactions from the memory pool into a new block,  then broadcast the block proposal 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡,ℎ,𝑣,𝑝,𝑏𝑙𝑜𝑐𝑘,
+4. In one round, the Speaker package the transactions from the memory pool into a new block,  then broadcast the proposal block 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡,ℎ,𝑣,𝑝,𝑏𝑙𝑜𝑐𝑘,
 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑝</sub>〉. 
 
-   1. Load all the transactions in the memory pool.
+   1. Load all the transactions in memory pool.
 
-   2. Load [`IPolicyPlugin`](https://github.com/neo-project/neo-plugins) plugin, sort and filter the transaction.
+   2. Load [`IPolicyPlugin`](https://github.com/neo-project/neo-plugins) plugin, sort and filter the transactions.
    
-   3. Calculate the network fee (`= inputs.GAS - outputs.GAS - transactions_system_fee `), and take it as the `MinerTransaction` award for the current Speaker.
+   3. Calculate the network fee (`= inputs.GAS - outputs.GAS - transactions_system_fee `), and take it as the reward for the current Speaker in `MinerTransaction`.
 
-   4. Combining the above transactions and the previous validators votes, calculate the next round consensus nodes, and assign the multi-party signature script hash to `block.NextConsensus`, locking the consensus nodes of the next block.
+   4. Combining the above transactions and the previous validators votes, calculate the next round consensus nodes, and assign the hash of multi-party signature script to `block.NextConsensus`, locking the consensus nodes of the next round.
 
-   5.  Set the timestamp of block to the current time and calculate the signature of the speaker.
+   5.  Set the timestamp of block to the current time and calculate the signature of the Speaker.
    
-   6. Broadcast `PrepareRequset` consensus messsage.
+   6. Broadcast `PrepareRequset` messsage.
 
-   7. Broadcast `inv` message, attached with transactions' hashs except `MinerTransaction`. (Notify the other nodes to synchronize the transactions to be packed)
+   7. Broadcast `inv` message, attached with transactions' hashs except `MinerTransaction`, to notify the other nodes to synchronize the transactions in the proposal block.
 
-5. Delegates recieved the block proposal, and verify the new block, then broadcast 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>〉 consensus message.
+5. Delegates recieved the proposal block, and verify the new block, then broadcast 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>〉 message.
 
 
 6. Any node, receiving at leat `n-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub> , reaches a consensus and publishes the full block.
@@ -77,7 +77,7 @@ Assume the total number of active consensus nodes is `N`, up to `f` fault tolera
 
 [![dbft_two_phase](../../images/consensus/dbft_two_phase_en.jpg)](../../images/consensus/dbft_two_phase_en.jpg)
 
-The algorithm can be divided into three stages. 1) `PRE-PREPARE`, the speaker of this round is responsible for broadcasting `Prepare-request` message to the delegates and initiating the block proposal. 2) `PREPARE`, the delegates after receiving `PRE-PREPARE`, then broadcast `Prepare-Response` if the proposal verified successful. When a node receives at least `N-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>, it enters the third stage. 3) `PERSIST`, the consensus node publishes the full node and enter the next consensus round.
+The algorithm can be divided into three stages. 1) `PRE-PREPARE`, the speaker of this round is responsible for broadcasting `Prepare-request` message to the delegates and initiating the proposal block. 2) `PREPARE`, the delegates after receiving `PRE-PREPARE`, then broadcast `Prepare-Response` if the proposal verified successful. When a node receives at least `N-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>, it enters the third stage. 3) `PERSIST`, the node publishes the full node and enter the next consensus round.
 
 > [!Note]
 > 1. At the beigining of the blockchain network started, `StandbyValidators` are read from the configureation file `protocol.json` by default.
@@ -85,7 +85,7 @@ The algorithm can be divided into three stages. 1) `PRE-PREPARE`, the speaker of
 
 ### View Change
 
-In the process of consensus on a open p2p network environment, there may be network delay, evil node sending illegal data, etc. The consensus nodes can initiate a `ChangeView` proposal. They enter a new view with new speaker, and restart consensus, after receiving at least `N-f` `ChangeView` messages with the same view number.
+As the process of consensus on a open p2p network environment, there may be network delay, evil node sending illegal data, etc. The consensus nodes can initiate a `ChangeView` proposal. They enter a new view with new speaker, and restart consensus, after receiving at least `N-f` `ChangeView` messages with the same view number.
 
 [![dbft_state_graph](../../images/consensus/dbft_state_graph.jpg)](../../images/consensus/dbft_state_graph.jpg)
 

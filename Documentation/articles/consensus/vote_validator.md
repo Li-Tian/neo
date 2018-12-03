@@ -65,7 +65,7 @@
    1. Check `StateDescriptor.Type` matching with  `StateDescriptor.Field`.
   
    2. When `StateDescriptor.Type = 0x40`, means voting.
-       1. Check the voter account is not frozen and the amount of NEO is more than zero. 
+       1. Check whether the voter account is not frozen and the amount of NEO is more than zero. 
        
        2. The voted validator address is not in the `StandbyValidators` and must be registered.
 
@@ -119,7 +119,7 @@ $$
 
 - `⌈A⌉` represents the first F<sub>i</sub> >= 0.25 point. 
 - `⌈B⌉` represents the first  F<sub>i</sub> >= 0.75 point.
-- `min(0.75, F<sub>i</sub>) - max( F<sub>i - 1</sub>, 0.25 )`  the shadow part.
+- min(0.75, F<sub>i</sub>) - max( F<sub>i - 1</sub>, 0.25 )  the shadow part.
 - `StandbyValidators` standby validators
 
 > [!Note]
@@ -131,7 +131,7 @@ In the above steps, we calcuate the number of consensus nodes `Count`, and take 
 
 ## From Delegates to Speaker
 
-The list of consesus nodes is obtained from the above method, and the Speaker is determined by the formula `p = (h - v) mod N` in the dBFT algorithm. while, `h` -- the proposal block height, `v` - view number, start from 0, `N` -- the number of consensus nodes.
+The list of consesus nodes is obtained from the above method, and the Speaker is determined by the formula `p = (h - v) mod N` in the dBFT algorithm. while, `h` - the proposal block height, `v` - view number, start from 0, `N` - the number of consensus nodes.
 
 
 During the consensus phase, the Speaker will send `PrepareRequest` message with `NextConsensus`, which determines the next block consensus nodes. The Speaker calculates the next round of conosensus nodes by combining the proposal block's transactions with the previous votes, and assign the script hash of 2/3 multi-signs contract to `NextConsensus`. There are transactions that may affect the number of votes, first, there may be a `StateTransaction`, second, there may be a transfer change in voter's NEO assets.

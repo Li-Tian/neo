@@ -4,8 +4,6 @@
 
 ## **Structure**
 
-&emsp;&emsp;Neo区块去掉区块头部分就是一串交易构成的区块主体，因而交易是整个NEO系统的基础部件。钱包、智能合约、账户和交易相互作用但最终都转化成交易被记入区块链中。在Neo的P2P网络传输中，信息被打包成InvPayload信息包来传送（Inv即Inventory）。不同信息包有自己需要的特定数据，因此衍生出三种类型的数据包。`InventoryType = 0x01`来标定网络中的InvPayload信息包内装的是交易数据。除交易数据包之外，还有块数据包(`InventoryType = 0x02`)和共识数据包(`InventoryType = 0xe0`)。
-
 &emsp;&emsp; The basic data structure of transaction as following:
 
 | Size | Field | Type | Description |
@@ -49,9 +47,7 @@
 | 0|1 | length | uint8 | 	Length of data(Specific circumstances will be omitted) |
 | ? | Data | byte[length] | External dataExternal data | 
 
-&emsp;&emsp;TransactionAttributeUsage, each transaction attribute has different usages:
-
-TransactionAttributeUsage，交易属性使用表数据结构如下：
+TransactionAttributeUsage, each transaction attribute has different usages:
 
 | Field | Value | Description |
 |-------|-----|----|

@@ -1,6 +1,6 @@
 <center><h2> Wallets </h2></center>
 
-&emsp;&emsp;Wallet is a basic component of NEO and the bridge for users to access NEO network. It's responsible for transaction operations such as transfer, contract deployment, asset registration, etc.
+&emsp;&emsp;Wallets is a basic component of NEO and the bridge for users to access NEO network. It's responsible for transaction operations such as transfer, contract deployment, asset registration, etc.
 
 &emsp;&emsp;NEO wallets can be redesigned and modified on their own, but need to meet the following rules and patterns.
 

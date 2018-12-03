@@ -2,7 +2,7 @@
 
 &emsp;&emsp;Asset is the core of Neo system. Transaction, contract, account and walet serves asset registration, flowing & administration. Neo CLI, compiler & virtual machine, etc, are technical means for function realization. Their function is as follows:
 
-[![neo system](../../images/blockchain/system1.jpg)](../../images/blockchain/system1.jpg)
+[![neo system](../../images/blockchain/system1_em.jpg)](../../images/blockchain/system1_em.jpg)
 
 &emsp;&emsp;All operations are accomplished by transaction in Neo blockchain network. Assets can be transferred between different accounts through `ContractTransaction`. Users can also extract deserved GAS through `ClaimTransaction`. Contracts are also invoked by `InvocationTransaction`.
 

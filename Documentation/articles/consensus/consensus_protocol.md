@@ -43,7 +43,7 @@
 | 1 | Type | ConsensusMessageType |  `0x20` |
 | 1 | ViewNumber | byte | Current view number |
 | 1 | Nonce | byte |  block nonce |
-| 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-sign contract  |
+| 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-party signature contract  |
 | 4 + 32 * length   | TransactionHashes | UInt256[] |  The proposal block's transaction hashes |
 | 78  | MinerTransaction | MinerTransaction |  It is used to reward all transaction fees of the current block to the speaker. |
 |  64 | Signature | byte[] |  Block signature |
@@ -61,7 +61,7 @@
 ## Transport Protocol
 
 
-When consensus message enters the P2P network, it broadcasts and transmits like other data packets, becuase consensus nodes do not know each other's IP address. That is to say, ordinary nodes can receive consensus message. The broadcast flow of consensus messages is as follows.
+When consensus message enters the P2P network, it's broadcasted and transmitted like other data packets, becuase consensus nodes do not know each other's IP address. That is to say, ordinary nodes can receive consensus message. The broadcast flow of consensus messages is as follows.
 
 [![consensus_msg_seq](../../images/consensus/consensus_msg_seq.jpg)](../../images/consensus/consensus_msg_seq.jpg)
 
@@ -107,24 +107,16 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 | length   | Payload | byte[] | Format: `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
 
 > [!Note] 
-> `getdata` message is mainly used to get the `inv` message with specific content hash.
-> `getdata` 消息主要用来获取 `inv`消息附带hash列表对应的具体内容。
-> 以上英语翻译不够精确
+> The `getdata` message is mainly used to get the specific content in `inv` message.
 
 
+## Consensus Message Process
 
-
-
-
-## Consensus Message Process(共识消息处理)
-
-###  Verification(校验)
+###  Verification
 
 1. If the `ConsensusPayload.BlockIndex` no more than current block height, then ignore.
-1. 检查`ConsensusPayload.BlockIndex`。若小于或等于当前高度，则忽略该消息。
 
 2. If the verification script executed failed or the script hash not equal to `ConsensusPayload.ValidatorIndex` address's script hash, then ignore.
-2. 检查验证脚本是否通过，以及验证脚本的地址hash，是否等于`ConsensusPayload.ValidatorIndex`所在议员列表中，对应的地址签名脚本hash。
 
 3. If the `ConsensusPayload.ValidatorIndex` equal to current node index, then ignore.
 
@@ -138,7 +130,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 
 ### Process
 
-1. **PrepareRequest** was send by the speaker, attached with block proposal data.
+1. **PrepareRequest** was send by the speaker, attached with proposal block data.
 
    1. If the current node is not delegates in the consensus round, or the `PrepareRequest` received already, then ignore.
 
@@ -152,11 +144,11 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 
    6. Check the first transaction in block -- `MinerTransaction`, like step 5). If validation fails, then ignore
 
-   7. Collect the signature in the `PrepareRequest` message.
+   7. Reserve the signature in the `PrepareRequest` message.
 
    8. If there is a lack of transactions in `block`, send the `getdata` message with the hashes of those transactions. 
 
-   9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-sign contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
+   9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-party signature contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
 
 
 2. **PrepareResponse** is the Delegates' answer to the `PrepareRequest` message sent by the Speaker attached with block signture.
@@ -165,7 +157,7 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 
    2. If the block signature has collected already, then ignore.
 
-   3. Check the signature is correct. If not, then ingore, else collect.
+   3. Check the signature is correct. If not, then ingore, else reserve.
 
    4. If there are at least `N+f` signatures, then publish the new full block.
 
@@ -200,6 +192,6 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 
     4. If the transacion isn't in the propoal block, then ignore.
 
-    5. Collect the transaction.
+    5. Reserve the transaction.
 
 <a name="6_tx_handler"/>

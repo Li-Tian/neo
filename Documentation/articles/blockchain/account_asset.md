@@ -49,8 +49,7 @@ There are two kinds of assets in NEO: one is UTXO-type global assets issued by u
 
 ### **Account**
 
-In NEO, the account model and UTXO model coexist. Accounts record the UTXO-type global assets, and NEP5 TOKEN-type assets also.
-NEO网络中，账户(account)模型和UTXO模型并存。账户记录了UTXO类型的全局资产的用户资金和用户投票。
+In NEO, the account model and UTXO model coexist. Accounts record the UTXO-type global assets.
 
 | Size | Field  | Type | Descriptoin |
 |--|-------|-----|------|
