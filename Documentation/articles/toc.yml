@@ -17,28 +17,31 @@
        href: cryptography/merkle_tree.md
      - name: 布隆过滤器
        href: cryptography/bloom_filter.md
-- name: 区块链系统
+- name: 区块，交易，账户等模型
   href: blockchain/neo_system.md
   items:
     - name: 代币模型
       href: blockchain/token_model.md
-    - name: 区块链数据结构
+    - name: 收费模型
+      href: blockchain/charging_model.md
+    - name: UTXO模型
+      href: blockchain/utxo.md
+    - name: 区块
       href: blockchain/blockchain_datastructure.md
     - name: 交易
       href: blockchain/transaction.md
-    - name: UTXO模型
-      href: blockchain/utxo.md
     - name: 账户和资产
       href: blockchain/account_asset.md
-    - name: 钱包
-      href: blockchain/wallets.md
-    - name: 收费模型
-      href: blockchain/charging_model.md
+    - name: 验证人
+      href: blockchain/validator.md
+    # - name: 钱包
+    #   href: blockchain/wallets.md
+
 # “钱包”被移动到“区块链系统”下面
-#- name: 钱包
-#  href: wallets.md
 - name: 交易流程
   href: tx_execution.md
+- name: 钱包
+  href: wallets.md
 - name: 网络协议
   href: network_protocol.md
 - name: 共识机制

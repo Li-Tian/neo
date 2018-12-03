@@ -109,7 +109,11 @@ namespace Neo.Wallets
             thread.Join();
             db.Dispose();
         }
-
+        /// <summary>
+        /// 获取钱包索引内与指定账户集合有关联的Coin集合
+        /// </summary>
+        /// <param name="accounts">指定账户集合</param>
+        /// <returns>关联的Coin集合</returns>
         public IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts)
         {
             lock (SyncRoot)
@@ -316,7 +320,7 @@ namespace Neo.Wallets
             }
         }
         /// <summary>
-        /// 向钱包索引中注册账户
+        /// 向钱包索引中注册账户，并存储到数据库中
         /// </summary>
         /// <param name="accounts">需要注册的账户列表集合</param>
         /// <param name="height">钱包高度</param>
@@ -351,7 +355,10 @@ namespace Neo.Wallets
                 }
             }
         }
-
+        /// <summary>
+        /// 向钱包索引中删除指定账户，并删除数据库中的记录
+        /// </summary>
+        /// <param name="accounts">需要删除的账户列表集合</param>
         public void UnregisterAccounts(IEnumerable<UInt160> accounts)
         {
             lock (SyncRoot)

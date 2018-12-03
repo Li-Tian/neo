@@ -34,12 +34,12 @@ namespace Neo.Consensus
         public UInt256 PrevHash;
 
         /// <summary>
-        /// 提案block高度
+        /// 提案block的区块高度
         /// </summary>
         public uint BlockIndex;
 
         /// <summary>
-        /// 当前视图编号
+        /// 当前视图的编号
         /// </summary>
         public byte ViewNumber;
 
@@ -49,7 +49,7 @@ namespace Neo.Consensus
         public Snapshot Snapshot;
 
         /// <summary>
-        /// 本轮共识节点公钥列表
+        /// 本轮共识节点的公钥列表
         /// </summary>
         public ECPoint[] Validators;
 
@@ -94,7 +94,7 @@ namespace Neo.Consensus
         public byte[][] Signatures;
 
         /// <summary>
-        /// 收到的各节点期望视图编号，主要用在改变视图过程中
+        /// 收到的各节点期望视图编号，主要用在改变视图过程中。这个数组的每一位对应每个验证人节点期待的视图编号。而验证人是有相应编号的。
         /// </summary>
         public byte[] ExpectedView;
 
@@ -102,6 +102,11 @@ namespace Neo.Consensus
         /// 钥匙对
         /// </summary>
         private KeyPair KeyPair;
+
+
+        /// <summary>
+        /// 钱包
+        /// </summary>
         private readonly Wallet wallet;
 
         /// <summary>
@@ -123,7 +128,7 @@ namespace Neo.Consensus
         /// <param name="view_number">new view number</param>
         public void ChangeView(byte view_number)
         {
-            State &= ConsensusState.SignatureSent; // why this?
+            State &= ConsensusState.SignatureSent; 
             ViewNumber = view_number;
             PrimaryIndex = GetPrimaryIndex(view_number);
             if (State == ConsensusState.Initial)
@@ -136,6 +141,13 @@ namespace Neo.Consensus
             _header = null;
         }
 
+
+        /// <summary>
+        /// 用当前共识上下文的数据生成一个新区块。
+        /// </summary>
+        /// <remark>
+        /// 
+        /// </remark>
         public Block CreateBlock()
         {
             Block block = MakeHeader();
@@ -162,7 +174,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 计算议长编号 = (提案block高区 - 视图编号) % 共识节点个数
+        /// 计算议长编号 = (提案block的区块高度 - 当前视图编号) % 共识节点个数
         /// </summary>
         /// <param name="view_number">给定当前视图编号</param>
         /// <returns></returns>
@@ -252,7 +264,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 构建PrepareRequset消息的货物类
+        /// 构建PrepareRequset消息的共识货物ConsensusPayload类
         /// </summary>
         /// <returns>共识消息货物</returns>
         public ConsensusPayload MakePrepareRequest()
@@ -268,7 +280,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 构建PrepareResponse消息的货物类
+        /// 构建PrepareResponse消息的共识货物ConsensusPayload类
         /// </summary>
         /// <param name="signature">对提案block的签名</param>
         /// <returns>共识消息货物</returns>
@@ -282,14 +294,16 @@ namespace Neo.Consensus
 
         /// <summary>
         /// 重置上下文数据
+        /// </summary>
+        /// <remark>
         /// 1. 重新获取当前区块快照
         /// 2. 初始化状态
         /// 3. 重置区块高度为当前快照区块高区+1
         /// 4. 重置视图编号为0
-        /// 5. 重新计算议长编号
-        /// 6. 清空签名，期望视图数组
-        /// 7. 重新计算自身编号
-        /// </summary>
+        /// 5. 默认共识节点编号为-1，即此节点不是公式节点。重新计算议长的编号。
+        /// 6. 清空签名数组和期望视图数组
+        /// 7. 重新计算自身验证人节点编号，并得出KeyPair。
+        /// </remark>
         public void Reset()
         {
             Snapshot?.Dispose();
@@ -319,11 +333,13 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        ///  填充提案block的数据
+        /// 填充提案block的数据
         /// </summary>
+        /// <remark>
         /// 1. 交易，从内存池加载交易，并进行插件过滤和排序
         /// 2. MinerTransaction和奖励费（奖励费 = Inputs.GAS - outputs.GAS - 总交易系统手续费）
         /// 3. NextConsensus，结合上面的交易，计算下一轮的共识节点，并计算得到
+        /// </remark>
         public void Fill()
         {
             IEnumerable<Transaction> mem_pool = Blockchain.Singleton.GetMemoryPool();
@@ -375,11 +391,13 @@ namespace Neo.Consensus
 
 
         /// <summary>
-        /// 校验PrepareRequest所带的提案block数据
+        /// 收到PrepareRequest包后，校验PrepareRequest所带的提案block数据
         /// </summary>
         /// <remarks>
-        /// 1. 校验NextConsensus 是否与计算出的一致
-        /// 2. 校验MinerTransaction的奖励是否一致
+        /// 检验的标准有以下3条：
+        /// 1. 共识状态已经标出了RequestReceived，即已经收到了PrepareRequest包
+        /// 2. 校验NextConsensus是否与当前快照中的验证人计算出的地址一致
+        /// 3. 校验MinerTransaction的奖励计算是否正确。注，MinerTransaction是每个块的第一个交易，记录了网络费的分布情况。
         /// </remarks>
         /// <returns></returns>
         public bool VerifyRequest()

@@ -16,11 +16,54 @@ using System.Threading.Tasks;
 
 namespace Neo.Network.P2P
 {
+    /// <summary>
+    /// NEO所用P2P网络中的peer类.
+    /// </summary>
     public abstract class Peer : UntypedActor
     {
-        public class Start { public int Port; public int WsPort; public int MinDesiredConnections; public int MaxConnections; }
-        public class Peers { public IEnumerable<IPEndPoint> EndPoints; }
-        public class Connect { public IPEndPoint EndPoint; public bool IsTrusted = false; }
+        /// <summary>
+        /// 内部Start类
+        /// </summary>
+        public class Start {
+            /// <summary>
+            /// 端口号
+            /// </summary>
+            public int Port;
+            /// <summary>
+            ///  WS-RPC监听端口
+            /// </summary>
+            public int WsPort;
+            /// <summary>
+            /// 最小需要的连接数
+            /// </summary>
+            public int MinDesiredConnections;
+            /// <summary>
+            /// 最多的连接数
+            /// </summary>
+            public int MaxConnections;
+        }
+        /// <summary>
+        /// 内部Peers类.
+        /// </summary>
+        public class Peers {
+            /// <summary>
+            /// 所有peer节点IPEndPoint的集合
+            /// </summary>
+            public IEnumerable<IPEndPoint> EndPoints;
+        }
+        /// <summary>
+        /// 内部Connect类
+        /// </summary>
+        public class Connect {
+            /// <summary>
+            ///  连接到的Peer的IPEndPoint
+            /// </summary>
+            public IPEndPoint EndPoint;
+            /// <summary>
+            /// 判断连接的节点是否可信
+            /// </summary>
+            public bool IsTrusted = false;
+        }
         private class Timer { }
         private class WsConnected { public WebSocket Socket; public IPEndPoint Remote; public IPEndPoint Local; }
 
@@ -39,11 +82,30 @@ namespace Neo.Network.P2P
         protected readonly ConcurrentDictionary<IActorRef, IPEndPoint> ConnectedPeers = new ConcurrentDictionary<IActorRef, IPEndPoint>();
         protected ImmutableHashSet<IPEndPoint> UnconnectedPeers = ImmutableHashSet<IPEndPoint>.Empty;
         protected ImmutableHashSet<IPEndPoint> ConnectingPeers = ImmutableHashSet<IPEndPoint>.Empty;
+        /// <summary>
+        /// 可信任的IP地址集合
+        /// </summary>
+        /// <value>
+        /// 返回可信任的IP地址集合
+        /// </value>
         protected HashSet<IPAddress> TrustedIpAddresses { get; } = new HashSet<IPAddress>();
         
+        /// <summary>
+        /// 监听接口
+        /// </summary>
+        /// <value>返回这个Peer对象</value>
         public int ListenerPort { get; private set; }
+        /// <summary>
+        /// 当前peer需要的连接的最小值.默认值为10.
+        /// </summary>
+        /// <value>返回peer需要的连接的最小值</value>
         public int MinDesiredConnections { get; private set; } = DefaultMinDesiredConnections;
         public int MaxConnections { get; private set; } = DefaultMaxConnections;
+
+        /// <summary>
+        /// 未连接的peer列表中peer个数的最大值. 默认1000
+        /// </summary>
+        /// <value>未连接的peer列表中peer个数的最大值</value>
         protected int UnconnectedMax { get; } = 1000;
         protected virtual int ConnectingMax
         {
@@ -61,6 +123,10 @@ namespace Neo.Network.P2P
             localAddresses.UnionWith(NetworkInterface.GetAllNetworkInterfaces().SelectMany(p => p.GetIPProperties().UnicastAddresses).Select(p => p.Address.Unmap()));
         }
 
+        /// <summary>
+        /// 将一个peer集合添加到本地未连接的peer列表中.
+        /// </summary>
+        /// <param name="peers">被添加的peer集合</param>
         protected void AddPeers(IEnumerable<IPEndPoint> peers)
         {
             if (UnconnectedPeers.Count < UnconnectedMax)
@@ -70,6 +136,12 @@ namespace Neo.Network.P2P
             }
         }
 
+        /// <summary>
+        /// 指定一个Peer的IPEndPoint并进行连接.如果连接成功则加入已连接的peer表中.
+        /// 如果改Peer节点是可信任的,则将该节点的IP地址加入本地的可信任地址列表中.
+        /// </summary>
+        /// <param name="endPoint">需要连接的Peer</param>
+        /// <param name="isTrusted">该Peer节点是否是可信任的</param>
         protected void ConnectToPeer(IPEndPoint endPoint, bool isTrusted = false)
         {
             endPoint = endPoint.Unmap();
@@ -97,6 +169,10 @@ namespace Neo.Network.P2P
 
         protected abstract void NeedMorePeers(int count);
 
+        /// <summary>
+        /// 用来监听消息的回调方法
+        /// </summary>
+        /// <param name="message">接收到的消息</param>
         protected override void OnReceive(object message)
         {
             switch (message)
@@ -236,6 +312,9 @@ namespace Neo.Network.P2P
             }
         }
 
+        /// <summary>
+        ///停止传递消息
+        /// </summary>
         protected override void PostStop()
         {
             timer.CancelIfNotNull();

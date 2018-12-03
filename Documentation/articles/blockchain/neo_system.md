@@ -1,10 +1,10 @@
-<center><h2>Neo区块链系统</h2></center>
+<center><h2>Neo区块链模型</h2></center>
 
-&emsp;&emsp;资产是 Neo 系统中的核心。交易、合约、账户和钱包的存在都是为了服务于资产的生成、流动和管理。而之前单独介绍过的Neo CLI、编译器、虚拟机等都是实现功能的技术手段。我们把这种关系用下图来描述：
+&emsp;&emsp;资产是 Neo 系统中的核心。交易、合约、账户和钱包服务于资产的生成、流动和管理。而之前单独介绍过的Neo CLI、编译器、虚拟机等都是实现功能的技术手段。关系如下图描述：
 
 [![neo system](../../images/blockchain/system1.jpg)](../../images/blockchain/system1.jpg)
 
-&emsp;&emsp;Neo区块链网络中，一切的事物操作都是通过交易完成的。资产可以在不同账户之间通过交易(`ContractTransaction`)进行转账。用户也可以通过交易（`ClaimTransaction`）来提取应得的分红GAS。合约最终也是通过交易（`InvocationTransaction`）才实现其调用。
+&emsp;&emsp;Neo区块链网络中，一切的事物操作都是通过交易完成。资产可以在不同账户之间通过交易(`ContractTransaction`)进行转账；用户也可以通过交易（`ClaimTransaction`）来提取应得的分红GAS；合约也是通过交易（`InvocationTransaction`）才实现其调用。
 
 &emsp;&emsp;在比特币中，Script脚本承担了交易中签名验证的任务。在Neo系统中，由合约承担了此项任务。合约可以简单理解成比特币的 Script 脚本的升级。比特币的 Script 脚本不是图灵完备的，虽然能够完成交易的签名验证，但是能做到的功能有限。因此比特币只有UTXO模型，关注的就是交易本身。编写 Neo 智能合约的语言，比如 C# 和 Python 等，都是图灵完备的，可以满足现实世界中的丰富多彩的需要。而现实世界广泛采用的是账户余额(account balance)模型。以太坊就采用了账户余额模型。在 Neo系统中，UTXO 模型和账户余额模型同时存在：UTXO 模型主要用于NEO和GAS等原生代币，账户余额模型主要用于用户发行的NEP-5资产（如股权、代币等）。
 

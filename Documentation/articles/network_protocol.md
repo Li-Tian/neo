@@ -1,4 +1,4 @@
-<center><h2> 网络架构：P2P </h2></center>
+﻿<center><h2> 网络架构：P2P </h2></center>
 
 &emsp;&emsp;在网络结构上，NEO 采用点对点网络结构，并使用 TCP/IP 协议进行通讯。
 网络中存在两种节点类型，分别是普通节点和共识节点。普通节点可以广播、接收和转发交易、区块等，而共识节点可以创建区块。
@@ -45,7 +45,7 @@ NEO 的网络协议规范与比特币的协议大致类似，但在区块、交�
 | getdata |  |  |  | 询问其它节点获取指定种类和哈希的Inventory对象。<br>目前有以下场景发送getdata消息。<br>1)共识过程中发送获取交易(Transaction)的请求。<br>2)收到inv消息以后发送getdata消息。 |
 | getheaders | 〇 |  |  | 在两个节点创建连接以后，少的一方向多的一方请求区块头。 |
 | headers |  |  |  | 应答 getheaders 消息。最多发送不超过2000条区块头。 |
-| inv |  |  |  | 发送指定种类和哈希值的若干个Inventory的哈希值数组（只有哈希值，没有完整数据）。Inventory的种类包括区块(Block)、交易(Transaction)、共识(Concensus)。目前有以下场景发送inv消息。<br>1)共识过程中发送交易。<br>2)应答 getblocks 消息。发送少于500个区块。<br>3)应答 mempool 消息。发送整个内存池中的交易。<br>4)传递(Relay)一个Inventory。<br>5)传递(Relay)一批交易。 |
+| inv |  |  |  | 发送指定种类和哈希值的若干个Inventory的哈希值数组（只有哈希值，没有完整数据）。Inventory的种类包括区块(Block)、交易(Transaction)、共识(Consensus)。目前有以下场景发送inv消息。<br>1)共识过程中发送交易。<br>2)应答 getblocks 消息。发送少于500个区块。<br>3)应答 mempool 消息。发送整个内存池中的交易。<br>4)传递(Relay)一个Inventory。<br>5)传递(Relay)一批交易。 |
 | mempool | 〇 | 〇 |  | 请求对方节点整个内存池中的交易。 |
 | tx |  |  |  | 应答 getdata 消息。返回指定哈希值的Transaction。 |
 | verack | - | 〇 | - | 第二个指令：握手应答Version。 |

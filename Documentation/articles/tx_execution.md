@@ -100,7 +100,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 ### （2）签名验证
 
 
-在前面的章节提到，一个账户地址，实际上代表的就是一段`OpCode.CHECKSIG`或者`OpCode.CHECKMULTISIG`[合约代码](./blockchain/wallets.md#3_address)，执行时需要提供签名参数。经典的UTXO交易转账时，实际上是对输入地址脚本进行执行解锁，执行成功则表示对交易的输入引用成功。在NEO交易验证时，也需要对涉及的脚本进行执行验证，故在执行前，需提供相应的脚本所需参数，如交易签名参数。这些参数与对应的脚本，最终被封装在交易的[见证人(Witness)](./blockchain/transaction.md#4_witness)列表中。
+在前面的章节提到，一个账户地址，实际上代表的就是一段`OpCode.CHECKSIG`或者`OpCode.CHECKMULTISIG`[合约代码](./wallets.md#3_address)，执行时需要提供签名参数。经典的UTXO交易转账时，实际上是对输入地址脚本进行执行解锁，执行成功则表示对交易的输入引用成功。在NEO交易验证时，也需要对涉及的脚本进行执行验证，故在执行前，需提供相应的脚本所需参数，如交易签名参数。这些参数与对应的脚本，最终被封装在交易的[见证人(Witness)](./blockchain/transaction.md#witness)列表中。
 
 交易签名，实际上是添加地址脚本的签名参数，构建完整可执行的见证人(Witness)，其签名步骤如下：
 
@@ -294,7 +294,7 @@ public Transaction MakeTransaction(List<TransactionAttribute> attributes, IEnume
 -------------------
 
 
-## 交易类型
+## 特殊交易的处理
 
 NEO中定义的交易类型如下所示：
 

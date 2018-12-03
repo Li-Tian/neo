@@ -113,7 +113,10 @@ namespace Neo.Wallets.NEP6
                 accounts[account.ScriptHash] = account;
             }
         }
-
+        /// <summary>
+        /// 发送交易，将交易添加进未确认交易列表，并发出通知触发委托
+        /// </summary>
+        /// <param name="tx">交易对象</param>
         public override void ApplyTransaction(Transaction tx)
         {
             lock (unconfirmed)
@@ -272,10 +275,10 @@ namespace Neo.Wallets.NEP6
             }
         }
         /// <summary>
-        /// 获取指定账户集合所所持有的Coin的集合
+        /// 获取指定账户集合所持有的Coin的集合
         /// </summary>
         /// <param name="accounts">指定账户集合</param>
-        /// <returns></returns>
+        /// <returns>持有的Coin的集合</returns>
         public override IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts)
         {
             if (unconfirmed.Count == 0)

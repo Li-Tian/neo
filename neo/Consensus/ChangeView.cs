@@ -4,7 +4,7 @@ using System.IO;
 namespace Neo.Consensus
 {   
     /// <summary>
-    ///  ChangeView 消息
+    ///  ChangeView消息，用于转换视图的共识消息。继承于类ConsensusMessage。
     /// </summary>
     internal class ChangeView : ConsensusMessage
     {

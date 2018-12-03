@@ -50,6 +50,7 @@ namespace Neo.Consensus
         /// Neo系统的当前状态
         /// </summary>
         private readonly NeoSystem system;
+        private ICancelable timer_token;
         /// <summary>
         /// 最新收块时间
         /// </summary>
@@ -120,7 +121,8 @@ namespace Neo.Consensus
         /// <param name="delay">delay秒后超时</param>
         private void ChangeTimer(TimeSpan delay)
         {
-            Context.System.Scheduler.ScheduleTellOnce(delay, Self, new Timer
+            timer_token.CancelIfNotNull();
+            timer_token = Context.System.Scheduler.ScheduleTellOnceCancelable(delay, Self, new Timer
             {
                 Height = context.BlockIndex,
                 ViewNumber = context.ViewNumber

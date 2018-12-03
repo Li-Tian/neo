@@ -5,16 +5,28 @@ using System.Reflection;
 
 namespace Neo.IO.Caching
 {
+    /// <summary>
+    /// 反射缓存类
+    /// </summary>
+    /// <typeparam name="T">泛型</typeparam>
     public class ReflectionCache<T> : Dictionary<T, Type>
     {
+        // <summary>
+        // Constructor
+        // </summary>
         /// <summary>
-        /// Constructor
+        /// 构造器
         /// </summary>
         public ReflectionCache() { }
+        // <summary>
+        // Constructor
+        // </summary>
+        // <typeparam name="EnumType">Enum type</typeparam>
         /// <summary>
-        /// Constructor
+        /// 构造器
         /// </summary>
-        /// <typeparam name="EnumType">Enum type</typeparam>
+        /// <typeparam name="EnumType">枚举类型</typeparam>
+        /// <returns>反射缓存</returns>
         public static ReflectionCache<T> CreateFromEnum<EnumType>() where EnumType : struct, IConvertible
         {
             Type enumType = typeof(EnumType);
@@ -45,11 +57,17 @@ namespace Neo.IO.Caching
             }
             return r;
         }
+        // <summary>
+        // Create object from key
+        // </summary>
+        // <param name="key">Key</param>
+        // <param name="def">Default value</param>
         /// <summary>
-        /// Create object from key
+        /// 根据键创建对象
         /// </summary>
-        /// <param name="key">Key</param>
-        /// <param name="def">Default value</param>
+        /// <param name="key">键</param>
+        /// <param name="def">默认值</param>
+        /// <returns>返回def</returns>
         public object CreateInstance(T key, object def = null)
         {
             Type tp;
@@ -60,12 +78,19 @@ namespace Neo.IO.Caching
             // return null
             return def;
         }
+        // <summary>
+        // Create object from key
+        // </summary>
+        // <typeparam name="K">Type</typeparam>
+        // <param name="key">Key</param>
+        // <param name="def">Default value</param>
         /// <summary>
-        /// Create object from key
+        /// 根据键创建对象
         /// </summary>
-        /// <typeparam name="K">Type</typeparam>
-        /// <param name="key">Key</param>
-        /// <param name="def">Default value</param>
+        /// <typeparam name="K">类型</typeparam>
+        /// <param name="key">键</param>
+        /// <param name="def">默认值</param>
+        /// <returns>返回def</returns>
         public K CreateInstance<K>(T key, K def = default(K))
         {
             Type tp;
