@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 namespace Neo.Cryptography.ECC
 {
     /// <summary>
-    /// 用椭圆曲线和产生的公钥拿来做签名
+    /// 使用椭圆曲线和产生的公钥拿来做签名的算法类
     /// </summary>
     public class ECDsa
     {

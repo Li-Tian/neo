@@ -12,7 +12,7 @@ using VMBoolean = Neo.VM.Types.Boolean;
 namespace Neo.VM
 {
     /// <summary>
-    /// 
+    /// VM的辅助操作类
     /// </summary>
     public static class Helper
     {
