@@ -94,7 +94,7 @@ namespace Neo
         // If null is passed as parameter or if it's not a UIntBase object, this method returns false.
         // </summary>
         /// <summary>
-        /// 将当前8对象与另一个对象进行比较
+        /// 将当前对象与另一个对象进行比较
         /// </summary>
         /// <param name="obj">另一个被比较的Object</param>
         /// <returns>

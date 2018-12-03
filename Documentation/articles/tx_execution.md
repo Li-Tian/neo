@@ -293,7 +293,7 @@ Wallet starts a thread listening to new blocks. It will renew transaction status
 -------------------
 
 
-## Transaction Type
+## 特殊交易的处理(Transaction Type?)
 
 NEO transanction is defined as follows：
 

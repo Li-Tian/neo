@@ -26,6 +26,7 @@ namespace Neo.VM.Types
         /// </summary>
         /// <param name="other">指定的堆栈项</param>
         /// <returns>相等则返回true，否则返回false</returns>
+        /// <exception cref="System.NotSupportedException">调用StackItem对象GetByteArray出错时抛出</exception>
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;

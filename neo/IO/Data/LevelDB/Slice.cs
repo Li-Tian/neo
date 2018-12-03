@@ -20,10 +20,10 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 比较大小，按照单个字节进行对比（注，当时前缀关系时，长度最长的大）
+        /// 比较大小，按照单个字节进行对比（注，当是前缀关系时，长度最长的大）
         /// </summary>
         /// <param name="other">待对比切片</param>
-        /// <returns></returns>
+        /// <returns>大于则返回1，等于则返回0，小于则返回-1</returns>
         public int CompareTo(Slice other)
         {
             for (int i = 0; i < buffer.Length && i < other.buffer.Length; i++)
@@ -38,7 +38,7 @@ namespace Neo.IO.Data.LevelDB
         /// 是否等于该切片
         /// </summary>
         /// <param name="other">待比较切片</param>
-        /// <returns></returns>
+        /// <returns>相等则返回true,否则返回false</returns>
         public bool Equals(Slice other)
         {
             if (buffer.Length != other.buffer.Length) return false;

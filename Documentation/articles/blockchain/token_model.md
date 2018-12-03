@@ -10,6 +10,8 @@
 
 &emsp;&emsp;A new block is certified about every 15 seconds according to system design. Thus 2 million new blocks are created every year. 100 million GAS is issued gradually in 22 years according to a attenuation algorithm. No block exitation is issued afterwards.
 
+&emsp;&emsp; 按照系统设定，约15秒钟能够确认一个区块。一年约生成200万个区块。经过一个衰减算法在约22年的时间内逐步生成一亿个GAS。之后将不再有区块奖励。
+
 
 | Cycle |  Block Height Range | Block excitation GAS  |
 |-----|-------------     |---------------|

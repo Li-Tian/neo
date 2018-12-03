@@ -23,6 +23,7 @@
 
 
 ### **Block Header** 
+### **区块头** 
 
 
 &emsp;&emsp; The block header contains the basic information of a block and provide verification of a block.  The first 10 attributes of the block constitute the header.
@@ -40,6 +41,7 @@
 [![../../images/blockchain/nextconsensus_script.jpg](../../images/blockchain/nextconsensus_script.jpg)](../../images/blockchain/nextconsensus_script.jpg)
 
 ### **Block Body**
+### **区块主体**
 
 &emsp;&emsp; The block body is a transaction list. In one round of consensus activity, the Speaker select all the transactions in memeory pool, sort and filter by plugin, package them into a new proposal block. For more details about consensus, please read "Consensus Mechanism" section.
 
@@ -48,3 +50,5 @@
 
 > [!NOTE]
 > When a block persistent, it stores a hash list of the block's transaction, and the transaction data is stored separately for facilitate query.
+
+&emsp;&emsp;除去区块头，剩下的便是由一个交易列表组成的区块主体。严格讲，区块主体以交易列表长度开始，后面罗列各条交易。此轮共识的议长将从其内存池队列中挑出通过验证的一串交易，将其放入一个共识包（`InventoryType = 0xe0`）中再发送到网络里。共识过程相对复杂，请参见"共识机制"章节。每一个区块的第一条交易都必须是`MinerTransaction`交易类型，作用是存放该块中的交易网络费的分配情况。目前，每一个块中最多有500笔交易，最多有20笔免费交易。

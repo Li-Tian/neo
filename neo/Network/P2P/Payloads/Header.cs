@@ -19,6 +19,7 @@ namespace Neo.Network.P2P.Payloads
         /// 反序列化
         /// </summary>
         /// <param name="reader">二进制输入流</param>
+        /// <exception cref="System.FormatException">二进制数据格式与Header序列化后格式不符时抛出</exception>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -41,7 +42,7 @@ namespace Neo.Network.P2P.Payloads
         /// 比较区块头是否等于某对象
         /// </summary>
         /// <param name="obj">待比较对象</param>
-        /// <returns></returns>
+        /// <returns>等于返回true，不等于返回false</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Header);
@@ -50,7 +51,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 获取hash code
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区块哈希的hashcode</returns>
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
@@ -103,7 +104,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成简化版block
         /// </summary>
-        /// <returns></returns>
+        /// <returns>简化版block对象</returns>
         public TrimmedBlock Trim()
         {
             return new TrimmedBlock

@@ -19,7 +19,7 @@ namespace Neo.VM.Types
         {
         }
         /// <summary>
-        /// 复制Struct到另一个Struct
+        /// 复制Struct的数据给另一个Struct，深拷贝
         /// </summary>
         /// <returns>复制得到的Struct</returns>
         public Struct Clone()

@@ -6,13 +6,13 @@
     public interface ICrypto
     {
         /// <summary>
-        /// Hash160算法
+        /// 求数据使用Hash160算法进行运算的结果
         /// </summary>
         /// <param name="message">待处理的数据</param>
         /// <returns>运算结果</returns>
         byte[] Hash160(byte[] message);
         /// <summary>
-        /// Hash256算法
+        /// 求数据使用Hash256算法进行运算的结果
         /// </summary>
         /// <param name="message">待处理的数据</param>
         /// <returns>运算结果</returns>

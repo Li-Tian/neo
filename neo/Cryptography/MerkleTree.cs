@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Neo.Cryptography
 {
+    /// <summary>
+    /// 梅克尔树的实现类
+    /// </summary>
     public class MerkleTree
     {
         private MerkleTreeNode root;

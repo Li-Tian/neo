@@ -2,7 +2,6 @@
 
 ## Consensus Message Format
 
-
 ### P2p message format
 
 | Size | Field | Type  | Description |
@@ -109,15 +108,23 @@ When consensus message enters the P2P network, it broadcasts and transmits like 
 
 > [!Note] 
 > `getdata` message is mainly used to get the `inv` message with specific content hash.
+> `getdata` 消息主要用来获取 `inv`消息附带hash列表对应的具体内容。
+> 以上英语翻译不够精确
 
 
-## Consensus Message Process
 
-###  Verification
+
+
+
+## Consensus Message Process(共识消息处理)
+
+###  Verification(校验)
 
 1. If the `ConsensusPayload.BlockIndex` no more than current block height, then ignore.
+1. 检查`ConsensusPayload.BlockIndex`。若小于或等于当前高度，则忽略该消息。
 
 2. If the verification script executed failed or the script hash not equal to `ConsensusPayload.ValidatorIndex` address's script hash, then ignore.
+2. 检查验证脚本是否通过，以及验证脚本的地址hash，是否等于`ConsensusPayload.ValidatorIndex`所在议员列表中，对应的地址签名脚本hash。
 
 3. If the `ConsensusPayload.ValidatorIndex` equal to current node index, then ignore.
 
