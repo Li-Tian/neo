@@ -313,10 +313,9 @@ NEO transanction is defined as follows：
 > [!NOTE]
 > **Transaction system fee**: Different transactions are with different fee standard, which is set in configuration file `protocol.json`. Collected system fee is distributed to NEO holders。
 >
-> **Transaction network fee**： `NetworkFee = tx.inputs.GAS - tx.outputs.GAS - tx.SystemFee`， 共识过程中，对议长打包交易的奖励，存于共识新块的第一笔交易`MinerTransaction`中。交易的网络费设置的越高，越容易被打包。
+> **Transaction network fee**： `NetworkFee = tx.inputs.GAS - tx.outputs.GAS - tx.SystemFee`. In consensus activity, the `NetworkFee` will be the reward for the Speaker, which packet transactions into a block, stored in the first transaction (`MinerTransaction`) of the block. The higher the transaction network fee is set, the easier to be packaged.
 
 &nbsp;
-
 
 ### Common attributes
 
