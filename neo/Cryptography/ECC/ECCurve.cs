@@ -4,7 +4,7 @@ using System.Numerics;
 namespace Neo.Cryptography.ECC
 {
     /// <summary>
-    /// 代表了椭圆曲线的类, 根据参数的不同, 可以分为Secp256k1和Secp256r1两种类
+    /// 定义椭圆曲线的类, 根据参数的不同, 定义了两条曲线Secp256k1和Secp256r1
     /// </summary>
     public class ECCurve
     {

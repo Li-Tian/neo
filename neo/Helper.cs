@@ -67,6 +67,7 @@ namespace Neo
         /// </summary>
         /// <param name="value">被转换的十六进制的字符串</param>
         /// <returns>转换后成功的byte数组</returns>
+        /// <exception cref="System.FormatException">字符串中字符个数不是2的整数倍时抛出</exception>
         public static byte[] HexToBytes(this string value)
         {
             if (value == null || value.Length == 0)
@@ -154,7 +155,9 @@ namespace Neo
         }
 
         /// <summary>
-        /// 传入一个实现了IEnumerable接口的任意Tsource泛型对象集合，和一个能够将Tsource转化为Fixed8对象的转换函数, 将集合中每个Tsource元素转换成Fixed8对象，然后求和后返回.
+        /// 传入一个实现了IEnumerable接口的任意Tsource泛型对象集合，
+        /// 和一个能够将Tsource转化为Fixed8对象的转换函数, 将集合中
+        /// 每个Tsource元素转换成Fixed8对象，然后求和后返回.
         /// </summary>
         /// <typeparam name="TSource">该方法所需要处理的数值表达式类型</typeparam>
         /// <param name="source">一个包含多个TSource对象,实现了IEnumerable接口的集合</param>
