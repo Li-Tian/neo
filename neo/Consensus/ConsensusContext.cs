@@ -145,9 +145,6 @@ namespace Neo.Consensus
         /// <summary>
         /// 用当前共识上下文的数据生成一个新区块。
         /// </summary>
-        /// <remark>
-        /// 
-        /// </remark>
         public Block CreateBlock()
         {
             Block block = MakeHeader();
@@ -300,7 +297,7 @@ namespace Neo.Consensus
         /// 2. 初始化状态
         /// 3. 重置区块高度为当前快照区块高区+1
         /// 4. 重置视图编号为0
-        /// 5. 默认共识节点编号为-1，即此节点不是公式节点。重新计算议长的编号。
+        /// 5. 默认节点编号为-1，即此节点不是公式节点。重新计算议长的编号。
         /// 6. 清空签名数组和期望视图数组
         /// 7. 重新计算自身验证人节点编号，并得出KeyPair。
         /// </remark>
