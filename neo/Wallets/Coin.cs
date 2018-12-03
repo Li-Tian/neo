@@ -7,12 +7,12 @@ namespace Neo.Wallets
     public class Coin : IEquatable<Coin>
     {
         /// <summary>
-        /// 
+        /// Coin的引用，即交易输入
         /// </summary>
         public CoinReference Reference;
 
         /// <summary>
-        /// 
+        /// 交易输出
         /// </summary>
         public TransactionOutput Output;
 
