@@ -3,7 +3,7 @@
 namespace Neo.Wallets
 {
     /// <summary>
-    /// Neo钱包的抽象类
+    /// Neo钱包账户的抽象类
     /// </summary>
     public abstract class WalletAccount
     {
@@ -18,16 +18,19 @@ namespace Neo.Wallets
         /// 是否是默认钱包
         /// </summary>
         public bool IsDefault;
+        /// <summary>
+        /// 是否锁定
+        /// </summary>
         public bool Lock;
 
         /// <summary>
-        /// 钱包的合约
+        /// 钱包账户的合约
         /// </summary>
         public Contract Contract;
 
 
         /// <summary>
-        /// 钱包的地址
+        /// 钱包账户的地址
         /// </summary>
         public string Address => ScriptHash.ToAddress();
 
@@ -37,7 +40,7 @@ namespace Neo.Wallets
         public abstract bool HasKey { get; }
 
         /// <summary>
-        /// 是否是一个监视钱包
+        /// 是否是一个监视钱包账户
         /// </summary>
         public bool WatchOnly => Contract == null;
 

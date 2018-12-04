@@ -132,7 +132,8 @@ namespace Neo.Wallets
         {
         }
         /// <summary>
-        /// 查询指定账户地址集合内所有未花费的Coin集合
+        /// 查询指定账户地址集合内所有非锁定账户和非观察账户中所有未花费的Coin集合
+        /// 如果指定账户地址集合为空，则取钱包账户列表内所有账户作为指定账户地址集合
         /// </summary>
         /// <param name="from">待查询账户地址集合</param>
         /// <returns>查询到的Coin集合</returns>
