@@ -24,7 +24,7 @@
 [![../../images/blockchain/blockchain.jpg](../../images/blockchain/blockchain.jpg)](../../images/blockchain/blockchain.jpg)
 
 
-### **区块头Header** 
+### **区块头** 
 
 &emsp;&emsp;区块头包含了一个区块的基本信息，用以保证这个区块能正确地连入区块链。区块的前10个数据构成了区块头。
 
@@ -36,5 +36,5 @@
 
 [![../../images/blockchain/nextconsensus_script.jpg](../../images/blockchain/nextconsensus_script.jpg)](../../images/blockchain/nextconsensus_script.jpg)
 
-### **Block的主体**
-&emsp;&emsp;除去区块头，剩下的便是由一个交易列表组成的区块主体。严格讲，区块主体以交易数开始，后面罗列各条交易。此轮共识的议长将从其内存池队列中挑出通过验证的一串交易，将其放入一个共识包（`InventoryType = 0xe0`）中再发送到网络里。共识过程相对复杂，请参见"共识机制"章节。每一个区块的第一条交易都必须是`MinerTransaction`交易类型，作用是存放该块中的交易网络费的分配情况。目前，每一个块中最多有500笔交易，最多有20笔免费交易。
+### **区块主体**
+&emsp;&emsp;除去区块头，剩下的便是由一个交易列表组成的区块主体。严格讲，区块主体以交易列表长度开始，后面罗列各条交易。此轮共识的议长将从其内存池队列中挑出通过验证的一串交易，将其放入一个共识包（`InventoryType = 0xe0`）中再发送到网络里。共识过程相对复杂，请参见"共识机制"章节。每一个区块的第一条交易都必须是`MinerTransaction`交易类型，作用是存放该块中的交易网络费的分配情况。目前，每一个块中最多有500笔交易，最多有20笔免费交易。

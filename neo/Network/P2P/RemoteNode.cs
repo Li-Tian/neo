@@ -26,10 +26,27 @@ namespace Neo.Network.P2P
         private BloomFilter bloom_filter;
         private bool verack = false;
 
+        /// <summary>
+        /// 监听器所在的远端节点的IP和监听的端口
+        /// </summary>
         public IPEndPoint Listener => new IPEndPoint(Remote.Address, ListenerPort);
+
+        /// <summary>
+        /// 监听的端口
+        /// </summary>
         public override int ListenerPort => Version?.Port ?? 0;
+        /// <summary>
+        /// 记录当前节点的版本数据和区块高度
+        /// </summary>
         public VersionPayload Version { get; private set; }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="system">NEO核心系统类</param>
+        /// <param name="connection">一个Tcp连接对象</param>
+        /// <param name="remote">远端节点的IP和端口</param>
+        /// <param name="local">本地节点的IP和端口</param>
         public RemoteNode(NeoSystem system, object connection, IPEndPoint remote, IPEndPoint local)
             : base(connection, remote, local)
         {
@@ -87,12 +104,19 @@ namespace Neo.Network.P2P
             CheckMessageQueue();
         }
 
+        /// <summary>
+        /// 当节点收到ack消息后的回调函数. 将ack标志位设置为true, 然后检查消息队列中的消息, 并将最早进入消息队列中的最消息弹出并发送,
+        /// </summary>
         protected override void OnAck()
         {
             ack = true;
             CheckMessageQueue();
         }
 
+        /// <summary>
+        /// 解析准备好的数据, 通过actor进行发送
+        /// </summary>
+        /// <param name="data">准备发送的的数据</param>
         protected override void OnData(ByteString data)
         {
             msg_buffer = msg_buffer.Concat(data);
@@ -100,6 +124,10 @@ namespace Neo.Network.P2P
                 protocol.Tell(message);
         }
 
+        /// <summary>
+        /// 接收到消息后的回调函数, 根据不同消息类型来进行处理
+        /// </summary>
+        /// <param name="message">接收到的信息</param>
         protected override void OnReceive(object message)
         {
             base.OnReceive(message);
@@ -176,6 +204,9 @@ namespace Neo.Network.P2P
             SendMessage(Message.Create("verack"));
         }
 
+        /// <summary>
+        /// 停止连接和数据发送, 并将这个远端节点从本地节点的RemoteNodes列表中删除
+        /// </summary>
         protected override void PostStop()
         {
             LocalNode.Singleton.RemoteNodes.TryRemove(Self, out _);
@@ -193,6 +224,10 @@ namespace Neo.Network.P2P
             SendData(ByteString.FromBytes(message.ToArray()));
         }
 
+        /// <summary>
+        /// 使用OneForOneStrategy针对异常的那个子actor, 直接终止该子actor.
+        /// </summary>
+        /// <returns>返回一个处理错误的SupervisorStrategy用来处理Akka中子actor的错误</returns>
         protected override SupervisorStrategy SupervisorStrategy()
         {
             return new OneForOneStrategy(ex =>

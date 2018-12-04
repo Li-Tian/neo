@@ -29,19 +29,26 @@ namespace Neo.Consensus
         public class Start { }
 
         /// <summary>
-        /// 更新视图消息
+        /// 更新/设置视图编号
         /// </summary>
         public class SetViewNumber { public byte ViewNumber; }
 
         /// <summary>
         /// 超时消息
         /// </summary>
+        /// <remarks>
+        /// 给出超时区块的块高度和视图编号
+        /// </remarks>
         internal class Timer { public uint Height; public byte ViewNumber; }
 
         /// <summary>
-        /// 上下文
+        /// 共识上下文
         /// </summary>
         private readonly ConsensusContext context;
+        
+        /// <summary>
+        /// Neo系统的当前状态
+        /// </summary>
         private readonly NeoSystem system;
         private ICancelable timer_token;
         /// <summary>
@@ -52,8 +59,8 @@ namespace Neo.Consensus
         /// <summary>
         /// 构建共识服务
         /// </summary>
-        /// <param name="system"></param>
-        /// <param name="wallet"></param>
+        /// <param name="system">Neo系统的当前状态</param>
+        /// <param name="wallet">钱包</param>
         public ConsensusService(NeoSystem system, Wallet wallet)
         {
             this.system = system;
@@ -64,8 +71,16 @@ namespace Neo.Consensus
         /// 添加新交易
         /// </summary>
         /// <remarks>
-        /// 注意，1. 若提案block的交易全部收齐时，将发送PrepareReponse消息
-        /// 2. 校验失败时，会触发ChangeView
+        /// 大致算法过程解释如下：
+        /// 1. 若满足以下3个条件，这条交易会被拒收
+        /// 1) 当前上下文的快照中已经包含这条交易；
+        /// 2）传入的verify参数为True，意味着要验证；且验证的结果为false;
+        /// 3) 这条交易不满足Plugin中的某条policy；
+        /// 
+        /// 2. 将这条交易放入Transactions数组；
+        /// 3. 当提案block的交易全部收齐，即TransactionHashes的长度和Transactions数组的长度一致时：
+        ///    若通过了上下文中的VerifyRequest测试，该节点将发送PrepareReponse消息；否则该节点将发送ChangeView请求；
+        ///    VerifyRequest测试的具体内容见ConsensusContext.cs中的VerifyRequest方法。
         /// </remarks>
         /// <param name="tx">待添加交易</param>
         /// <param name="verify">是否进行交易验证</param>
@@ -115,10 +130,11 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 检查视图更换是否达成一致 
+        /// 检查视图更换的决定是否达成一致 
         /// </summary>
         /// <remarks>
-        /// 当有最少M个节点的期望视图编号都等于view_number时，则视图更换完成，重置共识活动以及使该视图编号
+        /// 当上下文中的当前视图标号与输入的这个视图标号一样时，不做任何处理，返回；否则，检查是不是有
+        /// 有最少M个节点的期望视图编号都等于一个view_number时，则更新到该视图编号开始重置共识活动；
         /// </remarks>
         /// <param name="view_number">视图编号</param>
         private void CheckExpectedView(byte view_number)
@@ -148,6 +164,15 @@ namespace Neo.Consensus
         /// 初始化共识活动
         /// </summary>
         /// <param name="view_number">视图编号</param>
+        /// <remarks>
+        /// 视图编号为0，意味着这是个新块，刚开始第一轮共识，重置上下文中的内容；视图编号不为0，则这次共识时对同一块进行视图转换试图达成共识
+        /// 如果上下文中MyIndex小于0，意味着此节点非验证人节点，不参与共识过程
+        /// 如果试图编号大于零，发出Log消息，表明新的一轮共识过程以新的视图编号开启
+        /// 发出Log消息，给出当前共识要确定的块的高度、视图编号、此节点的角色(议长还是议员)等
+        /// 如果该节点是议长，议长需要将其状态改为"Primary"，并设置计时器，因为系统设定了一个块约15秒生成一个新块
+        /// 如果该节点是议员，它就需要将其状态改为"Backup"， 并将计时器乘以2。视图每加1，计时器时长变为之前的两倍
+        /// </remarks>
+
         private void InitializeConsensus(byte view_number)
         {
             if (view_number == 0)
@@ -198,6 +223,17 @@ namespace Neo.Consensus
         /// 共识消息货物的处理，检查与具体共识消息处理
         /// </summary>
         /// <param name="payload">共识消息货物</param>
+        /// <remark>
+        /// 在以下3中情况下，此节点不处理收到的这个ConsensusPayload包：
+        /// 1. 此节点已经确认了这个块；
+        /// 2. 这个共识包实际上是此节点自己发出去的；
+        /// 3. 共识包的版本号与当前共识上下文中的版本号不一致，即不是一个共识版本；
+        /// 4. 在发现落后于其他共识节点后，此节点发送链同步Log；
+        /// 5. 这个共识包中的验证人个数和上下文中的不符；
+        /// 
+        /// 此共识包通过以上验证之后，进行解包。解开发现这个包的视图号与当前共识的不符并且这不是一个请求转换视图的共识包，不做处理。
+        /// 至此若此共识包没有被丢弃，则按照其类型，分别处理。
+        /// </remark>
         private void OnConsensusPayload(ConsensusPayload payload)
         {
             if (context.State.HasFlag(ConsensusState.BlockSent)) return;
@@ -315,7 +351,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// PrepareResponse 消息处理
+        /// PrepareResponse消息处理
         /// </summary>
         /// 若PrepareRequest消息已收过，则验证签名数据后收下；否则先收下（后续在收到PrepareRequset消息时，会进行验证）
         /// <param name="payload">PrepareResponse货物</param>

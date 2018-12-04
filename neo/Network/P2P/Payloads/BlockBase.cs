@@ -203,7 +203,13 @@ namespace Neo.Network.P2P.Payloads
         /// 根据当前区块快照，校验该区块
         /// </summary>
         /// <param name="snapshot">区块快照</param>
-        /// <returns>1）若上一个区块不存在或者上一个区块高度加一不等于当前区块高度，2）或者上一个区块时间戳大于当前区块时间戳，3）或见证人校验失败，则返回false，否则返回true</returns>
+        /// <remark>
+        /// 若满足以下4个条件之一，则验证节点为false；
+        /// 1）若上一个区块不存在
+        /// 2）若上一个区块高度加一不等于当前区块高度
+        /// 3）若者上一个区块时间戳大于当前区块时间戳
+        /// 4）若见证人校验失败
+        /// </remark>
         public virtual bool Verify(Snapshot snapshot)
         {
             Header prev_header = snapshot.GetHeader(PrevHash);

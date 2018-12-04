@@ -105,7 +105,7 @@ namespace Neo.Network.P2P
         /// <summary>
         /// 未连接的peer列表中peer个数的最大值. 默认1000
         /// </summary>
-        /// <value>未连接的peer列表中peer个数的最大值</value
+        /// <value>未连接的peer列表中peer个数的最大值</value>
         protected int UnconnectedMax { get; } = 1000;
         protected virtual int ConnectingMax
         {

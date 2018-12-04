@@ -143,7 +143,7 @@ namespace Neo.Wallets
             return GetCoins(accounts).Where(p => p.State.HasFlag(CoinState.Confirmed) && !p.State.HasFlag(CoinState.Spent) && !p.State.HasFlag(CoinState.Frozen));
         }
         /// <summary>
-        /// 查询指定账户集合内某一全局资产（neo、gas）所有为花费的Coin集合中满足指定金额的子集(按照降序查找)
+        /// 查询指定账户集合内某一全局资产（neo、gas）所有未花费的Coin集合中满足指定金额的子集(按照降序查找)
         /// </summary>
         /// <param name="asset_id">指定全局资产的ID</param>
         /// <param name="amount">指定金额</param>
@@ -255,9 +255,9 @@ namespace Neo.Wallets
             return account?.ScriptHash;
         }
         /// <summary>
-        /// 查询获取钱包内所用账户的Coin集合
+        /// 查询获取钱包内所有账户的Coin集合
         /// </summary>
-        /// <returns>钱包内所用账户的Coin集合</returns>
+        /// <returns>钱包内所有账户的Coin集合</returns>
         public IEnumerable<Coin> GetCoins()
         {
             return GetCoins(GetAccounts().Select(p => p.ScriptHash));
@@ -355,7 +355,7 @@ namespace Neo.Wallets
             return account;
         }
         /// <summary>
-        /// 导入NEP2格式密文，利用其中的数据生成钱包对象
+        /// 导入NEP2格式密文，利用其中的数据生成钱包账户对象
         /// </summary>
         /// <param name="nep2">NEP2格式密文</param>
         /// <param name="passphrase">解析NEP2格式密文的密码</param>
@@ -570,7 +570,7 @@ namespace Neo.Wallets
         /// 验证用户输入的钱包密码的正确性.
         /// 这是个抽象方法。
         /// </summary>
-        /// <param name="password">户输入的钱包</param>
+        /// <param name="password">用户输入的钱包密码</param>
         /// <returns>验证成功返回true，否则返回false</returns>
         public abstract bool VerifyPassword(string password);
 
