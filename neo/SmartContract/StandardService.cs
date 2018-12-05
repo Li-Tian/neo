@@ -126,8 +126,8 @@ namespace Neo.SmartContract
         /// <summary>
         /// 根据互操作服务哈希查找对应的Gas消耗
         /// </summary>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="hash">互操作服务哈希</param>
+        /// <returns>对应的Gas消耗</returns>
         public long GetPrice(uint hash)
         {
             prices.TryGetValue(hash, out long price);
