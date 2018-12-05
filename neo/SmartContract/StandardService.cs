@@ -123,7 +123,11 @@ namespace Neo.SmartContract
                 disposable.Dispose();
             Disposables.Clear();
         }
-
+        /// <summary>
+        /// 根据互操作服务哈希查找对应的Gas消耗
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         public long GetPrice(uint hash)
         {
             prices.TryGetValue(hash, out long price);
@@ -138,36 +142,61 @@ namespace Neo.SmartContract
             if (!methods.TryGetValue(hash, out Func<ExecutionEngine, bool> func)) return false;
             return func(engine);
         }
-
+        /// <summary>
+        /// 注册一个互操作服务
+        /// </summary>
+        /// <param name="method">互操作服务名</param>
+        /// <param name="handler">互操作服务方法</param>
         protected void Register(string method, Func<ExecutionEngine, bool> handler)
         {
             methods.Add(method.ToInteropMethodHash(), handler);
         }
-
+        /// <summary>
+        /// 注册一个互操作服务
+        /// </summary>
+        /// <param name="method">互操作服务名</param>
+        /// <param name="handler">互操作服务方法</param>
+        /// <param name="price">互操作服务Gas消耗</param>
         protected void Register(string method, Func<ExecutionEngine, bool> handler, long price)
         {
             Register(method, handler);
             prices.Add(method.ToInteropMethodHash(), price);
         }
-
+        /// <summary>
+        /// 获得该智能合约的脚本容器（最开始的触发者）
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功返回true</returns>
         protected bool ExecutionEngine_GetScriptContainer(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(engine.ScriptContainer));
             return true;
         }
-
+        /// <summary>
+        /// 获得该智能合约执行的脚本哈希
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功返回true</returns>
         protected bool ExecutionEngine_GetExecutingScriptHash(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.ScriptHash);
             return true;
         }
-
+        /// <summary>
+        /// 获得该智能合约的调用者的脚本哈希
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功返回true</returns>
         protected bool ExecutionEngine_GetCallingScriptHash(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(engine.CallingContext.ScriptHash);
             return true;
         }
-
+        /// <summary>
+        /// 获得该智能合约的入口点（合约调用链的起点）的脚本哈希
+        /// </summary>
+        /// <param name="engine">当前执行引擎</param>
+        /// <returns>执行成功返回true</returns>
         protected bool ExecutionEngine_GetEntryScriptHash(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(engine.EntryContext.ScriptHash);
