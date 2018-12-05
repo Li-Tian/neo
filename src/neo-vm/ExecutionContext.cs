@@ -37,10 +37,20 @@ namespace Neo.VM
                 OpReader.BaseStream.Seek(value, SeekOrigin.Begin);
             }
         }
+
         /// <summary>
-        /// 下一条指令对应的操作码
+        /// 下一条指令对应的操作码。
         /// </summary>
-        public OpCode NextInstruction => (OpCode)Script[OpReader.BaseStream.Position];
+        public OpCode NextInstruction
+        {
+            get
+            {
+                var position = OpReader.BaseStream.Position;
+                if (position >= Script.Length) return OpCode.RET;
+                
+                return (OpCode)Script[position];
+            }
+        }
 
         private byte[] _script_hash = null;
         /// <summary>

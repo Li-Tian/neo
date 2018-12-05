@@ -7,7 +7,7 @@ using System.Linq;
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  PrepareRequest消息.
+    ///  PrepareRequest消息
     /// </summary>
     internal class PrepareRequest : ConsensusMessage
     {
