@@ -67,7 +67,11 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">区块快照</param>
         /// <param name="mempool">内存池交易</param>
-        /// <returns>1）若资产变化增多情况等于0，返回false；2）若发行的资产不存在返回false；3）若该交易的发行量加上内存池其他发行量，超过了发行总量，则返回false</returns>
+        /// <returns>
+        /// 1. 进行交易的基本验证，若验证失败，则返回false <br/>
+        /// 2. 若资产变化增多情况等于0，返回false <br/>
+        /// 3. 若发行的资产不存在返回false <br/>
+        /// 4. 若该交易的发行量加上内存池其他发行量，超过了发行总量，则返回false</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (!base.Verify(snapshot, mempool)) return false;

@@ -350,7 +350,25 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">区块快照</param>
         /// <param name="mempool">内存池交易</param>
-        /// <returns></returns>
+        /// <returns>1. 若Input存在重复，则返回false <br/>
+        /// 2.若内存池交易包含Input交易时，返回false <br/>
+        /// 3.若Input是已经花费的交易，则返回false <br/>
+        /// 4. 若转账资产不存在，则返回false  <br/>
+        /// 5. 若资产是非NEO或非GAS时，且资产过期时，返回false  <br/>
+        /// 6. 若转账金额不能整除对应资产的最小精度时，返回false  <br/>
+        /// 7. 检查金额关系：  <br/>
+        ///    7.1 若 Input.Asset = Output.Asset 时，返回false  <br/>
+        ///    7.2 若 Input.Asset > Output.Asset 时，且资金种类大于一种时，返回false  <br/>
+        ///    7.3 若 Input.Asset > Output.Asset 时，资金种类不是GAS时，返回false  <br/>
+        ///    7.4 若 交易手续费 大于 Input.GAS - output.GAS 时， 返回false  <br/>
+        ///    7.5 若 Input.Asset &lt Output.Asset 时：
+        ///        7.5.1 若 交易类型是MinerTransaction 或 ClaimTransaction， 且 资产不是GAS时，返回false <br/>
+        ///        7.5.2 若交易类型时 IssueTransaction时，且 资产是GAS时，返回false  <br/>
+        ///        7.5.3 若是其他交易类型，且 存在增发资产时，返回false  <br/>
+        /// 8. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false
+        /// 9. 若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永正）<br/>
+        /// 10.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false 
+        /// </returns>
         public virtual bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (Size > MaxTransactionSize) return false;
