@@ -35,7 +35,7 @@ namespace Neo.Ledger
         /// </summary>
         public class ApplicationExecuted {
             /// <summary>
-            /// 所处交易
+            /// 所处理的交易
             /// </summary>
             public Transaction Transaction;
             /// <summary>
@@ -243,7 +243,7 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 启动区块链核心
+        /// 构造函数.构造一个区块链核心
         /// </summary>
         /// <param name="system">neo actor系统</param>
         /// <param name="store">持久化存储</param>
@@ -286,7 +286,7 @@ namespace Neo.Ledger
         /// 根据区块hash查询区块是否存在
         /// </summary>
         /// <param name="hash">区块hash</param>
-        /// <returns></returns>
+        /// <returns>如果这个区块已经存在返回true, 否则返回False</returns>
         public bool ContainsBlock(UInt256 hash)
         {
             if (block_cache.ContainsKey(hash)) return true;
@@ -296,8 +296,8 @@ namespace Neo.Ledger
         /// <summary>
         /// 根据交易hash查询交易是否存在
         /// </summary>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="hash">交易的hash</param>
+        /// <returns>如果该交易存在返回true, 否则返回false</returns>
         public bool ContainsTransaction(UInt256 hash)
         {
             if (mem_pool.ContainsKey(hash)) return true;
@@ -346,7 +346,7 @@ namespace Neo.Ledger
         /// <summary>
         /// 获取内存池交易
         /// </summary>
-        /// <returns></returns>
+        /// <returns>内存池所有交易的序列</returns>
         public IEnumerable<Transaction> GetMemoryPool()
         {
             return mem_pool;
@@ -355,17 +355,17 @@ namespace Neo.Ledger
         /// <summary>
         /// 获取区块快照
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区块的快照</returns>
         public Snapshot GetSnapshot()
         {
             return Store.GetSnapshot();
         }
 
         /// <summary>
-        /// 根据交易hash查询交易
+        /// 根据交易hash查询交易.先去从内存池中拿， 如果没有， 则去从持久化存储中去哪.
         /// </summary>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="hash">交易的hash</param>
+        /// <returns>通过交易获取的交易</returns>
         public Transaction GetTransaction(UInt256 hash)
         {
             if (mem_pool.TryGetValue(hash, out Transaction transaction))
@@ -376,8 +376,8 @@ namespace Neo.Ledger
         /// <summary>
         /// 根据交易hash查询未验证的交易
         /// </summary>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="hash">未验证的交易hash</param>
+        /// <returns>查询到的交易</returns>
         internal Transaction GetUnverifiedTransaction(UInt256 hash)
         {
             mem_pool_unverified.TryGetValue(hash, out Transaction transaction);
