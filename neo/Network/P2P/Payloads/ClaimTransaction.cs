@@ -101,11 +101,13 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">区块快照</param>
         /// <param name="mempool">已经花费的GAS outputs</param>
-        /// <returns>1. 若Claims包含重复交易时，返回false； 
-        /// 2. 若Claims与内存池交易存在重复时，返回false； 
-        /// 3. 若GAS的资产没有变动或者减少时，返回false；
-        /// 4. 若计算的claim到的Gas不等于GAS的增发量时，返回false
-        /// 5. 返回true</returns>
+        /// <returns>
+        /// 1. 进行交易的基本验证，若验证失败，则返回false <br/>
+        /// 2. 若Claims包含重复交易时，返回false <br/>
+        /// 3. 若Claims与内存池交易存在重复时，返回false <br/>
+        /// 4. 若GAS的资产没有变动或者减少时，返回false <br/>
+        /// 5. 若计算的claim到的Gas不等于GAS的增发量时，返回false <br/>
+        /// 6. 若处理过程异常时，返回false <br/>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (!base.Verify(snapshot, mempool)) return false;
