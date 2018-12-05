@@ -108,6 +108,7 @@ namespace Neo.Network.P2P.Payloads
         /// 4. 若GAS的资产没有变动或者减少时，返回false <br/>
         /// 5. 若计算的claim到的Gas不等于GAS的增发量时，返回false <br/>
         /// 6. 若处理过程异常时，返回false <br/>
+        /// </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (!base.Verify(snapshot, mempool)) return false;

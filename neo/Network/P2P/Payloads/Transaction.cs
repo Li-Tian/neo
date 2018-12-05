@@ -15,12 +15,12 @@ using System.Text;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 交易
+    /// 所有交易的父类。
     /// </summary>
     public abstract class Transaction : IEquatable<Transaction>, IInventory
     {
         /// <summary>
-        /// 交易最大存储大小
+        /// 交易最大存储字节数。如果收到的交易数超过这个限制将被直接抛弃。
         /// </summary>
         public const int MaxTransactionSize = 102400;
         /// <summary>
@@ -39,7 +39,7 @@ namespace Neo.Network.P2P.Payloads
         public readonly TransactionType Type;
 
         /// <summary>
-        /// 交易版本号
+        /// 交易版本号。行为在各个子类中定义。
         /// </summary>
         public byte Version;
 
@@ -59,14 +59,14 @@ namespace Neo.Network.P2P.Payloads
         public TransactionOutput[] Outputs;
 
         /// <summary>
-        /// 见证人
+        /// 验证脚本的数组
         /// </summary>
         public Witness[] Witnesses { get; set; }
 
         private UInt256 _hash = null;
 
         /// <summary>
-        /// 交易hash
+        /// 获取交易的hash值。是将交易信息数据做2次Sha256运算，这个过程被称为Hash256。
         /// </summary>
         public UInt256 Hash
         {
@@ -83,14 +83,15 @@ namespace Neo.Network.P2P.Payloads
         InventoryType IInventory.InventoryType => InventoryType.TX;
 
         /// <summary>
-        /// 是否是低优先级交易   若是claim交易或网络费用低于某阈值时，则为低优先级交易
+        /// 是否是低优先级交易。若是claim交易或网络费用低于阈值时，则为低优先级交易。
+        /// 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
         /// </summary>
         public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
 
         private Fixed8 _network_fee = -Fixed8.Satoshi;
 
         /// <summary>
-        /// 网络手续费
+        /// 网络手续费。值为交易的Input中的GAS总和减去Output中的GAS总和。
         /// </summary>
         public virtual Fixed8 NetworkFee
         {
@@ -109,7 +110,9 @@ namespace Neo.Network.P2P.Payloads
         private IReadOnlyDictionary<CoinReference, TransactionOutput> _references;
 
         /// <summary>
-        /// 
+        /// 获取当前交易所有输入(input)与其所指向的之前某个交易的一个输出(output)之间的只读关系映射(Dictionary)。<BR/>
+        /// 这个关系映射的每个 key 都是当前交易的 input，而 value 则是之前某个交易的 output。<BR/>
+        /// 如果当前交易的某个 input 所指向的 output 在过去的交易中不存在，那么返回 null。<BR/>
         /// </summary>
         public IReadOnlyDictionary<CoinReference, TransactionOutput> References
         {
@@ -138,12 +141,12 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 存储大小
+        /// 存储大小。包括交易类型、版本号、属性、输入、输出和签名的总字节数。
         /// </summary>
         public virtual int Size => sizeof(TransactionType) + sizeof(byte) + Attributes.GetVarSize() + Inputs.GetVarSize() + Outputs.GetVarSize() + Witnesses.GetVarSize();
 
         /// <summary>
-        /// 手续费
+        /// 手续费。因交易种类不同而不同。
         /// </summary>
         public virtual Fixed8 SystemFee => Settings.Default.SystemFee.TryGetValue(Type, out Fixed8 fee) ? fee : Fixed8.Zero;
 
@@ -164,9 +167,9 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 反序列化非data数据
+        /// 反序列化类型特定数据。因交易种类不同而不同。
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">从指定reader中读取二进制信息</param>
         protected virtual void DeserializeExclusiveData(BinaryReader reader)
         {
         }
@@ -176,7 +179,7 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="value">原数据</param>
         /// <param name="offset">偏移量</param>
-        /// <returns></returns>
+        /// <returns>反序列化出来的Tx对象</returns>
         public static Transaction DeserializeFrom(byte[] value, int offset = 0)
         {
             using (MemoryStream ms = new MemoryStream(value, offset, value.Length - offset, false))
@@ -217,8 +220,8 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 判断两笔交易是否相等
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
+        /// <param name="other">相比较的另一个交易</param>
+        /// <returns>如果参数other是null则返回false，否则按照哈希值比较。</returns>
         public bool Equals(Transaction other)
         {
             if (other is null) return false;
@@ -230,7 +233,7 @@ namespace Neo.Network.P2P.Payloads
         /// 判断交易是否等于该对象
         /// </summary>
         /// <param name="obj">待比较对象</param>
-        /// <returns></returns>
+        /// <returns>如果参数 obj 是null或者不是Transaction则返回false，否则按照哈希值比较。</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Transaction);
@@ -240,7 +243,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 获取hash code
         /// </summary>
-        /// <returns></returns>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
@@ -275,9 +278,14 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 获取交易资产变化
+        /// 获取交易的 input 与 output 的比较结果。
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// 如果当前交易的某个 input 所指向的 output 在过去的交易中不存在，那么返回 null。<br/>
+        /// 否则按照资产种类归档，返回每种资产的所有 input 之和减去对应资产的所有 output 之和。<br/>
+        /// 归档以后，资产比较结果为 0 的资产会从归档列表中除去。<br/>
+        /// 如果所有的资产比较结果都被除去，则返回一个长度为0的IEnumerable对象。
+        /// </returns>
         public IEnumerable<TransactionResult> GetTransactionResults()
         {
             if (References == null) return null;
@@ -323,7 +331,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public virtual JObject ToJson()
         {
             JObject json = new JObject();
@@ -350,25 +358,26 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">区块快照</param>
         /// <param name="mempool">内存池交易</param>
-        /// <returns>1. 若Input存在重复，则返回false <br/>
-        /// 2.若内存池交易包含Input交易时，返回false <br/>
-        /// 3.若Input是已经花费的交易，则返回false <br/>
-        /// 4. 若转账资产不存在，则返回false  <br/>
-        /// 5. 若资产是非NEO或非GAS时，且资产过期时，返回false  <br/>
-        /// 6. 若转账金额不能整除对应资产的最小精度时，返回false  <br/>
-        /// 7. 检查金额关系：  <br/>
-        ///    7.1 若 Input.Asset = Output.Asset 时，返回false  <br/>
-        ///    7.2 若 Input.Asset > Output.Asset 时，且资金种类大于一种时，返回false  <br/>
-        ///    7.3 若 Input.Asset > Output.Asset 时，资金种类不是GAS时，返回false  <br/>
-        ///    7.4 若 交易手续费 大于 Input.GAS - output.GAS 时， 返回false  <br/>
-        ///    7.5 若 Input.Asset &lt Output.Asset 时：
-        ///        7.5.1 若 交易类型是MinerTransaction 或 ClaimTransaction， 且 资产不是GAS时，返回false <br/>
-        ///        7.5.2 若交易类型时 IssueTransaction时，且 资产是GAS时，返回false  <br/>
-        ///        7.5.3 若是其他交易类型，且 存在增发资产时，返回false  <br/>
-        /// 8. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false
+        /// <returns>
+        /// 1. 若Input存在重复，则返回false<br/>
+        /// 2. 若内存池交易包含Input交易时，返回false<br/>
+        /// 3. 若Input是已经花费的交易，则返回false<br/>
+        /// 4. 若转账资产不存在，则返回false<br/>
+        /// 5. 若资产是非NEO或非GAS时，且资产过期时，返回false<br/>
+        /// 6. 若转账金额不能整除对应资产的最小精度时，返回false<br/>
+        /// 7. 检查金额关系：<br/>
+        ///    7.1 若当前交易的某个 input 所指向的 output 在过去的交易中不存在时，返回false<br/>
+        ///    7.2 若 Input.Asset &gt; Output.Asset 时，且资金种类大于一种时，返回false<br/>
+        ///    7.3 若 Input.Asset &gt; Output.Asset 时，资金种类不是GAS时，返回false<br/>
+        ///    7.4 若 交易手续费 大于 Input.GAS - output.GAS 时， 返回false<br/>
+        ///    7.5 若 Input.Asset &lt; Output.Asset 时：
+        ///        7.5.1 若交易类型是 MinerTransaction 或 ClaimTransaction，且资产不是 GAS 时，返回false<br/>
+        ///        7.5.2 若交易类型时 IssueTransaction时，且资产是GAS时，返回false<br/>
+        ///        7.5.3 若是其他交易类型，且存在增发资产时，返回false<br/>
+        /// 8. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false <br/>
         /// 9. 若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永正）<br/>
-        /// 10.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false 
-        /// </returns>
+        /// 10.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false
+        ///</returns>
         public virtual bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (Size > MaxTransactionSize) return false;
