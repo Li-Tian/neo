@@ -336,7 +336,8 @@ namespace Neo.IO
         /// 输出格式为：
         /// 1）value小于0xFD，用一个字节的形式输出
         /// 2）value小于等于0xFFFF，用0xFD+字节数组的形式输出
-        /// 3）value小于等于0xFFFFFFFF，用0xFF+字节数组的形式输出
+        /// 3）value小于等于0xFFFFFFFF，用0xFE+字节数组的形式输出
+        /// 4) 其他情况，用0xFF+字节数组的形式输出
         /// </summary>
         /// <param name="writer">2进制输出器</param>
         /// <param name="value">长整形数据</param>
