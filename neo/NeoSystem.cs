@@ -72,7 +72,7 @@ namespace Neo
         /// <param name="wallet">钱包对象</param>
         public void StartConsensus(Wallet wallet)
         {
-            Consensus = ActorSystem.ActorOf(ConsensusService.Props(this, wallet));
+            Consensus = ActorSystem.ActorOf(ConsensusService.Props(this.LocalNode, this.TaskManager, wallet));
             Consensus.Tell(new ConsensusService.Start());
         }
         /// <summary>

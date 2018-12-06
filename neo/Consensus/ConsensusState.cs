@@ -6,7 +6,7 @@ namespace Neo.Consensus
     /// 共识活动状态
     /// </summary>
     [Flags]
-    internal enum ConsensusState : byte
+    public enum ConsensusState : byte
     {
         /// <summary>
         /// 初始化
