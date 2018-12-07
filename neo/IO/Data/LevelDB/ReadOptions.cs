@@ -2,8 +2,14 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    /// <summary>
+    /// 读选项
+    /// </summary>
     public class ReadOptions
     {
+        /// <summary>
+        /// 默认读选项
+        /// </summary>
         public static readonly ReadOptions Default = new ReadOptions();
         internal readonly IntPtr handle = Native.leveldb_readoptions_create();
 

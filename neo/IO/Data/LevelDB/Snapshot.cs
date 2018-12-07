@@ -17,7 +17,7 @@ namespace Neo.IO.Data.LevelDB
 
 
         /// <summary>
-        /// 释放资源
+        /// 释放快照资源
         /// </summary>
         public void Dispose()
         {

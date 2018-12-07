@@ -63,7 +63,7 @@ namespace Neo.IO.Wrappers
         /// <summary>
         /// 返回UInt32Wrapper对象内封装的uint对象
         /// </summary>
-        /// <param name="wrapper"></param>
+        /// <param name="wrapper">UInt32Wrapper对象</param>
         public static implicit operator uint(UInt32Wrapper wrapper)
         {
             return wrapper.value;

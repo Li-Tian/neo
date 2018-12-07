@@ -205,7 +205,7 @@ namespace Neo.Ledger
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>将这个ContractState转化成Json对象返回</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

@@ -38,14 +38,17 @@ namespace Neo.Plugins
 
         static Plugin()
         {
-            configWatcher = new FileSystemWatcher(pluginsPath, "*.json")
+            if (Directory.Exists(pluginsPath))
             {
-                EnableRaisingEvents = true,
-                IncludeSubdirectories = true,
-                NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.Size,
-            };
-            configWatcher.Changed += ConfigWatcher_Changed;
-            configWatcher.Created += ConfigWatcher_Changed;
+                configWatcher = new FileSystemWatcher(pluginsPath, "*.json")
+                {
+                    EnableRaisingEvents = true,
+                    IncludeSubdirectories = true,
+                    NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.Size,
+                };
+                configWatcher.Changed += ConfigWatcher_Changed;
+                configWatcher.Created += ConfigWatcher_Changed;
+            }
         }
 
         /// <summary>
@@ -59,6 +62,8 @@ namespace Neo.Plugins
             if (this is IPolicyPlugin policy) Policies.Add(policy);
             if (this is IRpcPlugin rpc) RpcPlugins.Add(rpc);
             if (this is IPersistencePlugin persistence) PersistencePlugins.Add(persistence);
+
+            Configure();
         }
 
 
@@ -113,18 +118,11 @@ namespace Neo.Plugins
                     if (type.IsAbstract) continue;
 
                     ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
-                    if (constructor == null) continue;
-
-                    Plugin plugin;
                     try
                     {
-                        plugin = (Plugin)constructor.Invoke(null);
+                        constructor?.Invoke(null);
                     }
-                    catch
-                    {
-                        continue;
-                    }
-                    plugin.Configure();
+                    catch { }
                 }
             }
         }
