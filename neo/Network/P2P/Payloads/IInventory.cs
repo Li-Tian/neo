@@ -3,16 +3,16 @@
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 库存接口
+    /// Inventory接口
     /// </summary>
     public interface IInventory : IVerifiable
     {
         /// <summary>
-        /// 库存哈希值
+        /// Inventory哈希值
         /// </summary>
         UInt256 Hash { get; }
         /// <summary>
-        /// 库存类型
+        /// Inventory类型
         /// </summary>
         InventoryType InventoryType { get; }
         /// <summary>

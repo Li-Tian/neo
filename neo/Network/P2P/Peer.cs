@@ -17,20 +17,20 @@ using System.Threading.Tasks;
 namespace Neo.Network.P2P
 {
     /// <summary>
-    /// NEO所用P2P网络中的peer类.
+    /// NEO所用P2P网络中的peer类.描述节点的基本的网络功能
     /// </summary>
     public abstract class Peer : UntypedActor
     {
         /// <summary>
-        /// 内部Start类
+        /// 自定义Akka消息类型，代表节点的启动,描述了节点的监听端口、连接数等属性
         /// </summary>
         public class Start {
             /// <summary>
-            /// 端口号
+            /// tcp监听端口号
             /// </summary>
             public int Port;
             /// <summary>
-            ///  WS-RPC监听端口
+            ///  WebSocket监听端口
             /// </summary>
             public int WsPort;
             /// <summary>
@@ -43,7 +43,7 @@ namespace Neo.Network.P2P
             public int MaxConnections;
         }
         /// <summary>
-        /// 内部Peers类.
+        /// 自定义Akka消息类型，代表添加未连接节点列表,描述需要添加到未连接节点列表的节点.
         /// </summary>
         public class Peers {
             /// <summary>
@@ -52,7 +52,7 @@ namespace Neo.Network.P2P
             public IEnumerable<IPEndPoint> EndPoints;
         }
         /// <summary>
-        /// 内部Connect类
+        /// 自定义Akka消息类型，代表连接节点,描述了连接到节点的IP和端口、是否可信等属性
         /// </summary>
         public class Connect {
             /// <summary>
@@ -68,7 +68,13 @@ namespace Neo.Network.P2P
         private class WsConnected { public WebSocket Socket; public IPEndPoint Remote; public IPEndPoint Local; }
 
         private const int MaxConnectionsPerAddress = 3;
+        /// <summary>
+        /// 默认最小需要连接数，默认值为10
+        /// </summary>
         public const int DefaultMinDesiredConnections = 10;
+        /// <summary>
+        /// 默认最大连接数，默认是默认最小需要连接数*4
+        /// </summary>
         public const int DefaultMaxConnections = DefaultMinDesiredConnections * 4;
 
         private static readonly IActorRef tcp_manager = Context.System.Tcp();
@@ -100,6 +106,9 @@ namespace Neo.Network.P2P
         /// </summary>
         /// <value>返回peer需要的连接的最小值</value>
         public int MinDesiredConnections { get; private set; } = DefaultMinDesiredConnections;
+        /// <summary>
+        /// 当前peer的最大连接数
+        /// </summary>
         public int MaxConnections { get; private set; } = DefaultMaxConnections;
 
         /// <summary>
@@ -138,7 +147,7 @@ namespace Neo.Network.P2P
 
         /// <summary>
         /// 指定一个Peer的IPEndPoint并进行连接.如果连接成功则加入已连接的peer表中.
-        /// 如果改Peer节点是可信任的,则将该节点的IP地址加入本地的可信任地址列表中.
+        /// 如果该Peer节点是可信任的,则将该节点的IP地址加入本地的可信任地址列表中.
         /// </summary>
         /// <param name="endPoint">需要连接的Peer</param>
         /// <param name="isTrusted">该Peer节点是否是可信任的</param>
@@ -170,7 +179,7 @@ namespace Neo.Network.P2P
         protected abstract void NeedMorePeers(int count);
 
         /// <summary>
-        /// 用来监听消息的回调方法
+        /// 用来Akka消息的回调方法
         /// </summary>
         /// <param name="message">接收到的消息</param>
         protected override void OnReceive(object message)

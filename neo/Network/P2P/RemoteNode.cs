@@ -13,6 +13,9 @@ using System.Net;
 
 namespace Neo.Network.P2P
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RemoteNode : Connection
     {
         internal class Relay { public IInventory Inventory; }
@@ -125,7 +128,7 @@ namespace Neo.Network.P2P
         }
 
         /// <summary>
-        /// 接收到消息后的回调函数, 根据不同消息类型来进行处理
+        /// Akka消息的回调函数, 根据不同消息类型来进行处理
         /// </summary>
         /// <param name="message">接收到的信息</param>
         protected override void OnReceive(object message)

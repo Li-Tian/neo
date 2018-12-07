@@ -24,7 +24,7 @@ namespace Neo.Network.P2P.Payloads
         private UInt160 _scriptHash;
 
         /// <summary>
-        /// 交易hash
+        /// 验证脚本的哈希
         /// </summary>
         public virtual UInt160 ScriptHash
         {

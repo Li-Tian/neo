@@ -39,7 +39,7 @@ namespace Neo.Network.P2P.Payloads
         public readonly TransactionType Type;
 
         /// <summary>
-        /// 交易版本号。行为在各个子类中定义。
+        /// 交易版本号。在各个子类中定义。
         /// </summary>
         public byte Version;
 
@@ -146,7 +146,7 @@ namespace Neo.Network.P2P.Payloads
         public virtual int Size => sizeof(TransactionType) + sizeof(byte) + Attributes.GetVarSize() + Inputs.GetVarSize() + Outputs.GetVarSize() + Witnesses.GetVarSize();
 
         /// <summary>
-        /// 手续费。因交易种类不同而不同。
+        /// 系统手续费。因交易种类不同而不同。
         /// </summary>
         public virtual Fixed8 SystemFee => Settings.Default.SystemFee.TryGetValue(Type, out Fixed8 fee) ? fee : Fixed8.Zero;
 
@@ -241,7 +241,7 @@ namespace Neo.Network.P2P.Payloads
 
 
         /// <summary>
-        /// 获取hash code
+        /// 获取交易哈希的hash code
         /// </summary>
         /// <returns>hash code</returns>
         public override int GetHashCode()
@@ -258,7 +258,9 @@ namespace Neo.Network.P2P.Payloads
         /// 获取验证脚本hash
         /// </summary>
         /// <param name="snapshot">区块快照</param>
-        /// <returns>包含：1. 交易输入所指向的收款人地址脚本hash，2. 交易属性为script时，包含该Data， 3. 若资产类型包含AssetType.DutyFlag时，包含收款人地址脚本hash</returns>
+        /// <returns>包含：1. 交易输入所指向的收款人地址脚本hash，
+        ///                2. 交易属性为script时，包含该Data， 
+        ///                3. 若资产类型包含AssetType.DutyFlag时，包含收款人地址脚本hash</returns>
         /// <exception cref="System.InvalidOperationException">若输入为空或者资产不存在时，抛出该异常</exception>
         public virtual UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
@@ -359,24 +361,25 @@ namespace Neo.Network.P2P.Payloads
         /// <param name="snapshot">区块快照</param>
         /// <param name="mempool">内存池交易</param>
         /// <returns>
-        /// 1. 若Input存在重复，则返回false<br/>
-        /// 2. 若内存池交易包含Input交易时，返回false<br/>
-        /// 3. 若Input是已经花费的交易，则返回false<br/>
-        /// 4. 若转账资产不存在，则返回false<br/>
-        /// 5. 若资产是非NEO或非GAS时，且资产过期时，返回false<br/>
-        /// 6. 若转账金额不能整除对应资产的最小精度时，返回false<br/>
-        /// 7. 检查金额关系：<br/>
-        ///    7.1 若当前交易的某个 input 所指向的 output 在过去的交易中不存在时，返回false<br/>
-        ///    7.2 若 Input.Asset &gt; Output.Asset 时，且资金种类大于一种时，返回false<br/>
-        ///    7.3 若 Input.Asset &gt; Output.Asset 时，资金种类不是GAS时，返回false<br/>
-        ///    7.4 若 交易手续费 大于 Input.GAS - output.GAS 时， 返回false<br/>
-        ///    7.5 若 Input.Asset &lt; Output.Asset 时：
-        ///        7.5.1 若交易类型是 MinerTransaction 或 ClaimTransaction，且资产不是 GAS 时，返回false<br/>
-        ///        7.5.2 若交易类型时 IssueTransaction时，且资产是GAS时，返回false<br/>
-        ///        7.5.3 若是其他交易类型，且存在增发资产时，返回false<br/>
-        /// 8. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false <br/>
-        /// 9. 若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永正）<br/>
-        /// 10.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false
+        /// 1. 交易数据大小大于最大交易数据大小时，则返回false
+        /// 2. 若Input存在重复，则返回false<br/>
+        /// 3. 若内存池交易包含Input交易时，返回false<br/>
+        /// 4. 若Input是已经花费的交易，则返回false<br/>
+        /// 5. 若转账资产不存在，则返回false<br/>
+        /// 6. 若资产是非NEO或非GAS时，且资产过期时，返回false<br/>
+        /// 7. 若转账金额不能整除对应资产的最小精度时，返回false<br/>
+        /// 8. 检查金额关系：<br/>
+        ///    8.1 若当前交易的某个 input 所指向的 output 在过去的交易中不存在时，返回false<br/>
+        ///    8.2 若 Input.Asset &gt; Output.Asset 时，且资金种类大于一种时，返回false<br/>
+        ///    8.3 若 Input.Asset &gt; Output.Asset 时，资金种类不是GAS时，返回false<br/>
+        ///    8.4 若 交易手续费 大于 Input.GAS - output.GAS 时， 返回false<br/>
+        ///    8.5 若 Input.Asset &lt; Output.Asset 时：
+        ///        8.5.1 若交易类型是 MinerTransaction 或 ClaimTransaction，且资产不是 GAS 时，返回false<br/>
+        ///        8.5.2 若交易类型时 IssueTransaction时，且资产是GAS时，返回false<br/>
+        ///        8.5.3 若是其他交易类型，且存在增发资产时，返回false<br/>
+        /// 9. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false <br/>
+        /// 10.若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永正）<br/>
+        /// 11.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false
         ///</returns>
         public virtual bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
