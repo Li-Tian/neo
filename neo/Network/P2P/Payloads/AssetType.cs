@@ -24,12 +24,19 @@
         /// GAS 资产
         /// </summary>
         UtilityToken = 0x01,
+        /// <summary>
+        /// 未使用（保留）
+        /// </summary>
         Currency = 0x08,
 
         /// <summary>
         /// 股权类资产
         /// </summary>
         Share = DutyFlag | 0x10,
+
+        /// <summary>
+        /// 票据类资产（保留）
+        /// </summary>
         Invoice = DutyFlag | 0x18,
 
         /// <summary>
