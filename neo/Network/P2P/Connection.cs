@@ -107,8 +107,8 @@ namespace Neo.Network.P2P
         /// 主要处理的消息类型有：
         /// 1、超时
         /// 2、TCP的ACK回应
-        /// 3、接收到tcp数据
-        /// 3、tcp连接关闭
+        /// 3、接收到TCP数据
+        /// 4、TCP连接关闭
         /// </summary>
         /// <param name="message">Akka框架传递的消息</param>
         protected override void OnReceive(object message)
