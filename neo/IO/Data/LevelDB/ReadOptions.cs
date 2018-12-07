@@ -45,7 +45,9 @@ namespace Neo.IO.Data.LevelDB
                 Native.leveldb_readoptions_set_snapshot(handle, value.handle);
             }
         }
-
+        /// <summary>
+        /// 析构函数。将关闭leveldb的句柄。
+        /// </summary>
         ~ReadOptions()
         {
             Native.leveldb_readoptions_destroy(handle);

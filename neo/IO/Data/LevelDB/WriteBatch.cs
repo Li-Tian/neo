@@ -8,7 +8,9 @@ namespace Neo.IO.Data.LevelDB
     public class WriteBatch
     {
         internal readonly IntPtr handle = Native.leveldb_writebatch_create();
-
+        /// <summary>
+        /// 析构函数。将关闭leveldb的句柄。
+        /// </summary>
         ~WriteBatch()
         {
             Native.leveldb_writebatch_destroy(handle);

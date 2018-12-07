@@ -7,11 +7,19 @@ namespace Neo.VM.Types
     /// </summary>
     public abstract class InteropInterface : StackItem
     {
+        /// <summary>
+        /// 获取字节数组
+        /// </summary>
+        /// <returns></returns>
         public override byte[] GetByteArray()
         {
             throw new NotSupportedException();
         }
-
+        /// <summary>
+        /// 转换成指定的类型
+        /// </summary>
+        /// <typeparam name="T">指定的类型</typeparam>
+        /// <returns>转换成指定类型的对象</returns>
         public abstract T GetInterface<T>() where T : class;
     }
     /// <summary>
@@ -50,7 +58,11 @@ namespace Neo.VM.Types
         {
             return _object != null;
         }
-
+        /// <summary>
+        /// 转换成为指定的数据类型接口
+        /// </summary>
+        /// <typeparam name="I">指定的数据类型接口</typeparam>
+        /// <returns>指定的数据类型接口的实例</returns>
         public override I GetInterface<I>()
         {
             return _object as I;

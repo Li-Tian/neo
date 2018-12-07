@@ -30,7 +30,12 @@ namespace Neo.Consensus
         /// <summary>
         /// 更新/设置视图编号
         /// </summary>
-        public class SetViewNumber { public byte ViewNumber; }
+        public class SetViewNumber {
+            /// <summary>
+            /// 视图编号
+            /// </summary>
+            public byte ViewNumber;
+        }
 
         /// <summary>
         /// 超时消息
@@ -67,11 +72,22 @@ namespace Neo.Consensus
         // <param name="wallet">钱包</param>
         //public ConsensusService(NeoSystem system, Wallet wallet)
 
+        /// <summary>
+        /// 共识服务构造函数
+        /// </summary>
+        /// <param name="localNode">本地节点</param>
+        /// <param name="taskManager">任务管理器</param>
+        /// <param name="wallet">钱包</param>
         public ConsensusService(IActorRef localNode, IActorRef taskManager, Wallet wallet)
             : this(localNode, taskManager, new ConsensusContext(wallet))
         {
         }
-
+        /// <summary>
+        /// 共识服务构造函数
+        /// </summary>
+        /// <param name="localNode">本地节点</param>
+        /// <param name="taskManager">任务管理器</param>
+        /// <param name="context">共识上下文</param>
         public ConsensusService(IActorRef localNode, IActorRef taskManager, IConsensusContext context)
         {
             this.localNode = localNode;

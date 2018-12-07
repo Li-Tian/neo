@@ -5,6 +5,9 @@ using System;
 
 namespace Neo.Wallets
 {
+    /// <summary>
+    /// 资产的描述
+    /// </summary>
     public class AssetDescriptor
     {
         /// <summary>

@@ -559,7 +559,10 @@ namespace Neo.Ledger
             system.Consensus?.Tell(completed);
             Distribute(completed);
         }
-
+        /// <summary>
+        /// 消息处理函数
+        /// </summary>
+        /// <param name="message">收到的消息</param>
         protected override void OnReceive(object message)
         {
             switch (message)
@@ -769,7 +772,9 @@ namespace Neo.Ledger
             UpdateCurrentSnapshot();
             OnPersistCompleted(block);
         }
-
+        /// <summary>
+        /// AKKA框架的自定义回调函数
+        /// </summary>
         protected override void PostStop()
         {
             base.PostStop();

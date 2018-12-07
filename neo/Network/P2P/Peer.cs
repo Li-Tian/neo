@@ -81,12 +81,24 @@ namespace Neo.Network.P2P
         private IActorRef tcp_listener;
         private IWebHost ws_host;
         private ICancelable timer;
+        /// <summary>
+        /// 获取所有活动连接
+        /// </summary>
         protected ActorSelection Connections => Context.ActorSelection("connection_*");
 
         private static readonly HashSet<IPAddress> localAddresses = new HashSet<IPAddress>();
         private readonly Dictionary<IPAddress, int> ConnectedAddresses = new Dictionary<IPAddress, int>();
+        /// <summary>
+        /// 活动的连接的关系映射。key是活动连接的引用，value是活动连接的远程IP地址和端口号。
+        /// </summary>
         protected readonly ConcurrentDictionary<IActorRef, IPEndPoint> ConnectedPeers = new ConcurrentDictionary<IActorRef, IPEndPoint>();
+        /// <summary>
+        /// 未连接的已知节点集合
+        /// </summary>
         protected ImmutableHashSet<IPEndPoint> UnconnectedPeers = ImmutableHashSet<IPEndPoint>.Empty;
+        /// <summary>
+        /// 正在连接中的已知节点集合
+        /// </summary>
         protected ImmutableHashSet<IPEndPoint> ConnectingPeers = ImmutableHashSet<IPEndPoint>.Empty;
         /// <summary>
         /// 可信任的IP地址集合
@@ -116,6 +128,9 @@ namespace Neo.Network.P2P
         /// </summary>
         /// <value>未连接的peer列表中peer个数的最大值</value>
         protected int UnconnectedMax { get; } = 1000;
+        /// <summary>
+        /// 
+        /// </summary>
         protected virtual int ConnectingMax
         {
             get
@@ -175,7 +190,10 @@ namespace Neo.Network.P2P
             uint value = data.ToUInt32(0);
             return (value & 0xff000000) == 0x0a000000 || (value & 0xff000000) == 0x7f000000 || (value & 0xfff00000) == 0xac100000 || (value & 0xffff0000) == 0xc0a80000 || (value & 0xffff0000) == 0xa9fe0000;
         }
-
+        /// <summary>
+        /// 尝试获取更多的节点
+        /// </summary>
+        /// <param name="count">需求的数量</param>
         protected abstract void NeedMorePeers(int count);
 
         /// <summary>
@@ -343,7 +361,13 @@ namespace Neo.Network.P2P
                 Local = new IPEndPoint(context.Connection.LocalIpAddress, context.Connection.LocalPort)
             });
         }
-
+        /// <summary>
+        /// 通过一个活动的TCP/IP连接来创建一个RemoteNode对象，并返回它对应的Props对象
+        /// </summary>
+        /// <param name="connection">活动的连接</param>
+        /// <param name="remote">连接的远端IP地址和端口</param>
+        /// <param name="local">连接的本地地址和端口</param>
+        /// <returns>RemoteNode对象对应的Props</returns>
         protected abstract Props ProtocolProps(object connection, IPEndPoint remote, IPEndPoint local);
     }
 }

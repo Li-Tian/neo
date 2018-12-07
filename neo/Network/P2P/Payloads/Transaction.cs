@@ -305,7 +305,9 @@ namespace Neo.Network.P2P.Payloads
                 Amount = g.Sum(p => p.Value)
             }).Where(p => p.Amount != Fixed8.Zero);
         }
-
+        /// <summary>
+        /// 反序列化。因子类的不同而实现不同。
+        /// </summary>
         protected virtual void OnDeserialized()
         {
         }
@@ -315,7 +317,10 @@ namespace Neo.Network.P2P.Payloads
             ((IVerifiable)this).SerializeUnsigned(writer);
             writer.Write(Witnesses);
         }
-
+        /// <summary>
+        /// 序列化扩展数据。因子类的不同而实现不同。
+        /// </summary>
+        /// <param name="writer">序列化的输出对象</param>
         protected virtual void SerializeExclusiveData(BinaryWriter writer)
         {
         }

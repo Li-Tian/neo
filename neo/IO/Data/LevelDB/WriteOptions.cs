@@ -23,7 +23,9 @@ namespace Neo.IO.Data.LevelDB
                 Native.leveldb_writeoptions_set_sync(handle, value);
             }
         }
-
+        /// <summary>
+        /// 析构函数。将关闭leveldb的句柄。
+        /// </summary>
         ~WriteOptions()
         {
             Native.leveldb_writeoptions_destroy(handle);

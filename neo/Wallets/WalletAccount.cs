@@ -7,6 +7,9 @@ namespace Neo.Wallets
     /// </summary>
     public abstract class WalletAccount
     {
+        /// <summary>
+        /// 脚本的哈希值。可以转化为地址。
+        /// </summary>
         public readonly UInt160 ScriptHash;
 
         /// <summary>
@@ -49,7 +52,10 @@ namespace Neo.Wallets
         /// </summary>
         /// <returns>钱包中的一个KeyPair</returns>
         public abstract KeyPair GetKey();
-
+        /// <summary>
+        /// 通过一个地址脚本哈希来构建一个钱包账户。
+        /// </summary>
+        /// <param name="scriptHash">地址哈希</param>
         protected WalletAccount(UInt160 scriptHash)
         {
             this.ScriptHash = scriptHash;

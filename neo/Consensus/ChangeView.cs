@@ -42,6 +42,7 @@ namespace Neo.Consensus
         /// <term>ViewNumber</term>
         /// <description>当前视图编号</description>
         /// </item>
+        /// <item>
         /// <term>NewViewNumber</term>
         /// <description>新视图编号</description>
         /// </item>

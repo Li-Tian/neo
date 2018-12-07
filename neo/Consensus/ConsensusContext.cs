@@ -159,7 +159,7 @@ namespace Neo.Consensus
         /// 计算议长编号 = (提案block的区块高度 - 当前视图编号) % 共识节点个数
         /// </summary>
         /// <param name="view_number">给定当前视图编号</param>
-        /// <returns></returns>
+        /// <returns>新的议长编号</returns>
         public uint GetPrimaryIndex(byte view_number)
         {
             int p = ((int)BlockIndex - view_number) % Validators.Length;
@@ -167,9 +167,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 构建ChangeView消息的货物类
+        /// 构建ChangeView消息
         /// </summary>
-        /// <returns>共识消息货物</returns>
+        /// <returns>更换视图的共识消息</returns>
         public ConsensusPayload MakeChangeView()
         {
             return MakeSignedPayload(new ChangeView
@@ -181,9 +181,9 @@ namespace Neo.Consensus
         private Block _header = null;
 
         /// <summary>
-        /// 结合上下文数据，构造出区块头
+        /// 结合上下文数据，构造出一个只有区块头的空区块
         /// </summary>
-        /// <returns>Block</returns>
+        /// <returns>只含有区块头的区块</returns>
         public Block MakeHeader()
         {
             if (TransactionHashes == null) return null;
@@ -224,7 +224,9 @@ namespace Neo.Consensus
             SignPayload(payload);
             return payload;
         }
-
+        /// <summary>
+        /// 签名区块头
+        /// </summary>
         public void SignHeader()
         {
             Signatures[MyIndex] = MakeHeader()?.Sign(keyPair);
@@ -265,7 +267,7 @@ namespace Neo.Consensus
         /// 构建PrepareResponse消息的共识货物ConsensusPayload类
         /// </summary>
         /// <param name="signature">对提案block的签名</param>
-        /// <returns>共识消息货物</returns>
+        /// <returns>共识消息</returns>
         public ConsensusPayload MakePrepareResponse(byte[] signature)
         {
             return MakeSignedPayload(new PrepareResponse
@@ -381,7 +383,7 @@ namespace Neo.Consensus
         /// 2. 校验NextConsensus是否与当前快照中的验证人计算出的地址一致
         /// 3. 校验MinerTransaction的奖励计算是否正确。注，MinerTransaction是每个块的第一个交易，记录了网络费的分布情况。
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>验证合法返回true</returns>
         public bool VerifyRequest()
         {
             if (!State.HasFlag(ConsensusState.RequestReceived))
