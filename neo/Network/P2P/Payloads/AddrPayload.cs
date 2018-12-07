@@ -1,4 +1,4 @@
-﻿using Neo.IO;
+using Neo.IO;
 using System;
 using System.IO;
 
@@ -22,6 +22,7 @@ namespace Neo.Network.P2P.Payloads
         /// 获取整个数据包的传输长度。单位:字节
         /// </summary>
         public int Size => AddressList.GetVarSize();
+
         /// <summary>
         /// 创建 AddrPayload 数据结构
         /// </summary>
