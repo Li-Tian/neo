@@ -40,7 +40,8 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 反序列化，读取claims数据，其他数据未提取
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">二进制输入流</param>
+        /// <exception cref="FormatException">当交易版本号不为0，或者Claims长度为0时，抛出异常</exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version != 0) throw new FormatException();
@@ -88,7 +89,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -100,7 +101,7 @@ namespace Neo.Network.P2P.Payloads
         /// 验证交易
         /// </summary>
         /// <param name="snapshot">区块快照</param>
-        /// <param name="mempool">已经花费的GAS outputs</param>
+        /// <param name="mempool">内存池交易</param>
         /// <returns>
         /// 1. 进行交易的基本验证，若验证失败，则返回false <br/>
         /// 2. 若Claims包含重复交易时，返回false <br/>

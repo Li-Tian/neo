@@ -95,7 +95,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 反序列化
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">二进制输入流</param>
         public virtual void Deserialize(BinaryReader reader)
         {
             ((IVerifiable)this).DeserializeUnsigned(reader);
@@ -141,7 +141,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item>
         /// <item>
         /// <term>MerkleRoot</term>
-        /// <description>梅克尔树</description>
+        /// <description>梅克尔根</description>
         /// </item>
         /// <item>
         /// <term>Timestamp</term>
@@ -182,7 +182,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public virtual JObject ToJson()
         {
             JObject json = new JObject();
@@ -207,7 +207,7 @@ namespace Neo.Network.P2P.Payloads
         /// 若满足以下4个条件之一，则验证节点为false；
         /// 1）若上一个区块不存在
         /// 2）若上一个区块高度加一不等于当前区块高度
-        /// 3）若者上一个区块时间戳大于当前区块时间戳
+        /// 3）若上一个区块时间戳大于等于当前区块时间戳
         /// 4）若见证人校验失败
         /// </remark>
         public virtual bool Verify(Snapshot snapshot)

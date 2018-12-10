@@ -104,7 +104,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 发序列化未签名数据
+        /// 序列化未签名数据
         /// </summary>
         /// <param name="reader">二进制输入流</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
@@ -166,7 +166,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item>
         /// <item>
         /// <term>ValidatorIndex</term>
-        /// <description>节点编号</description>
+        /// <description>共识节点编号</description>
         /// </item>
         /// <item>
         /// <term>Timestamp</term>
@@ -197,7 +197,7 @@ namespace Neo.Network.P2P.Payloads
         /// 2) 校验验证脚本
         /// </remarks>
         /// <param name="snapshot">区块快照</param>
-        /// <returns></returns>
+        /// <returns>校验通过返回true，否则返回false</returns>
         public bool Verify(Snapshot snapshot)
         {
             if (BlockIndex <= snapshot.Height)

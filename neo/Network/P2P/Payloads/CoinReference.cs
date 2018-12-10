@@ -60,7 +60,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 获取hash code
         /// </summary>
-        /// <returns></returns>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return PrevHash.GetHashCode() + PrevIndex.GetHashCode();
@@ -76,7 +76,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();

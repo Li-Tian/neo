@@ -31,7 +31,7 @@ namespace Neo.Network.P2P.Payloads
         public string Field;
 
         /// <summary>
-        /// 当Type = 0x40时， 代表投票地址列表；  当Type = 0x48时， 代表取消或申验证人的布尔值
+        /// 当Type = 0x40时， 代表投票地址列表；  当Type = 0x48时， 代表取消或申请验证人的布尔值
         /// </summary>
         public byte[] Value;
 
@@ -42,7 +42,7 @@ namespace Neo.Network.P2P.Payloads
 
 
         /// <summary>
-        /// 交易手续费  若是申请见证人，需要1000个GAS， 否则0
+        /// 交易手续费  若是申请见证人，需要1000个GAS， 否则为0
         /// </summary>
         public Fixed8 SystemFee
         {
@@ -115,7 +115,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();
