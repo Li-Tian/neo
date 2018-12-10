@@ -20,7 +20,7 @@ namespace Neo.IO.Json
         /// 对JObject对象set、get方法的扩展，使外部方法可以便捷的操作properties字典
         /// </summary>
         /// <param name="name">属性字典的键</param>
-        /// <returns>属性字典的键所多对应的值</returns>
+        /// <returns>属性字典的键所对应的值</returns>
         public JObject this[string name]
         {
             get
@@ -297,7 +297,7 @@ namespace Neo.IO.Json
         /// <summary>
         /// 将String类型数据转换成JString对象
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">string类型数据</param>
         public static implicit operator JObject(string value)
         {
             return value == null ? null : new JString(value);

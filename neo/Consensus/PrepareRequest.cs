@@ -84,12 +84,15 @@ namespace Neo.Consensus
         /// <term>Nonce</term>
         /// <description>Block nonce</description>
         /// </item>
+        /// <item>
         /// <term>NextConsensus</term>
         /// <description>下一轮共识节点的多方签名脚本hash</description>
         /// </item>
+        /// <item>
         /// <term>TransactionHashes</term>
         /// <description>提案block的交易hash列表</description>
         /// </item>
+        /// <item>
         /// <term>Signature</term>
         /// <description>对提案block的签名</description>
         /// </item>

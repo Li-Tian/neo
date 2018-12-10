@@ -6,16 +6,39 @@ using System.Net;
 
 namespace Neo.Network.P2P.Payloads
 {
+    /// <summary>
+    /// 节点地址信息和最近活动时间
+    /// </summary>
     public class NetworkAddressWithTime : ISerializable
     {
+        /// <summary>
+        /// 节点类型常量：普通网络节点。
+        /// 比特币网络中节点类型很多，与之相比 NEO 网络目前只有一种节点。
+        /// </summary>
         public const ulong NODE_NETWORK = 1;
-
+        /// <summary>
+        /// 最近一次的活动时间。从EPOCH(1970/1/1 00:00:00)开始，单位秒。
+        /// </summary>
         public uint Timestamp;
+        /// <summary>
+        /// 节点类型。目前 NEO 只有普通网络节点。
+        /// </summary>
         public ulong Services;
+        /// <summary>
+        /// 节点地址信息。包括IP地址和端口
+        /// </summary>
         public IPEndPoint EndPoint;
-
+        /// <summary>
+        /// 获取传输时的长度（字节）
+        /// </summary>
         public int Size => sizeof(uint) + sizeof(ulong) + 16 + sizeof(ushort);
-
+        /// <summary>
+        /// 创建一个地址与活动时间信息对象
+        /// </summary>
+        /// <param name="endpoint">地址信息</param>
+        /// <param name="services">服务类型</param>
+        /// <param name="timestamp">最近活动时间</param>
+        /// <returns>地址与活动时间信息对象</returns>
         public static NetworkAddressWithTime Create(IPEndPoint endpoint, ulong services, uint timestamp)
         {
             return new NetworkAddressWithTime

@@ -19,9 +19,14 @@ namespace Neo.Cryptography
         private readonly uint seed;
         private uint hash;
         private int length;
-
+        /// <summary>
+        /// 获得哈希值的长度
+        /// </summary>
         public override int HashSize => 32;
-
+        /// <summary>
+        /// 构造一个 Murmur3 对象
+        /// </summary>
+        /// <param name="seed">种子</param>
         public Murmur3(uint seed)
         {
             this.seed = seed;
@@ -79,7 +84,9 @@ namespace Neo.Cryptography
             hash ^= hash >> 16;
             return BitConverter.GetBytes(hash);
         }
-
+        /// <summary>
+        /// 初始化。将hash设置为seed的值，将length设置为0
+        /// </summary>
         public override void Initialize()
         {
             hash = seed;

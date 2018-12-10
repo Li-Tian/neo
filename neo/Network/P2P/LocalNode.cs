@@ -119,7 +119,7 @@ namespace Neo.Network.P2P
         /// 从种子节点列表中读取指定个数个备用节点
         /// </summary>
         /// <param name="seedsToTake">读取个数</param>
-        /// <returns>选区的备用节点</returns>
+        /// <returns>读取的备用节点</returns>
         private static IEnumerable<IPEndPoint> GetIPEndPointsFromSeedList(int seedsToTake)
         {
             if (seedsToTake > 0)
@@ -179,7 +179,7 @@ namespace Neo.Network.P2P
             }
         }
         /// <summary>
-        /// 用于LocalNode对象接收和处理其他对象通过Akkak框架传来的消息
+        /// 用于LocalNode对象接收和处理其他对象通过Akka框架传来的消息
         /// </summary>
         /// <param name="message">消息</param>
         protected override void OnReceive(object message)

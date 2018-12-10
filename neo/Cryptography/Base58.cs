@@ -16,7 +16,13 @@ namespace Neo.Cryptography
         /// </summary>
         public const string Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
         /// <summary>
-        /// 将一个Base56的字符串解析为一个字节数组
+        /// 将一个Base58的字符串解析为一个字节数组
+        /// 具体解码步骤：
+        /// 1、倒序输入的字符串，将其按字母表转换成10进制 Biginteger 数
+        /// 2、把 Biginteger 数转换成 byte[] 数据，并将 byte[] 数据倒序排序
+        /// 3、统计原输入的字符串中字母表游标为零所对应的字符的个数 count
+        /// 4、若 byte[] 数据的长度大于1，且 byte[0] 等于0，byte[1] 大于等于0x80，
+        /// 则从 byte[1] 开始截取，否则从 byte[0] 开始截取，得到结果。
         /// </summary>
         /// <param name="input">被解码的Base58字符串</param>
         /// <exception cref="FormatException">不是一个标准的Base58字符串</exception>
@@ -45,7 +51,12 @@ namespace Neo.Cryptography
         }
 
         /// <summary>
-        /// 将一个表示一个长数字的字节数组编码为基于Base58的字符串.其中在字节数组会加入一个前缀0x00.
+        /// 将一个表示一个长数字的字节数组编码为基于Base58的字符串.
+        /// 具体编码步骤：
+        /// 1、在 byte[] 数据前添加一个0x00，生成一个新的byte数组，并将新数组做倒序排序
+        /// 2、把数组的数据转成10进制BigInteger数
+        /// 3、把BigInteger数按字母表转换成58进制字符串
+        /// 4、统计原 byte[] 数据中0x00的个数 count，在字符串前补 count 个字母表游标为零所对应的字符
         /// </summary>
         /// <param name="input">被编码的字节数组</param>
         /// <returns>编码后的Base58字符串</returns>

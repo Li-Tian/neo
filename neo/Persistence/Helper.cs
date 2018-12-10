@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Neo.Persistence
 {
+    /// <summary>
+    /// Helper类
+    /// </summary>
     public static class Helper
     {
         /// <summary>

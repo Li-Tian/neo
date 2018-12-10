@@ -79,7 +79,6 @@ namespace Neo.Consensus
         /// <term>ViewNumber</term>
         /// <description>当前视图编号</description>
         /// </item>
-        /// <item>
         /// </list>
         /// </summary>
         /// <param name="writer">二进制输出流</param>

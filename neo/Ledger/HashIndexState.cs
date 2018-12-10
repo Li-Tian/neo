@@ -78,7 +78,7 @@ namespace Neo.Ledger
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>返回一个包含了Hash和Index的json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

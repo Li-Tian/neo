@@ -76,9 +76,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转bool
+        /// 转bool类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的bool值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于bool存储大小时，抛出该异常</exception>
         unsafe public bool ToBoolean()
         {
@@ -91,9 +91,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转byte
+        /// 转byte类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的byte值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于byte存储大小时，抛出该异常</exception>
         public byte ToByte()
         {
@@ -103,9 +103,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转double
+        /// 转double类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的double值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于double存储大小时，抛出该异常</exception>
         unsafe public double ToDouble()
         {
@@ -118,9 +118,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转int16
+        /// 转int16类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的int16值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于short存储大小时，抛出该异常</exception>
         unsafe public short ToInt16()
         {
@@ -133,9 +133,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转int32
+        /// 转int32类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的int32值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于int存储大小时，抛出该异常</exception>
         unsafe public int ToInt32()
         {
@@ -148,9 +148,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转int64
+        /// 转int64类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的int64值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于long存储大小时，抛出该异常</exception>
         unsafe public long ToInt64()
         {
@@ -163,9 +163,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转float
+        /// 转float类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的float值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于float存储大小时，抛出该异常</exception>
         unsafe public float ToSingle()
         {
@@ -178,18 +178,18 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转utf8 string
+        /// 转utf8 string类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的utf8 string值</returns>
         public override string ToString()
         {
             return Encoding.UTF8.GetString(buffer);
         }
 
         /// <summary>
-        /// 转uint16
+        /// 转uint16类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的uint16值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于ushort存储大小时，抛出该异常</exception>
         unsafe public ushort ToUInt16()
         {
@@ -202,9 +202,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转uint32
+        /// 转uint32类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的uint32值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于uint存储大小时，抛出该异常</exception>
         unsafe public uint ToUInt32(int index = 0)
         {
@@ -217,9 +217,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 转UInt64
+        /// 转UInt64类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns>对应的UInt64值</returns>
         /// <exception cref="System.InvalidCastException">若切片长度不等于ulong存储大小时，抛出该异常</exception>
         unsafe public ulong ToUInt64()
         {
@@ -234,16 +234,16 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建byte数组切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">字节数组数据</param>
         public static implicit operator Slice(byte[] data)
         {
             return new Slice { buffer = data };
         }
 
         /// <summary>
-        /// 创建bool数组切片
+        /// 创建bool切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">bool数据</param>
         public static implicit operator Slice(bool data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -253,7 +253,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建byte切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">字节数据</param>
         public static implicit operator Slice(byte data)
         {
             return new Slice { buffer = new[] { data } };
@@ -262,7 +262,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建double切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">double数据</param>
         public static implicit operator Slice(double data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -271,7 +271,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建short切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">short数据</param>
         public static implicit operator Slice(short data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -280,7 +280,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建int切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">int数据</param>
         public static implicit operator Slice(int data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -289,7 +289,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建long切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">long数据</param>
         public static implicit operator Slice(long data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -298,7 +298,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建float切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">float数据</param>
         public static implicit operator Slice(float data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -307,7 +307,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建string切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">string数据</param>
         public static implicit operator Slice(string data)
         {
             return new Slice { buffer = Encoding.UTF8.GetBytes(data) };
@@ -316,7 +316,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建ushort切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">ushort数据</param>
         public static implicit operator Slice(ushort data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -325,7 +325,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建uint切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">uint数据</param>
         public static implicit operator Slice(uint data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -334,7 +334,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建ulong切片
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">ulong数据</param>
         public static implicit operator Slice(ulong data)
         {
             return new Slice { buffer = BitConverter.GetBytes(data) };
@@ -344,9 +344,9 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 切片操作，小于
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">第一个对象</param>
+        /// <param name="y">第二个对象</param>
+        /// <returns>比较结果，如果小于则返回true，否则返回false</returns>
         public static bool operator <(Slice x, Slice y)
         {
             return x.CompareTo(y) < 0;
@@ -355,9 +355,9 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 切片操作，小于等于
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">第一个对象</param>
+        /// <param name="y">第二个对象</param>
+        /// <returns>比较结果，如果小于等于则返回true，否则返回false</returns>
         public static bool operator <=(Slice x, Slice y)
         {
             return x.CompareTo(y) <= 0;
@@ -365,9 +365,9 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 切片操作，大于
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">第一个对象</param>
+        /// <param name="y">第二个对象</param>
+        /// <returns>比较结果，如果大于则返回true，否则返回false</returns>
         public static bool operator >(Slice x, Slice y)
         {
             return x.CompareTo(y) > 0;
@@ -375,9 +375,9 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 切片操作，大于等于
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">第一个对象</param>
+        /// <param name="y">第二个对象</param>
+        /// <returns>比较结果，如果大于等于则返回true，否则返回false</returns>
         public static bool operator >=(Slice x, Slice y)
         {
             return x.CompareTo(y) >= 0;
@@ -386,9 +386,9 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 切片操作，等于
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">第一个对象</param>
+        /// <param name="y">第二个对象</param>
+        /// <returns>比较结果，如果等于则返回true，否则返回false</returns>
         public static bool operator ==(Slice x, Slice y)
         {
             return x.Equals(y);
@@ -398,9 +398,9 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 切片操作，不等于
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">第一个对象</param>
+        /// <param name="y">第二个对象</param>
+        /// <returns>比较结果，如果不等于则返回true，否则返回false</returns>
         public static bool operator !=(Slice x, Slice y)
         {
             return !x.Equals(y);

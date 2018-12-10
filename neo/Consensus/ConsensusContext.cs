@@ -1,4 +1,4 @@
-﻿using Neo.Cryptography;
+using Neo.Cryptography;
 using Neo.Cryptography.ECC;
 using Neo.IO;
 using Neo.Ledger;
@@ -16,94 +16,76 @@ namespace Neo.Consensus
     /// <summary>
     /// 共识过程上下文，记录当前共识活动信息
     /// </summary>
-    internal class ConsensusContext : IDisposable
+    internal class ConsensusContext : IConsensusContext
     {
         /// <summary>
         /// 共识协议版本号，目前为0
         /// </summary>
         public const uint Version = 0;
-
         /// <summary>
         /// 所处共识过程状态
         /// </summary>
-        public ConsensusState State;
-
+        public ConsensusState State { get; set; }
         /// <summary>
         /// 上一个block的hash
         /// </summary>
-        public UInt256 PrevHash;
-
+        public UInt256 PrevHash { get; set; }
         /// <summary>
         /// 提案block的区块高度
         /// </summary>
-        public uint BlockIndex;
-
+        public uint BlockIndex { get; set; }
         /// <summary>
         /// 当前视图的编号
         /// </summary>
-        public byte ViewNumber;
-
-        /// <summary>
-        /// 持久层快照
-        /// </summary>
-        public Snapshot Snapshot;
-
+        public byte ViewNumber { get; set; }
         /// <summary>
         /// 本轮共识节点的公钥列表
         /// </summary>
-        public ECPoint[] Validators;
-
+        public ECPoint[] Validators { get; set; }
         /// <summary>
         /// 当前节点编号，在Validators数组中序号
         /// </summary>
-        public int MyIndex;
-
+        public int MyIndex { get; set; }
         /// <summary>
         /// 本轮共识的议长编号
         /// </summary>
-        public uint PrimaryIndex;
-
+        public uint PrimaryIndex { get; set; }
         /// <summary>
         /// 当前提案block时间戳
         /// </summary>
-        public uint Timestamp;
-
+        public uint Timestamp { get; set; }
         /// <summary>
         /// 当前提案block的nonce
         /// </summary>
-        public ulong Nonce;
-
+        public ulong Nonce { get; set; }
         /// <summary>
         /// 当前提案block的NextConsensus, 指定下一轮共识节点
         /// </summary>
-        public UInt160 NextConsensus;
-
+        public UInt160 NextConsensus { get; set; }
         /// <summary>
         /// 当前提案block的交易hash列表
         /// </summary>
-        public UInt256[] TransactionHashes;
-
+        public UInt256[] TransactionHashes { get; set; }
         /// <summary>
         /// 当前提案block的交易
         /// </summary>
-        public Dictionary<UInt256, Transaction> Transactions;
-
+        public Dictionary<UInt256, Transaction> Transactions { get; set; }
         /// <summary>
         /// 存放收到的提案block的签名数组
         /// </summary>
-        public byte[][] Signatures;
-
+        public byte[][] Signatures { get; set; }
         /// <summary>
         /// 收到的各节点期望视图编号，主要用在改变视图过程中。这个数组的每一位对应每个验证人节点期待的视图编号。而验证人是有相应编号的。
         /// </summary>
-        public byte[] ExpectedView;
-
+        public byte[] ExpectedView { get; set; }
+        /// <summary>
+        /// 持久层快照
+        /// </summary>
+        private Snapshot snapshot;
         /// <summary>
         /// 钥匙对
         /// </summary>
-        private KeyPair KeyPair;
-
-
+        private KeyPair keyPair;
         /// <summary>
         /// 钱包
         /// </summary>
@@ -113,6 +95,9 @@ namespace Neo.Consensus
         /// 最低共识节点安全阈值个数，低于该阈值，共识过程将会出错
         /// </summary>
         public int M => Validators.Length - (Validators.Length - 1) / 3;
+        public Header PrevHeader => snapshot.GetHeader(PrevHash);
+        public bool ContainsTransaction(UInt256 hash) => snapshot.ContainsTransaction(hash);
+        public bool VerifyTransaction(Transaction tx) => tx.Verify(snapshot, Transactions.Values);
 
         public ConsensusContext(Wallet wallet)
         {
@@ -167,14 +152,14 @@ namespace Neo.Consensus
         /// </summary>
         public void Dispose()
         {
-            Snapshot?.Dispose();
+            snapshot?.Dispose();
         }
 
         /// <summary>
         /// 计算议长编号 = (提案block的区块高度 - 当前视图编号) % 共识节点个数
         /// </summary>
         /// <param name="view_number">给定当前视图编号</param>
-        /// <returns></returns>
+        /// <returns>新的议长编号</returns>
         public uint GetPrimaryIndex(byte view_number)
         {
             int p = ((int)BlockIndex - view_number) % Validators.Length;
@@ -182,9 +167,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 构建ChangeView消息的货物类
+        /// 构建ChangeView消息
         /// </summary>
-        /// <returns>共识消息货物</returns>
+        /// <returns>更换视图的共识消息</returns>
         public ConsensusPayload MakeChangeView()
         {
             return MakeSignedPayload(new ChangeView
@@ -196,9 +181,9 @@ namespace Neo.Consensus
         private Block _header = null;
 
         /// <summary>
-        /// 结合上下文数据，构造出区块头
+        /// 结合上下文数据，构造出一个只有区块头的空区块
         /// </summary>
-        /// <returns>Block</returns>
+        /// <returns>只含有区块头的区块</returns>
         public Block MakeHeader()
         {
             if (TransactionHashes == null) return null;
@@ -239,10 +224,12 @@ namespace Neo.Consensus
             SignPayload(payload);
             return payload;
         }
-
+        /// <summary>
+        /// 签名区块头
+        /// </summary>
         public void SignHeader()
         {
-            Signatures[MyIndex] = MakeHeader()?.Sign(KeyPair);
+            Signatures[MyIndex] = MakeHeader()?.Sign(keyPair);
         }
 
         private void SignPayload(ConsensusPayload payload)
@@ -280,7 +267,7 @@ namespace Neo.Consensus
         /// 构建PrepareResponse消息的共识货物ConsensusPayload类
         /// </summary>
         /// <param name="signature">对提案block的签名</param>
-        /// <returns>共识消息货物</returns>
+        /// <returns>共识消息</returns>
         public ConsensusPayload MakePrepareResponse(byte[] signature)
         {
             return MakeSignedPayload(new PrepareResponse
@@ -303,26 +290,26 @@ namespace Neo.Consensus
         /// </remark>
         public void Reset()
         {
-            Snapshot?.Dispose();
-            Snapshot = Blockchain.Singleton.GetSnapshot();
+            snapshot?.Dispose();
+            snapshot = Blockchain.Singleton.GetSnapshot();
             State = ConsensusState.Initial;
-            PrevHash = Snapshot.CurrentBlockHash;
-            BlockIndex = Snapshot.Height + 1;
+            PrevHash = snapshot.CurrentBlockHash;
+            BlockIndex = snapshot.Height + 1;
             ViewNumber = 0;
-            Validators = Snapshot.GetValidators();
+            Validators = snapshot.GetValidators();
             MyIndex = -1;
             PrimaryIndex = BlockIndex % (uint)Validators.Length;
             TransactionHashes = null;
             Signatures = new byte[Validators.Length][];
             ExpectedView = new byte[Validators.Length];
-            KeyPair = null;
+            keyPair = null;
             for (int i = 0; i < Validators.Length; i++)
             {
                 WalletAccount account = wallet.GetAccount(Validators[i]);
                 if (account?.HasKey == true)
                 {
                     MyIndex = i;
-                    KeyPair = account.GetKey();
+                    keyPair = account.GetKey();
                     break;
                 }
             }
@@ -361,7 +348,7 @@ namespace Neo.Consensus
                     Outputs = outputs,
                     Witnesses = new Witness[0]
                 };
-                if (!Snapshot.ContainsTransaction(tx.Hash))
+                if (!snapshot.ContainsTransaction(tx.Hash))
                 {
                     Nonce = nonce;
                     transactions.Insert(0, tx);
@@ -370,8 +357,8 @@ namespace Neo.Consensus
             }
             TransactionHashes = transactions.Select(p => p.Hash).ToArray();
             Transactions = transactions.ToDictionary(p => p.Hash);
-            NextConsensus = Blockchain.GetConsensusAddress(Snapshot.GetValidators(transactions).ToArray());
-            Timestamp = Math.Max(DateTime.UtcNow.ToTimestamp(), Snapshot.GetHeader(PrevHash).Timestamp + 1);
+            NextConsensus = Blockchain.GetConsensusAddress(snapshot.GetValidators(transactions).ToArray());
+            Timestamp = Math.Max(TimeProvider.Current.UtcNow.ToTimestamp(), PrevHeader.Timestamp + 1);
         }
 
         /// <summary>
@@ -396,12 +383,12 @@ namespace Neo.Consensus
         /// 2. 校验NextConsensus是否与当前快照中的验证人计算出的地址一致
         /// 3. 校验MinerTransaction的奖励计算是否正确。注，MinerTransaction是每个块的第一个交易，记录了网络费的分布情况。
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>验证合法返回true</returns>
         public bool VerifyRequest()
         {
             if (!State.HasFlag(ConsensusState.RequestReceived))
                 return false;
-            if (!Blockchain.GetConsensusAddress(Snapshot.GetValidators(Transactions.Values).ToArray()).Equals(NextConsensus))
+            if (!Blockchain.GetConsensusAddress(snapshot.GetValidators(Transactions.Values).ToArray()).Equals(NextConsensus))
                 return false;
             Transaction tx_gen = Transactions.Values.FirstOrDefault(p => p.Type == TransactionType.MinerTransaction);
             Fixed8 amount_netfee = Block.CalculateNetFee(Transactions.Values);

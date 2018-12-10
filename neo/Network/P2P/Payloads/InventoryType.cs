@@ -1,7 +1,7 @@
 ﻿namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 存货类型
+    /// Inventory类型
     /// </summary>
     public enum InventoryType : byte
     {
