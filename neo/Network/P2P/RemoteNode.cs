@@ -14,7 +14,7 @@ using System.Net;
 namespace Neo.Network.P2P
 {
     /// <summary>
-    /// 
+    /// 描述远程节点的各种属性和功能
     /// </summary>
     public class RemoteNode : Connection
     {
@@ -30,7 +30,7 @@ namespace Neo.Network.P2P
         private bool verack = false;
 
         /// <summary>
-        /// 监听器所在的远端节点的IP和监听的端口
+        /// 所监听的远端节点的IP和监听的端口
         /// </summary>
         public IPEndPoint Listener => new IPEndPoint(Remote.Address, ListenerPort);
 
@@ -44,7 +44,7 @@ namespace Neo.Network.P2P
         public VersionPayload Version { get; private set; }
 
         /// <summary>
-        /// 构造函数
+        /// 构造函数，并向连接的远端节点发送本地节点的版本数据
         /// </summary>
         /// <param name="system">NEO核心系统类</param>
         /// <param name="connection">一个Tcp连接对象</param>

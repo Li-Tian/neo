@@ -6,11 +6,11 @@
     public interface IInteropService
     {
         /// <summary>
-        /// 激活互操作服务
+        /// 调用互操作服务
         /// </summary>
         /// <param name="method">方法名称</param>
         /// <param name="engine">执行引擎</param>
-        /// <returns></returns>
+        /// <returns>调用成功返回true,否则返回false</returns>
         bool Invoke(byte[] method, ExecutionEngine engine);
     }
 }
