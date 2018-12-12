@@ -96,7 +96,7 @@ namespace Neo.Consensus
         /// </summary>
         public int M => Validators.Length - (Validators.Length - 1) / 3;
         public Header PrevHeader => snapshot.GetHeader(PrevHash);
-        public bool ContainsTransaction(UInt256 hash) => snapshot.ContainsTransaction(hash);
+        public bool TransactionExists(UInt256 hash) => snapshot.ContainsTransaction(hash);
         public bool VerifyTransaction(Transaction tx) => tx.Verify(snapshot, Transactions.Values);
 
         public ConsensusContext(Wallet wallet)
@@ -113,7 +113,7 @@ namespace Neo.Consensus
         /// <param name="view_number">new view number</param>
         public void ChangeView(byte view_number)
         {
-            State &= ConsensusState.SignatureSent; 
+            State &= ConsensusState.SignatureSent;
             ViewNumber = view_number;
             PrimaryIndex = GetPrimaryIndex(view_number);
             if (State == ConsensusState.Initial)
@@ -125,7 +125,6 @@ namespace Neo.Consensus
                 ExpectedView[MyIndex] = view_number;
             _header = null;
         }
-
 
         /// <summary>
         /// 用当前共识上下文的数据生成一个新区块。
@@ -224,6 +223,7 @@ namespace Neo.Consensus
             SignPayload(payload);
             return payload;
         }
+
         /// <summary>
         /// 签名区块头
         /// </summary>
@@ -372,7 +372,6 @@ namespace Neo.Consensus
             rand.NextBytes(nonce);
             return nonce.ToUInt64(0);
         }
-
 
         /// <summary>
         /// 收到PrepareRequest包后，校验PrepareRequest所带的提案block数据

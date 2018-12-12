@@ -82,11 +82,16 @@ namespace Neo.Network.P2P.Payloads
 
         InventoryType IInventory.InventoryType => InventoryType.TX;
 
+        // <summary>
+        // 是否是低优先级交易。若是claim交易或网络费用低于阈值时，则为低优先级交易。
+        // 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
+        // </summary>
+        //public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
         /// <summary>
-        /// 是否是低优先级交易。若是claim交易或网络费用低于阈值时，则为低优先级交易。
+        /// 是否是低优先级交易。若网络费用低于阈值时，则为低优先级交易。
         /// 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
         /// </summary>
-        public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
+        public bool IsLowPriority => NetworkFee < Settings.Default.LowPriorityThreshold;
 
         private Fixed8 _network_fee = -Fixed8.Satoshi;
 

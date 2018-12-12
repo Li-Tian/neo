@@ -75,12 +75,18 @@ namespace Neo.Consensus
         /// 前区块的区块头
         /// </summary>
         Header PrevHeader { get; }
+        // <summary>
+        // 判定是否包含指定哈希值的交易
+        // </summary>
+        // <param name="hash">交易的哈希值</param>
+        // <returns>判定是否包含</returns>
+        //bool ContainsTransaction(UInt256 hash);
         /// <summary>
-        /// 判定是否包含指定哈希值的交易
+        /// 判定指定哈希值的交易是否存在
         /// </summary>
         /// <param name="hash">交易的哈希值</param>
-        /// <returns>判定是否包含</returns>
-        bool ContainsTransaction(UInt256 hash);
+        /// <returns>判定是否存在</returns>
+        bool TransactionExists(UInt256 hash);
         /// <summary>
         /// 验证指定的交易是否合法
         /// </summary>
