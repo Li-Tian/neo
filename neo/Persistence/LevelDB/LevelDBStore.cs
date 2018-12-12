@@ -48,7 +48,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取账户
         /// </summary>
-        /// <returns></returns>
+        /// <returns>账户前缀的DbCache</returns>
         public override DataCache<UInt160, AccountState> GetAccounts()
         {
             return new DbCache<UInt160, AccountState>(db, null, null, Prefixes.ST_Account);
@@ -57,7 +57,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取资产
         /// </summary>
-        /// <returns></returns>
+        /// <returns>资产前缀的DbCache</returns>
         public override DataCache<UInt256, AssetState> GetAssets()
         {
             return new DbCache<UInt256, AssetState>(db, null, null, Prefixes.ST_Asset);
@@ -67,7 +67,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取区块
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区块前缀的DbCache</returns>
         public override DataCache<UInt256, BlockState> GetBlocks()
         {
             return new DbCache<UInt256, BlockState>(db, null, null, Prefixes.DATA_Block);
@@ -76,7 +76,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取合约
         /// </summary>
-        /// <returns></returns>
+        /// <returns>合约前缀的DbCache</returns>
         public override DataCache<UInt160, ContractState> GetContracts()
         {
             return new DbCache<UInt160, ContractState>(db, null, null, Prefixes.ST_Contract);
@@ -85,7 +85,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取快照
         /// </summary>
-        /// <returns></returns>
+        /// <returns>数据库快照</returns>
         public override Snapshot GetSnapshot()
         {
             return new DbSnapshot(db);
@@ -95,7 +95,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取已花费交易
         /// </summary>
-        /// <returns></returns>
+        /// <returns>已花费交易前缀的DbCache</returns>
         public override DataCache<UInt256, SpentCoinState> GetSpentCoins()
         {
             return new DbCache<UInt256, SpentCoinState>(db, null, null, Prefixes.ST_SpentCoin);
@@ -104,7 +104,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取合约的存储
         /// </summary>
-        /// <returns></returns>
+        /// <returns>合约的存储前缀的DbCache</returns>
         public override DataCache<StorageKey, StorageItem> GetStorages()
         {
             return new DbCache<StorageKey, StorageItem>(db, null, null, Prefixes.ST_Storage);
@@ -113,7 +113,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取交易
         /// </summary>
-        /// <returns></returns>
+        /// <returns>交易前缀的DbCache</returns>
         public override DataCache<UInt256, TransactionState> GetTransactions()
         {
             return new DbCache<UInt256, TransactionState>(db, null, null, Prefixes.DATA_Transaction);
@@ -123,7 +123,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取utxo
         /// </summary>
-        /// <returns></returns>
+        /// <returns>utxo前缀的DbCache</returns>
         public override DataCache<UInt256, UnspentCoinState> GetUnspentCoins()
         {
             return new DbCache<UInt256, UnspentCoinState>(db, null, null, Prefixes.ST_Coin);
@@ -133,7 +133,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取验证人
         /// </summary>
-        /// <returns></returns>
+        /// <returns>验证人前缀的DbCache</returns>
         public override DataCache<ECPoint, ValidatorState> GetValidators()
         {
             return new DbCache<ECPoint, ValidatorState>(db, null, null, Prefixes.ST_Validator);
@@ -143,7 +143,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取区块头hash列表
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区块头hash列表前缀的DbCache</returns>
         public override DataCache<UInt32Wrapper, HeaderHashList> GetHeaderHashList()
         {
             return new DbCache<UInt32Wrapper, HeaderHashList>(db, null, null, Prefixes.IX_HeaderHashList);
@@ -153,7 +153,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取验证人个数的投票
         /// </summary>
-        /// <returns></returns>
+        /// <returns>验证人个数的投票前缀的DbMetaDataCache</returns>
         public override MetaDataCache<ValidatorsCountState> GetValidatorsCount()
         {
             return new DbMetaDataCache<ValidatorsCountState>(db, null, null, Prefixes.IX_ValidatorsCount);
@@ -162,7 +162,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取区块索引
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区块索引前缀的DbMetaDataCache</returns>
         public override MetaDataCache<HashIndexState> GetBlockHashIndex()
         {
             return new DbMetaDataCache<HashIndexState>(db, null, null, Prefixes.IX_CurrentBlock);
@@ -172,7 +172,7 @@ namespace Neo.Persistence.LevelDB
         /// <summary>
         /// 获取区块头索引
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区块头索引前缀的DbMetaDataCache</returns>
         public override MetaDataCache<HashIndexState> GetHeaderHashIndex()
         {
             return new DbMetaDataCache<HashIndexState>(db, null, null, Prefixes.IX_CurrentHeader);

@@ -31,7 +31,7 @@
         Vote = 0x30,
 
         /// <summary>
-        /// 	外部介绍信息地址
+        /// 外部介绍信息地址
         /// </summary>
         DescriptionUrl = 0x81,
 

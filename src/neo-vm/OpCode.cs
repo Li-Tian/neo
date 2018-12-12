@@ -1,8 +1,8 @@
 namespace Neo.VM
 {
-    // <summary>
-    // 枚举类，NVM支持的所有操作码。
-    // </summary>
+    /// <summary>
+    /// 枚举类，NVM支持的所有操作码。
+    /// </summary>
     public enum OpCode : byte
     {
         // Constants
@@ -24,6 +24,9 @@ namespace Neo.VM
         /// 0x01-0x4B 本指令后操作码指定的字节数对应的数据将会被压栈。
         /// </summary>
         PUSHBYTES1 = 0x01,
+        /// <summary>
+        /// 0x01-0x4B 本指令后操作码指定的字节数对应的数据将会被压栈。
+        /// </summary>
         PUSHBYTES75 = 0x4B,
         // <summary>
         // The next byte contains the number of bytes to be pushed onto the stack.

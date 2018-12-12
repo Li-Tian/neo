@@ -44,7 +44,12 @@ namespace Neo.Cryptography
             Array.Clear(_blockDWords, 0, _blockDWords.Length);
             Array.Clear(_buffer, 0, _buffer.Length);
         }
-
+        /// <summary>
+        /// 哈希计算的核心算法程序。此方法不应该被直接调用。
+        /// </summary>
+        /// <param name="rgb">计算哈希值的原始输入</param>
+        /// <param name="ibStart">计算哈希值时的数据开始偏移量</param>
+        /// <param name="cbSize">计算哈希值时的数据长度</param>
         [System.Security.SecuritySafeCritical]  // auto-generated
         protected override void HashCore(byte[] rgb, int ibStart, int cbSize)
         {

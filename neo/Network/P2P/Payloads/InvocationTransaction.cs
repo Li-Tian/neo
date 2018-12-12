@@ -111,8 +111,10 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">区块快照</param>
         /// <param name="mempool">内存池交易</param>
-        /// <returns>若消耗的GAS不能整除10^8, 则返回false.
-        /// （即，GAS必须是整数单位形式的Fixed8，即不能包含有小数的GAS） </returns>
+        /// <returns>
+        /// 1. 若消耗的GAS不能整除10^8, 则返回false.（即，GAS必须是整数单位形式的Fixed8，即不能包含有小数的GAS） <br/>
+        /// 2. 进行交易的基本验证，若验证失败，则返回false  <br/>
+        /// </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (Gas.GetData() % 100000000 != 0) return false;

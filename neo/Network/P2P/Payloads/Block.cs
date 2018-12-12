@@ -10,7 +10,7 @@ using System.Linq;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 区块数据
+    /// 区块数据类，BlockBase的子类
     /// </summary>
     public class Block : BlockBase, IInventory, IEquatable<Block>
     {
@@ -49,7 +49,7 @@ namespace Neo.Network.P2P.Payloads
 
 
         /// <summary>
-        /// 存储大小
+        /// 区块大小
         /// </summary>
         public override int Size => base.Size + Transactions.GetVarSize();
 
@@ -57,7 +57,7 @@ namespace Neo.Network.P2P.Payloads
         /// 计算交易的网络手续费, network_fee = input.GAS - output.GAS - input.systemfee
         /// </summary>
         /// <param name="transactions">待计算的交易</param>
-        /// <returns></returns>
+        /// <returns>交易的网络手续费</returns>
         public static Fixed8 CalculateNetFee(IEnumerable<Transaction> transactions)
         {
             Transaction[] ts = transactions.Where(p => p.Type != TransactionType.MinerTransaction && p.Type != TransactionType.ClaimTransaction).ToArray();
@@ -71,6 +71,12 @@ namespace Neo.Network.P2P.Payloads
         /// 反序列化
         /// </summary>
         /// <param name="reader">二进制输入流</param>
+        /// <exception cref="FormatException">
+        /// 如果出现以下情况之一，会抛出异常：
+        /// 1）第一笔交易不是挖矿交易；
+        /// 2）除第一笔交易外，其他交易是挖矿交易；
+        /// 3）添加交易Hash已存在；
+        /// 4）梅克尔根和计算出来的值不相等。</exception>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -113,7 +119,7 @@ namespace Neo.Network.P2P.Payloads
         /// 判断区块是否等于某个对象
         /// </summary>
         /// <param name="obj">待对比对象</param>
-        /// <returns></returns>
+        /// <returns>相等则返回true，否则返回false</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Block);
@@ -122,7 +128,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 获取区块hash code
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区块hash code</returns>
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
@@ -183,7 +189,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -195,7 +201,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成简化版的block
         /// </summary>
-        /// <returns></returns>
+        /// <returns>简化版的block</returns>
         public TrimmedBlock Trim()
         {
             return new TrimmedBlock

@@ -2,8 +2,14 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    /// <summary>
+    /// 读选项
+    /// </summary>
     public class ReadOptions
     {
+        /// <summary>
+        /// 默认读选项
+        /// </summary>
         public static readonly ReadOptions Default = new ReadOptions();
         internal readonly IntPtr handle = Native.leveldb_readoptions_create();
 
@@ -39,7 +45,9 @@ namespace Neo.IO.Data.LevelDB
                 Native.leveldb_readoptions_set_snapshot(handle, value.handle);
             }
         }
-
+        /// <summary>
+        /// 析构函数。将关闭leveldb的句柄。
+        /// </summary>
         ~ReadOptions()
         {
             Native.leveldb_readoptions_destroy(handle);

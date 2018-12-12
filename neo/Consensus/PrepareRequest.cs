@@ -1,4 +1,4 @@
-﻿using Neo.IO;
+using Neo.IO;
 using Neo.Network.P2P.Payloads;
 using System;
 using System.IO;
@@ -83,15 +83,18 @@ namespace Neo.Consensus
         /// <term>Nonce</term>
         /// <description>block nonce</description>
         /// </item>
+        /// <item>
         /// <term>NextConsensus</term>
         /// <description>The script hash of the next round consensus nodes' multi-sign contract</description>
         /// </item>
+        /// <item>
         /// <term>TransactionHashes</term>
         /// <description>Hash list of the proposal block's transactions</description>
         /// </item>
         /// <term>MinerTransaction</term>
         /// <description>Miner transanction</description>
         /// </item>
+        /// <item>
         /// <term>Signature</term>
         /// <description>Signature of the proposal block</description>
         /// </item>

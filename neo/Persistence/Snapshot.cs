@@ -96,22 +96,27 @@ namespace Neo.Persistence
         public uint HeaderHeight => HeaderHashIndex.Get().Index;
 
         /// <summary>
-        /// 区块hash
+        /// 当前区块hash
         /// </summary>
         public UInt256 CurrentBlockHash => BlockHashIndex.Get().Hash;
 
         /// <summary>
-        /// 区块头hash
+        /// 当前区块头hash
         /// </summary>
         public UInt256 CurrentHeaderHash => HeaderHashIndex.Get().Hash;
 
         /// <summary>
-        /// 计算可以Claim的GAS
+        /// 计算可以Claim的GAS奖励
         /// </summary>
-        /// <param name="inputs">claim指向的交易</param>
-        /// <param name="ignoreClaimed">是否忽略已经claims的input</param>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentException">若ignoreClaimed设置为false，且发现有已经claim的input时，抛出该异常</exception>
+        /// <param name="inputs">Claim指向的交易集合</param>
+        /// <param name="ignoreClaimed">是否忽略已经Claims的input</param>
+        /// <returns>可以Claim的GAS数量</returns>
+        /// <exception cref="System.ArgumentException">
+        /// ignoreClaimed设置为false时，若出现以下一种情况：
+        /// 1）claimable为null，或者其数量为零
+        /// 2）发现有已经claim的input时，
+        /// 抛出该异常
+        /// </exception>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
         {
             List<SpentCoin> unclaimed = new List<SpentCoin>();
@@ -137,11 +142,12 @@ namespace Neo.Persistence
         }
 
         /// <summary>
-        /// 计算可以claim到的GAS奖励
+        /// 计算可以Claim到的GAS奖励
         /// </summary>
-        /// <param name="inputs">已经花费尚未claim的output</param>
+        /// <param name="inputs">Claim指向的交易集合</param>
         /// <param name="height_end">花费的高度</param>
-        /// <returns></returns>
+        /// <exception cref="ArgumentException">当指向的交易不存在，或者指向交易输出序号不合法，或者指向交易输出不是NEO输出时，抛出异常</exception>
+        /// <returns>可以Claim的GAS数量</returns>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint height_end)
         {
             List<SpentCoin> unclaimed = new List<SpentCoin>();
@@ -204,7 +210,7 @@ namespace Neo.Persistence
         /// <summary>
         /// 克隆快照
         /// </summary>
-        /// <returns></returns>
+        /// <returns>快照</returns>
         public Snapshot Clone()
         {
             return new CloneSnapshot(this);
@@ -246,10 +252,10 @@ namespace Neo.Persistence
         }
 
         /// <summary>
-        /// 获取一笔交易尚未Claim的outputs
+        /// 获取一笔交易尚未Claim的outputs的字典
         /// </summary>
         /// <param name="hash">待查询交易hash</param>
-        /// <returns></returns>
+        /// <returns>返回尚未Claim的outputs字典，如果交易不存在，则返回null</returns>
         public Dictionary<ushort, SpentCoin> GetUnclaimed(UInt256 hash)
         {
             TransactionState tx_state = Transactions.TryGet(hash);
@@ -275,7 +281,7 @@ namespace Neo.Persistence
         /// <summary>
         /// 获取当前参与共识的验证人
         /// </summary>
-        /// <returns></returns>
+        /// <returns>参与共识的验证人列表</returns>
         public ECPoint[] GetValidators()
         {
             if (_validators == null)
@@ -289,7 +295,7 @@ namespace Neo.Persistence
         /// 获取参与共识的验证人列表
         /// </summary>
         /// <param name="others">打包的交易</param>
-        /// <returns></returns>
+        /// <returns>参与共识的验证人列表</returns>
         public IEnumerable<ECPoint> GetValidators(IEnumerable<Transaction> others)
         {
             Snapshot snapshot = Clone();

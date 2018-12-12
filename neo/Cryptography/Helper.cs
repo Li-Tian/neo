@@ -76,9 +76,15 @@ namespace Neo.Cryptography
         }
         /// <summary>
         /// 将一个Based58Check编码的字符串解码为字节数组
+        /// 解码步骤：
+        /// 1、把输入的字符串做 Base58 解码，得到 byte[] 数据。
+        /// 2、取 byte[] 数据收字节到倒数第4字节前的所有数据 byte[] 称作 data。
+        /// 3、把 data 做两次 sha256 得到的哈希值的前4字节作为版本前缀 checksum，
+        /// 与 byte[] 数据的后4字节比较是否相同，相同则返回data, 否则判定为数据无效。
         /// </summary>
         /// <param name="input">被解码的字符串</param>
         /// <returns>解码后的字节数组</returns>
+        /// <exception cref="System.FormatException">版本前缀 checksum与byte[] 数据的后4字节不同时抛出</exception>
         public static byte[] Base58CheckDecode(this string input)
         {
             byte[] buffer = Base58.Decode(input);
@@ -91,6 +97,10 @@ namespace Neo.Cryptography
 
         /// <summary>
         /// 将一个字节数组经过Based58Check编码后返回其字符串
+        /// 编码步骤：
+        /// 1、通过对原 byte[] 数据做两次 sha256 得到原数据的哈希，
+        ///    取其前4字节作为版本前缀checksum，添加到原 byte[] 数据的末尾。
+        /// 2、把添加了版本前缀的 byte[] 数据做 Base58 编码得到对应的字符串。
         /// </summary>
         /// <param name="data">需要用Based58Check编码的字节数组</param>
         /// <returns>解码后的Base58CheckEncode字符串</returns>

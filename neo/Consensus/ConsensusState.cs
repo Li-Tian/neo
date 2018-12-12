@@ -6,7 +6,7 @@ namespace Neo.Consensus
     /// Consensus state
     /// </summary>
     [Flags]
-    internal enum ConsensusState : byte
+    public enum ConsensusState : byte
     {
         /// <summary>
         /// Initial

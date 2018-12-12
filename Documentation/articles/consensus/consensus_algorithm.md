@@ -69,7 +69,6 @@ Assume the total number of active consensus nodes is `N`, up to `f` fault tolera
 
 5. Delegates recieved the proposal block, and verify the new block, then broadcast 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>〉 message.
 
-
 6. Any node, receiving at leat `n-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub> , reaches a consensus and publishes the full block.
 
 7. Any node, after receiving the full block, deletes all the full block's transactions in the memory pool. If the node is the consensus node, then enter the next round consensus.
@@ -77,7 +76,10 @@ Assume the total number of active consensus nodes is `N`, up to `f` fault tolera
 
 [![dbft_two_phase](../../images/consensus/dbft_two_phase_en.jpg)](../../images/consensus/dbft_two_phase_en.jpg)
 
-The algorithm can be divided into three stages. 1) `PRE-PREPARE`, the speaker of this round is responsible for broadcasting `Prepare-request` message to the delegates and initiating the proposal block. 2) `PREPARE`, the delegates after receiving `PRE-PREPARE`, then broadcast `Prepare-Response` if the proposal verified successful. When a node receives at least `N-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>, it enters the third stage. 3) `PERSIST`, the node publishes the full node and enter the next consensus round.
+The algorithm can be divided into three stages.<BR/>
+1) `PRE-PREPARE`, the speaker of this round is responsible for broadcasting `Prepare-request` message to the delegates and initiating the proposal block.<BR/>
+2) `PREPARE`, the delegates after receiving `PRE-PREPARE`, then broadcast `Prepare-Response` if the proposal verified successful. When a node receives at least `N-f` 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>, it enters the third stage.<BR/>
+3) `PERSIST`, the node publishes the full node and enter the next consensus round.<BR/>
 
 > [!Note]
 > 1. At the beigining of the blockchain network started, `StandbyValidators` are read from the configureation file `protocol.json` by default.

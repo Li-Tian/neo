@@ -3,7 +3,7 @@
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  PrepareResponse消息
+    ///  PrepareResponse消息，包含的数据实际就是一个签名
     /// </summary>
     internal class PrepareResponse : ConsensusMessage
     {

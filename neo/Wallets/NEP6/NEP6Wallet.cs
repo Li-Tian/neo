@@ -217,7 +217,7 @@ namespace Neo.Wallets.NEP6
         /// 利用脚本哈希从账户列表中删除指定账户对象
         /// </summary>
         /// <param name="scriptHash">指定账户对象对应的脚本哈希</param>
-        /// <returns></returns>
+        /// <returns>删除成功则返回true，否则返回false</returns>
         public override bool DeleteAccount(UInt160 scriptHash)
         {
             bool removed;
@@ -463,7 +463,7 @@ namespace Neo.Wallets.NEP6
         /// 解锁钱包
         /// </summary>
         /// <param name="password">用户输入的密码</param>
-        /// <returns></returns>
+        /// <returns>返回WalletLocker</returns>
         /// <exception cref="System.Security.Cryptography.CryptographicException">密码验证失败时抛出</exception>
         public IDisposable Unlock(string password)
         {

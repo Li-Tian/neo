@@ -34,7 +34,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        ///  查询前缀匹配的元素
+        /// 查询前缀匹配的元素
         /// </summary>
         /// <typeparam name="T">值泛型</typeparam>
         /// <param name="db">待查询db</param>

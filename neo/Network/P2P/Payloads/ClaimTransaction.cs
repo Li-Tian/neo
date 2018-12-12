@@ -40,7 +40,8 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 反序列化，读取claims数据，其他数据未提取
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">二进制输入流</param>
+        /// <exception cref="FormatException">当交易版本号不为0，或者Claims长度为0时，抛出异常</exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version != 0) throw new FormatException();
@@ -88,7 +89,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -100,12 +101,15 @@ namespace Neo.Network.P2P.Payloads
         /// 验证交易
         /// </summary>
         /// <param name="snapshot">区块快照</param>
-        /// <param name="mempool">已经花费的GAS outputs</param>
-        /// <returns>1. 若Claims包含重复交易时，返回false； 
-        /// 2. 若Claims与内存池交易存在重复时，返回false； 
-        /// 3. 若GAS的资产没有变动或者减少时，返回false；
-        /// 4. 若计算的claim到的Gas不等于GAS的增发量时，返回false
-        /// 5. 返回true</returns>
+        /// <param name="mempool">内存池交易</param>
+        /// <returns>
+        /// 1. 进行交易的基本验证，若验证失败，则返回false <br/>
+        /// 2. 若Claims包含重复交易时，返回false <br/>
+        /// 3. 若Claims与内存池交易存在重复时，返回false <br/>
+        /// 4. 若GAS的资产没有变动或者减少时，返回false <br/>
+        /// 5. 若计算的claim到的Gas不等于GAS的增发量时，返回false <br/>
+        /// 6. 若处理过程异常时，返回false <br/>
+        /// </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             if (!base.Verify(snapshot, mempool)) return false;

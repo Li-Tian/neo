@@ -5,6 +5,7 @@ namespace Neo.Consensus
 {
     /// <summary>
     ///  ChangeView message
+    ///  ChangeView消息，用于转换视图的共识消息。继承于类ConsensusMessage。
     /// </summary>
     internal class ChangeView : ConsensusMessage
     {

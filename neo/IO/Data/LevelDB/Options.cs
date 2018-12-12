@@ -116,6 +116,9 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        /// <summary>
+        /// 析构函数。将关闭leveldb的句柄。
+        /// </summary>
         ~Options()
         {
             Native.leveldb_options_destroy(handle);

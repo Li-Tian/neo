@@ -10,7 +10,7 @@ namespace Neo.Plugins
         /// <summary>
         /// 当前快照
         /// </summary>
-        /// <param name="snapshot"></param>
+        /// <param name="snapshot">快照</param>
         void OnPersist(Snapshot snapshot);
     }
 }

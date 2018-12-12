@@ -36,7 +36,7 @@ namespace Neo.IO.Data.LevelDB
 #endif
 
         /// <summary>
-        /// 创建日志
+        /// 创建日志（保留）
         /// </summary>
         /// <param name="logger"></param>
         /// <returns></returns>
@@ -45,7 +45,7 @@ namespace Neo.IO.Data.LevelDB
         public static extern IntPtr leveldb_logger_create(IntPtr /* Action<string> */ logger);
 
         /// <summary>
-        /// 释放日志
+        /// 释放日志（保留）
         /// </summary>
         /// <param name="option"></param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -59,7 +59,7 @@ namespace Neo.IO.Data.LevelDB
         /// <param name="options">数据库选项</param>
         /// <param name="name">数据库名字</param>
         /// <param name="error">错误句柄</param>
-        /// <returns></returns>
+        /// <returns>数据库句柄</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_open(IntPtr /* Options*/ options, string name, out IntPtr error);
 
@@ -114,7 +114,7 @@ namespace Neo.IO.Data.LevelDB
         /// <param name="keylen">键长度</param>
         /// <param name="vallen">值长度</param>
         /// <param name="errptr">错误句柄</param>
-        /// <returns></returns>
+        /// <returns>值指针</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_get(IntPtr /* DB */ db, IntPtr /* ReadOptions*/ options, byte[] key, UIntPtr keylen, out UIntPtr vallen, out IntPtr errptr);
 
@@ -126,7 +126,7 @@ namespace Neo.IO.Data.LevelDB
         /// </summary>
         /// <param name="db">数据库db</param>
         /// <param name="options">可选项</param>
-        /// <returns></returns>
+        /// <returns>迭代器指针</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_create_iterator(IntPtr /* DB */ db, IntPtr /* ReadOption */ options);
 
@@ -134,7 +134,7 @@ namespace Neo.IO.Data.LevelDB
         /// 创建快照
         /// </summary>
         /// <param name="db">数据库db</param>
-        /// <returns></returns>
+        /// <returns>快照句柄</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_create_snapshot(IntPtr /* DB */ db);
 
@@ -142,12 +142,12 @@ namespace Neo.IO.Data.LevelDB
         /// 释放快照
         /// </summary>
         /// <param name="db">数据库db</param>
-        /// <param name="snapshot">待释放的快照</param>
+        /// <param name="snapshot">待释放的快照句柄</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_release_snapshot(IntPtr /* DB */ db, IntPtr /* SnapShot*/ snapshot);
 
         /// <summary>
-        /// 获取属性值
+        /// 获取属性值（保留）
         /// </summary>
         /// <param name="db">数据库db</param>
         /// <param name="propname">属性名</param>
@@ -156,7 +156,7 @@ namespace Neo.IO.Data.LevelDB
         public static extern IntPtr leveldb_property_value(IntPtr /* DB */ db, string propname);
 
         /// <summary>
-        /// 修复数据库
+        /// 修复数据库（保留）
         /// </summary>
         /// <param name="options">可选项</param>
         /// <param name="name">数据库名</param>
@@ -165,7 +165,7 @@ namespace Neo.IO.Data.LevelDB
         public static extern void leveldb_repair_db(IntPtr /* Options*/ options, string name, out IntPtr error);
 
         /// <summary>
-        /// 销毁数据库
+        /// 销毁数据库（保留）
         /// </summary>
         /// <param name="options">可选项</param>
         /// <param name="name">数据库名</param>
@@ -189,14 +189,14 @@ namespace Neo.IO.Data.LevelDB
 
         #region Env
         /// <summary>
-        /// 创建默认环境变量
+        /// 创建默认环境变量（保留）
         /// </summary>
         /// <returns></returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_create_default_env();
 
         /// <summary>
-        /// 销毁环境变量
+        /// 销毁环境变量（保留）
         /// </summary>
         /// <param name="cache"></param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -215,7 +215,7 @@ namespace Neo.IO.Data.LevelDB
         /// 检查迭代器是否合法
         /// </summary>
         /// <param name="iterator">待检查迭代器</param>
-        /// <returns></returns>
+        /// <returns>合法则返回true，否则返回false</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool leveldb_iter_valid(IntPtr /*Iterator*/ iterator);
@@ -259,11 +259,11 @@ namespace Neo.IO.Data.LevelDB
         public static extern void leveldb_iter_prev(IntPtr /*Iterator*/ iterator);
 
         /// <summary>
-        /// 查询当前迭代带游标处的Key
+        /// 查询当前迭代器游标处的键
         /// </summary>
         /// <param name="iterator">迭代器</param>
         /// <param name="length">键长度</param>
-        /// <returns>键</returns>
+        /// <returns>键指针</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_iter_key(IntPtr /*Iterator*/ iterator, out UIntPtr length);
 
@@ -272,7 +272,7 @@ namespace Neo.IO.Data.LevelDB
         /// </summary>
         /// <param name="iterator">迭代器</param>
         /// <param name="length">值长度</param>
-        /// <returns>值</returns>
+        /// <returns>值指针</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_iter_value(IntPtr /*Iterator*/ iterator, out UIntPtr length);
 
@@ -296,7 +296,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 销毁可选项
         /// </summary>
-        /// <param name="options"></param>
+        /// <param name="options">可选项</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_options_destroy(IntPtr /*Options*/ options);
 
@@ -317,10 +317,10 @@ namespace Neo.IO.Data.LevelDB
         public static extern void leveldb_options_set_error_if_exists(IntPtr /*Options*/ options, [MarshalAs(UnmanagedType.U1)] bool o);
 
         /// <summary>
-        /// 设置可选项：设置info级别日志
+        /// 设置选项：设置info级别日志
         /// </summary>
         /// <param name="options">待设置的可选项</param>
-        /// <param name="logger">日期器</param>
+        /// <param name="logger">日志器</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_options_set_info_log(IntPtr /*Options*/ options, IntPtr /* Logger */ logger);
 
@@ -333,7 +333,7 @@ namespace Neo.IO.Data.LevelDB
         public static extern void leveldb_options_set_paranoid_checks(IntPtr /*Options*/ options, [MarshalAs(UnmanagedType.U1)] bool o);
 
         /// <summary>
-        /// 设置选项：环境变量
+        /// 设置选项：环境变量（保留）
         /// </summary>
         /// <param name="options">待设置的可选项</param>
         /// <param name="env">环境变量</param>
@@ -357,7 +357,7 @@ namespace Neo.IO.Data.LevelDB
         public static extern void leveldb_options_set_max_open_files(IntPtr /*Options*/ options, int max);
 
         /// <summary>
-        /// 设置选项：设置缓存
+        /// 设置选项：设置缓存（保留）
         /// </summary>
         /// <param name="options">待设置的可选项</param>
         /// <param name="cache">缓存</param>
@@ -389,7 +389,7 @@ namespace Neo.IO.Data.LevelDB
         public static extern void leveldb_options_set_compression(IntPtr /*Options*/ options, CompressionType level);
 
         /// <summary>
-        /// 设置选项：比较器
+        /// 设置选项：比较器（保留）
         /// </summary>
         /// <param name="options">待设置的选项</param>
         /// <param name="comparer">比较器</param>
@@ -409,7 +409,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建读选项
         /// </summary>
-        /// <returns></returns>
+        /// <returns>读选项句柄</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_readoptions_create();
 
@@ -440,31 +440,61 @@ namespace Neo.IO.Data.LevelDB
         /// 选项：是否从快照读取
         /// </summary>
         /// <param name="options">读选项</param>
-        /// <param name="snapshot">快照</param>
+        /// <param name="snapshot">快照句柄</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_readoptions_set_snapshot(IntPtr /*ReadOptions*/ options, IntPtr /*SnapShot*/ snapshot);
         #endregion
 
+
+        #region WriteBatch
         /// <summary>
         /// 批量写选项
         /// </summary>
-        /// <returns></returns>
-        #region WriteBatch
+        /// <returns>批量写句柄</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_writebatch_create();
 
+        /// <summary>
+        /// 销毁批量写句柄
+        /// </summary>
+        /// <param name="batch">批量写句柄</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writebatch_destroy(IntPtr /* WriteBatch */ batch);
 
+        /// <summary>
+        /// 清空批量写句柄
+        /// </summary>
+        /// <param name="batch">批量写句柄</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writebatch_clear(IntPtr /* WriteBatch */ batch);
 
+        /// <summary>
+        /// 向批量写中添加键值对
+        /// </summary>
+        /// <param name="batch">批量写句柄</param>
+        /// <param name="key">键</param>
+        /// <param name="keylen">键长度</param>
+        /// <param name="val">值</param>
+        /// <param name="vallen">值长度</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writebatch_put(IntPtr /* WriteBatch */ batch, byte[] key, UIntPtr keylen, byte[] val, UIntPtr vallen);
 
+        /// <summary>
+        /// 从批量写中删除键
+        /// </summary>
+        /// <param name="batch">批量写句柄</param>
+        /// <param name="key">键</param>
+        /// <param name="keylen">键长度</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writebatch_delete(IntPtr /* WriteBatch */ batch, byte[] key, UIntPtr keylen);
 
+        /// <summary>
+        /// 批量写迭代器（保留）
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <param name="state"></param>
+        /// <param name="put"></param>
+        /// <param name="deleted"></param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writebatch_iterate(IntPtr /* WriteBatch */ batch, object state, Action<object, byte[], int, byte[], int> put, Action<object, byte[], int> deleted);
         #endregion
@@ -473,7 +503,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 创建写选项
         /// </summary>
-        /// <returns></returns>
+        /// <returns>写选项句柄</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_writeoptions_create();
 
@@ -487,7 +517,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 选项：是否同步到磁盘
         /// </summary>
-        /// <param name="options">写选项</param>
+        /// <param name="options">写选项句柄</param>
         /// <param name="o">是否同步</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writeoptions_set_sync(IntPtr /*WriteOptions*/ options, [MarshalAs(UnmanagedType.U1)] bool o);
@@ -496,7 +526,7 @@ namespace Neo.IO.Data.LevelDB
       
         #region Cache 
         /// <summary>
-        /// 创建LRU缓存
+        /// 创建LRU缓存（保留）
         /// </summary>
         /// <param name="capacity">缓存大小</param>
         /// <returns>LRU缓存</returns>
@@ -504,7 +534,7 @@ namespace Neo.IO.Data.LevelDB
         public static extern IntPtr leveldb_cache_create_lru(int capacity);
 
         /// <summary>
-        /// 释放缓存
+        /// 释放缓存（保留）
         /// </summary>
         /// <param name="cache">待释放的缓存</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -515,7 +545,7 @@ namespace Neo.IO.Data.LevelDB
         #region Comparator
 
         /// <summary>
-        /// 创建比较器
+        /// 创建比较器（保留）
         /// </summary>
         /// <param name="state">状态</param>
         /// <param name="destructor">构造函数</param>
@@ -535,7 +565,7 @@ namespace Neo.IO.Data.LevelDB
             IntPtr /* const char* (*)(void*) */ name);
 
         /// <summary>
-        /// 释放比较器
+        /// 释放比较器（保留）
         /// </summary>
         /// <param name="cmp">待释放比较器</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]

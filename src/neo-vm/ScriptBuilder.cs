@@ -6,14 +6,14 @@ using System.Text;
 namespace Neo.VM
 {
     /// <summary>
-    /// 
+    /// 脚本生成器类，用于构建脚本
     /// </summary>
     public class ScriptBuilder : IDisposable
     {
         private readonly MemoryStream ms = new MemoryStream();
         private readonly BinaryWriter writer;
         /// <summary>
-        /// 
+        /// MemoryStream数据读取的偏移位
         /// </summary>
         public int Offset => (int)ms.Position;
         /// <summary>
@@ -137,6 +137,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="api">系统互操作服务api字符串</param>
         /// <returns>写入完成后的脚本生成器</returns>
+        /// <exception cref="System.ArgumentException">输入的api字符串为空或转换成字节后长度等于0或大于252时抛出</exception>
         public ScriptBuilder EmitSysCall(string api)
         {
             if (api == null)

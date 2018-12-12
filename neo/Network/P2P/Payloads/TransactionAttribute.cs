@@ -74,7 +74,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>转换的Json对象</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();
