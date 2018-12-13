@@ -1,6 +1,6 @@
 ﻿<center><h2> Hash Algorithm </h2></center>
 
-　Hash function, or hash algorithm, is a method creating digital finger print from any kind data. Hash function compresses message or data  into abstract to shrink data size & fix data size. This function disorgnizes & remixes data, rebuilding a finger print with the name Hash value. Hash value is always represented by a short string consisted of random letters and digits.
+　Hash function, or hash algorithm, is a method creating digital finger print from any kind of data. Hash function compresses message or data into a digested version to shrink the data into a fixed data size. This function disorgnizes and remixes data, rebuilding a finger print data and name it as hash-value. Hash value is always represented by a short string consisted of random letters and digits.
 
 ### RIPEMD160 
 
@@ -39,7 +39,7 @@ Scenarios:
 
 1. Compute contract hash.
 
-2. Signing & Signing validation.
+2. Signing & Signature validation.
 
 3. Base58Check encoding / decoding.
 

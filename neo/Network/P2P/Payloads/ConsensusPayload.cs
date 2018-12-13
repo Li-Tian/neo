@@ -234,8 +234,6 @@ namespace Neo.Network.P2P.Payloads
         /// 1) Check if BlockIndex is more than the snapshot.Height
         /// 2) Verify the witness script
         /// </remarks>
-        /// <param name="snapshot"></param>
-        /// <returns></returns>
         /// <param name="snapshot">区块快照</param>
         /// <returns>校验通过返回true，否则返回false</returns>
         public bool Verify(Snapshot snapshot)

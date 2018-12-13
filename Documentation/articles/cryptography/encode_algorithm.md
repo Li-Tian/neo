@@ -26,23 +26,23 @@ byte[] Decode(string input)
 
 **Encoding Steps**：
 
-1.  Add 0x00 before byte[] data to generate a new byte array, and sort it to reserve order
+1.  Add 0x00 before byte[] data to generate a new byte array, and then reverse its order.(little endian)
 
-2.  Convert array data to decimal BigInteger format.
+2.  Convert array data to BigInteger Object.
 
-3.  Convert BigInteger format number to 58-binary format according to Base58 alphabet.
+3.  Convert BigInteger format number to 58-based number according to Base58 alphabet.
 
-4.  Count the number of 0x00 in original byte array format data. In the head of the Base58 in step 3, for each 0x00, add one letter which is the first one in Base58 alphabet.
+4.  Count the number of 0x00 in original byte array format data. In the head of the Base58 format data generated in step 3, for each 0x00, add a letter '1', which is the first charater in Base58 alphabet.
 
 **Decoding Steps**：
 
-1.  Invert input string & convert it into decimal Biginteger format according to Base58 alphabet.
+1.  Invert input string and convert it into Biginteger format according to Base58 alphabet.
 
-2.  Convert from Biginteger format to byte[] format and sort reserve order.
+2.  Convert from Biginteger format to byte[] format and then reverse the order to big endian.
 
-3.  Count the number of the first letter of Base58 alphabet in original input data as count.
+3.  If byte[] format data's length is more than 1 & byte[0] = 0 & byte[1] >= 0x80, start from byte[1], otherwise start from byte[0] to get the decoded result.
 
-4.  If byte[] format data's length is more than 1 & byte[0] = 0 & byte[1] >= 0x80, start from byte[1], otherwise start from byte[0] to get final result.
+4.  Count the number of the first letter of Base58 alphabet in original input data as count and remove leading zeros from the decoded data.
 
 Example:
 
@@ -74,7 +74,7 @@ byte[] Base58CheckDecode(string input)
 ```
 **Encoding Steps**:
 
-1.  Encode input byte array twice with Sha256 algorithm. Take the first 4 byte of result hash as version prefix checksum & concatenate to the end of original byte array.
+1.  Encode input byte array twice with Sha256 algorithm. Take the first 4 bytes of result hash as version prefix checksum and append it to the end of original byte array.
 
 2.  Base58-encode the byte array with version prefix to get corresponding encoded result.
 
@@ -84,7 +84,7 @@ byte[] Base58CheckDecode(string input)
 
 2.  Take the content of byte array except the last 4 bytes as data.
 
-3.  Encode data twice with Sha256 algorithm & check whether the first 4 bytes are the same as the last 4 bytes in byte array of step 1. If so return data, otherwise regard data as illegal.
+3.  Encode data twice with Sha256 algorithm and check whether the first 4 bytes are the same with the last 4 bytes in byte array of step 1. If so return the decoded data, otherwise regard data as illegal.
 
 [![Base58Check Encoding & Decoding](../../images/blockchain_paradigm/Base58CheckEncodeAndDecode-en.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/20)](../../images/blockchain_paradigm/Base58CheckEncodeAndDecode.png)
 
