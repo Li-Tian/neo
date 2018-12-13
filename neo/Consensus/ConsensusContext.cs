@@ -105,18 +105,27 @@ namespace Neo.Consensus
             this.wallet = wallet;
         }
 
+
+        // <summary>
+        // Change view number
+        // </summary>
+        // <remarks>
+        // 1. Update the context ViewNumber, PrimaryIndex and ExpectedView[Myindex]
+        // 2. If the node has the SignatureSent flag, reserve the signatures array 
+        // (Mybe some signatures are arrived before the PrepareRequset received), else reset it
+        // </remarks>
+        // <param name="view_number">new view number</param>
+
         /// <summary>
-        /// Change view number
+        /// 修改上下文视图编号，即改变视图达成一致，同时重新计算议长编号
         /// </summary>
         /// <remarks>
-        /// 1. Update the context ViewNumber, PrimaryIndex and ExpectedView[Myindex]
-        /// 2. If the node has the SignatureSent flag, reserve the signatures array 
-        /// (Mybe some signatures are arrived before the PrepareRequset received), else reset it
+        /// 若状态带有SignatureSent标志，则保留签名数组（视图过程中，可能收到别的已经提前发来的签名，后面会再进行过滤处理）
         /// </remarks>
         /// <param name="view_number">new view number</param>
         public void ChangeView(byte view_number)
         {
-            State &= ConsensusState.SignatureSent; 
+            State &= ConsensusState.SignatureSent;
             ViewNumber = view_number;
             PrimaryIndex = GetPrimaryIndex(view_number);
             if (State == ConsensusState.Initial)
@@ -133,6 +142,7 @@ namespace Neo.Consensus
         /// <summary>
         /// Create a full block with the context data
         /// </summary>
+        /// <returns></returns>
         public Block CreateBlock()
         {
             Block block = MakeHeader();
@@ -158,21 +168,34 @@ namespace Neo.Consensus
             snapshot?.Dispose();
         }
 
+
+        // <summary>
+        // Get the Speaker index = (BlockIndex - view_number) % Validators.Length
+        // </summary>
+        // <param name="view_number">current view number</param>
+        // <returns></returns>
+
         /// <summary>
-        /// Get the Primary/Speaker index = (the height of proposal block -  view number) % the number of consensus nodes
+        /// 计算议长编号 = (提案block的区块高度 - 当前视图编号) % 共识节点个数
         /// </summary>
-        /// <param name="view_number">view number</param>
-        /// <returns>The Primary/Speaker index</returns>
+        /// <param name="view_number">给定当前视图编号</param>
+        /// <returns>新的议长编号</returns>
         public uint GetPrimaryIndex(byte view_number)
         {
             int p = ((int)BlockIndex - view_number) % Validators.Length;
             return p >= 0 ? (uint)p : (uint)(p + Validators.Length);
         }
 
+
+        // <summary>
+        // Create ChangeView message payload
+        // </summary>
+        // <returns>ConsensusPayload</returns>
+
         /// <summary>
-        ///  Create ChangeView message
+        /// 构建ChangeView消息
         /// </summary>
-        /// <returns>The consensus message payload with ChangeView</returns>
+        /// <returns>更换视图的共识消息</returns>
         public ConsensusPayload MakeChangeView()
         {
             return MakeSignedPayload(new ChangeView
@@ -182,6 +205,7 @@ namespace Neo.Consensus
         }
 
         private Block _header = null;
+
 
         /// <summary>
         /// Construct the block header with context data
@@ -206,6 +230,13 @@ namespace Neo.Consensus
             }
             return _header;
         }
+
+
+        // <summary>
+        // Create ConsensusPayload which contains the ConsensusMessage
+        // </summary>
+        // <param name="message">consensus message</param>
+        // <returns>ConsensusPayload</returns>
 
         /// <summary>
         /// Create ConsensusPayload which contains the ConsensusMessage
@@ -253,10 +284,15 @@ namespace Neo.Consensus
         }
 
 
+        // <summary>
+        // Create PrepareRequest message paylaod
+        // </summary>
+        // <returns>ConsensusPayload</returns>
+
         /// <summary>
-        /// Create PrepareRequest message paylaod
+        /// 构建PrepareRequset消息的共识货物ConsensusPayload类
         /// </summary>
-        /// <returns>ConsensusPayload</returns>
+        /// <returns>共识消息货物</returns>
         public ConsensusPayload MakePrepareRequest()
         {
             return MakeSignedPayload(new PrepareRequest
@@ -269,11 +305,12 @@ namespace Neo.Consensus
             });
         }
 
+
         /// <summary>
-        /// Create PrepareReponse message paylaod
+        /// 构建PrepareResponse消息的共识货物ConsensusPayload类
         /// </summary>
-        /// <param name="signature">signaure of the proposal block</param>
-        /// <returns>ConsensusPayload</returns>
+        /// <param name="signature">对提案block的签名</param>
+        /// <returns>共识消息</returns>
         public ConsensusPayload MakePrepareResponse(byte[] signature)
         {
             return MakeSignedPayload(new PrepareResponse
@@ -294,6 +331,7 @@ namespace Neo.Consensus
         /// 4. Calculate the PriamryIndex, MyIndex and keyPair
         /// 5. Clear Signatures, ExpectedView
         /// </remarks>
+
         public void Reset()
         {
             snapshot?.Dispose();
@@ -388,6 +426,24 @@ namespace Neo.Consensus
         /// 3. Check whether the MinerTransaction.output.value is equal to the proposal block's txs network fee
         /// </remarks>
         /// <returns>If valid, then return true</returns>
+        // <summary>
+        // Verify the PrepareRequest's proposal block
+        // </summary>
+        // <remarks>
+        // Check if NextConsensus is correct and MinerTransaction.output.value is equal to txs network fee
+        // </remarks>
+        // <returns></returns>
+
+        /// <summary>
+        /// 收到PrepareRequest包后，校验PrepareRequest所带的提案block数据
+        /// </summary>
+        /// <remarks>
+        /// 检验的标准有以下3条：
+        /// 1. 共识状态已经标出了RequestReceived，即已经收到了PrepareRequest包
+        /// 2. 校验NextConsensus是否与当前快照中的验证人计算出的地址一致
+        /// 3. 校验MinerTransaction的奖励计算是否正确。注，MinerTransaction是每个块的第一个交易，记录了网络费的分布情况。
+        /// </remarks>
+        /// <returns>验证合法返回true</returns>
         public bool VerifyRequest()
         {
             if (!State.HasFlag(ConsensusState.RequestReceived))

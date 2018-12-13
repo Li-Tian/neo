@@ -104,7 +104,8 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        ///  Deserialize from the reader of the unsigned binary data without the witness field
+        /// Deserialize from the reader of the unsigned binary data without the witness field
+        /// 序列化未签名数据
         /// </summary>
         /// <param name="reader"></param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
@@ -201,11 +202,9 @@ namespace Neo.Network.P2P.Payloads
         /// </item>
         /// <item>
         /// <term>ValidatorIndex</term>
-<<<<<<< HEAD
         /// <description>the sender(the Speaker or Delegates) index in the validators array</description>
-=======
         /// <description>共识节点编号</description>
->>>>>>> 6feaa685ed1290ee6450a5eb2de40811e3655509
+        /// <description>共识节点编号the sender(the Speaker or Delegates) index in the validators array</description>
         /// </item>
         /// <item>
         /// <term>Timestamp</term>
@@ -235,13 +234,10 @@ namespace Neo.Network.P2P.Payloads
         /// 1) Check if BlockIndex is more than the snapshot.Height
         /// 2) Verify the witness script
         /// </remarks>
-<<<<<<< HEAD
         /// <param name="snapshot"></param>
         /// <returns></returns>
-=======
         /// <param name="snapshot">区块快照</param>
         /// <returns>校验通过返回true，否则返回false</returns>
->>>>>>> 6feaa685ed1290ee6450a5eb2de40811e3655509
         public bool Verify(Snapshot snapshot)
         {
             if (BlockIndex <= snapshot.Height)

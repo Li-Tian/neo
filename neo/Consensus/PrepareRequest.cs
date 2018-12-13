@@ -1,4 +1,4 @@
-﻿using Neo.IO;
+using Neo.IO;
 using Neo.Network.P2P.Payloads;
 using System;
 using System.IO;
@@ -37,7 +37,7 @@ namespace Neo.Consensus
         public byte[] Signature;
 
         /// <summary>
-        /// Size of message：
+        /// 消息大小：
         /// <code>base.Size + sizeof(ulong) + NextConsensus.Size + TransactionHashes.GetVarSize() + MinerTransaction.Size + Signature.Length</code>
         /// </summary>
         public override int Size => base.Size + sizeof(ulong) + NextConsensus.Size + TransactionHashes.GetVarSize() + MinerTransaction.Size + Signature.Length;

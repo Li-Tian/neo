@@ -29,6 +29,7 @@ namespace Neo.Consensus
 
         /// <summary>
         /// Change the current view number message
+        /// 更新/设置视图编号
         /// </summary>
         public class SetViewNumber {
             /// <summary>
@@ -44,7 +45,6 @@ namespace Neo.Consensus
         /// It contains the `Height` and `ViewNumber` of the timeout block.
         /// </remarks>
         internal class Timer { public uint Height; public byte ViewNumber; }
-
 
         // <summary>
         // The context of consensus activity
@@ -95,10 +95,17 @@ namespace Neo.Consensus
         }
 
 
-        /// <summary>
-        /// Add new transaction
-        /// </summary>
-        /// <remarks>
+
+        // <summary>
+        // Add new transaction
+        // </summary>
+        // <remarks>
+        // Note, if the proposal block's transactions are all received, the PrepareResponse will be send.
+        // If the verification fails, the ChangeView will be send.
+        // </remarks>
+        // <param name="tx"></param>
+        // <param name="verify">Whether or not to the verify the transaction</param>
+        // <returns></returns>
 
         /// 大致算法过程解释如下：
         /// 1. 若满足以下3个条件，这条交易会被拒收
@@ -161,6 +168,12 @@ namespace Neo.Consensus
                 ViewNumber = context.ViewNumber
             }, ActorRefs.NoSender);
         }
+
+        // <summary>
+        // Check the exptected view number array 
+        // </summary>
+        // <remarks>
+        // If there are at least M nodes meeting the EV[i] == view_number, the view change completed.
 
         /// <summary>
         /// 检查视图更换的决定是否达成一致 
@@ -284,6 +297,7 @@ namespace Neo.Consensus
             {
                 if (context.BlockIndex < payload.BlockIndex)
                 {
+                    //Log($"chain sync: expected={payload.BlockIndex} current: {context.Snapshot.Height} nodes={LocalNode.Singleton.ConnectedCount}", LogLevel.Warning);
                     Log($"chain sync: expected={payload.BlockIndex} current={context.BlockIndex - 1} nodes={LocalNode.Singleton.ConnectedCount}", LogLevel.Warning);
                 }
                 return;
