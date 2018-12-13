@@ -5,6 +5,9 @@ using System;
 
 namespace Neo.Wallets
 {
+    /// <summary>
+    /// 资产的描述
+    /// </summary>
     public class AssetDescriptor
     {
         /// <summary>
@@ -18,7 +21,7 @@ namespace Neo.Wallets
         public string AssetName;
 
         /// <summary>
-        /// 资产的数额
+        /// 资产的精度
         /// </summary>
         public byte Decimals;
 

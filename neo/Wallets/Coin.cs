@@ -4,15 +4,18 @@ using System;
 
 namespace Neo.Wallets
 {
+    /// <summary>
+    /// 一个可以使用的 UTXO 资产。它可以通过 CoinReference来描述，也可以通过 TransactionOutput来描述，两者指向同一个实体。
+    /// </summary>
     public class Coin : IEquatable<Coin>
     {
         /// <summary>
-        /// 
+        /// Coin的引用，即交易输入
         /// </summary>
         public CoinReference Reference;
 
         /// <summary>
-        /// 
+        /// 交易输出
         /// </summary>
         public TransactionOutput Output;
 

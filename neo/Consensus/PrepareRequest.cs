@@ -7,7 +7,7 @@ using System.Linq;
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  PrepareRequest消息.
+    ///  PrepareRequest Message
     /// </summary>
     internal class PrepareRequest : ConsensusMessage
     {
@@ -37,7 +37,7 @@ namespace Neo.Consensus
         public byte[] Signature;
 
         /// <summary>
-        /// 消息大小：
+        /// Size of message：
         /// <code>base.Size + sizeof(ulong) + NextConsensus.Size + TransactionHashes.GetVarSize() + MinerTransaction.Size + Signature.Length</code>
         /// </summary>
         public override int Size => base.Size + sizeof(ulong) + NextConsensus.Size + TransactionHashes.GetVarSize() + MinerTransaction.Size + Signature.Length;
@@ -83,15 +83,18 @@ namespace Neo.Consensus
         /// <term>Nonce</term>
         /// <description>block nonce</description>
         /// </item>
+        /// <item>
         /// <term>NextConsensus</term>
         /// <description>The script hash of the next round consensus nodes' multi-sign contract</description>
         /// </item>
+        /// <item>
         /// <term>TransactionHashes</term>
         /// <description>Hash list of the proposal block's transactions</description>
         /// </item>
         /// <term>MinerTransaction</term>
         /// <description>Miner transanction</description>
         /// </item>
+        /// <item>
         /// <term>Signature</term>
         /// <description>Signature of the proposal block</description>
         /// </item>

@@ -17,20 +17,20 @@ using System.Threading.Tasks;
 namespace Neo.Network.P2P
 {
     /// <summary>
-    /// NEO所用P2P网络中的peer类.
+    /// NEO所用P2P网络中的peer类.描述节点的基本的网络功能
     /// </summary>
     public abstract class Peer : UntypedActor
     {
         /// <summary>
-        /// 内部Start类
+        /// 自定义Akka消息类型，代表节点的启动,描述了节点的监听端口、连接数等属性
         /// </summary>
         public class Start {
             /// <summary>
-            /// 端口号
+            /// tcp监听端口号
             /// </summary>
             public int Port;
             /// <summary>
-            ///  WS-RPC监听端口
+            ///  WebSocket监听端口
             /// </summary>
             public int WsPort;
             /// <summary>
@@ -43,7 +43,7 @@ namespace Neo.Network.P2P
             public int MaxConnections;
         }
         /// <summary>
-        /// 内部Peers类.
+        /// 自定义Akka消息类型，代表添加未连接节点列表,描述需要添加到未连接节点列表的节点.
         /// </summary>
         public class Peers {
             /// <summary>
@@ -52,7 +52,7 @@ namespace Neo.Network.P2P
             public IEnumerable<IPEndPoint> EndPoints;
         }
         /// <summary>
-        /// 内部Connect类
+        /// 自定义Akka消息类型，代表连接节点,描述了连接到节点的IP和端口、是否可信等属性
         /// </summary>
         public class Connect {
             /// <summary>
@@ -68,19 +68,37 @@ namespace Neo.Network.P2P
         private class WsConnected { public WebSocket Socket; public IPEndPoint Remote; public IPEndPoint Local; }
 
         private const int MaxConnectionsPerAddress = 3;
+        /// <summary>
+        /// 默认最小需要连接数，默认值为10
+        /// </summary>
         public const int DefaultMinDesiredConnections = 10;
+        /// <summary>
+        /// 默认最大连接数，默认是默认最小需要连接数*4
+        /// </summary>
         public const int DefaultMaxConnections = DefaultMinDesiredConnections * 4;
 
         private static readonly IActorRef tcp_manager = Context.System.Tcp();
         private IActorRef tcp_listener;
         private IWebHost ws_host;
         private ICancelable timer;
+        /// <summary>
+        /// 获取所有活动连接
+        /// </summary>
         protected ActorSelection Connections => Context.ActorSelection("connection_*");
 
         private static readonly HashSet<IPAddress> localAddresses = new HashSet<IPAddress>();
         private readonly Dictionary<IPAddress, int> ConnectedAddresses = new Dictionary<IPAddress, int>();
+        /// <summary>
+        /// 活动的连接的关系映射。key是活动连接的引用，value是活动连接的远程IP地址和端口号。
+        /// </summary>
         protected readonly ConcurrentDictionary<IActorRef, IPEndPoint> ConnectedPeers = new ConcurrentDictionary<IActorRef, IPEndPoint>();
+        /// <summary>
+        /// 未连接的已知节点集合
+        /// </summary>
         protected ImmutableHashSet<IPEndPoint> UnconnectedPeers = ImmutableHashSet<IPEndPoint>.Empty;
+        /// <summary>
+        /// 正在连接中的已知节点集合
+        /// </summary>
         protected ImmutableHashSet<IPEndPoint> ConnectingPeers = ImmutableHashSet<IPEndPoint>.Empty;
         /// <summary>
         /// 可信任的IP地址集合
@@ -100,6 +118,9 @@ namespace Neo.Network.P2P
         /// </summary>
         /// <value>返回peer需要的连接的最小值</value>
         public int MinDesiredConnections { get; private set; } = DefaultMinDesiredConnections;
+        /// <summary>
+        /// 当前peer的最大连接数
+        /// </summary>
         public int MaxConnections { get; private set; } = DefaultMaxConnections;
 
         /// <summary>
@@ -107,6 +128,9 @@ namespace Neo.Network.P2P
         /// </summary>
         /// <value>未连接的peer列表中peer个数的最大值</value>
         protected int UnconnectedMax { get; } = 1000;
+        /// <summary>
+        /// 
+        /// </summary>
         protected virtual int ConnectingMax
         {
             get
@@ -138,7 +162,7 @@ namespace Neo.Network.P2P
 
         /// <summary>
         /// 指定一个Peer的IPEndPoint并进行连接.如果连接成功则加入已连接的peer表中.
-        /// 如果改Peer节点是可信任的,则将该节点的IP地址加入本地的可信任地址列表中.
+        /// 如果该Peer节点是可信任的,则将该节点的IP地址加入本地的可信任地址列表中.
         /// </summary>
         /// <param name="endPoint">需要连接的Peer</param>
         /// <param name="isTrusted">该Peer节点是否是可信任的</param>
@@ -166,11 +190,14 @@ namespace Neo.Network.P2P
             uint value = data.ToUInt32(0);
             return (value & 0xff000000) == 0x0a000000 || (value & 0xff000000) == 0x7f000000 || (value & 0xfff00000) == 0xac100000 || (value & 0xffff0000) == 0xc0a80000 || (value & 0xffff0000) == 0xa9fe0000;
         }
-
+        /// <summary>
+        /// 尝试获取更多的节点
+        /// </summary>
+        /// <param name="count">需求的数量</param>
         protected abstract void NeedMorePeers(int count);
 
         /// <summary>
-        /// 用来监听消息的回调方法
+        /// 用来Akka消息的回调方法
         /// </summary>
         /// <param name="message">接收到的消息</param>
         protected override void OnReceive(object message)
@@ -334,7 +361,13 @@ namespace Neo.Network.P2P
                 Local = new IPEndPoint(context.Connection.LocalIpAddress, context.Connection.LocalPort)
             });
         }
-
+        /// <summary>
+        /// 通过一个活动的TCP/IP连接来创建一个RemoteNode对象，并返回它对应的Props对象
+        /// </summary>
+        /// <param name="connection">活动的连接</param>
+        /// <param name="remote">连接的远端IP地址和端口</param>
+        /// <param name="local">连接的本地地址和端口</param>
+        /// <returns>RemoteNode对象对应的Props</returns>
         protected abstract Props ProtocolProps(object connection, IPEndPoint remote, IPEndPoint local);
     }
 }

@@ -8,7 +8,8 @@ namespace Neo.Cryptography.ECC
     /// <summary>
     /// 使用椭圆曲线和产生的公钥拿来做签名的算法类
     /// </summary>
-    public class ECDsa
+    /// <remarks>原版代码是public，但未被使用，所以不予公开</remarks>
+    internal class ECDsa
     {
         private readonly byte[] privateKey;
         private readonly ECPoint publicKey;
@@ -48,9 +49,14 @@ namespace Neo.Cryptography.ECC
 
         /// <summary>
         /// 产生签名
+        /// 签名过程：
+        /// 1、选择随机数r，计算点r·G(x, y)。
+        /// 2、根据随机数r、消息M的哈希h、私钥k，计算s = (h + k·x)/r。
+        /// 3、将消息M、和签名{r·G, s}发给接收方。
         /// </summary>
         /// <param name="message">被签名的信息</param>
         /// <returns>作为签名的大数对r,s</returns>
+        /// <exception cref="System.InvalidOperationException">私钥为空的时候抛出</exception>
         public BigInteger[] GenerateSignature(byte[] message)
         {
             if (privateKey == null) throw new InvalidOperationException();
@@ -112,6 +118,16 @@ namespace Neo.Cryptography.ECC
 
         /// <summary>
         /// 验证签名
+        /// 验证过程：
+        /// 1、接收方收到消息M、以及签名{r·G=(x, y), s}。
+        /// 2、根据消息求哈希h。
+        /// 3、使用发送方公钥K计算：h·G/s + x·K/s，并与r·G比较，如相等即验签成功。
+        /// 推导原理如下：
+        /// h⋅G/s+x⋅K/s
+        /// =h⋅G/s+x(k⋅G)/s
+        /// =(h+x⋅k)G/s
+        /// =r(h+x⋅k)G/(h+k⋅x)
+        /// =r⋅G
         /// </summary>
         /// <param name="message">等待被验证的消息</param>
         /// <param name="r">作为签名的大数r</param>

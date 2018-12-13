@@ -21,7 +21,8 @@ namespace Neo.Network
         public static TimeSpan TimeOut { get; set; } = TimeSpan.FromSeconds(3);
 
         /// <summary>
-        /// 发送查找消息. 根据Upnp协议多播消息来通知控制点, 然后通过响应的消息找出根设备的url 通过此URL就可以找到根设备的描述信息，从根设备的描述信息中又可以得到设备的控制URL
+        /// 发送查找消息. 根据Upnp协议多播消息来通知控制点, 然后通过响应的消息找出根设备的url 
+        /// 通过此URL就可以找到根设备的描述信息，从根设备的描述信息中又可以得到设备的控制URL
         /// </summary>
         /// <returns>找到设备的控制URL则返回<c>true</c>, 如果超时没找到就返回<c>false</c></returns>
         public static bool Discover()
@@ -40,9 +41,16 @@ namespace Neo.Network
 
                 DateTime start = DateTime.Now;
 
-                s.SendTo(data, ipe);
-                s.SendTo(data, ipe);
-                s.SendTo(data, ipe);
+                try
+                {
+                    s.SendTo(data, ipe);
+                    s.SendTo(data, ipe);
+                    s.SendTo(data, ipe);
+                }
+                catch
+                {
+                    return false;
+                }
 
                 byte[] buffer = new byte[0x1000];
 

@@ -45,9 +45,9 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 转成Json对象
+        /// 转成Json对象.添入状态版本号.
         /// </summary>
-        /// <returns>JObject</returns>
+        /// <returns>返回一个包含状态版本号的JObject</returns>
         public virtual JObject ToJson()
         {
             JObject json = new JObject();

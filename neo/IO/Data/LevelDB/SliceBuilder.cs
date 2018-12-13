@@ -16,10 +16,10 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 添加byte到构建器中
+        /// 添加byte数据到构建器中
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">需要添加的byte数据</param>
+        /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(byte value)
         {
             data.Add(value);
@@ -29,8 +29,8 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 添加ushort数据到构建器中
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">需要添加的ushort数据</param>
+        /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(ushort value)
         {
             data.AddRange(BitConverter.GetBytes(value));
@@ -40,8 +40,8 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 添加uint数据到构建器中
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">需要添加的uint数据</param>
+        /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(uint value)
         {
             data.AddRange(BitConverter.GetBytes(value));
@@ -51,8 +51,8 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 添加long数据到构建器中
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">需要添加的long数据</param>
+        /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(long value)
         {
             data.AddRange(BitConverter.GetBytes(value));
@@ -62,8 +62,8 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 将byte泛型的枚举数据添加到构建器中
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">需要添加的byte泛型的枚举数据</param>
+        /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(IEnumerable<byte> value)
         {
             data.AddRange(value);
@@ -71,10 +71,10 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 将可string数据添加到构建器中
+        /// 将string数据添加到构建器中
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">需要添加的string数据</param>
+        /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(string value)
         {
             data.AddRange(Encoding.UTF8.GetBytes(value));
@@ -84,8 +84,8 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 将可序列化的数据添加到构建器中
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">需要添加的可序列化的数据</param>
+        /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(ISerializable value)
         {
             data.AddRange(value.ToArray());
@@ -105,7 +105,7 @@ namespace Neo.IO.Data.LevelDB
         /// 创建构造器
         /// </summary>
         /// <param name="prefix">给定某前缀</param>
-        /// <returns></returns>
+        /// <returns>创建的构造器对象</returns>
         public static SliceBuilder Begin(byte prefix)
         {
             return new SliceBuilder().Add(prefix);
@@ -115,7 +115,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 将切片构造器转成切片
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">切片构造器</param>
         public static implicit operator Slice(SliceBuilder value)
         {
             return value.data.ToArray();

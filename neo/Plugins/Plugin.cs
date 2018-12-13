@@ -8,7 +8,7 @@ using System.Reflection;
 namespace Neo.Plugins
 {
     /// <summary>
-    /// 抽象插件
+    /// 抽象类插件
     /// </summary>
     public abstract class Plugin
     {
@@ -23,7 +23,9 @@ namespace Neo.Plugins
 
         private static readonly string pluginsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Plugins");
         private static readonly FileSystemWatcher configWatcher;
-
+        /// <summary>
+        /// NeoSystem对象
+        /// </summary>
         protected static NeoSystem System { get; private set; }
 
         /// <summary>
@@ -34,18 +36,24 @@ namespace Neo.Plugins
         /// 插件版本
         /// </summary>
         public virtual Version Version => GetType().Assembly.GetName().Version;
+        /// <summary>
+        /// 获取配置文件的路径
+        /// </summary>
         public virtual string ConfigFile => Path.Combine(pluginsPath, GetType().Assembly.GetName().Name, "config.json");
 
         static Plugin()
         {
-            configWatcher = new FileSystemWatcher(pluginsPath, "*.json")
+            if (Directory.Exists(pluginsPath))
             {
-                EnableRaisingEvents = true,
-                IncludeSubdirectories = true,
-                NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.Size,
-            };
-            configWatcher.Changed += ConfigWatcher_Changed;
-            configWatcher.Created += ConfigWatcher_Changed;
+                configWatcher = new FileSystemWatcher(pluginsPath, "*.json")
+                {
+                    EnableRaisingEvents = true,
+                    IncludeSubdirectories = true,
+                    NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.Size,
+                };
+                configWatcher.Changed += ConfigWatcher_Changed;
+                configWatcher.Created += ConfigWatcher_Changed;
+            }
         }
 
         /// <summary>
@@ -59,14 +67,16 @@ namespace Neo.Plugins
             if (this is IPolicyPlugin policy) Policies.Add(policy);
             if (this is IRpcPlugin rpc) RpcPlugins.Add(rpc);
             if (this is IPersistencePlugin persistence) PersistencePlugins.Add(persistence);
+
+            Configure();
         }
 
 
         /// <summary>
         /// 内存池交易过滤策略
         /// </summary>
-        /// <param name="tx"></param>
-        /// <returns></returns>
+        /// <param name="tx">交易</param>
+        /// <returns>通过过滤策略则返回true,否则返回false</returns>
         public static bool CheckPolicy(Transaction tx)
         {
             foreach (IPolicyPlugin plugin in Policies)
@@ -74,7 +84,9 @@ namespace Neo.Plugins
                     return false;
             return true;
         }
-
+        /// <summary>
+        /// 初始化配置
+        /// </summary>
         public abstract void Configure();
 
         private static void ConfigWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -93,7 +105,6 @@ namespace Neo.Plugins
         /// <summary>
         /// 获取插件配置
         /// </summary>
-        /// <param name="assembly">程序集，加载config.json配置文件</param>
         /// <returns>插件的配置</returns>
         protected IConfigurationSection GetConfiguration()
         {
@@ -113,22 +124,19 @@ namespace Neo.Plugins
                     if (type.IsAbstract) continue;
 
                     ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
-                    if (constructor == null) continue;
-
-                    Plugin plugin;
                     try
                     {
-                        plugin = (Plugin)constructor.Invoke(null);
+                        constructor?.Invoke(null);
                     }
-                    catch
-                    {
-                        continue;
-                    }
-                    plugin.Configure();
+                    catch { }
                 }
             }
         }
-
+        /// <summary>
+        /// 输出日志
+        /// </summary>
+        /// <param name="message">日志消息</param>
+        /// <param name="level">日志级别</param>
         protected void Log(string message, LogLevel level = LogLevel.Info)
         {
             Log($"{nameof(Plugin)}:{Name}", level, message);
@@ -149,8 +157,8 @@ namespace Neo.Plugins
         /// <summary>
         /// 消息处理
         /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
+        /// <param name="message">消息</param>
+        /// <returns>默认返回false</returns>
         protected virtual bool OnMessage(object message) => false;
 
         /// <summary>

@@ -2,8 +2,14 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    /// <summary>
+    /// 写选项
+    /// </summary>
     public class WriteOptions
     {
+        /// <summary>
+        /// 默认写选项
+        /// </summary>
         public static readonly WriteOptions Default = new WriteOptions();
         internal readonly IntPtr handle = Native.leveldb_writeoptions_create();
 
@@ -17,7 +23,9 @@ namespace Neo.IO.Data.LevelDB
                 Native.leveldb_writeoptions_set_sync(handle, value);
             }
         }
-
+        /// <summary>
+        /// 析构函数。将关闭leveldb的句柄。
+        /// </summary>
         ~WriteOptions()
         {
             Native.leveldb_writeoptions_destroy(handle);

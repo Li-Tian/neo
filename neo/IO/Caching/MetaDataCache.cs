@@ -59,7 +59,7 @@ namespace Neo.IO.Caching
             return new CloneMetaCache<T>(this);
         }
         /// <summary>
-        /// 获取项，如果不存在则新建一个项
+        /// 获取项，如果不存在则尝试从内部获取，若仍不存在则新建一个项
         /// </summary>
         /// <returns>获得的项</returns>
         public T Get()

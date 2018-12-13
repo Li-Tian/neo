@@ -31,7 +31,7 @@ namespace Neo.IO.Json
         /// 对JArray对象set、get方法的扩展，使外部方法可以便捷的操作其内部元素
         /// </summary>
         /// <param name="index">要获取或设置的元素的索引</param>
-        /// <returns></returns>
+        /// <returns>对应的元素</returns>
         public JObject this[int index]
         {
             get
@@ -82,7 +82,7 @@ namespace Neo.IO.Json
         /// 判断JArray对象内部是否包含某个元素
         /// </summary>
         /// <param name="item">需要检查的元素</param>
-        /// <returns>判断结果</returns>
+        /// <returns>判断结果，包含返回true,否则返回false</returns>
         public bool Contains(JObject item)
         {
             return items.Contains(item);
@@ -113,7 +113,7 @@ namespace Neo.IO.Json
         /// 获取某个元素在JArray对象中的索引
         /// </summary>
         /// <param name="item">待查询的元素</param>
-        /// <returns></returns>
+        /// <returns>对应的索引</returns>
         public int IndexOf(JObject item)
         {
             return items.IndexOf(item);

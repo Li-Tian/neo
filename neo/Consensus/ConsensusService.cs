@@ -6,7 +6,6 @@ using Neo.IO.Actors;
 using Neo.Ledger;
 using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
-using Neo.Persistence;
 using Neo.Plugins;
 using Neo.Wallets;
 using System;
@@ -29,52 +28,101 @@ namespace Neo.Consensus
         public class Start { }
 
         /// <summary>
-        /// Update the current view number message
+        /// Change the current view number message
         /// </summary>
-        public class SetViewNumber { public byte ViewNumber; }
+        public class SetViewNumber {
+            /// <summary>
+            /// vie number
+            /// </summary>
+            public byte ViewNumber;
+        }
 
         /// <summary>
         /// Time out message
         /// </summary>
+        /// <remarks>
+        /// It contains the `Height` and `ViewNumber` of the timeout block.
+        /// </remarks>
         internal class Timer { public uint Height; public byte ViewNumber; }
 
-        /// <summary>
-        /// Consensus context in current round
-        /// </summary>
-        private readonly ConsensusContext context;
-        private readonly NeoSystem system;
+
+        // <summary>
+        // The context of consensus activity
+        // </summary>
+        //private readonly ConsensusContext context;
+        private readonly IConsensusContext context;
+
+        // <summary>
+        // Local node, send and receive message
+        // </summary>
+        //private readonly ConsensusContext context;
+        private readonly IActorRef localNode;
+
+        // <summary>
+        // Task manager
+        // </summary>
+        //private readonly ConsensusContext context;
+        private readonly IActorRef taskManager;
+
         private ICancelable timer_token;
         /// <summary>
         /// The latest block received time
         /// </summary>
         private DateTime block_received_time;
 
+
         /// <summary>
-        /// Construct consensus service
+        /// Construct a ConsensusService
         /// </summary>
-        /// <param name="system"></param>
-        /// <param name="wallet"></param>
-        public ConsensusService(NeoSystem system, Wallet wallet)
+        /// <param name="localNode">local node</param>
+        /// <param name="taskManager">task manager</param>
+        /// <param name="wallet">wallet</param>
+        public ConsensusService(IActorRef localNode, IActorRef taskManager, Wallet wallet)
+            : this(localNode, taskManager, new ConsensusContext(wallet))
         {
-            this.system = system;
-            this.context = new ConsensusContext(wallet);
         }
+        /// <summary>
+        /// Construction 
+        /// </summary>
+        /// <param name="localNode">local node</param>
+        /// <param name="taskManager">task manager</param>
+        /// <param name="context">consensus context</param>
+        public ConsensusService(IActorRef localNode, IActorRef taskManager, IConsensusContext context)
+        {
+            this.localNode = localNode;
+            this.taskManager = taskManager;
+            this.context = context;
+        }
+
 
         /// <summary>
         /// Add new transaction
         /// </summary>
         /// <remarks>
-        /// Note, if the proposal block's transactions are all received, the PrepareResponse will be send.
-        /// If the verification fails, the ChangeView will be send.
+
+        /// 大致算法过程解释如下：
+        /// 1. 若满足以下3个条件，这条交易会被拒收
+        /// 1) 当前上下文的快照中已经包含这条交易；
+        /// 2）传入的verify参数为True，意味着要验证；且验证的结果为false;
+        /// 3) 这条交易不满足Plugin中的某条policy；
+        /// 
+        /// 2. 将这条交易放入Transactions数组；
+        /// 3. 当提案block的交易全部收齐，即TransactionHashes的长度和Transactions数组的长度一致时：
+        ///    若通过了上下文中的VerifyRequest测试，该节点将发送PrepareReponse消息；否则该节点将发送ChangeView请求；
+        ///    VerifyRequest测试的具体内容见ConsensusContext.cs中的VerifyRequest方法。
         /// </remarks>
-        /// <param name="tx"></param>
-        /// <param name="verify">Whether or not to the verify the transaction</param>
-        /// <returns></returns>
+        /// <param name="tx">待添加交易</param>
+        /// <param name="verify">是否进行交易验证</param>
+        /// <returns>添加成功返回 true，添加失败返回 false</returns>
         private bool AddTransaction(Transaction tx, bool verify)
         {
-            if (context.Snapshot.ContainsTransaction(tx.Hash) ||
-                (verify && !tx.Verify(context.Snapshot, context.Transactions.Values)) ||
-                !Plugin.CheckPolicy(tx))
+            if (verify && !context.VerifyTransaction(tx))
+            {
+                Log($"Invalid transaction: {tx.Hash}{Environment.NewLine}{tx.ToArray().ToHexString()}", LogLevel.Warning);
+                RequestChangeView();
+                return false;
+            }
+            if (!Plugin.CheckPolicy(tx))
             {
                 Log($"reject tx: {tx.Hash}{Environment.NewLine}{tx.ToArray().ToHexString()}", LogLevel.Warning);
                 RequestChangeView();
@@ -88,7 +136,7 @@ namespace Neo.Consensus
                     Log($"send prepare response");
                     context.State |= ConsensusState.SignatureSent;
                     context.SignHeader();
-                    system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakePrepareResponse(context.Signatures[context.MyIndex]) });
+                    localNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakePrepareResponse(context.Signatures[context.MyIndex]) });
                     CheckSignatures();
                 }
                 else
@@ -115,10 +163,11 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Check the exptected view number array 
+        /// 检查视图更换的决定是否达成一致 
         /// </summary>
         /// <remarks>
-        /// If there are at least M nodes meeting the EV[i] == view_number, the view change completed.
+        /// 当上下文中的当前视图标号与输入的这个视图标号一样时，不做任何处理，返回；否则，检查是不是有
+        /// 有最少M个节点的期望视图编号都等于一个view_number时，则更新到该视图编号开始重置共识活动；
         /// </remarks>
         /// <param name="view_number"></param>
         private void CheckExpectedView(byte view_number)
@@ -142,7 +191,7 @@ namespace Neo.Consensus
             {
                 Block block = context.CreateBlock();
                 Log($"relay block: {block.Hash}");
-                system.LocalNode.Tell(new LocalNode.Relay { Inventory = block });
+                localNode.Tell(new LocalNode.Relay { Inventory = block });
                 context.State |= ConsensusState.BlockSent;
             }
         }
@@ -151,6 +200,14 @@ namespace Neo.Consensus
         /// Initialize the consensus activity with view_number
         /// </summary>
         /// <param name="view_number">view number</param>
+        /// <remarks>
+        /// If view number is zero, it means a new block in the first round, then reset context.
+        /// Else, change view.
+        /// If Myindex of context is less than zero, not a validator, then not participate the consensus activity.
+        /// If node is the Primary/Speaker, set context's state `ConsensusState.Primary` flag true, then reset the timer as block time is 15 seconds.
+        /// If node is the Backup/Delegates, set context's state `ConsensusState.Backup` flag true, 
+        /// then reset the timer with 15 << view_number +1) seconds to timeout, to avoid frequent view change.
+        /// </remarks>
         private void InitializeConsensus(byte view_number)
         {
             if (view_number == 0)
@@ -164,7 +221,7 @@ namespace Neo.Consensus
             if (context.MyIndex == context.PrimaryIndex)
             {
                 context.State |= ConsensusState.Primary;
-                TimeSpan span = DateTime.UtcNow - block_received_time;
+                TimeSpan span = TimeProvider.Current.UtcNow - block_received_time;
                 if (span >= Blockchain.TimePerBlock)
                     ChangeTimer(TimeSpan.Zero);
                 else
@@ -172,7 +229,7 @@ namespace Neo.Consensus
             }
             else
             {
-                context.State = ConsensusState.Backup;// 重置 State
+                context.State = ConsensusState.Backup;// reset State
                 ChangeTimer(TimeSpan.FromSeconds(Blockchain.SecondsPerBlock << (view_number + 1)));
             }
         }
@@ -204,7 +261,19 @@ namespace Neo.Consensus
         /// <summary>
         /// Consensus message checking and processing
         /// </summary>
-        /// <param name="payload"></param>
+        /// <param name="payload">consensus message payload</param>
+        /// <remark>
+        /// This node will ignore the message when one the below cases happens:
+        /// 1. This node has already send the full prosoal block before enter the next round.
+        /// 2. The payload was sent from myself.
+        /// 3. The payload's version is not equal to the current context's version.
+        /// 4. If the context's BlockIndex is less than the payload's, then send a sync log and ignore.
+        /// 5. If the index of the payload's validator is more than the number of current context's validators, then ignore.
+        /// 6. Deserialize consensus message from the payload's `Data`, if the consensus message's view number is same to the context's view number and the conosensus message is not `ChangeView`, then ignore.
+        /// 7. If the consensus message is not a `ChangeView`, `PrepareResponse` or `PrepareResponse`, then ignore
+        ///
+        /// Process the consensus message
+        /// </remark>
         private void OnConsensusPayload(ConsensusPayload payload)
         {
             if (context.State.HasFlag(ConsensusState.BlockSent)) return;
@@ -213,9 +282,9 @@ namespace Neo.Consensus
                 return;
             if (payload.PrevHash != context.PrevHash || payload.BlockIndex != context.BlockIndex)
             {
-                if (context.Snapshot.Height + 1 < payload.BlockIndex)
+                if (context.BlockIndex < payload.BlockIndex)
                 {
-                    Log($"chain sync: expected={payload.BlockIndex} current: {context.Snapshot.Height} nodes={LocalNode.Singleton.ConnectedCount}", LogLevel.Warning);
+                    Log($"chain sync: expected={payload.BlockIndex} current={context.BlockIndex - 1} nodes={LocalNode.Singleton.ConnectedCount}", LogLevel.Warning);
                 }
                 return;
             }
@@ -252,7 +321,7 @@ namespace Neo.Consensus
         private void OnPersistCompleted(Block block)
         {
             Log($"persist block: {block.Hash}");
-            block_received_time = DateTime.UtcNow;
+            block_received_time = TimeProvider.Current.UtcNow;
             InitializeConsensus(0);
         }
 
@@ -273,9 +342,14 @@ namespace Neo.Consensus
             if (payload.ValidatorIndex != context.PrimaryIndex) return;
             Log($"{nameof(OnPrepareRequestReceived)}: height={payload.BlockIndex} view={message.ViewNumber} index={payload.ValidatorIndex} tx={message.TransactionHashes.Length}");
             if (!context.State.HasFlag(ConsensusState.Backup)) return;
-            if (payload.Timestamp <= context.Snapshot.GetHeader(context.PrevHash).Timestamp || payload.Timestamp > DateTime.UtcNow.AddMinutes(10).ToTimestamp())
+            if (payload.Timestamp <= context.PrevHeader.Timestamp || payload.Timestamp > TimeProvider.Current.UtcNow.AddMinutes(10).ToTimestamp())
             {
                 Log($"Timestamp incorrect: {payload.Timestamp}", LogLevel.Warning);
+                return;
+            }
+            if (message.TransactionHashes.Any(p => context.TransactionExists(p)))
+            {
+                Log($"Invalid request: transaction already exists", LogLevel.Warning);
                 return;
             }
             context.State |= ConsensusState.RequestReceived;
@@ -314,7 +388,7 @@ namespace Neo.Consensus
             if (context.Transactions.Count < context.TransactionHashes.Length)
             {
                 UInt256[] hashes = context.TransactionHashes.Where(i => !context.Transactions.ContainsKey(i)).ToArray();
-                system.TaskManager.Tell(new TaskManager.RestartTasks
+                taskManager.Tell(new TaskManager.RestartTasks
                 {
                     Payload = InvPayload.Create(InventoryType.TX, hashes)
                 });
@@ -388,7 +462,7 @@ namespace Neo.Consensus
         /// Timeout processing
         /// </summary>
         /// <remarks>
-        /// If it's Primary and has not send PrepareRequest, send PrepareRequest, otherwise, send ChangeView
+        /// If it's Primary and has not send PrepareRequest message, then send PrepareRequest message, otherwise, send ChangeView
         /// </remarks>
         /// <param name="timer"></param>
         private void OnTimer(Timer timer)
@@ -405,11 +479,11 @@ namespace Neo.Consensus
                     context.Fill();
                     context.SignHeader();
                 }
-                system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakePrepareRequest() });
+                localNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakePrepareRequest() });
                 if (context.TransactionHashes.Length > 1)
                 {
                     foreach (InvPayload payload in InvPayload.CreateGroup(InventoryType.TX, context.TransactionHashes.Skip(1).ToArray()))
-                        system.LocalNode.Tell(Message.Create("inv", payload));
+                        localNode.Tell(Message.Create("inv", payload));
                 }
                 ChangeTimer(TimeSpan.FromSeconds(Blockchain.SecondsPerBlock << (timer.ViewNumber + 1)));
             }
@@ -446,12 +520,13 @@ namespace Neo.Consensus
         /// <summary>
         /// Create ActorRef with mail box `consensus-service-mailbox`
         /// </summary>
-        /// <param name="system"></param>
-        /// <param name="wallet"></param>
-        /// <returns></returns>
-        public static Props Props(NeoSystem system, Wallet wallet)
+        /// <param name="localNode">local node</param>
+        /// <param name="taskManager">task manager</param>
+        /// <param name="wallet">wallet</param>
+        /// <returns>Akka.Actor.Props</returns>
+        public static Props Props(IActorRef localNode, IActorRef taskManager, Wallet wallet)
         {
-            return Akka.Actor.Props.Create(() => new ConsensusService(system, wallet)).WithMailbox("consensus-service-mailbox");
+            return Akka.Actor.Props.Create(() => new ConsensusService(localNode, taskManager, wallet)).WithMailbox("consensus-service-mailbox");
         }
 
 
@@ -464,7 +539,7 @@ namespace Neo.Consensus
             context.ExpectedView[context.MyIndex]++;
             Log($"request change view: height={context.BlockIndex} view={context.ViewNumber} nv={context.ExpectedView[context.MyIndex]} state={context.State}");
             ChangeTimer(TimeSpan.FromSeconds(Blockchain.SecondsPerBlock << (context.ExpectedView[context.MyIndex] + 1)));
-            system.LocalNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakeChangeView() });
+            localNode.Tell(new LocalNode.SendDirectly { Inventory = context.MakeChangeView() });
             CheckExpectedView(context.ExpectedView[context.MyIndex]);
         }
 

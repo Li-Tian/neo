@@ -17,7 +17,7 @@
 
 | Size | Field | Type  | Description |
 |----|------|-------|------|
-| 4  | Version |  uint | 	Version of protocol, 0 for now |
+| 4  | Version |  uint | 	Consensus version, current is 0 |
 | 32  | PrevHash | UInt256 | Previous block's hash |
 | 4 | BlockIndex |uint | Height of the block |
 | 2 | ValidatorIndex | ushort | The index of the current consensus node in validators array |
@@ -42,10 +42,10 @@
 |----|------|-----|-------|
 | 1 | Type | ConsensusMessageType |  `0x20` |
 | 1 | ViewNumber | byte | Current view number |
-| 1 | Nonce | byte |  block nonce |
+| 1 | Nonce | byte |  block nonce, random value |
 | 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-party signature contract  |
 | 4 + 32 * length   | TransactionHashes | UInt256[] |  The proposal block's transaction hashes |
-| 78  | MinerTransaction | MinerTransaction |  It is used to reward all transaction fees of the current block to the speaker. |
+| 78  | MinerTransaction | MinerTransaction |  It is used to sum all the transaction fees of the current block as a reward for the speaker. |
 |  64 | Signature | byte[] |  Block signature |
 
 ### PrepareResponse

@@ -19,4 +19,4 @@ This document is mainly used to describe the design of NEO network nodes, but do
 > [!NOTE]
 > - The documentation is constantly being updated. If you find errors or omissions, problems with links 404, or you have suggestions for improvement, or you are willing to translate it into other languages, please write to <feedback@neo.org>.
 > - The Yellow Paper is based on NEO 2.9.2.0. Although we intended to make it less dependent on a specific programming language, there is still a small amount of C# language habits referenced in type definitions and so on.
-> - The API documentation is the C# programming interface documentation for NEO 2.9.2.0.
+> - The API documentation is the C# programming interface documentation for NEO 2.9.3.0.

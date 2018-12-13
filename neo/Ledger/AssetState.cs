@@ -140,9 +140,9 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 从副本读取值
+        /// 将当前资产拷贝一份.
         /// </summary>
-        /// <param name="replica"></param>
+        /// <param name="replica">资产的拷贝副本</param>
         void ICloneable<AssetState>.FromReplica(AssetState replica)
         {
             AssetId = replica.AssetId;
@@ -292,9 +292,9 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 转成json对象
+        /// 将这个AsseetState转成json对象返回
         /// </summary>
-        /// <returns></returns>
+        /// <returns>转换好的Sjson对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

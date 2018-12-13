@@ -7,6 +7,7 @@ namespace Neo.VM
 {
     /// <summary>
     /// 随机访问栈类，定义了随机访问栈的基本结构和一些操作方法
+    /// 可用于实现虚拟的调用栈、计算栈等
     /// </summary>
     /// <typeparam name="T">泛型</typeparam>
     public class RandomAccessStack<T> : IReadOnlyCollection<T>
@@ -54,6 +55,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="index">插入位置</param>
         /// <param name="item">插入元素</param>
+        /// <exception cref="System.InvalidOperationException">插入位置大于随机访问栈中元素个数时抛出</exception>
         public void Insert(int index, T item)
         {
             if (index > list.Count) throw new InvalidOperationException();
@@ -64,6 +66,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="index">需要查看的位置，默认为0，表示栈顶元素</param>
         /// <returns>指定位置的元素</returns>
+        /// <exception cref="System.InvalidOperationException">插入位置大于随机访问栈中元素个数或插入位置小于0时抛出</exception>
         public T Peek(int index = 0)
         {
             if (index >= list.Count) throw new InvalidOperationException();
@@ -93,6 +96,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="index">元素所在位置</param>
         /// <returns>获取到的元素</returns>
+        /// <exception cref="System.InvalidOperationException">指定位置大于等于随机访问栈中元素个数或小于0时抛出</exception>
         public T Remove(int index)
         {
             if (index >= list.Count) throw new InvalidOperationException();
@@ -108,6 +112,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="index">需要赋值的元素位置</param>
         /// <param name="item">需要赋的值</param>
+        /// <exception cref="System.InvalidOperationException">指定位置大于等于随机访问栈中元素个数或小于0时抛出</exception>
         public void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();

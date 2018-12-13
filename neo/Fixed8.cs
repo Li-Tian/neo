@@ -368,6 +368,7 @@ namespace Neo
         /// <param name="x">第一个Fixed8对象</param>
         /// <param name="y">第二个Fixed8对象</param>
         /// <returns>相乘后的得到一个Fixed8对象</returns>
+        /// <exception cref="System.OverflowException">相乘溢出时抛出</exception>
         public static Fixed8 operator *(Fixed8 x, Fixed8 y)
         {
             const ulong QUO = (1ul << 63) / (D >> 1);

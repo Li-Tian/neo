@@ -76,8 +76,6 @@ A blockchain that provides smart contract system should provide multiple trigger
 
 `VerificationR` and `ApplicationR` enable smart contract to reject a transfer or change the state of the blockchain when a transfer received.
 
-For more information, please read: <http://docs.neo.org/zh-cn/sc/trigger.html>
-
 
 ## VerificationR
 

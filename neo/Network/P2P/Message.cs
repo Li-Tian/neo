@@ -35,7 +35,7 @@ namespace Neo.Network.P2P
         /// </summary>
         public byte[] Payload;
         /// <summary>
-        /// 报文大小
+        /// 报文大小，等于头部大小加上正文大小
         /// </summary>
         public int Size => HeaderSize + Payload.Length;
         /// <summary>

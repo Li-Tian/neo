@@ -11,7 +11,7 @@ using System.Linq;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 注册验证人【已弃用，请使用StateTransactioni】
+    /// 注册验证人【已弃用，请使用StateTransaction】
     /// </summary>
     [Obsolete]
     public class EnrollmentTransaction : Transaction
@@ -77,7 +77,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">二进制输出流</param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.Write(PublicKey);
@@ -86,7 +86,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

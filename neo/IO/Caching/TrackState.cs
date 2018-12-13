@@ -10,15 +10,15 @@
         /// </summary>
         None,
         /// <summary>
-        /// 被增加
+        /// 已增加
         /// </summary>
         Added,
         /// <summary>
-        /// 被更改
+        /// 已更改
         /// </summary>
         Changed,
         /// <summary>
-        /// 被删除
+        /// 已删除
         /// </summary>
         Deleted
     }

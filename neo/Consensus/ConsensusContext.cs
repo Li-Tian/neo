@@ -1,4 +1,4 @@
-﻿using Neo.Cryptography;
+using Neo.Cryptography;
 using Neo.Cryptography.ECC;
 using Neo.IO;
 using Neo.Ledger;
@@ -16,98 +16,88 @@ namespace Neo.Consensus
     /// <summary>
     /// Consensus context, it records the data in current consensus activity.
     /// </summary>
-    internal class ConsensusContext : IDisposable
+    internal class ConsensusContext : IConsensusContext
     {
         /// <summary>
         /// Consensus message version, it's fixed to 0 currently
         /// </summary>
         public const uint Version = 0;
-
         /// <summary>
         /// Context state
         /// </summary>
-        public ConsensusState State;
-
+        public ConsensusState State { get; set; }
         /// <summary>
-        /// The previous block hash
+        /// The previous block's hash
         /// </summary>
-        public UInt256 PrevHash;
-
+        public UInt256 PrevHash { get; set; }
         /// <summary>
-        /// The proposal block height
+        /// The proposal block's height
         /// </summary>
-        public uint BlockIndex;
-
+        public uint BlockIndex { get; set; }
         /// <summary>
         /// Current view number
         /// </summary>
-        public byte ViewNumber;
-
+        public byte ViewNumber { get; set; }
         /// <summary>
-        /// Blockchain snapshot
+        ///  The public keys of consensus nodes in current round
         /// </summary>
-        public Snapshot Snapshot;
-
+        public ECPoint[] Validators { get; set; }
         /// <summary>
-        /// Consensus nodes in the current round
+        /// My index in the validators array
         /// </summary>
-        public ECPoint[] Validators;
-
+        public int MyIndex { get; set; }
         /// <summary>
-        /// My index in the validators
+        /// The Speaker index in the validators array
         /// </summary>
-        public int MyIndex;
-
+        public uint PrimaryIndex { get; set; }
         /// <summary>
-        /// The Speaker index
+        /// The proposal block's Timestamp
         /// </summary>
-        public uint PrimaryIndex;
-
+        public uint Timestamp { get; set; }
         /// <summary>
-        /// Timestamp
+        /// The proposal block's nonce
         /// </summary>
-        public uint Timestamp;
-
+        public ulong Nonce { get; set; }
         /// <summary>
-        /// Block nonce
+        ///The proposal block's NextConsensus, which binding the consensus nodes in the next round 
         /// </summary>
-        public ulong Nonce;
-
+        public UInt160 NextConsensus { get; set; }
         /// <summary>
-        /// Script hash of the next round consensus nodes' multi-signs contract
+        ///The hash list of current proposal block's txs
         /// </summary>
-        public UInt160 NextConsensus;
-
+        public UInt256[] TransactionHashes { get; set; }
         /// <summary>
-        /// Hash list of Transactions
+        /// The proposal block's txs
         /// </summary>
-        public UInt256[] TransactionHashes;
-
+        public Dictionary<UInt256, Transaction> Transactions { get; set; }
         /// <summary>
-        /// The proposal block transactions
+        /// Store the proposal block's signatures recevied
         /// </summary>
-        public Dictionary<UInt256, Transaction> Transactions;
-
+        public byte[][] Signatures { get; set; }
         /// <summary>
-        /// Signature array, store the signatures from different validators
+        /// The expected view number of consensus nodes, mainly used in ChangeView processing. The index of the array is crresponding to the index of nodes.
         /// </summary>
-        public byte[][] Signatures;
-
+        public byte[] ExpectedView { get; set; }
         /// <summary>
-        /// The expected view number of validators
+        /// Snapshot of persistence layer
         /// </summary>
-        public byte[] ExpectedView;
-
+        private Snapshot snapshot;
         /// <summary>
         /// Key pair
         /// </summary>
-        public KeyPair KeyPair;
+        private KeyPair keyPair;
+        /// <summary>
+        /// Wallet
+        /// </summary>
         private readonly Wallet wallet;
 
         /// <summary>
         /// The safe consensus threshold. Below this threshold, the network is exposed to fault.
         /// </summary>
         public int M => Validators.Length - (Validators.Length - 1) / 3;
+        public Header PrevHeader => snapshot.GetHeader(PrevHash);
+        public bool TransactionExists(UInt256 hash) => snapshot.ContainsTransaction(hash);
+        public bool VerifyTransaction(Transaction tx) => tx.Verify(snapshot, Transactions.Values);
 
         
         public ConsensusContext(Wallet wallet)
@@ -139,10 +129,10 @@ namespace Neo.Consensus
             _header = null;
         }
 
+
         /// <summary>
-        /// 
+        /// Create a full block with the context data
         /// </summary>
-        /// <returns></returns>
         public Block CreateBlock()
         {
             Block block = MakeHeader();
@@ -161,18 +151,18 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Free resource
+        /// Free resource, free the snapshot of persistence layer
         /// </summary>
         public void Dispose()
         {
-            Snapshot?.Dispose();
+            snapshot?.Dispose();
         }
 
         /// <summary>
-        /// Get the Speaker index = (BlockIndex - view_number) % Validators.Length
+        /// Get the Primary/Speaker index = (the height of proposal block -  view number) % the number of consensus nodes
         /// </summary>
-        /// <param name="view_number">current view number</param>
-        /// <returns></returns>
+        /// <param name="view_number">view number</param>
+        /// <returns>The Primary/Speaker index</returns>
         public uint GetPrimaryIndex(byte view_number)
         {
             int p = ((int)BlockIndex - view_number) % Validators.Length;
@@ -180,9 +170,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Create ChangeView message payload
+        ///  Create ChangeView message
         /// </summary>
-        /// <returns>ConsensusPayload</returns>
+        /// <returns>The consensus message payload with ChangeView</returns>
         public ConsensusPayload MakeChangeView()
         {
             return MakeSignedPayload(new ChangeView
@@ -194,9 +184,9 @@ namespace Neo.Consensus
         private Block _header = null;
 
         /// <summary>
-        /// Contruct the block header 
+        /// Construct the block header with context data
         /// </summary>
-        /// <returns>Block</returns>
+        /// <returns>block header</returns>
         public Block MakeHeader()
         {
             if (TransactionHashes == null) return null;
@@ -238,13 +228,13 @@ namespace Neo.Consensus
             return payload;
         }
 
+
         /// <summary>
-        /// Create PrepareRequest message paylaod
+        /// Sign the block header
         /// </summary>
-        /// <returns>ConsensusPayload</returns>
         public void SignHeader()
         {
-            Signatures[MyIndex] = MakeHeader()?.Sign(KeyPair);
+            Signatures[MyIndex] = MakeHeader()?.Sign(keyPair);
         }
 
         private void SignPayload(ConsensusPayload payload)
@@ -261,6 +251,7 @@ namespace Neo.Consensus
             }
             sc.Verifiable.Witnesses = sc.GetWitnesses();
         }
+
 
         /// <summary>
         /// Create PrepareRequest message paylaod
@@ -295,34 +286,36 @@ namespace Neo.Consensus
         /// Reset the context
         /// </summary>
         /// <remarks>
-        /// 1. Update snapshot and PreHash, BlockIndex
+        /// 1. Rearquire the blockchain snapshot 
+        /// 2. Initial the context state
+        /// 3. Update snapshot and PreHash, BlockIndex
         /// 2. Reset ViewNumber zero
         /// 3. Get the latest validators
-        /// 4. Calculate the PriamryIndex and MyIndex
+        /// 4. Calculate the PriamryIndex, MyIndex and keyPair
         /// 5. Clear Signatures, ExpectedView
         /// </remarks>
         public void Reset()
         {
-            Snapshot?.Dispose();
-            Snapshot = Blockchain.Singleton.GetSnapshot();
+            snapshot?.Dispose();
+            snapshot = Blockchain.Singleton.GetSnapshot();
             State = ConsensusState.Initial;
-            PrevHash = Snapshot.CurrentBlockHash;
-            BlockIndex = Snapshot.Height + 1;
+            PrevHash = snapshot.CurrentBlockHash;
+            BlockIndex = snapshot.Height + 1;
             ViewNumber = 0;
-            Validators = Snapshot.GetValidators();
+            Validators = snapshot.GetValidators();
             MyIndex = -1;
             PrimaryIndex = BlockIndex % (uint)Validators.Length;
             TransactionHashes = null;
             Signatures = new byte[Validators.Length][];
             ExpectedView = new byte[Validators.Length];
-            KeyPair = null;
+            keyPair = null;
             for (int i = 0; i < Validators.Length; i++)
             {
                 WalletAccount account = wallet.GetAccount(Validators[i]);
                 if (account?.HasKey == true)
                 {
                     MyIndex = i;
-                    KeyPair = account.GetKey();
+                    keyPair = account.GetKey();
                     break;
                 }
             }
@@ -332,6 +325,11 @@ namespace Neo.Consensus
         /// <summary>
         /// Fill the proposal block, contains txs, MinerTransaction, NextConsensus
         /// </summary>
+        /// <remark>
+        /// 1. Transaction, load from memory pool , sort and filter using plugin.
+        /// 2. MinerTransaction and Reward (Reward = Inputs.GAS - outputs.GAS - txs.systemfee)
+        /// 3. NextConsensus, calculated by combining the proposal block's txs with previous voting of the validotars
+        /// </remark>
         public void Fill()
         {
             IEnumerable<Transaction> mem_pool = Blockchain.Singleton.GetMemoryPool();
@@ -356,7 +354,7 @@ namespace Neo.Consensus
                     Outputs = outputs,
                     Witnesses = new Witness[0]
                 };
-                if (!Snapshot.ContainsTransaction(tx.Hash))
+                if (!snapshot.ContainsTransaction(tx.Hash))
                 {
                     Nonce = nonce;
                     transactions.Insert(0, tx);
@@ -365,12 +363,12 @@ namespace Neo.Consensus
             }
             TransactionHashes = transactions.Select(p => p.Hash).ToArray();
             Transactions = transactions.ToDictionary(p => p.Hash);
-            NextConsensus = Blockchain.GetConsensusAddress(Snapshot.GetValidators(transactions).ToArray());
-            Timestamp = Math.Max(DateTime.UtcNow.ToTimestamp(), Snapshot.GetHeader(PrevHash).Timestamp + 1);
+            NextConsensus = Blockchain.GetConsensusAddress(snapshot.GetValidators(transactions).ToArray());
+            Timestamp = Math.Max(TimeProvider.Current.UtcNow.ToTimestamp(), PrevHeader.Timestamp + 1);
         }
 
         /// <summary>
-        /// Get block nonce
+        /// Get a new nonce
         /// </summary>
         /// <returns>random data</returns>
         private static ulong GetNonce()
@@ -381,19 +379,20 @@ namespace Neo.Consensus
             return nonce.ToUInt64(0);
         }
 
-
         /// <summary>
-        /// Verify the PrepareRequest's proposal block
+        /// Verify the proposal block, after received the PrepareRequest message
         /// </summary>
         /// <remarks>
-        /// Check if NextConsensus is correct and MinerTransaction.output.value is equal to txs network fee
+        /// 1. If hasn't received the `PrepareRequest` message, return false
+        /// 2. Check whether the proposal block's NextConsensus is the same to the result, calculated by the current blockchain snapshot's validators
+        /// 3. Check whether the MinerTransaction.output.value is equal to the proposal block's txs network fee
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>If valid, then return true</returns>
         public bool VerifyRequest()
         {
             if (!State.HasFlag(ConsensusState.RequestReceived))
                 return false;
-            if (!Blockchain.GetConsensusAddress(Snapshot.GetValidators(Transactions.Values).ToArray()).Equals(NextConsensus))
+            if (!Blockchain.GetConsensusAddress(snapshot.GetValidators(Transactions.Values).ToArray()).Equals(NextConsensus))
                 return false;
             Transaction tx_gen = Transactions.Values.FirstOrDefault(p => p.Type == TransactionType.MinerTransaction);
             Fixed8 amount_netfee = Block.CalculateNetFee(Transactions.Values);

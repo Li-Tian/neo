@@ -3,7 +3,7 @@
 namespace Neo.Consensus
 {
     /// <summary>
-    ///  PrepareResponse消息
+    ///  PrepareResponse message, which only contains a signature
     /// </summary>
     internal class PrepareResponse : ConsensusMessage
     {

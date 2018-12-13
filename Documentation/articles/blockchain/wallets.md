@@ -6,7 +6,7 @@
 
 
 ## **钱包中的数据格式**
-&emsp;&emsp;Neo钱包主要包括地址(Address)、私钥(Private Key)、公钥(Public Key)、脚本哈希(ScriptHash)和WIF这五种数据。它们之间可以相互转化。
+&emsp;&emsp;Neo钱包主要处理地址(Address)、私钥(Private Key)、公钥(Public Key)、脚本哈希(ScriptHash)和WIF这五种数据。它们之间可以相互转化。
 
 &emsp;&emsp;NEP <=> WIF <=> Private Key => Public Key => ScriptHash <=> Address
 
@@ -264,11 +264,13 @@ Neo使用的是X509格式的证书。
 | 测试智能合约     | 测试智能合约                                                 |
 
 
-## **钱包软件**
+## **两种节点类型对应的钱包**
+
+
 
 ### 1. 全节点钱包
 
-&emsp;&emsp;全节点钱包是对区块链数据的完整备份，保存了链上的所有数据，同时也参与了P2P网络的构建，因此需要占用较大的存储空间。neo-cli、neo-gui都是全节点钱包
+&emsp;&emsp;全节点钱包是对区块链数据的完整备份，保存了链上的所有数据，同时也参与了P2P网络的构建，因此需要占用较大的存储空间。neo-cli、neo-gui都是全节点钱包。
 
 ### 2. 轻钱包
 

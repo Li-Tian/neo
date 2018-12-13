@@ -79,7 +79,6 @@ namespace Neo.Consensus
         /// <term>ViewNumber</term>
         /// <description>view number</description>
         /// </item>
-        /// <item>
         /// </list>
         /// </summary>
         /// <param name="writer">binary writer</param>

@@ -115,7 +115,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -128,7 +128,14 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">区块快照</param>
         /// <param name="mempool">内存池交易</param>
-        /// <returns></returns>
+        /// <returns>
+        /// 1. 对每个StateDescriptor进行验证 <br/>
+        ///     1.1 若 descriptor.Type 是 StateType.Validator 时, 若 descriptor.Field 不等于`Registered`时，返回false <br/>
+        ///     1.2 若 descriptor.Type 是 StateType.Account 时 <br/>
+        ///         1.2.1 若投票账户持有的NEO数量为0，或者投票账户冻结时，返回false <br/>
+        ///         1.2.2 若被投账户在备用共识节点列表或尚未申请为验证人时，返回false  <br/>
+        /// 2. 进行交易的基本验证，若验证失败，则返回false <br/>
+        /// </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             foreach (StateDescriptor descriptor in Descriptors)
