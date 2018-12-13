@@ -16,7 +16,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">待查询区块hash</param>
-        /// <returns></returns>
+        /// <returns>存在则返回false.不存在则返回true</returns>
         public static bool ContainsBlock(this IPersistence persistence, UInt256 hash)
         {
             BlockState state = persistence.Blocks.TryGet(hash);
@@ -29,7 +29,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">交易hash</param>
-        /// <returns></returns>
+        /// <returns>存在则返回true,不存在返回false</returns>
         public static bool ContainsTransaction(this IPersistence persistence, UInt256 hash)
         {
             TransactionState state = persistence.Transactions.TryGet(hash);
@@ -41,7 +41,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="index">区块高度</param>
-        /// <returns></returns>
+        /// <returns>返回指定高度对应的区块，若不存在则返回null</returns>
         public static Block GetBlock(this IPersistence persistence, uint index)
         {
             UInt256 hash = Blockchain.Singleton.GetBlockHash(index);
@@ -54,7 +54,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">区块hash</param>
-        /// <returns></returns>
+        /// <returns>返回指定区块哈希对应的区块，若不存在则返回null</returns>
         public static Block GetBlock(this IPersistence persistence, UInt256 hash)
         {
             BlockState state = persistence.Blocks.TryGet(hash);
@@ -67,7 +67,7 @@ namespace Neo.Persistence
         /// 获取验证人
         /// </summary>
         /// <param name="persistence">持久化器</param>
-        /// <returns></returns>
+        /// <returns>验证人</returns>
         public static IEnumerable<ValidatorState> GetEnrollments(this IPersistence persistence)
         {
             HashSet<ECPoint> sv = new HashSet<ECPoint>(Blockchain.StandbyValidators);
@@ -79,7 +79,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="index">区块头高度</param>
-        /// <returns></returns>
+        /// <returns>指定高度的区块的区块头，如果该高度区块不存在，则返回false</returns>
         public static Header GetHeader(this IPersistence persistence, uint index)
         {
             UInt256 hash = Blockchain.Singleton.GetBlockHash(index);
@@ -92,18 +92,18 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">区块头hash</param>
-        /// <returns></returns>
+        /// <returns>指定区块的区块头</returns>
         public static Header GetHeader(this IPersistence persistence, UInt256 hash)
         {
             return persistence.Blocks.TryGet(hash)?.TrimmedBlock.Header;
         }
 
         /// <summary>
-        /// 获取下一个block的hash
+        /// 获取下一个区块的哈希
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">待查询的区块hash</param>
-        /// <returns></returns>
+        /// <returns>下一个区块的哈希</returns>
         public static UInt256 GetNextBlockHash(this IPersistence persistence, UInt256 hash)
         {
             BlockState state = persistence.Blocks.TryGet(hash);
@@ -116,7 +116,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="height">区块高度</param>
-        /// <returns></returns>
+        /// <returns>总的系统手续费金额</returns>
         public static long GetSysFeeAmount(this IPersistence persistence, uint height)
         {
             return persistence.GetSysFeeAmount(Blockchain.Singleton.GetBlockHash(height));
@@ -127,7 +127,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">区块hash</param>
-        /// <returns></returns>
+        /// <returns>总的系统手续费金额</returns>
         public static long GetSysFeeAmount(this IPersistence persistence, UInt256 hash)
         {
             BlockState block_state = persistence.Blocks.TryGet(hash);
@@ -140,7 +140,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">交易hash</param>
-        /// <returns></returns>
+        /// <returns>指定哈希对应的交易</returns>
         public static Transaction GetTransaction(this IPersistence persistence, UInt256 hash)
         {
             return persistence.Transactions.TryGet(hash)?.Transaction;
@@ -148,12 +148,12 @@ namespace Neo.Persistence
 
 
         /// <summary>
-        /// 查询UTXO
+        /// 查询未花费交易输出
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">交易hash</param>
         /// <param name="index">第几个output</param>
-        /// <returns></returns>
+        /// <returns>指定索引的未花费交易输出，查询不到交易hash对应的未花费交易输出或未花费交易输出的输出个数小于索引或处于被花费的状态的时候返回null</returns>
         public static TransactionOutput GetUnspent(this IPersistence persistence, UInt256 hash, ushort index)
         {
             UnspentCoinState state = persistence.UnspentCoins.TryGet(hash);
@@ -164,11 +164,11 @@ namespace Neo.Persistence
         }
 
         /// <summary>
-        /// 查询某一笔交易的UTXO
+        /// 查询某一笔交易的未花费交易输出
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">交易Hash</param>
-        /// <returns>该交易所有的UTXO</returns>
+        /// <returns>该交易所有的未花费交易输出</returns>
         public static IEnumerable<TransactionOutput> GetUnspent(this IPersistence persistence, UInt256 hash)
         {
             List<TransactionOutput> outputs = new List<TransactionOutput>();

@@ -69,11 +69,11 @@
 
 触发器是触发智能合约执行的机制，在 NEO 智能合约中，有 4 种触发器，`Verification`, `Application`， `VerificationR`, `ApplicationR`。其中`VerificationR`和`ApplicationR`为2.9版新增的触发器。
 
-一个实现智能合约的区块链应该为其上运行的智能合约提供多种触发器，便其在不同的上下文中起作用。
+一个实现智能合约的区块链应该为其上运行的智能合约提供多种触发器，以便于其在不同的上下文中起作用。
 
-Verification和Application使智能合约能够验证交易和改变区块链的状态。
+Verification 和 Application 使智能合约能够验证交易和改变区块链的状态。
 
-VerificationR, ApplicationR则使智能合约能够拒绝一笔转账或者在接收到一笔转账时改变区块链的状态。
+VerificationR, ApplicationR 则使智能合约能够拒绝一笔转账或者在接收到一笔转账时改变区块链的状态。
 
 相关介绍可以参考: http://docs.neo.org/zh-cn/sc/trigger.html
 
@@ -868,7 +868,7 @@ public static event transfer(byte[] from, byte[] to, BigInteger amount)
 ## 合约迁移/升级
 智能合约支持在发布之后进行升级操作，但需要在旧合约内预留升级接口。
 
-合约升级主要调用了Neo.Contract.Migrate方法:
+合约升级主要调用了 Neo.Contract.Migrate 方法:
 
 ```c#
 Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, ContractPropertyState contract_property_state, string name, string version, string author, string email, string description);
@@ -890,7 +890,7 @@ Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, Contrac
 ## 合约销毁
 智能合约支持在发布之后进行销毁操作，但需要在旧合约内预留销毁接口。
 
-合约升级主要调用了Neo.Contract.Destroy方法:
+合约销毁主要调用了 Neo.Contract.Destroy 方法:
 
 ```c#
 void Destroy();

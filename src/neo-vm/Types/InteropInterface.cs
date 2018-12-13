@@ -3,14 +3,15 @@
 namespace Neo.VM.Types
 {
     /// <summary>
-    /// 
+    /// 定义了虚拟机InteropInterface（互操作服务接口）类型的相关方法
     /// </summary>
     public abstract class InteropInterface : StackItem
     {
         /// <summary>
         /// 获取字节数组
         /// </summary>
-        /// <returns></returns>
+        /// <returns>字节数组</returns>
+        /// <exception cref="System.NotSupportedException">默认抛出</exception>
         public override byte[] GetByteArray()
         {
             throw new NotSupportedException();
@@ -23,7 +24,7 @@ namespace Neo.VM.Types
         public abstract T GetInterface<T>() where T : class;
     }
     /// <summary>
-    /// 
+    /// 定义了虚拟机InteropInterface（互操作服务接口）泛型类型的相关方法
     /// </summary>
     /// <typeparam name="T">泛型，必须是引用类型</typeparam>
     public class InteropInterface<T> : InteropInterface

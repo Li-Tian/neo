@@ -27,6 +27,8 @@ namespace Neo.IO.Caching
         /// </summary>
         /// <typeparam name="EnumType">枚举类型</typeparam>
         /// <returns>反射缓存</returns>
+        /// <exception cref="System.ArgumentException">EnumType不是枚举类型时抛出</exception>
+        /// <exception cref="System.FormatException">EnumType中每个属性的注解无法获取时抛出</exception>
         public static ReflectionCache<T> CreateFromEnum<EnumType>() where EnumType : struct, IConvertible
         {
             Type enumType = typeof(EnumType);

@@ -65,7 +65,10 @@
 
 [![dbft_two_phase](../../images/consensus/dbft_two_phase.jpg)](../../images/consensus/dbft_two_phase.jpg)
 
-算法可以划分为三阶段。1）`PRE-PREPARE`预准备阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。 2）`PREPARE`准备阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个共识节点收到不少于`2f+1`个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。3)`PERSIST`出块阶段， 负责向外广播新块，并进入下一轮共识。
+算法可以划分为三阶段。<BR/>
+1）`PRE-PREPARE`预准备阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。<BR/>
+2）`PREPARE`准备阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个共识节点收到不少于`2f+1`个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。<BR/>
+3）`PERSIST`出块阶段， 负责向外广播新块，并进入下一轮共识。<BR/>
 
 
 > [!Note]

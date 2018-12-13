@@ -22,7 +22,7 @@
 | 32  | PrevHash | UInt256 | 上一个区块的hash |
 | 4 | BlockIndex |uint | 当前Block高度 |
 | 2 | ValidatorIndex | ushort | 发送共识消息的议员，在议员列表中的序号 |
-| 4  | Timestamp | byte[] | 时间戳 |
+| 4  | Timestamp | uint | 时间戳 |
 | ?  |  Data | byte[] | 具体消息内容： `ChangeView`, `PrepareRequest`, `PrepareResponse` |
 | 1 |  - | uint8 | 	固定为 1 |
 | ? | Witness | Witness | 见证人 |
@@ -44,7 +44,7 @@
 |----|------|-----|-------|
 | 1 | Type | ConsensusMessageType | 值 `0x20` |
 | 1 | ViewNumber | byte | 当前视图编号 |
-| 1 | Nonce | byte |  Block随机值 |
+| 8 | Nonce | ulong |  Block随机值 |
 | 20  | NextConsensus | UInt160 |  下一轮共识节点地址的多方签名 |
 | 4 + 32 * length   | TransactionHashes | UInt256[] |  打包的交易hash列表 |
 | 78  | MinerTransaction | MinerTransaction | 议长的出块奖励交易 |

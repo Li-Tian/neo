@@ -116,9 +116,13 @@ namespace Neo.Consensus
         /// <returns>添加成功返回 true，添加失败返回 false</returns>
         private bool AddTransaction(Transaction tx, bool verify)
         {
-            if (context.ContainsTransaction(tx.Hash) ||
-                (verify && !context.VerifyTransaction(tx)) ||
-                !Plugin.CheckPolicy(tx))
+            if (verify && !context.VerifyTransaction(tx))
+            {
+                Log($"Invalid transaction: {tx.Hash}{Environment.NewLine}{tx.ToArray().ToHexString()}", LogLevel.Warning);
+                RequestChangeView();
+                return false;
+            }
+            if (!Plugin.CheckPolicy(tx))
             {
                 Log($"reject tx: {tx.Hash}{Environment.NewLine}{tx.ToArray().ToHexString()}", LogLevel.Warning);
                 RequestChangeView();
@@ -335,6 +339,11 @@ namespace Neo.Consensus
             if (payload.Timestamp <= context.PrevHeader.Timestamp || payload.Timestamp > TimeProvider.Current.UtcNow.AddMinutes(10).ToTimestamp())
             {
                 Log($"Timestamp incorrect: {payload.Timestamp}", LogLevel.Warning);
+                return;
+            }
+            if (message.TransactionHashes.Any(p => context.TransactionExists(p)))
+            {
+                Log($"Invalid request: transaction already exists", LogLevel.Warning);
                 return;
             }
             context.State |= ConsensusState.RequestReceived;

@@ -8,7 +8,7 @@ using System.Reflection;
 namespace Neo.Plugins
 {
     /// <summary>
-    /// 抽象插件
+    /// 抽象类插件
     /// </summary>
     public abstract class Plugin
     {
@@ -75,8 +75,8 @@ namespace Neo.Plugins
         /// <summary>
         /// 内存池交易过滤策略
         /// </summary>
-        /// <param name="tx"></param>
-        /// <returns></returns>
+        /// <param name="tx">交易</param>
+        /// <returns>通过过滤策略则返回true,否则返回false</returns>
         public static bool CheckPolicy(Transaction tx)
         {
             foreach (IPolicyPlugin plugin in Policies)
@@ -157,8 +157,8 @@ namespace Neo.Plugins
         /// <summary>
         /// 消息处理
         /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
+        /// <param name="message">消息</param>
+        /// <returns>默认返回false</returns>
         protected virtual bool OnMessage(object message) => false;
 
         /// <summary>

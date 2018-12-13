@@ -63,6 +63,21 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         public Witness[] Witnesses { get; set; }
 
+        private Fixed8 _feePerByte = -Fixed8.Satoshi;
+        /// <summary>
+        /// The <c>NetworkFee</c> for the transaction divided by its <c>Size</c>.
+        /// <para>Note that this property must be used with care. Getting the value of this property multiple times will return the same result. The value of this property can only be obtained after the transaction has been completely built (no longer modified).</para>
+        /// </summary>
+        public Fixed8 FeePerByte
+        {
+            get
+            {
+                if (_feePerByte == -Fixed8.Satoshi)
+                    _feePerByte = NetworkFee / Size;
+                return _feePerByte;
+            }
+        }
+
         private UInt256 _hash = null;
 
         /// <summary>
@@ -82,11 +97,16 @@ namespace Neo.Network.P2P.Payloads
 
         InventoryType IInventory.InventoryType => InventoryType.TX;
 
+        // <summary>
+        // 是否是低优先级交易。若是claim交易或网络费用低于阈值时，则为低优先级交易。
+        // 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
+        // </summary>
+        //public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
         /// <summary>
-        /// 是否是低优先级交易。若是claim交易或网络费用低于阈值时，则为低优先级交易。
+        /// 是否是低优先级交易。若网络费用低于阈值时，则为低优先级交易。
         /// 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
         /// </summary>
-        public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
+        public bool IsLowPriority => NetworkFee < Settings.Default.LowPriorityThreshold;
 
         private Fixed8 _network_fee = -Fixed8.Satoshi;
 
