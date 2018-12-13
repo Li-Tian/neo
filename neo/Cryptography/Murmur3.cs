@@ -34,7 +34,7 @@ namespace Neo.Cryptography
         }
 
         /// <summary>
-        /// Murmur3算法的计算部分
+        /// Murmur3算法的计算部分（保留）
         /// </summary>
         /// <param name="array">被哈希的数据</param>
         /// <param name="ibStart">开始的字节位</param>

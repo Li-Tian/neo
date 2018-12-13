@@ -13,7 +13,7 @@ namespace Neo.Network.P2P.Payloads
     public class IssueTransaction : Transaction
     {
         /// <summary>
-        /// 系统手续费  1）若交易类型大于等于1，手续费为0  2）若发布的资产是NEO，GAS则手续费为0 
+        /// 系统手续费  1）若交易版本号大于等于1，手续费为0  2）若发布的资产是NEO或GAS，则手续费为0 
         /// </summary>
         public override Fixed8 SystemFee
         {
@@ -27,7 +27,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 创建发布资产
+        /// 创建发布资产交易
         /// </summary>
         public IssueTransaction()
             : base(TransactionType.IssueTransaction)
@@ -38,7 +38,7 @@ namespace Neo.Network.P2P.Payloads
         /// 反序列化
         /// </summary>
         /// <param name="reader">二进制输入流</param>
-        /// <exception cref="System.FormatException">若交易版本大于1，则抛出该异常</exception>
+        /// <exception cref="System.FormatException">若交易版本号大于1，则抛出该异常</exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version > 1) throw new FormatException();
@@ -47,9 +47,9 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 获取验证脚本hash
         /// </summary>
-        /// <param name="snapshot"></param>
+        /// <param name="snapshot">快照</param>
         /// <returns>交易本身的验证脚本，以及发行者的地址脚本hash</returns>
-        /// <exception cref="System.InvalidOperationException">若发行的资产不存在，则抛出该 异常</exception>
+        /// <exception cref="System.InvalidOperationException">若发行的资产不存在，则抛出该异常</exception>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             HashSet<UInt160> hashes = new HashSet<UInt160>(base.GetScriptHashesForVerifying(snapshot));

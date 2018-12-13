@@ -255,7 +255,7 @@ namespace Neo.Cryptography
         /// <param name="N">算法Scrypt使用的参数N</param>
         /// <param name="r">算法Scrypt使用的参数r</param>
         /// <param name="p">算法Scrypt使用的参数p</param>
-        /// <param name="derivedKeyLength">生成key的长途</param>
+        /// <param name="derivedKeyLength">生成key的长度</param>
         /// <returns>生成的scrypt key</returns>
 #if NET47
         public static byte[] DeriveKey(byte[] password, byte[] salt, int N, int r, int p, int derivedKeyLength)

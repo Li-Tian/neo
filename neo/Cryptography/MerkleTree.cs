@@ -53,7 +53,7 @@ namespace Neo.Cryptography
         /// 传入所有交易的哈希值, 构建MerkleTree, 并返回构建后根节点的哈希值
         /// </summary>
         /// <param name="hashes">用来构建Merkle树的交易哈希数组</param>
-        /// <exception cref="ArgumentException">如果没有数据拿来构建Merkle树</exception>
+        /// <exception cref="ArgumentException">如果没有数据拿来构建Merkle树，则抛出该异常</exception>
         /// <returns>返回MerkleTree根节点的哈希值</returns>
         public static UInt256 ComputeRoot(UInt256[] hashes)
         {
@@ -90,9 +90,9 @@ namespace Neo.Cryptography
         }
 
         /// <summary>
-        /// 
+        /// 根据标志位修剪梅克尔树，其中标志位为true的节点保留，标志位为false的节点删除
         /// </summary>
-        /// <param name="flags"></param>
+        /// <param name="flags">标志位</param>
         public void Trim(BitArray flags)
         {
             flags = new BitArray(flags);

@@ -21,7 +21,7 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         public UInt256[] Hashes;
         /// <summary>
-        /// 标志位，表示梅克尔树中那些节点可以省略，
+        /// 标志位，表示梅克尔树中哪些节点可以省略，
         /// 哪些节点不可以省略，用于梅克尔树与数组
         /// 的相互转换
         /// </summary>
