@@ -15,7 +15,7 @@ using System.Linq;
 namespace Neo.Consensus
 {
     /// <summary>
-    /// 共识服务，实现了dBFF算法
+    /// 共识服务，实现了dBFT算法
     /// </summary>
     /// <remarks>
     ///  算法介绍： http://docs.neo.org/en-us/basic/consensus/whitepaper.html
@@ -23,12 +23,12 @@ namespace Neo.Consensus
     public sealed class ConsensusService : UntypedActor
     {
         /// <summary>
-        /// 开始共识消息
+        /// 开始共识消息（AKKA自定义消息类型）
         /// </summary>
         public class Start { }
 
         /// <summary>
-        /// 更新/设置视图编号
+        /// 更新/设置视图编号（AKKA自定义消息类型）
         /// </summary>
         public class SetViewNumber {
             /// <summary>
@@ -38,7 +38,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 超时消息
+        /// 超时消息（AKKA自定义消息类型）
         /// </summary>
         /// <remarks>
         /// 给出超时区块的块高度和视图编号
@@ -101,7 +101,7 @@ namespace Neo.Consensus
         /// </summary>
         /// <remarks>
         /// 大致算法过程解释如下：
-        /// 1. 若满足以下3个条件，这条交易会被拒收
+        /// 1. 若以下3个条件满足任意一条，这条交易会被拒收
         /// 1) 当前上下文的快照中已经包含这条交易；
         /// 2）传入的verify参数为True，意味着要验证；且验证的结果为false;
         /// 3) 这条交易不满足Plugin中的某条policy；
@@ -412,9 +412,9 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// 消息接收器
+        /// 消息接收器（AKKA框架的方法）
         /// </summary>
-        /// <param name="message">六类消息：Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted</param>
+        /// <param name="message">(*)六类消息：Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted</param>
         protected override void OnReceive(object message)
         {
             switch (message)
@@ -502,7 +502,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Actor停止前回调，回收资源
+        /// Actor停止前回调，回收资源（AKKA框架）
         /// </summary>
         protected override void PostStop()
         {

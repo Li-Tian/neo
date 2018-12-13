@@ -33,12 +33,15 @@ namespace Neo.IO.Json
             return true;
         }
         /// <summary>
-        /// 重写了父类的相关方法，将JNumber对象转换成泛型枚举类型数据，可指定的类型有byte、int、long、sbyte、short、uint、ulong、ushort
+        /// 重写了父类的相关方法，将JNumber对象转换成泛型枚举类型数据，
+        /// 可指定的类型有byte、int、long、sbyte、short、uint、ulong、ushort
         /// </summary>
         /// <typeparam name="T">泛型枚举类型的类型</typeparam>
         /// <param name="ignoreCase">保留</param>
         /// <returns>输出JNumber对象转换成泛型枚举类型数据</returns>
-        /// <exception cref="System.InvalidCastException">泛型枚举类型的类型为byte、int、long、sbyte、short、uint、ulong、ushort以外的类型</exception>
+        /// <exception cref="System.InvalidCastException">
+        /// 泛型枚举类型的类型为byte、int、long、sbyte、short、uint、ulong、ushort以外的类型
+        /// </exception>
         public override T AsEnum<T>(bool ignoreCase = false)
         {
             Type t = typeof(T);
@@ -80,10 +83,11 @@ namespace Neo.IO.Json
             return Value.ToString();
         }
         /// <summary>
-        /// 重写了父类的相关方法，判断JBoolean对象能否转换成其他类型数据，允许JNumber对象与bool、double和string类型数据的互转
+        /// 重写了父类的相关方法，判断JBoolean对象能否转换成其他类型数据，
+        /// 允许JNumber对象与bool、double和string类型数据的互转
         /// </summary>
         /// <param name="type">指定的数据类型</param>
-        /// <returns>指定的数据类型为bool、double和string，则返回true，否则返回false</returns>
+        /// <returns>指定的数据能转换则返回true，否则返回false</returns>
         public override bool CanConvertTo(Type type)
         {
             if (type == typeof(bool))

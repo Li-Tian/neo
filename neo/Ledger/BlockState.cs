@@ -24,6 +24,10 @@ namespace Neo.Ledger
         /// </summary>
         public override int Size => base.Size + sizeof(long) + TrimmedBlock.Size;
 
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆的对象</returns>
         BlockState ICloneable<BlockState>.Clone()
         {
             return new BlockState
@@ -78,7 +82,7 @@ namespace Neo.Ledger
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json数据对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

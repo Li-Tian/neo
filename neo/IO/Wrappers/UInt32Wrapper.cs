@@ -53,7 +53,7 @@ namespace Neo.IO.Wrappers
             writer.Write(value);
         }
         /// <summary>
-        /// 封装一个uint对象
+        /// 从uint 默认转换为UInt32Wrapper对象
         /// </summary>
         /// <param name="value">待封装的对象</param>
         public static implicit operator UInt32Wrapper(uint value)
@@ -61,7 +61,7 @@ namespace Neo.IO.Wrappers
             return new UInt32Wrapper(value);
         }
         /// <summary>
-        /// 返回UInt32Wrapper对象内封装的uint对象
+        /// 从UInt32Wrapper对象默认转换为 uint
         /// </summary>
         /// <param name="wrapper">UInt32Wrapper对象</param>
         public static implicit operator uint(UInt32Wrapper wrapper)

@@ -4,7 +4,9 @@ using System.Numerics;
 namespace Neo
 {
     /// <summary>
-    /// 不可改变的, 任意精度的, 有符号的小数. 一个BigDecimal对象由一个BigInteger所表示的有效数和一个由byte表示的，对于一个任意长度整数小数点向左移的偏移量，其中小数点后最多255位.
+    /// 不可改变的, 任意精度的, 有符号的小数. 一个BigDecimal对象由一个BigInteger
+    /// 所表示的有效数和一个由byte表示的，对于一个任意长度整数小数点向左移的偏移量，
+    /// 其中小数点后最多255位.
     /// </summary>
     public struct BigDecimal
     {
@@ -30,7 +32,7 @@ namespace Neo
         public int Sign => value.Sign;
 
         /// <summary>
-        /// 将一个有效数 value 和小数位数 decimals 传入这个BigDecimal对象, 其数值为 value × 10<sup>-deciaml</sup>
+        /// 将一个有效数 value 和小数位数 decimals 传入这个BigDecimal对象, 其数值为 value × 10<sup>-decimals</sup>
         /// </summary>
         /// <param name="value">BigDecimal的有效数部分</param>
         /// <param name="decimals">BigDecimal的小数位数</param>
@@ -67,7 +69,7 @@ namespace Neo
         /// <summary>
         /// 将传入的字符串解析为以指定小数位数为表示的BigDecimal对象.
         /// </summary>
-        /// <param name="s">被解析的字符串</param>
+        /// <param name="s">(*)被解析的字符串</param>
         /// <param name="decimals">小数位数</param>
         /// <exception cref="FormatException">如果这个字符串无法转换为以指定小数位所表示的BigDecimal对象</exception>
         /// <returns>字符串解析后的BigDecimal对象</returns>
@@ -112,7 +114,7 @@ namespace Neo
         /// <summary>
         /// 将传入的字符串解析为以指定小数位数表示的BigDecimal对象
         /// </summary>
-        /// <param name="s">被解析的字符串</param>
+        /// <param name="s">(*)被解析的字符串</param>
         /// <param name="decimals">小数位</param>
         /// <param name="result">转换后的BigDecimal对象</param>
         /// <returns>如果成功解析则返回<c>true</c>, 如果不能够解析则返回<c>false</c></returns>

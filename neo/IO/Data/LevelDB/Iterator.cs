@@ -36,7 +36,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 获取当前Key值
         /// </summary>
-        /// <returns>切片</returns>
+        /// <returns>Slice数据</returns>
         /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
         public Slice Key()
         {
@@ -47,7 +47,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 游标前移一位
+        /// 游标下移一位
         /// </summary>
         public void Next()
         {
@@ -56,7 +56,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 游标后退一位
+        /// 游标上移一位
         /// </summary>
         public void Prev()
         {
@@ -101,7 +101,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 当前位置的值
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Slice数据</returns>
         /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
         public Slice Value()
         {

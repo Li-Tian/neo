@@ -9,7 +9,7 @@ namespace Neo.Ledger
     public class ApplicationExecutionResult
     {
         /// <summary>
-        /// 触发器
+        /// 触发器类型
         /// </summary>
         public TriggerType Trigger { get; internal set; }
 
@@ -29,12 +29,12 @@ namespace Neo.Ledger
         public Fixed8 GasConsumed { get; internal set; }
 
         /// <summary>
-        /// 栈顶数据
+        /// 栈数据
         /// </summary>
         public StackItem[] Stack { get; internal set; }
 
         /// <summary>
-        /// 执行过程中触发的事件
+        /// 智能合约执行过程中，通过互操作服务 Runtime_Notify 向客户端发出的通知事件的列表
         /// </summary>
         public NotifyEventArgs[] Notifications { get; internal set; }
     }

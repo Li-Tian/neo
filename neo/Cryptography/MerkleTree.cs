@@ -91,6 +91,7 @@ namespace Neo.Cryptography
 
         /// <summary>
         /// 根据标志位修剪梅克尔树，其中标志位为true的节点保留，标志位为false的节点删除
+        /// （*）增加树结构裁剪的步骤的描述
         /// </summary>
         /// <param name="flags">标志位</param>
         public void Trim(BitArray flags)

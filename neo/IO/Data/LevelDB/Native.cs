@@ -448,7 +448,7 @@ namespace Neo.IO.Data.LevelDB
 
         #region WriteBatch
         /// <summary>
-        /// 批量写选项
+        /// 创建批处理对象的句柄
         /// </summary>
         /// <returns>批量写句柄</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]

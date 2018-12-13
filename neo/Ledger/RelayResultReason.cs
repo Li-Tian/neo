@@ -1,7 +1,7 @@
 ﻿namespace Neo.Ledger
 {
     /// <summary>
-    /// 对消息转发的处理结果描述
+    /// 对接受到的转发消息的处理结果描述
     /// </summary>
     public enum RelayResultReason : byte
     {

@@ -7,8 +7,8 @@ namespace Neo.IO.Caching
     /// <summary>
     /// 数据缓存类，抽象类。定义了数据缓存需要实现的相关方法
     /// </summary>
-    /// <typeparam name="TKey">泛型键</typeparam>
-    /// <typeparam name="TValue">泛型值</typeparam>
+    /// <typeparam name="TKey">键</typeparam>
+    /// <typeparam name="TValue">值</typeparam>
     public abstract class DataCache<TKey, TValue>
         where TKey : IEquatable<TKey>, ISerializable
         where TValue : class, ICloneable<TValue>, ISerializable, new()
@@ -67,8 +67,8 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 向dictionary中新增一对键值对，如果trackable已存在则会修改状态
         /// </summary>
-        /// <param name="key">泛型键</param>
-        /// <param name="value">泛型值</param>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
         /// <exception cref="System.ArgumentException">字典中存在键所对应的值，且值的状态不为deleted时抛出</exception>
         public void Add(TKey key, TValue value)
         {
@@ -87,11 +87,11 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 把键值对添加至内部
         /// </summary>
-        /// <param name="key">泛型键</param>
-        /// <param name="value">泛型值</param>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
         protected abstract void AddInternal(TKey key, TValue value);
         /// <summary>
-        /// 提交所有更改
+        /// 提交所有更改。行为受子类的实现影响。
         /// </summary>
         public void Commit()
         {
@@ -120,7 +120,7 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 删除dictionary中指定键对应的项
         /// </summary>
-        /// <param name="key">泛型键</param>
+        /// <param name="key">键</param>
         public void Delete(TKey key)
         {
             lock (dictionary)
@@ -148,12 +148,12 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 内部删除
         /// </summary>
-        /// <param name="key">泛型键</param>
+        /// <param name="key">键</param>
         public abstract void DeleteInternal(TKey key);
         /// <summary>
         /// 按条件删除
         /// </summary>
-        /// <param name="predicate">键值对需要满足的条件</param>
+        /// <param name="predicate">键值对需要满足的条件判定函数</param>
         public void DeleteWhere(Func<TKey, TValue, bool> predicate)
         {
             lock (dictionary)
@@ -165,7 +165,7 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 根据指定前缀查找键值对
         /// </summary>
-        /// <param name="key_prefix">键的前缀</param>
+        /// <param name="key_prefix">键的前缀。不指定时返回所有键值对。</param>
         /// <returns>满足条件的键值对</returns>
         public IEnumerable<KeyValuePair<TKey, TValue>> Find(byte[] key_prefix = null)
         {
@@ -200,15 +200,16 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 内部查询指定键
         /// </summary>
-        /// <param name="key">需要查询的泛型键</param>
+        /// <param name="key">需要查询的键</param>
         /// <returns>对应的值</returns>
         protected abstract TValue GetInternal(TKey key);
         /// <summary>
-        /// 根据键获取对应trackable，并执行相应操作
+        /// 根据 key 获取对应的 value 对象，并将这个键值对标记为有发生更改。
         /// </summary>
-        /// <param name="key">需要查询的键</param>
-        /// <param name="factory">需要执行的操作</param>
-        /// <returns>对应操作完成的值</returns>
+        /// <param name="key">键</param>
+        /// <param name="factory">如果缓冲区没有指定的值，或者已经被删除时，通过factory重新创建值的实例</param>
+        /// <returns>指定的键所对应的值的实例</returns>
+        /// <exception cref="KeyNotFoundException">指定的key不存在或者已经被删除，而且factory未被指定，无法重新创建值对象时抛出此异常。</exception>
         public TValue GetAndChange(TKey key, Func<TValue> factory = null)
         {
             lock (dictionary)
@@ -249,11 +250,11 @@ namespace Neo.IO.Caching
             }
         }
         /// <summary>
-        /// 根据键获取对应trackable，并执行相应操作。如果对应的trackable不存在，则新建一个trackable并执行相应操作
+        /// 根据键获取对应值。如果不存在则重新创建实例。
         /// </summary>
         /// <param name="key">需要查询的键</param>
-        /// <param name="factory">需要执行的操作</param>
-        /// <returns>对应操作完成的值</returns>
+        /// <param name="factory">不存在时，通过factory创建实例</param>
+        /// <returns>对应的值</returns>
         public TValue GetOrAdd(TKey key, Func<TValue> factory)
         {
             lock (dictionary)
@@ -288,7 +289,7 @@ namespace Neo.IO.Caching
             }
         }
         /// <summary>
-        /// 根据键获取对应trackable，如果dictionary查找不到则会调用TryGetInternal查找
+        /// 根据键获取对应的值，如果缓冲区内查找不到则会调用TryGetInternal查找
         /// </summary>
         /// <param name="key">需要查询的键</param>
         /// <returns>查询到的值</returns>

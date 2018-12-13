@@ -7,7 +7,8 @@ using System.Text;
 namespace Neo.IO.Data.LevelDB
 {
     /// <summary>
-    /// 封装leveldb的切片，可以存放任何基础类型的值，并支持逻辑运算。与leveldb原生切片不同点是这里存放的是真实值而非引用或指针
+    /// 封装leveldb的切片，可以存放任何基础类型的值，并支持逻辑运算。
+    /// 与leveldb原生切片不同点是这里存放的是真实值而非引用或指针
     /// </summary>
     public struct Slice : IComparable<Slice>, IEquatable<Slice>
     {
@@ -69,7 +70,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 转成byte数组
         /// </summary>
-        /// <returns>若切片为空，返回空的byte数组</returns>
+        /// <returns>返回Slice内置数据的字节数组。若切片为空，返回空的byte数组</returns>
         public byte[] ToArray()
         {
             return buffer ?? new byte[0];
@@ -232,7 +233,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建byte数组切片
+        /// 从byte类型默认转换成数组切片
         /// </summary>
         /// <param name="data">字节数组数据</param>
         public static implicit operator Slice(byte[] data)
@@ -241,7 +242,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建bool切片
+        /// 从bool类型默认转换为Slice数据类型
         /// </summary>
         /// <param name="data">bool数据</param>
         public static implicit operator Slice(bool data)
@@ -251,7 +252,7 @@ namespace Neo.IO.Data.LevelDB
 
 
         /// <summary>
-        /// 创建byte切片
+        /// 从byte类型默认转换为Slice
         /// </summary>
         /// <param name="data">字节数据</param>
         public static implicit operator Slice(byte data)
@@ -260,7 +261,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建double切片
+        /// 创建double切片(*)
         /// </summary>
         /// <param name="data">double数据</param>
         public static implicit operator Slice(double data)
@@ -269,7 +270,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建short切片
+        /// 创建short切片(*)
         /// </summary>
         /// <param name="data">short数据</param>
         public static implicit operator Slice(short data)
@@ -278,7 +279,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建int切片
+        /// 创建int切片(*)
         /// </summary>
         /// <param name="data">int数据</param>
         public static implicit operator Slice(int data)
@@ -287,7 +288,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建long切片
+        /// 创建long切片(*)
         /// </summary>
         /// <param name="data">long数据</param>
         public static implicit operator Slice(long data)
@@ -296,7 +297,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建float切片
+        /// 创建float切片(*)
         /// </summary>
         /// <param name="data">float数据</param>
         public static implicit operator Slice(float data)
@@ -305,7 +306,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建string切片
+        /// 创建string切片(*)
         /// </summary>
         /// <param name="data">string数据</param>
         public static implicit operator Slice(string data)
@@ -314,7 +315,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建ushort切片
+        /// 创建ushort切片(*)
         /// </summary>
         /// <param name="data">ushort数据</param>
         public static implicit operator Slice(ushort data)
@@ -323,7 +324,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建uint切片
+        /// 创建uint切片(*)
         /// </summary>
         /// <param name="data">uint数据</param>
         public static implicit operator Slice(uint data)
@@ -332,7 +333,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 创建ulong切片
+        /// 创建ulong切片(*)
         /// </summary>
         /// <param name="data">ulong数据</param>
         public static implicit operator Slice(ulong data)

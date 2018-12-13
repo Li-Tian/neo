@@ -23,21 +23,24 @@ namespace Neo.IO.Caching
         /// <returns>获取的项</returns>
         protected abstract T TryGetInternal();
         /// <summary>
-        /// 从内部升级
+        /// 从内部更新
         /// </summary>
-        /// <param name="item">需要升级的项</param>
+        /// <param name="item">需要更新的项</param>
         protected abstract void UpdateInternal(T item);
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="factory">泛型方法</param>
+        /// <param name="factory">factory对象</param>
         protected MetaDataCache(Func<T> factory)
         {
             this.factory = factory;
         }
         /// <summary>
-        /// 提交所有更改
+        /// 提交所有更改。
         /// </summary>
+        /// <remarks>
+        /// 如果对象被标记为Added或者Changed，将被提交（写回文件）。
+        /// </remarks>
         public void Commit()
         {
             switch (State)
@@ -51,7 +54,7 @@ namespace Neo.IO.Caching
             }
         }
         /// <summary>
-        /// 创建快照，会调用CloneMetaCache实现
+        /// 创建快照CloneMetaCache
         /// </summary>
         /// <returns>创建完成的快照</returns>
         public MetaDataCache<T> CreateSnapshot()
@@ -76,7 +79,7 @@ namespace Neo.IO.Caching
             return Item;
         }
         /// <summary>
-        /// 获取项，如果是新建项则将其状态设为Changed
+        /// 获取项，如果是新建项则将其状态设为Changed。提交时会被写回。
         /// </summary>
         /// <returns>获得的项</returns>
         public T GetAndChange()

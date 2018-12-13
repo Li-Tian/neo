@@ -20,7 +20,7 @@ namespace Neo.Cryptography
         private uint hash;
         private int length;
         /// <summary>
-        /// 获得哈希值的长度
+        /// 获得哈希值的长度。固定值32
         /// </summary>
         public override int HashSize => 32;
         /// <summary>

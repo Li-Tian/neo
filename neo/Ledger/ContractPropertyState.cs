@@ -24,7 +24,7 @@ namespace Neo.Ledger
         HasDynamicInvoke = 1 << 1,
 
         /// <summary>
-        /// 可支付
+        /// 可支付(保留功能)
         /// </summary>
         Payable = 1 << 2
     }

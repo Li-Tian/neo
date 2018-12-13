@@ -50,7 +50,7 @@ namespace Neo.IO.Json
         /// 将JString对象转成泛型枚举对象
         /// </summary>
         /// <typeparam name="T">泛型枚举对象的数据类型</typeparam>
-        /// <param name="ignoreCase">保留</param>
+        /// <param name="ignoreCase">忽略大小写</param>
         /// <returns>输出JString对象转成的泛型枚举对象</returns>
         /// <exception cref="System.InvalidCastException">转换失败时抛出</exception>
         public override T AsEnum<T>(bool ignoreCase = false)
@@ -89,7 +89,8 @@ namespace Neo.IO.Json
             return Value;
         }
         /// <summary>
-        /// 重写了父类的相关方法，判断JString对象能否转换成指定类型数据，允许JString对象与bool、枚举、double和string类型数据的互转
+        /// 重写了父类的相关方法，判断JString对象能否转换成指定类型数据，
+        /// 允许JString对象与bool、枚举、double和string类型数据的互转
         /// </summary>
         /// <param name="type">指定数据类型</param>
         /// <returns>指定数据类型为bool、枚举、double和string时返回true,否则返回false</returns>
