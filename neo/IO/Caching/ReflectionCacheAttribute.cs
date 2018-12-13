@@ -22,7 +22,7 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 构造器
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">类型</param>
         public ReflectionCacheAttribute(Type type)
         {
             Type = type;

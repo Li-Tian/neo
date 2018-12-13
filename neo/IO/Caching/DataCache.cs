@@ -34,10 +34,11 @@ namespace Neo.IO.Caching
 
         private readonly Dictionary<TKey, Trackable> dictionary = new Dictionary<TKey, Trackable>();
         /// <summary>
-        /// 定义一个索引器
+        /// 定义一个索引器，便于直接操作字典中元素
         /// </summary>
         /// <param name="key">索引器参数</param>
         /// <returns>索引对应的TValue</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">若字典中存在索引参数对应的元素，且元素的状态为delete时抛出</exception>
         public TValue this[TKey key]
         {
             get
@@ -68,6 +69,7 @@ namespace Neo.IO.Caching
         /// </summary>
         /// <param name="key">泛型键</param>
         /// <param name="value">泛型值</param>
+        /// <exception cref="System.ArgumentException">字典中存在键所对应的值，且值的状态不为deleted时抛出</exception>
         public void Add(TKey key, TValue value)
         {
             lock (dictionary)
@@ -118,7 +120,7 @@ namespace Neo.IO.Caching
         /// <summary>
         /// 删除dictionary中指定键对应的项
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">泛型键</param>
         public void Delete(TKey key)
         {
             lock (dictionary)
