@@ -28,7 +28,7 @@ namespace Neo.Network.P2P.Payloads
         ClaimTransaction = 0x02,
 
         /// <summary>
-        /// 注册验证人交易
+        /// 注册验证人交易（已经弃用。参考StateTransaction）
         /// </summary>
         [ReflectionCache(typeof(EnrollmentTransaction))]
         EnrollmentTransaction = 0x20,
@@ -52,13 +52,13 @@ namespace Neo.Network.P2P.Payloads
         StateTransaction = 0x90,
 
         /// <summary>
-        /// Publish scripts to the blockchain for being invoked later.
+        /// 部署智能合约到区块链。已经弃用。参考 InvocationTransaction
         /// </summary>
         [ReflectionCache(typeof(PublishTransaction))]
         PublishTransaction = 0xd0,
 
         /// <summary>
-        /// 执行交易，调用智能合约或执行脚本
+        /// 执行交易，调用智能合约或执行脚本。或者部署智能合约。
         /// </summary>
         [ReflectionCache(typeof(InvocationTransaction))]
         InvocationTransaction = 0xd1

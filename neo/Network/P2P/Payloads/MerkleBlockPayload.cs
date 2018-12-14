@@ -23,7 +23,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 标志位，表示梅克尔树中哪些节点可以省略，
         /// 哪些节点不可以省略，用于梅克尔树与数组
-        /// 的相互转换
+        /// 的相互转换。(little endian)
         /// </summary>
         public byte[] Flags;
         /// <summary>

@@ -124,7 +124,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item> 
         /// <item>
         /// <term>NeedStorage</term>
-        /// <description>是否需要存储</description>
+        /// <description>是否需要存储（版本1开始有效）</description>
         /// </item>
         /// <item>
         /// <term>Name</term>
@@ -186,9 +186,9 @@ namespace Neo.Network.P2P.Payloads
 
 
         /// <summary>
-        /// 校验脚本
+        /// 校验脚本。已经弃用。不接受新的PublishTransaction
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <param name="mempool">内存池交易</param>
         /// <returns>返回固定值false，已弃用</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)

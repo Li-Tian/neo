@@ -42,11 +42,12 @@ namespace Neo.Network.P2P.Payloads
             };
         }
         /// <summary>
-        /// 构建一组InvPayload对象
+        /// 构建一组InvPayload对象。
         /// </summary>
         /// <param name="type">Inventory数据的类型</param>
         /// <param name="hashes">哈希数据</param>
         /// <returns>InvPayload对象数组</returns>
+        /// <remarks>通过yield指令，每次返回最多500个哈希值。</remarks>
         public static IEnumerable<InvPayload> CreateGroup(InventoryType type, UInt256[] hashes)
         {
             for (int i = 0; i < hashes.Length; i += MaxHashesCount)

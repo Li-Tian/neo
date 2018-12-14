@@ -10,7 +10,7 @@ using System.IO;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 共识消息货物（包装具体的共识消息. p2p广播时，将存放在Inventory消息的payload中）
+    /// 共识消息传输数据包（包装具体的共识消息. p2p广播时，将存放在Inventory消息的payload中）
     /// </summary>
     public class ConsensusPayload : IInventory
     {
@@ -30,7 +30,7 @@ namespace Neo.Network.P2P.Payloads
         public uint BlockIndex;
 
         /// <summary>
-        /// 共识节点编号
+        /// 议长的共识节点编号
         /// </summary>
         public ushort ValidatorIndex;
         
@@ -67,7 +67,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 货物类型， InventoryType.Consensus
+        /// Inventory类型， InventoryType.Consensus
         /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.Consensus;
 
@@ -104,7 +104,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 序列化未签名数据
+        /// 反序列化待签名数据
         /// </summary>
         /// <param name="reader">二进制输入流</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
@@ -118,19 +118,19 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 脚本容器消息
+        /// 获取原始的哈希数据
         /// </summary>
-        /// <returns>未签名数据</returns>
+        /// <returns>原始的哈希数据</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
         }
 
         /// <summary>
-        /// 获取验证脚本hash
+        /// 获取议长公钥的签名脚本
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
-        /// <returns>脚本hash列表</returns>
+        /// <param name="snapshot">数据库快照</param>
+        /// <returns>获取议长公钥的签名脚本</returns>
         UInt160[] IVerifiable.GetScriptHashesForVerifying(Snapshot snapshot)
         {
             ECPoint[] validators = snapshot.GetValidators();
@@ -150,7 +150,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        ///  序列化未签名数据
+        ///  序列化待签名数据
         /// <list type="bullet">
         /// <item>
         /// <term>Version</term>
@@ -193,10 +193,10 @@ namespace Neo.Network.P2P.Payloads
         /// 内容校验
         /// </summary>
         /// <remarks>
-        /// 1) 检查BlockIndex 是否大于已经存储的区块高度
-        /// 2) 校验验证脚本
+        /// 1) 如果共识数据的区块高度小于等于已知的区块高度，则验证失败<br/>
+        /// 2) 进行常规签名校验验证脚本。
         /// </remarks>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <returns>校验通过返回true，否则返回false</returns>
         public bool Verify(Snapshot snapshot)
         {

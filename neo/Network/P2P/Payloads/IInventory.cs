@@ -16,7 +16,7 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         InventoryType InventoryType { get; }
         /// <summary>
-        /// 库存校验函数，根据快照进行校验
+        /// 校验函数，根据快照进行校验
         /// </summary>
         /// <param name="snapshot">快照</param>
         /// <returns>校验成功返回true，否则返回false</returns>

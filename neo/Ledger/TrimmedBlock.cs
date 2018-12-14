@@ -18,7 +18,7 @@ namespace Neo.Ledger
         public UInt256[] Hashes;
 
         /// <summary>
-        /// 是否是block
+        /// 是否是从完整的block简化而来。从区块头对象简化而来的版本没有交易的哈希。
         /// </summary>
         public bool IsBlock => Hashes.Length > 0;
 
@@ -111,7 +111,7 @@ namespace Neo.Ledger
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

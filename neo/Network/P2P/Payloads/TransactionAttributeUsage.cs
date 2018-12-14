@@ -2,7 +2,7 @@
 {
 
     /// <summary>
-    /// 交易属性用途
+    /// 交易属性用途。新增的交易属性参考 NEP-9
     /// </summary>
     public enum TransactionAttributeUsage : byte
     {

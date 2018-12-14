@@ -19,7 +19,10 @@ namespace Neo.Ledger
         /// 存储大小
         /// </summary>
         public override int Size => base.Size + Items.GetVarSize();
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         UnspentCoinState ICloneable<UnspentCoinState>.Clone()
         {
             return new UnspentCoinState
@@ -38,6 +41,10 @@ namespace Neo.Ledger
             Items = reader.ReadVarBytes().Select(p => (CoinState)p).ToArray();
         }
 
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本</param>
         void ICloneable<UnspentCoinState>.FromReplica(UnspentCoinState replica)
         {
             Items = replica.Items;

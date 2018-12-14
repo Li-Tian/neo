@@ -5,7 +5,7 @@ namespace Neo.Ledger
 {
 
     /// <summary>
-    /// 合约存储元素值
+    /// 合约存储项目的数据结构
     /// </summary>
     public class StorageItem : StateBase, ICloneable<StorageItem>
     {
@@ -23,7 +23,10 @@ namespace Neo.Ledger
         /// 存储大小
         /// </summary>
         public override int Size => base.Size + Value.GetVarSize() + sizeof(bool);
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         StorageItem ICloneable<StorageItem>.Clone()
         {
             return new StorageItem
@@ -44,7 +47,10 @@ namespace Neo.Ledger
             Value = reader.ReadVarBytes();
             IsConstant = reader.ReadBoolean();
         }
-
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本</param>
         void ICloneable<StorageItem>.FromReplica(StorageItem replica)
         {
             Value = replica.Value;

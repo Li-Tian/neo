@@ -30,13 +30,13 @@ namespace Neo.Ledger
         public override int Size => base.Size + PublicKey.Size + sizeof(bool) + Votes.Size;
 
         /// <summary>
-        /// 创建验证人
+        /// 构造函数
         /// </summary>
         public ValidatorState() { }
 
 
         /// <summary>
-        /// 创建验证人
+        /// 构造函数
         /// </summary>
         /// <param name="pubkey">验证人公钥</param>
         public ValidatorState(ECPoint pubkey)
@@ -45,7 +45,10 @@ namespace Neo.Ledger
             this.Registered = false;
             this.Votes = Fixed8.Zero;
         }
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆</returns>
         ValidatorState ICloneable<ValidatorState>.Clone()
         {
             return new ValidatorState
@@ -57,7 +60,7 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 发序列化
+        /// 反序列化
         /// </summary>
         /// <param name="reader">二进制输入流</param>
         public override void Deserialize(BinaryReader reader)
@@ -68,6 +71,10 @@ namespace Neo.Ledger
             Votes = reader.ReadSerializable<Fixed8>();
         }
 
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本</param>
         void ICloneable<ValidatorState>.FromReplica(ValidatorState replica)
         {
             PublicKey = replica.PublicKey;

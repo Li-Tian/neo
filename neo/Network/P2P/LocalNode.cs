@@ -46,7 +46,7 @@ namespace Neo.Network.P2P
         /// </summary>
         public int UnconnectedCount => UnconnectedPeers.Count;
         /// <summary>
-        /// 本地节点的一个随机数
+        /// 本地节点的一个随机数。用来在交换数据时标识节点身份。
         /// </summary>
         public static readonly uint Nonce;
         /// <summary>
@@ -62,11 +62,14 @@ namespace Neo.Network.P2P
         {
             get
             {
+                // TODO 有待改进
                 while (singleton == null) Thread.Sleep(10);
                 return singleton;
             }
         }
-
+        /// <summary>
+        /// 初始化模块
+        /// </summary>
         static LocalNode()
         {
             Random rand = new Random();
@@ -77,6 +80,7 @@ namespace Neo.Network.P2P
         /// 构造函数
         /// </summary>
         /// <param name="system">NeoSystem系统对象</param>
+        /// <exception cref="InvalidOperationException">此对象只允许创建一个实例，创建第二实例时抛出异常</exception>
         public LocalNode(NeoSystem system)
         {
             lock (lockObj)
@@ -161,7 +165,7 @@ namespace Neo.Network.P2P
             return UnconnectedPeers;
         }
         /// <summary>
-        /// 获取更多的种子节点
+        /// 获取更多的节点
         /// 1、当本地节点与其他节点有连接时，会向其请求备用节点列表
         /// 2、当本地节点未与其他节点有连接时，会从配置文件中读取备用节点列表
         /// </summary>
@@ -221,7 +225,7 @@ namespace Neo.Network.P2P
             Connections.Tell(inventory);
         }
         /// <summary>
-        /// 创建一个本地节点对象
+        /// 创建一个本地节点对象。（AKKA框架）
         /// </summary>
         /// <param name="system">NEO系统对象</param>
         /// <returns>本地节点对象</returns>
@@ -235,7 +239,7 @@ namespace Neo.Network.P2P
         /// <param name="connection">一个连接对象</param>
         /// <param name="remote">远端节点的IP和端口</param>
         /// <param name="local">本地节点的IP和端口</param>
-        /// <returns>远端节点对象</returns>
+        /// <returns>远端节点对象的AKKA引用</returns>
         protected override Props ProtocolProps(object connection, IPEndPoint remote, IPEndPoint local)
         {
             return RemoteNode.Props(system, connection, remote, local);
