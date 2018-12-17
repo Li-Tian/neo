@@ -8,7 +8,7 @@ using System.IO;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 执行交易，执行脚本或智能合约
+    /// 执行交易，执行脚本或智能合约。包括部署和执行智能合约
     /// </summary>
     public class InvocationTransaction : Transaction
     {
@@ -33,7 +33,7 @@ namespace Neo.Network.P2P.Payloads
         public override Fixed8 SystemFee => Gas;
 
         /// <summary>
-        /// 创建执行交易
+        /// 构造函数：创建执行交易
         /// </summary>
         public InvocationTransaction()
             : base(TransactionType.InvocationTransaction)
@@ -44,7 +44,15 @@ namespace Neo.Network.P2P.Payloads
         /// 反序列化数据，除了data数据外。
         /// </summary>
         /// <param name="reader">二进制读取流</param>
-        /// <exception cref="System.FormatException">若交易版本大于1，则抛出该异常</exception>
+        /// <exception cref="System.FormatException">
+        /// 1. 若交易版本大于1，则抛出该异常<br/>
+        /// 2. 反序列化的脚本数组长度为0.<br/>
+        /// 3. 指定的执行智能合约的GAS额度小于0.<br/>
+        /// </exception>
+        /// <remarks>
+        /// Version为0时，不指定GAS。默认为0<br/>
+        /// Version为1时，需要指定GAS<br/>
+        /// </remarks>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version > 1) throw new FormatException();
@@ -65,7 +73,11 @@ namespace Neo.Network.P2P.Payloads
         /// 获取GAS消耗
         /// </summary>
         /// <param name="consumed">实际消耗的gas</param>
-        /// <returns>GAS消息等于实际消耗的GAS减去免费的10GAS；若gas消耗小于等于0，则返回0；最后对gas消耗取上整数</returns>
+        /// <returns>
+        /// GAS消息等于实际消耗的GAS减去免费的10GAS；
+        /// 若gas消耗小于等于0，则返回0；
+        /// 最后对gas消耗取上整数
+        /// </returns>
         public static Fixed8 GetGas(Fixed8 consumed)
         {
             Fixed8 gas = consumed - Fixed8.FromDecimal(10);
@@ -97,7 +109,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -109,7 +121,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 校验交易
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <param name="mempool">内存池交易</param>
         /// <returns>
         /// 1. 若消耗的GAS不能整除10^8, 则返回false.（即，GAS必须是整数单位形式的Fixed8，即不能包含有小数的GAS） <br/>

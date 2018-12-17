@@ -19,7 +19,10 @@ namespace Neo.Ledger
         /// 存储大小
         /// </summary>
         public override int Size => base.Size + Hashes.GetVarSize();
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         HeaderHashList ICloneable<HeaderHashList>.Clone()
         {
             return new HeaderHashList
@@ -37,7 +40,10 @@ namespace Neo.Ledger
             base.Deserialize(reader);
             Hashes = reader.ReadSerializableArray<UInt256>();
         }
-
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本对象</param>
         void ICloneable<HeaderHashList>.FromReplica(HeaderHashList replica)
         {
             Hashes = replica.Hashes;

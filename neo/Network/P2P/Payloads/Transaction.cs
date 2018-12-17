@@ -64,9 +64,12 @@ namespace Neo.Network.P2P.Payloads
         public Witness[] Witnesses { get; set; }
 
         private Fixed8 _feePerByte = -Fixed8.Satoshi;
+        // <summary>
+        // The <c>NetworkFee</c> for the transaction divided by its <c>Size</c>.
+        // <para>Note that this property must be used with care. Getting the value of this property multiple times will return the same result. The value of this property can only be obtained after the transaction has been completely built (no longer modified).</para>
+        // </summary>
         /// <summary>
-        /// The <c>NetworkFee</c> for the transaction divided by its <c>Size</c>.
-        /// <para>Note that this property must be used with care. Getting the value of this property multiple times will return the same result. The value of this property can only be obtained after the transaction has been completely built (no longer modified).</para>
+        /// 每字节手续费
         /// </summary>
         public Fixed8 FeePerByte
         {
@@ -94,7 +97,9 @@ namespace Neo.Network.P2P.Payloads
                 return _hash;
             }
         }
-
+        /// <summary>
+        /// 获取InventoryType。
+        /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.TX;
 
         // <summary>
@@ -111,7 +116,7 @@ namespace Neo.Network.P2P.Payloads
         private Fixed8 _network_fee = -Fixed8.Satoshi;
 
         /// <summary>
-        /// 网络手续费。值为交易的Input中的GAS总和减去Output中的GAS总和。
+        /// 网络手续费。值为交易的Input中的GAS总和减去Output中的GAS总和，再减去系统手续费。
         /// </summary>
         public virtual Fixed8 NetworkFee
         {
@@ -178,7 +183,10 @@ namespace Neo.Network.P2P.Payloads
         {
             this.Type = type;
         }
-
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ((IVerifiable)this).DeserializeUnsigned(reader);
@@ -220,7 +228,10 @@ namespace Neo.Network.P2P.Payloads
             transaction.OnDeserialized();
             return transaction;
         }
-
+        /// <summary>
+        /// 反序列化待签名数据
+        /// </summary>
+        /// <param name="reader">二进制输入</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
         {
             if ((TransactionType)reader.ReadByte() != Type)
@@ -268,7 +279,10 @@ namespace Neo.Network.P2P.Payloads
         {
             return Hash.GetHashCode();
         }
-
+        /// <summary>
+        /// 获取哈希数据
+        /// </summary>
+        /// <returns>哈希数据</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
@@ -277,10 +291,13 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 获取验证脚本hash
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
-        /// <returns>包含：1. 交易输入所指向的收款人地址脚本hash，
-        ///                2. 交易属性为script时，包含该Data， 
-        ///                3. 若资产类型包含AssetType.DutyFlag时，包含收款人地址脚本hash</returns>
+        /// <param name="snapshot">数据库快照</param>
+        /// <returns>
+        /// 包含：<br/>
+        /// 1. 交易输入所指向的收款人地址脚本hash，<br/>
+        /// 2. 交易属性为script时，包含该Data，<br/>
+        /// 3. 若资产类型包含AssetType.DutyFlag时，包含收款人地址脚本hash
+        /// </returns>
         /// <exception cref="System.InvalidOperationException">若输入为空或者资产不存在时，抛出该异常</exception>
         public virtual UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
@@ -331,7 +348,10 @@ namespace Neo.Network.P2P.Payloads
         protected virtual void OnDeserialized()
         {
         }
-
+        /// <summary>
+        /// 序列化
+        /// </summary>
+        /// <param name="writer">二进制输出</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             ((IVerifiable)this).SerializeUnsigned(writer);
@@ -344,7 +364,10 @@ namespace Neo.Network.P2P.Payloads
         protected virtual void SerializeExclusiveData(BinaryWriter writer)
         {
         }
-
+        /// <summary>
+        /// 序列化待签名的数据
+        /// </summary>
+        /// <param name="writer">二进制输出</param>
         void IVerifiable.SerializeUnsigned(BinaryWriter writer)
         {
             writer.Write((byte)Type);
@@ -374,7 +397,12 @@ namespace Neo.Network.P2P.Payloads
             json["scripts"] = Witnesses.Select(p => p.ToJson()).ToArray();
             return json;
         }
-
+        /// <summary>
+        /// 通过数据库快照验证交易
+        /// </summary>
+        /// <param name="snapshot">数据库快照</param>
+        /// <returns>验证结果</returns>
+        /// <see cref="Verify(Snapshot, IEnumerable{Transaction})"/>
         bool IInventory.Verify(Snapshot snapshot)
         {
             return Verify(snapshot, Enumerable.Empty<Transaction>());
@@ -383,7 +411,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 校验交易
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <param name="mempool">内存池交易</param>
         /// <returns>
         /// 1. 交易数据大小大于最大交易数据大小时，则返回false
@@ -397,13 +425,13 @@ namespace Neo.Network.P2P.Payloads
         ///    8.1 若当前交易的某个 input 所指向的 output 在过去的交易中不存在时，返回false<br/>
         ///    8.2 若 Input.Asset &gt; Output.Asset 时，且资金种类大于一种时，返回false<br/>
         ///    8.3 若 Input.Asset &gt; Output.Asset 时，资金种类不是GAS时，返回false<br/>
-        ///    8.4 若 交易手续费 大于 Input.GAS - output.GAS 时， 返回false<br/>
+        ///    8.4 若 交易手续费 大于 （Input.GAS - output.GAS） 时， 返回false<br/>
         ///    8.5 若 Input.Asset &lt; Output.Asset 时：
         ///        8.5.1 若交易类型是 MinerTransaction 或 ClaimTransaction，且资产不是 GAS 时，返回false<br/>
         ///        8.5.2 若交易类型时 IssueTransaction时，且资产是GAS时，返回false<br/>
         ///        8.5.3 若是其他交易类型，且存在增发资产时，返回false<br/>
         /// 9. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false <br/>
-        /// 10.若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永正）<br/>
+        /// 10.若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永真）<br/>
         /// 11.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false
         ///</returns>
         public virtual bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
@@ -438,6 +466,7 @@ namespace Neo.Network.P2P.Payloads
             TransactionResult[] results_issue = results.Where(p => p.Amount < Fixed8.Zero).ToArray();
             switch (Type)
             {
+                // TODO 移植到 java 时仔细检查这段逻辑是否正确
                 case TransactionType.MinerTransaction:
                 case TransactionType.ClaimTransaction:
                     if (results_issue.Any(p => p.AssetId != Blockchain.UtilityToken.Hash))

@@ -12,10 +12,10 @@ namespace Neo.Wallets.NEP6
         /// </summary>
         public static ScryptParameters Default { get; } = new ScryptParameters(16384, 8, 8);
         /// <summary>
-        /// ScryptParameters内部的三个参数
-        /// ​ N（CPU/内存消耗指数，一般取值为2的若干次方）：16384
-        ///  P（并行计算参数，理论上取值范围为1-255，参数值越大越依赖于并发计算）：8
-        ///  R（表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽 ）： 8
+        /// ScryptParameters内部的三个参数<br/>
+        /// ​ N（CPU/内存消耗指数，一般取值为2的若干次方）：16384<br/>
+        ///  R（表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽 ）： 8<br/>
+        ///  P（并行计算参数，理论上取值范围为1-255，参数值越大越依赖于并发计算）：8<br/>
         /// </summary>
         public readonly int N, R, P;
         /// <summary>

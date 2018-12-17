@@ -120,8 +120,9 @@ namespace Neo.SmartContract
             return true;
         }
         /// <summary>
-        /// 将签名添加至参数表中，首先判断合约脚本是多签还是单签，
-        /// 如果是多签，则首先获取所有需要签名的地址列表，然后检测是否有需要该用户签名的，如果是，则把签名添加到签名列表中。当所有签名完毕时，对所有签名排序。
+        /// 将签名添加至参数表中，首先判断合约脚本是多签还是单签，<br/>
+        /// 如果是多签，则首先获取所有需要签名的地址列表，然后检测是否有需要该用户签名的，
+        /// 如果是，则把签名添加到签名列表中。当所有签名完毕时，对所有签名排序。<br/>
         /// 如果是单签，则找到参数列表中签名参数所在的下标，将签名 signature 加入到合约的参数变量列表里面。
         /// </summary>
         /// <param name="contract">合约对象</param>
@@ -215,7 +216,9 @@ namespace Neo.SmartContract
         /// </summary>
         /// <param name="json">需要转换的Json对象</param>
         /// <returns>从Json对象转换来的合约参数上下文</returns>
-        /// <exception cref="System.FormatException">json对象中type属性转换成IVerifiable出的结果为false时抛出</exception>
+        /// <exception cref="System.FormatException">
+        /// json对象中type属性转换成IVerifiable出的结果为false时抛出
+        /// </exception>
         public static ContractParametersContext FromJson(JObject json)
         {
             IVerifiable verifiable = typeof(ContractParametersContext).GetTypeInfo().Assembly.CreateInstance(json["type"].AsString()) as IVerifiable;
@@ -254,9 +257,10 @@ namespace Neo.SmartContract
             return item.Parameters;
         }
         /// <summary>
-        /// 获取所有脚本见证人，对每个见证人，分别填充对应的参数和脚本信息。
-        /// 见证人，即脚本执行代码， 分为两段脚本: InvocationScript 执行脚本
-        /// （补充所需要的参数） ， VerificationScript 验证脚本， 具体的执行指令。
+        /// 获取所有脚本见证人。对每个见证人，分别填充对应的参数和脚本信息。<br/>
+        /// 见证人，即脚本执行代码， 分为两段脚本: <br/>
+        /// InvocationScript 执行脚本（补充所需要的参数）<br/>
+        /// VerificationScript 验证脚本， 具体的执行指令。
         /// </summary>
         /// <returns>填充完成的所有脚本见证人</returns>
         /// <exception cref="System.InvalidOperationException">脚本未完全执行成功时抛出</exception>
@@ -283,9 +287,9 @@ namespace Neo.SmartContract
             return witnesses;
         }
         /// <summary>
-        /// 从字符串中解析合约参数上下文
+        /// 从字符串中按照JSON格式解析合约参数上下文
         /// </summary>
-        /// <param name="value">需要解析的字符串</param>
+        /// <param name="value">需要解析的JSON格式的字符串</param>
         /// <returns>解析出来的合约参数上下文</returns>
         public static ContractParametersContext Parse(string value)
         {

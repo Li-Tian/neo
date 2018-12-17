@@ -22,7 +22,7 @@ namespace Neo.Cryptography
         public override int HashSize => 160;
 
         /// <summary>
-        /// 默认构造函数, 将chaining values 设置位初始值 , 初始化数组.
+        /// 默认构造函数, 设置初始值, 初始化数组.
         /// </summary>
         public RIPEMD160Managed()
         {
@@ -34,7 +34,7 @@ namespace Neo.Cryptography
         }
 
         /// <summary>
-        /// 初始化函数. 将chaining values 设置位初始值 和 将当前对象中的_blockDWords 和 buffer清零.
+        /// 初始化函数. 设置初始值和将当前对象中的_blockDWords 和 buffer清零.
         /// </summary>
         public override void Initialize()
         {

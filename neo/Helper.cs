@@ -12,7 +12,7 @@ using System.Text;
 namespace Neo
 {   
     /// <summary>
-    ///Neo的工具类
+    /// Neo的工具类
     /// </summary>
     public static class Helper
     {
@@ -155,14 +155,14 @@ namespace Neo
         }
 
         /// <summary>
-        /// 传入一个实现了IEnumerable接口的任意Tsource泛型对象集合，
-        /// 和一个能够将Tsource转化为Fixed8对象的转换函数, 将集合中
+        /// 传入一个实现了IEnumerable接口的任意TSource泛型对象集合，
+        /// 和一个能够将TSource转化为Fixed8对象的转换函数, 将集合中
         /// 每个Tsource元素转换成Fixed8对象，然后求和后返回.
         /// </summary>
         /// <typeparam name="TSource">该方法所需要处理的数值表达式类型</typeparam>
         /// <param name="source">一个包含多个TSource对象,实现了IEnumerable接口的集合</param>
-        /// <param name="selector">转换方法,能够将source中的每个Tsource对象转化为Fixed8对象</param>
-        /// <returns>集合中所有对象的和</returns>
+        /// <param name="selector">转换方法,能够将source中的每个TSource对象转化为Fixed8对象</param>
+        /// <returns>集合中所有对象经过转换后的值的和</returns>
         public static Fixed8 Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, Fixed8> selector)
         {
             return source.Select(selector).Sum();
@@ -194,9 +194,9 @@ namespace Neo
         }
 
         /// <summary>
-        /// 将一个Byts集合转化成十六进制表达的字符串
+        /// 将一个字节序列转化成十六进制表达的字符串
         /// </summary>
-        /// <param name="value">一个实现了IEnumerable接口的Bytes集合</param>
+        /// <param name="value">一个实现了IEnumerable接口的字节序列</param>
         /// <returns>转换后的十六进制字符串</returns>
         public static string ToHexString(this IEnumerable<byte> value)
         {
@@ -228,7 +228,7 @@ namespace Neo
         /// 将一个时间Datetime转化为时间戳
         /// </summary>
         /// <param name="time">需要被转化的DateTime对象</param>
-        /// <returns>以uint表示的时间戳</returns>
+        /// <returns>以uint表示的时间戳。自epoch开始的秒数。</returns>
         public static uint ToTimestamp(this DateTime time)
         {
             return (uint)(time.ToUniversalTime() - unixEpoch).TotalSeconds;

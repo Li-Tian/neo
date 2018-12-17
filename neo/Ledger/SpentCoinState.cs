@@ -20,7 +20,8 @@ namespace Neo.Ledger
         public uint TransactionHeight;
 
         /// <summary>
-        ///  已花费的outputs高度信息, output.index -> 花费该output的block.Index
+        ///  已花费的outputs高度信息, 
+        ///  output.index -> 花费该output的block.Index
         /// </summary>
         public Dictionary<ushort, uint> Items;
 
@@ -29,7 +30,10 @@ namespace Neo.Ledger
         /// </summary>
         public override int Size => base.Size + TransactionHash.Size + sizeof(uint)
             + IO.Helper.GetVarSize(Items.Count) + Items.Count * (sizeof(ushort) + sizeof(uint));
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         SpentCoinState ICloneable<SpentCoinState>.Clone()
         {
             return new SpentCoinState
@@ -59,6 +63,10 @@ namespace Neo.Ledger
             }
         }
 
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本数据</param>
         void ICloneable<SpentCoinState>.FromReplica(SpentCoinState replica)
         {
             TransactionHash = replica.TransactionHash;

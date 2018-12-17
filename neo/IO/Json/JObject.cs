@@ -47,7 +47,8 @@ namespace Neo.IO.Json
             throw new InvalidCastException();
         }
         /// <summary>
-        /// 将JObject对象转换成bool类型数据，默认返回布尔值类型参数。子类如需重写该方法，需要同时重写CanConvertTo和AsBoolean方法
+        /// 将JObject对象转换成bool类型数据，默认返回布尔值类型参数。
+        /// 子类如需重写该方法，需要同时重写CanConvertTo和AsBoolean方法
         /// </summary>
         /// <param name="value">默认布尔值类型参数</param>
         /// <returns>返回默认布尔值类型参数</returns>
@@ -58,10 +59,11 @@ namespace Neo.IO.Json
             return AsBoolean();
         }
         /// <summary>
-        /// 将JObject对象转换成泛型枚举对象，默认会抛出类型转换异常
+        /// 将JObject对象转换成泛型枚举对象，默认会抛出类型转换异常。
+        /// 具体行为在子类中定义。
         /// </summary>
         /// <typeparam name="T">泛型枚举对象的类型参数</typeparam>
-        /// <param name="ignoreCase">保留</param>
+        /// <param name="ignoreCase">忽略大小写（保留）</param>
         /// <returns>输出JObject对象转换成泛型枚举对象，默认无返回</returns>
         /// <exception cref="System.InvalidCastException">默认抛出</exception>
         public virtual T AsEnum<T>(bool ignoreCase = false)
@@ -70,11 +72,12 @@ namespace Neo.IO.Json
         }
 
         /// <summary>
-        /// 将JObject转换成泛型枚举类型对象，默认返回默认泛型枚举类型参数。子类如需重写该方法，需要同时重写CanConvertTo和AsBoolean方法
+        /// 将JObject转换成泛型枚举类型对象，默认返回默认泛型枚举类型参数。
+        /// 子类如需重写该方法，需要同时重写CanConvertTo和AsBoolean方法
         /// </summary>
         /// <typeparam name="T">泛型具体类型</typeparam>
         /// <param name="value">默认泛型枚举类型参数</param>
-        /// <param name="ignoreCase">忽略类型标志位</param>
+        /// <param name="ignoreCase">忽略大小写</param>
         /// <returns>输出JObject对象转换成泛型枚举对象，默认返回默认泛型枚举类型参数</returns>
         public T AsEnumOrDefault<T>(T value = default(T), bool ignoreCase = false)
         {
@@ -83,7 +86,8 @@ namespace Neo.IO.Json
             return AsEnum<T>(ignoreCase);
         }
         /// <summary>
-        /// 将JObject对象转换成double类型数据，默认会抛出类型转换异常
+        /// 将JObject对象转换成double类型数据，默认会抛出类型转换异常。
+        /// 子类需要覆盖此方法，否则抛出异常。
         /// </summary>
         /// <returns>输出JObject对象转换成double类型数据，默认无返回</returns>
         /// <exception cref="System.InvalidCastException">默认抛出</exception>
@@ -92,7 +96,8 @@ namespace Neo.IO.Json
             throw new InvalidCastException();
         }
         /// <summary>
-        /// 将JObject对象转换成double类型数据，默认返回默认double类型参数。子类同时重写CanConvertTo和AsNumber方法。
+        /// 将JObject对象转换成double类型数据，默认返回默认double类型参数。
+        /// 子类同时重写CanConvertTo和AsNumber方法。
         /// </summary>
         /// <param name="value">默认double类型参数</param>
         /// <returns>输出JObject对象转换成的double类型数据，默认返回默认double类型参数</returns>

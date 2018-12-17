@@ -29,7 +29,6 @@ namespace Neo.IO
         }
         /// <summary>
         /// 将2进制数据流反序列化出一个指定数据类型的可序列化对象，
-        /// 同时判定指定数据类型是否实现了序列化接口
         /// </summary>
         /// <param name="value">2进制数据流</param>
         /// <param name="type">指定数据类型</param>
@@ -108,17 +107,18 @@ namespace Neo.IO
             return GetVarSize(size) + size;
         }
         /// <summary>
-        /// 从2进制读取器读取分组后的数据，并按分组规则恢复分组前数据后输出
-        /// 分组规则：
-        /// 1、读取16字节数据，再读取一字节数据表示0x00的补充个数
-        /// 2、去除16字节数据中补充的0
-        /// 3、循环步骤1、2，直到数据全部读完后，输出恢复后的数据
+        /// 从2进制读取器读取分组后的数据，并按分组规则恢复分组前数据后输出<br/>
+        /// 分组规则：<br/>
+        /// 1、读取16字节数据，再读取一字节数据表示0x00的补充个数<br/>
+        /// 2、去除16字节数据中补充的0<br/>
+        /// 3、循环步骤1、2，直到数据全部读完后，输出恢复后的数据<br/>
         /// </summary>
         /// <param name="reader">2进制读取器</param>
         /// <returns>恢复后的数据</returns>
         /// <exception cref="System.FormatException">数据无法按分组规则恢复时抛出</exception>
         public static byte[] ReadBytesWithGrouping(this BinaryReader reader)
         {
+            // TODO 此方法在参数 value 的长度正好是16的整数倍时能否正常工作。需要测试。
             const int GROUP_SIZE = 16;
             using (MemoryStream ms = new MemoryStream())
             {
@@ -187,12 +187,12 @@ namespace Neo.IO
             return reader.ReadBytes((int)reader.ReadVarInt((ulong)max));
         }
         /// <summary>
-        /// 从2进制读取器中读取一个限定大小的长整型数据
+        /// 从2进制读取器中读取一个限定大小的变长数据，并转换为ulong。
         /// </summary>
         /// <param name="reader">2进制读取器</param>
         /// <param name="max">最大可读取数</param>
-        /// <returns>读取的长整型数据</returns>
-        /// <exception cref="System.FormatException">读取的长整型数据的数值大于最大可读取数时抛出</exception>
+        /// <returns>读取的数据</returns>
+        /// <exception cref="System.FormatException">读取的数据的数值大于最大可读取数时抛出</exception>
         public static ulong ReadVarInt(this BinaryReader reader, ulong max = ulong.MaxValue)
         {
             byte fb = reader.ReadByte();
@@ -209,7 +209,7 @@ namespace Neo.IO
             return value;
         }
         /// <summary>
-        /// 从2进制读取器中读取一个限定长度的字符串数据
+        /// 从2进制读取器中读取一个限定长度的字节数组，并按照 UTF8 编码转换成字符串。
         /// </summary>
         /// <param name="reader">2进制读取器</param>
         /// <param name="max">限定长度</param>
@@ -273,12 +273,12 @@ namespace Neo.IO
             }
         }
         /// <summary>
-        /// 将字节数组数据按分组规则分组后输出
-        /// 分组规则执行步骤：
-        /// 1、取字节数组中16个字节数据输出，并在之后输出1个0x00
-        /// 2、循环步骤1，直到字节数组中未输出数据不足16个字节时，计算16-未输出数据字节个数的差值padding。
-        /// 3、将字节数组中未输出数据输出，并在其之后输出padding个0x00
-        /// 4、最后输出1字节等于padding数值的数据
+        /// 将字节数组数据按分组规则分组后输出<br/>
+        /// 分组规则执行步骤：<br/>
+        /// 1、取字节数组中16个字节数据输出，并在之后输出1个0x00<br/>
+        /// 2、循环步骤1，直到字节数组中未输出数据不足16个字节时，计算16-待输出数据字节个数的差值padding。<br/>
+        /// 3、将字节数组中待输出数据输出，并在其之后输出padding个0x00<br/>
+        /// 4、最后输出1字节等于padding数值的数据<br/>
         /// </summary>
         /// <param name="writer">2进制输出器</param>
         /// <param name="value">字节数组数据</param>
@@ -302,7 +302,7 @@ namespace Neo.IO
             writer.Write((byte)padding);
         }
         /// <summary>
-        /// 将字符串按限定长度序列化输出，不足固定长度的数据会在之后补0x00.
+        /// 将字符串按 UTF 编码格式转换成字节数组，然后输出到 writer。不足指定长度时在之后补0x00.
         /// </summary>
         /// <param name="writer">2进制输出器</param>
         /// <param name="value">字符串数据</param>
@@ -332,11 +332,11 @@ namespace Neo.IO
             writer.Write(value);
         }
         /// <summary>
-        /// 将长整形数据按一定的格式序列化输出
-        /// 输出格式为：
-        /// 1）value小于0xFD，用一个字节的形式输出
-        /// 2）value小于等于0xFFFF，用0xFD+字节数组的形式输出
-        /// 3）value小于等于0xFFFFFFFF，用0xFE+字节数组的形式输出
+        /// 将长整形数据按可变长整数的格式序列化输出<br/>
+        /// 输出格式为：<br/>
+        /// 1）value小于0xFD，用一个字节的形式输出<br/>
+        /// 2）value小于等于0xFFFF，用0xFD+字节数组的形式输出<br/>
+        /// 3）value小于等于0xFFFFFFFF，用0xFE+字节数组的形式输出<br/>
         /// 4) 其他情况，用0xFF+字节数组的形式输出
         /// </summary>
         /// <param name="writer">2进制输出器</param>
@@ -367,7 +367,7 @@ namespace Neo.IO
             }
         }
         /// <summary>
-        /// 将字符串序列化输出
+        /// 将字符串按照 UTF8编码成字节数组，然后序列化输出
         /// </summary>
         /// <param name="writer">二进制输出器</param>
         /// <param name="value">待序列化的字符串</param>

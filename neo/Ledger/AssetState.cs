@@ -80,7 +80,7 @@ namespace Neo.Ledger
         public UInt160 Issuer;
 
         /// <summary>
-        /// 资产过期时间
+        /// 资产过期时间（允许上链的最后区块高度）
         /// </summary>
         public uint Expiration;
 
@@ -94,6 +94,10 @@ namespace Neo.Ledger
         /// </summary>
         public override int Size => base.Size + AssetId.Size + sizeof(AssetType) + Name.GetVarSize() + Amount.Size + Available.Size + sizeof(byte) + sizeof(byte) + Fee.Size + FeeAddress.Size + Owner.Size + Admin.Size + Issuer.Size + sizeof(uint) + sizeof(bool);
 
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         AssetState ICloneable<AssetState>.Clone()
         {
             return new AssetState
@@ -140,7 +144,7 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 将当前资产拷贝一份.
+        /// 从指定参数的副本复制信息到将当前资产.
         /// </summary>
         /// <param name="replica">资产的拷贝副本</param>
         void ICloneable<AssetState>.FromReplica(AssetState replica)
@@ -292,9 +296,9 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 将这个AsseetState转成json对象返回
+        /// 将这个AssetState转成json对象返回
         /// </summary>
-        /// <returns>转换好的Sjson对象</returns>
+        /// <returns>转换好的json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

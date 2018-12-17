@@ -35,14 +35,20 @@ namespace Neo.Network.P2P.Payloads
                 AddressList = addresses
             };
         }
-
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             AddressList = reader.ReadSerializableArray<NetworkAddressWithTime>(MaxCountToSend);
             if (AddressList.Length == 0)
                 throw new FormatException();
         }
-
+        /// <summary>
+        /// 序列化
+        /// </summary>
+        /// <param name="writer">二进制输出</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(AddressList);

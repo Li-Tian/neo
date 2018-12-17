@@ -64,20 +64,20 @@ namespace Neo
         }
 
         /// <summary>
-        /// 返回等于这个数或者比这个数大的最小单位的Fixed8.
+        /// 返回不小于这个数的最小整数的Fixed8.
         /// <list type="bullet">
         /// <item>
         /// <description>如果余数等于0， 直接返回该数本身</description>
         /// </item>
         /// <item>
-        /// <description>如果余数大于0，将数值减去余数并加上基数D，得到比这个数大的最小单位的Fixed8</description>
+        /// <description>如果余数大于0，将数值减去余数并加上基数D，得到比这个数大的最小整数的Fixed8</description>
         /// </item>
         /// <item>
-        /// <description>如果余数小于0，将数值减去余数D，得到比这个数大的最小单位的Fixed8</description>
+        /// <description>如果余数小于0，将数值减去余数D，得到比这个数大的最小整数的Fixed8</description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <returns>返回等于或者大于这个数的最小单位的Fixed8值，并且用Fixed8对象返回</returns>
+        /// <returns>返回不小于这个数的最小整数的Fixed8值</returns>
         public Fixed8 Ceiling()
         {
             long remainder = value % D;
@@ -98,7 +98,7 @@ namespace Neo
         /// 比较两个Fixed8对象的数值
         /// </summary>
         /// <param name="other">另一个被比较的Fixed8格式的数</param>
-        /// <returns>返回0如果两个数相等. 如果这个Fixed8数小于参数other返回一个负数, 如果这个Fixed8数大于参数other返回一个正数</returns>
+        /// <returns>返回0如果两个数相等. 如果这个Fixed8数小于参数other则返回一个负数, 如果这个Fixed8数大于参数other则返回一个正数</returns>
         public int CompareTo(Fixed8 other)
         {
             return value.CompareTo(other.value);
@@ -138,7 +138,7 @@ namespace Neo
         /// <summary>
         /// 从一个decimal数转化为一个Fixed8对象
         /// </summary>
-        /// <param name="value">被转换的小数</param>
+        /// <param name="value">被转换的数</param>
         /// <exception cref="OverflowException">如果这个数太大或者太小,不能转换成Fixed对象</exception>
         /// <returns>转换后的Fixed8对象</returns>
         public static Fixed8 FromDecimal(decimal value)
@@ -153,7 +153,7 @@ namespace Neo
         }
 
         /// <summary>
-        /// 返回这个Fixed8中的有效数值
+        /// 返回这个Fixed8中的有效数 value 的值
         /// </summary>
         /// <returns>Fixed8对象中的有效数值</returns>
         public long GetData() => value;
@@ -210,7 +210,7 @@ namespace Neo
         }
 
         /// <summary>
-        /// 将这个Fixed8对象的有效值序列化写入文件流
+        /// 将这个Fixed8对象的有效值序列化写入流
         /// </summary>
         /// <param name="writer">用于写入字节流</param>
         void ISerializable.Serialize(BinaryWriter writer)
@@ -219,7 +219,7 @@ namespace Neo
         }
 
         /// <summary>
-        /// 将这个Fixed8以<c>CultureInfo.InvariantCulture</c>格式转换成字符串
+        /// 将这个Fixed8以 C# <c>CultureInfo.InvariantCulture</c>格式转换成字符串
         /// </summary>
         /// <returns>转换后的字符串</returns>
         public override string ToString()
@@ -341,7 +341,7 @@ namespace Neo
         }
 
         /// <summary>
-        /// <c>&gt;=</c>操作符,比较第一个Fixed对象是否大于第二个Fixed8对象
+        /// <c>&gt;=</c>操作符,比较第一个Fixed对象是否大于等于第二个Fixed8对象
         /// </summary>
         /// <param name="x">第一个Fixed8对象</param>
         /// <param name="y">第二个Fixed8对象</param>
@@ -352,7 +352,7 @@ namespace Neo
         }
 
         /// <summary>
-        /// <c>&lt;=</c>操作符,比较第一个Fixed对象是否大于第二个Fixed8对象
+        /// <c>&lt;=</c>操作符,比较第一个Fixed对象是否小于等于第二个Fixed8对象
         /// </summary>
         /// <param name="x">第一个Fixed8对象</param>
         /// <param name="y">第二个Fixed8对象</param>

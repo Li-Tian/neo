@@ -34,7 +34,7 @@ namespace Neo.Network.P2P
         /// <summary>
         /// 构造方法
         /// </summary>
-        /// <param name="connection">一个TCP连接对象</param>
+        /// <param name="connection">一个TCP/IP连接对象或一个WebSocket连接对象</param>
         /// <param name="remote">远端节点的IP和端口</param>
         /// <param name="local">本地节点的IP和端口</param>
         protected Connection(object connection, IPEndPoint remote, IPEndPoint local)
@@ -103,12 +103,12 @@ namespace Neo.Network.P2P
         /// <param name="data">从网络上的接收到的数据</param>
         protected abstract void OnData(ByteString data);
         /// <summary>
-        /// 接收到Akka框架传递的消息时的处理方法
-        /// 主要处理的消息类型有：
-        /// 1、超时
-        /// 2、TCP的ACK回应
-        /// 3、接收到TCP数据
-        /// 4、TCP连接关闭
+        /// 接收到Akka框架传递的消息时的处理方法<br/>
+        /// 主要处理的消息类型有：<br/>
+        /// 1、超时<br/>
+        /// 2、TCP的ACK回应<br/>
+        /// 3、接收到TCP数据<br/>
+        /// 4、TCP连接关闭<br/>
         /// </summary>
         /// <param name="message">Akka框架传递的消息</param>
         protected override void OnReceive(object message)
@@ -144,7 +144,7 @@ namespace Neo.Network.P2P
             }
         }
         /// <summary>
-        /// 停止连接和数据发送
+        /// 停止连接和数据发送。AKKA框架的方法
         /// </summary>
         protected override void PostStop()
         {

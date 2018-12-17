@@ -21,8 +21,14 @@ namespace Neo.Ledger
         /// </summary>
         public byte[] Key;
 
+        /// <summary>
+        /// 序列化的字节大小
+        /// </summary>
         int ISerializable.Size => ScriptHash.Size + (Key.Length / 16 + 1) * 17;
-
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader"></param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ScriptHash = reader.ReadSerializable<UInt160>();
@@ -30,10 +36,11 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 比较两个合约存储的键是否相等
+        /// 比较两个合约存储的键是否相等。
         /// </summary>
         /// <param name="other">待对比的智能合约存储键</param>
         /// <returns>是否相等</returns>
+        /// <remarks>合约脚本相等且键值相等。</remarks>
         public bool Equals(StorageKey other)
         {
             if (other is null)
@@ -65,7 +72,10 @@ namespace Neo.Ledger
             return ScriptHash.GetHashCode() + (int)Key.Murmur32(0);
         }
 
-
+        /// <summary>
+        /// 序列化
+        /// </summary>
+        /// <param name="writer">输出</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(ScriptHash);

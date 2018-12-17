@@ -50,8 +50,8 @@ namespace Neo.Wallets
         /// <returns>存在，返回true,否则返回false</returns>
         public abstract bool Contains(UInt160 scriptHash);
         /// <summary>
-        /// 利用私钥创建钱包账户
-        /// 这是个抽象方法
+        /// 利用私钥创建钱包账户。
+        /// 这是个抽象方法。
         /// </summary>
         /// <param name="privateKey">私钥</param>
         /// <returns>生成的钱包账户对象</returns>
@@ -60,7 +60,7 @@ namespace Neo.Wallets
         /// 利用合约对象和密钥对创建钱包账户
         /// </summary>
         /// <param name="contract">合约对象</param>
-        /// <param name="key">密钥对</param>
+        /// <param name="key">密钥对。不指定时生成监视地址。</param>
         /// <returns>生成的钱包账户对象</returns>
         public abstract WalletAccount CreateAccount(Contract contract, KeyPair key = null);
         /// <summary>
@@ -71,14 +71,12 @@ namespace Neo.Wallets
         public abstract WalletAccount CreateAccount(UInt160 scriptHash);
         /// <summary>
         /// 根据脚本哈希删除钱包内对应的账户对象
-        /// 这是个抽象方法
         /// </summary>
         /// <param name="scriptHash">指定账户的脚本哈希</param>
         /// <returns>删除成功返回true,否则返回false</returns>
         public abstract bool DeleteAccount(UInt160 scriptHash);
         /// <summary>
         /// 根据脚本哈希获取钱包内对应的账户对象
-        /// 这是个抽象方法
         /// </summary>
         /// <param name="scriptHash">指定账户的脚本哈希</param>
         /// <returns>获取的钱包账户对象</returns>
@@ -126,7 +124,7 @@ namespace Neo.Wallets
             return CreateAccount(contract, new KeyPair(privateKey));
         }
         /// <summary>
-        /// 回收方法，保留
+        /// 回收方法
         /// </summary>
         public virtual void Dispose()
         {

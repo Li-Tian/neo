@@ -20,7 +20,7 @@ namespace Neo.Cryptography
         private uint hash;
         private int length;
         /// <summary>
-        /// 获得哈希值的长度
+        /// 获得哈希值的长度。固定值32
         /// </summary>
         public override int HashSize => 32;
         /// <summary>
@@ -34,7 +34,7 @@ namespace Neo.Cryptography
         }
 
         /// <summary>
-        /// Murmur3算法的计算部分
+        /// Murmur3算法的计算部分（保留）
         /// </summary>
         /// <param name="array">被哈希的数据</param>
         /// <param name="ibStart">开始的字节位</param>

@@ -60,9 +60,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 将byte泛型的枚举数据添加到构建器中
+        /// 将字节序列数据添加到构建器中
         /// </summary>
-        /// <param name="value">需要添加的byte泛型的枚举数据</param>
+        /// <param name="value">需要添加的字节序列数据</param>
         /// <returns>当前的切片构建器</returns>
         public SliceBuilder Add(IEnumerable<byte> value)
         {
@@ -95,7 +95,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 无参的构造器创建
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Slice构造器</returns>
         public static SliceBuilder Begin()
         {
             return new SliceBuilder();
@@ -113,9 +113,9 @@ namespace Neo.IO.Data.LevelDB
 
 
         /// <summary>
-        /// 将切片构造器转成切片
+        /// 将Slice构造器转成Slice对象
         /// </summary>
-        /// <param name="value">切片构造器</param>
+        /// <param name="value">Slice构造器</param>
         public static implicit operator Slice(SliceBuilder value)
         {
             return value.data.ToArray();

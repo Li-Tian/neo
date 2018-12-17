@@ -6,17 +6,17 @@ using System.IO;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// 交易输入
+    /// 交易引用
     /// </summary>
     public class CoinReference : IEquatable<CoinReference>, ISerializable
     {
         /// <summary>
-        /// 交易输入指向的上一笔交易的hash值
+        /// 指向的UTXO所在的交易的hash值
         /// </summary>
         public UInt256 PrevHash;
 
         /// <summary>
-        /// 交易输入指向的上一笔交易的第几个output
+        /// 指向的UTXO所在的交易的output的位置。从0开始。
         /// </summary>
         public ushort PrevIndex;
 
@@ -24,7 +24,10 @@ namespace Neo.Network.P2P.Payloads
         /// 存储大小
         /// </summary>
         public int Size => PrevHash.Size + sizeof(ushort);
-
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             PrevHash = reader.ReadSerializable<UInt256>();
@@ -36,7 +39,10 @@ namespace Neo.Network.P2P.Payloads
         /// 判断两个交易输入是否相等
         /// </summary>
         /// <param name="other">待比较的交易输入</param>
-        /// <returns>若待比较交易为null, 则返回false</returns>
+        /// <returns>
+        /// 若待比较交易为null, 则返回false。
+        /// 否则按所指向的交易哈希和所指向的交易的output index比较
+        /// </returns>
         public bool Equals(CoinReference other)
         {
             if (ReferenceEquals(this, other)) return true;
@@ -48,7 +54,10 @@ namespace Neo.Network.P2P.Payloads
         /// 判断交易与该对象是否相等
         /// </summary>
         /// <param name="obj">待比较对象</param>
-        /// <returns>若待比较对象为null 或 不是CoinReference， 则返回false</returns>
+        /// <returns>
+        /// 若待比较对象为null 或 不是CoinReference， 则返回false
+        /// 否则按照 public bool Equals(CoinReference other) 方法比较
+        /// </returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj)) return true;
@@ -65,7 +74,10 @@ namespace Neo.Network.P2P.Payloads
         {
             return PrevHash.GetHashCode() + PrevIndex.GetHashCode();
         }
-
+        /// <summary>
+        /// 序列化
+        /// </summary>
+        /// <param name="writer">二进制输出</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(PrevHash);

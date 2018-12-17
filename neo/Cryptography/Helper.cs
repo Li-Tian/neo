@@ -75,12 +75,12 @@ namespace Neo.Cryptography
             }
         }
         /// <summary>
-        /// 将一个Based58Check编码的字符串解码为字节数组
-        /// 解码步骤：
-        /// 1、把输入的字符串做 Base58 解码，得到 byte[] 数据。
-        /// 2、取 byte[] 数据收字节到倒数第4字节前的所有数据 byte[] 称作 data。
+        /// 将一个Based58Check编码的字符串解码为字节数组<br/>
+        /// 解码步骤：<br/>
+        /// 1、把输入的字符串做 Base58 解码，得到 byte[] 数据。<br/>
+        /// 2、取 byte[] 数据收字节到倒数第4字节前的所有数据 byte[] 称作 data。<br/>
         /// 3、把 data 做两次 sha256 得到的哈希值的前4字节作为版本前缀 checksum，
-        /// 与 byte[] 数据的后4字节比较是否相同，相同则返回data, 否则判定为数据无效。
+        /// 与 byte[] 数据的后4字节比较是否相同，相同则返回data, 否则判定为数据无效。<br/>
         /// </summary>
         /// <param name="input">被解码的字符串</param>
         /// <returns>解码后的字节数组</returns>
@@ -96,10 +96,10 @@ namespace Neo.Cryptography
         }
 
         /// <summary>
-        /// 将一个字节数组经过Based58Check编码后返回其字符串
-        /// 编码步骤：
+        /// 将一个字节数组经过Based58Check编码后返回其字符串<br/>
+        /// 编码步骤：<br/>
         /// 1、通过对原 byte[] 数据做两次 sha256 得到原数据的哈希，
-        ///    取其前4字节作为版本前缀checksum，添加到原 byte[] 数据的末尾。
+        ///    取其前4字节作为版本前缀checksum，添加到原 byte[] 数据的末尾。<br/>
         /// 2、把添加了版本前缀的 byte[] 数据做 Base58 编码得到对应的字符串。
         /// </summary>
         /// <param name="data">需要用Based58Check编码的字节数组</param>
@@ -129,7 +129,7 @@ namespace Neo.Cryptography
         /// 使用Murmur3算法的哈希函数来对一个字节集合进行哈希加密处理,产生一个32-bit哈希值
         /// </summary>
         /// <param name="value">被哈希函数处理的字节集合</param>
-        /// <param name="seed"> Murmur3中用到的一个随机的种子数， 用来防止HshDos攻击a[</param>
+        /// <param name="seed"> Murmur3中用到的一个随机的种子数， 用来防止HashDos攻击(*)确认</param>
         /// <returns>Murmur3函数处理过后的字节数组</returns>   
         public static uint Murmur32(this IEnumerable<byte> value, uint seed)
         {
@@ -140,18 +140,18 @@ namespace Neo.Cryptography
         }
 
         /// <summary>
-        /// 使用Sha256算法的哈希函数来对一个字节集合进行哈希加密处理
+        /// 使用Sha256算法的哈希函数来对一个字节序列进行哈希加密处理
         /// </summary>
-        /// <param name="value">被哈希函数处理的字节集合</param>
+        /// <param name="value">被哈希函数处理的字节序列</param>
         /// <returns>Sha256函数处理过后的字节数组</returns>
         public static byte[] Sha256(this IEnumerable<byte> value)
         {
             return _sha256.Value.ComputeHash(value.ToArray());
         }
         /// <summary>
-        /// 使用Sha256算法的哈希函数来对一个字节集合的一部分数据进行哈希加密处理
+        /// 使用Sha256算法的哈希函数来对一个字节数组的一部分数据进行哈希加密处理
         /// </summary>
-        /// <param name="value">被哈希函数处理的字节集合</param>
+        /// <param name="value">被哈希函数处理的字节数组</param>
         /// <param name="offset">字节数组中被取出做哈希处理的开始字节位置</param>
         /// <param name="count">字节数组中取出来做哈希加密部分的字节大小</param>
         /// <returns>Sha256函数处理过后的字节数组</returns>

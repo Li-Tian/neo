@@ -10,7 +10,7 @@ namespace Neo.IO.Data.LevelDB
     public static class Helper
     {
         /// <summary>
-        /// 批量删除Key
+        /// 向批处理中添加删除Key的行为
         /// </summary>
         /// <param name="batch">批量操作</param>
         /// <param name="prefix">待删除前缀</param>
@@ -89,7 +89,7 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 批量写入键值
+        /// 向批处理中添加写入键值的行为
         /// </summary>
         /// <param name="batch">批量操作</param>
         /// <param name="prefix">前缀</param>

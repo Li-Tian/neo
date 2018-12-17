@@ -14,19 +14,19 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         public uint Version;
         /// <summary>
-        /// 节点功能的描述符
+        /// 节点功能的描述符。固定值1
         /// </summary>
         public ulong Services;
         /// <summary>
-        /// 时间戳
+        /// 时间戳。自 epoch 开始的秒数。
         /// </summary>
         public uint Timestamp;
         /// <summary>
-        /// 接收端的监听端口
+        /// 服务监听端口
         /// </summary>
         public ushort Port;
         /// <summary>
-        /// 发送端的一个随机数
+        /// 代表LocalNode的一个随机数
         /// </summary>
         public uint Nonce;
         /// <summary>
@@ -38,7 +38,7 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         public uint StartHeight;
         /// <summary>
-        /// 是否具有转发功能
+        /// 是否具有转发功能。默认为true
         /// </summary>
         public bool Relay;
         /// <summary>

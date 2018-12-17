@@ -11,6 +11,7 @@ namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
     /// P2p consensus message payload
+    /// 共识消息传输数据包（包装具体的共识消息. p2p广播时，将存放在Inventory消息的payload中）
     /// </summary>
     public class ConsensusPayload : IInventory
     {
@@ -31,6 +32,7 @@ namespace Neo.Network.P2P.Payloads
 
         /// <summary>
         /// The sender(the Speaker or Delegates) index in the validators array
+        /// 议长的共识节点编号
         /// </summary>
         public ushort ValidatorIndex;
 
@@ -68,6 +70,7 @@ namespace Neo.Network.P2P.Payloads
 
         /// <summary>
         /// P2p inventory message type, equals to InventoryType.Consensus
+        /// Inventory类型， InventoryType.Consensus
         /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.Consensus;
 
@@ -105,9 +108,9 @@ namespace Neo.Network.P2P.Payloads
 
         /// <summary>
         /// Deserialize from the reader of the unsigned binary data without the witness field
-        /// 序列化未签名数据
+        /// 反序列化待签名数据
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">BinaryReader input</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
         {
             Version = reader.ReadUInt32();
@@ -119,9 +122,9 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// Script message = GetHashData()
+        /// 获取原始的哈希数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns>原始的哈希数据</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
@@ -129,9 +132,10 @@ namespace Neo.Network.P2P.Payloads
 
         /// <summary>
         /// Get the verification scripts' hashes
+        /// 获取议长公钥的签名脚本
         /// </summary>
-        /// <param name="snapshot"></param>
-        /// <returns> the script hash of the sender's signing contract</returns>
+        /// <param name="snapshot">数据库快照</param>
+        /// <returns>The script hash of the sender's signing contract</returns>
         UInt160[] IVerifiable.GetScriptHashesForVerifying(Snapshot snapshot)
         {
             ECPoint[] validators = snapshot.GetValidators();
@@ -187,6 +191,7 @@ namespace Neo.Network.P2P.Payloads
 
         /// <summary>
         /// Serialize the unsigned message. It includes the fields as follows:
+        /// 序列化待签名数据
         /// <list type="bullet">
         /// <item>
         /// <term>Version</term>
@@ -231,10 +236,10 @@ namespace Neo.Network.P2P.Payloads
         /// Verify this payload
         /// </summary>
         /// <remarks>
-        /// 1) Check if BlockIndex is more than the snapshot.Height
+        /// 1) Check if BlockIndex is more than the snapshot.Height<br/>
         /// 2) Verify the witness script
         /// </remarks>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <returns>校验通过返回true，否则返回false</returns>
         public bool Verify(Snapshot snapshot)
         {

@@ -25,7 +25,10 @@ namespace Neo.Ledger
         /// 存储大小
         /// </summary>
         public override int Size => base.Size + sizeof(uint) + Transaction.Size;
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         TransactionState ICloneable<TransactionState>.Clone()
         {
             return new TransactionState
@@ -46,6 +49,10 @@ namespace Neo.Ledger
             Transaction = Transaction.DeserializeFrom(reader);
         }
 
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本</param>
         void ICloneable<TransactionState>.FromReplica(TransactionState replica)
         {
             BlockIndex = replica.BlockIndex;
@@ -81,7 +88,7 @@ namespace Neo.Ledger
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

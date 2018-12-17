@@ -42,7 +42,7 @@ namespace Neo.Network.P2P.Payloads
         public uint Index;
 
         /// <summary>
-        /// 共识附加数据，默认为block nonce
+        /// 共识附加数据，默认为block nonce。议长出块时生成的一个伪随机数
         /// </summary>
         public ulong ConsensusData;
 
@@ -73,6 +73,9 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        /// <summary>
+        /// 获取见证人列表
+        /// </summary>
         Witness[] IVerifiable.Witnesses
         {
             get
@@ -102,7 +105,10 @@ namespace Neo.Network.P2P.Payloads
             if (reader.ReadByte() != 1) throw new FormatException();
             Witness = reader.ReadSerializable<Witness>();
         }
-
+        /// <summary>
+        /// 反序列化（区块头）
+        /// </summary>
+        /// <param name="reader">二进制输入</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
         {
             Version = reader.ReadUInt32();
@@ -113,12 +119,19 @@ namespace Neo.Network.P2P.Payloads
             ConsensusData = reader.ReadUInt64();
             NextConsensus = reader.ReadSerializable<UInt160>();
         }
-
+        /// <summary>
+        /// 获取原始哈希数据
+        /// </summary>
+        /// <returns>原始哈希数据</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
         }
-
+        /// <summary>
+        /// 获取用于验证的哈希脚本。实际为当前区块共识节点三分之二多方签名合约地址。
+        /// </summary>
+        /// <param name="snapshot">数据库快照</param>
+        /// <returns>脚本哈希的数组</returns>
         UInt160[] IVerifiable.GetScriptHashesForVerifying(Snapshot snapshot)
         {
             if (PrevHash == UInt256.Zero)
@@ -153,7 +166,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item>
         /// <item>
         /// <term>ConsensusData</term>
-        /// <description>共识数据，默认为block nonce</description>
+        /// <description>共识数据，默认为block nonce。议长出块时生成的一个伪随机数。</description>
         /// </item>
         /// <item>
         /// <term>NextConsensus</term>
@@ -167,7 +180,10 @@ namespace Neo.Network.P2P.Payloads
             ((IVerifiable)this).SerializeUnsigned(writer);
             writer.Write((byte)1); writer.Write(Witness);
         }
-
+        /// <summary>
+        /// 序列化（区块头）
+        /// </summary>
+        /// <param name="writer">二进制输出</param>
         void IVerifiable.SerializeUnsigned(BinaryWriter writer)
         {
             writer.Write(Version);
@@ -204,11 +220,11 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">区块快照</param>
         /// <remark>
-        /// 若满足以下4个条件之一，则验证节点为false；
-        /// 1）若上一个区块不存在
-        /// 2）若上一个区块高度加一不等于当前区块高度
-        /// 3）若上一个区块时间戳大于等于当前区块时间戳
-        /// 4）若见证人校验失败
+        /// 若满足以下4个条件之一，则验证节点为false。<br/>
+        /// 1）若上一个区块不存在<br/>
+        /// 2）若上一个区块高度加一不等于当前区块高度<br/>
+        /// 3）若上一个区块时间戳大于等于当前区块时间戳<br/>
+        /// 4）若见证人校验失败<br/>
         /// </remark>
         public virtual bool Verify(Snapshot snapshot)
         {

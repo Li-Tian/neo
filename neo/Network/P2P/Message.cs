@@ -23,7 +23,7 @@ namespace Neo.Network.P2P
         /// </summary>
         public static readonly uint Magic = Settings.Default.Magic;
         /// <summary>
-        /// 指令的名称
+        /// 指令的名称。最长12个字节。不足时补0x00
         /// </summary>
         public string Command;
         /// <summary>

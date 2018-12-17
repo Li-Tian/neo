@@ -30,7 +30,10 @@ namespace Neo.Network.P2P.Payloads
         /// 存储大小
         /// </summary>
         public int Size => AssetId.Size + Value.Size + ScriptHash.Size;
-
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             this.AssetId = reader.ReadSerializable<UInt256>();
@@ -38,7 +41,10 @@ namespace Neo.Network.P2P.Payloads
             if (Value <= Fixed8.Zero) throw new FormatException();
             this.ScriptHash = reader.ReadSerializable<UInt160>();
         }
-
+        /// <summary>
+        /// 序列化
+        /// </summary>
+        /// <param name="writer">二进制输出</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(AssetId);
@@ -49,8 +55,8 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json数据
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
+        /// <param name="index">此UTXO在交易的output列表中的index。从0开始。</param>
+        /// <returns>json对象</returns>
         public JObject ToJson(ushort index)
         {
             JObject json = new JObject();

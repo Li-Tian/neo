@@ -44,7 +44,9 @@ namespace Neo.Network.P2P.Payloads
                 return _header;
             }
         }
-
+        /// <summary>
+        /// 消息传输Inventory种类
+        /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.Block;
 
 
@@ -54,9 +56,9 @@ namespace Neo.Network.P2P.Payloads
         public override int Size => base.Size + Transactions.GetVarSize();
 
         /// <summary>
-        /// 计算交易的网络手续费, network_fee = input.GAS - output.GAS - input.systemfee
+        /// 计算一批交易的网络手续费, network_fee = input.GAS - output.GAS - input.systemfee
         /// </summary>
-        /// <param name="transactions">待计算的交易</param>
+        /// <param name="transactions">待计算的交易列表</param>
         /// <returns>交易的网络手续费</returns>
         public static Fixed8 CalculateNetFee(IEnumerable<Transaction> transactions)
         {
@@ -72,11 +74,12 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="reader">二进制输入流</param>
         /// <exception cref="FormatException">
-        /// 如果出现以下情况之一，会抛出异常：
-        /// 1）第一笔交易不是挖矿交易；
-        /// 2）除第一笔交易外，其他交易是挖矿交易；
-        /// 3）添加交易Hash已存在；
-        /// 4）梅克尔根和计算出来的值不相等。</exception>
+        /// 如果出现以下情况之一，会抛出异常：<br/>
+        /// 1）交易数量为0时<br/>
+        /// 2）第一笔交易不是挖矿交易；<br/>
+        /// 3）除第一笔交易外，其他交易是挖矿交易；<br/>
+        /// 4）添加交易Hash已存在；<br/>
+        /// 5）梅克尔根和计算出来的值不相等。</exception>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -199,7 +202,7 @@ namespace Neo.Network.P2P.Payloads
 
 
         /// <summary>
-        /// 转成简化版的block
+        /// 转成简化版的block。抛弃交易，仅保留交易的哈希值。
         /// </summary>
         /// <returns>简化版的block</returns>
         public TrimmedBlock Trim()

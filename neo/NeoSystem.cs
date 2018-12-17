@@ -80,7 +80,7 @@ namespace Neo
         /// </summary>
         /// <param name="port">tcp监听端口</param>
         /// <param name="wsPort">websocket监听端口</param>
-        /// <param name="minDesiredConnections">最小预连接数</param>
+        /// <param name="minDesiredConnections">最小期望连接数</param>
         /// <param name="maxConnections">最大连接数</param>
         public void StartNode(int port = 0, int wsPort = 0, int minDesiredConnections = Peer.DefaultMinDesiredConnections,
             int maxConnections = Peer.DefaultMaxConnections)
@@ -94,7 +94,7 @@ namespace Neo
             });
         }
         /// <summary>
-        /// 通过Akka框架通知RPC服务开始工作
+        /// 启动RPC服务
         /// </summary>
         /// <param name="bindAddress">RPC服务绑定的IP地址</param>
         /// <param name="port">RPC服务绑定的端口</param>
@@ -102,7 +102,7 @@ namespace Neo
         /// <param name="sslCert">ssl证书</param>
         /// <param name="password">ssl证书密码</param>
         /// <param name="trustedAuthorities">信任名单</param>
-        /// <param name="maxGasInvoke">最大gas调用限额</param>
+        /// <param name="maxGasInvoke">最大gas调用限额。默认为0，指定RPC服务启动时可以使用的GAS限额。实际额度是此限额加上10个gas的免费额度。</param>
         public void StartRpc(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
             string[] trustedAuthorities = null, Fixed8 maxGasInvoke = default(Fixed8))
         {

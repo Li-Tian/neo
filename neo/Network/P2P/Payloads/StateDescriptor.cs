@@ -16,22 +16,25 @@ namespace Neo.Network.P2P.Payloads
     public class StateDescriptor : ISerializable
     {
         /// <summary>
-        /// 类型
+        /// 类型：投票或者登记成为候选人。
         /// </summary>
         public StateType Type;
 
         /// <summary>
-        /// 当Field = "Votes"时， 存放投票人地址的脚本hash， Key代表投票人; 当Field = "Registered"时， 存放公钥， Key代表申请人
+        /// 当Field = "Votes"时， 存放投票人地址的脚本hash， Key代表投票人;<br/>
+        /// 当Field = "Registered"时， 存放公钥， Key代表申请人
         /// </summary>
         public byte[] Key;
 
         /// <summary>
-        /// 当Type = 0x40时， Field = "Votes";  当Type = 0x48时， Field = "Registered";
+        /// 当Type = 0x40时， Field = "Votes";<br/>
+        /// 当Type = 0x48时， Field = "Registered";
         /// </summary>
         public string Field;
 
         /// <summary>
-        /// 当Type = 0x40时， 代表投票地址列表；  当Type = 0x48时， 代表取消或申请验证人的布尔值
+        /// 当Type = 0x40时， 代表投票地址列表；<br/>
+        /// 当Type = 0x48时， 代表取消或申请验证人的布尔值
         /// </summary>
         public byte[] Value;
 
@@ -71,6 +74,10 @@ namespace Neo.Network.P2P.Payloads
             if (Field != "Registered") throw new FormatException();
         }
 
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="reader">二进制输入</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             Type = (StateType)reader.ReadByte();
@@ -103,7 +110,10 @@ namespace Neo.Network.P2P.Payloads
                     throw new InvalidOperationException();
             }
         }
-
+        /// <summary>
+        /// 序列化
+        /// </summary>
+        /// <param name="writer">二进制输出</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write((byte)Type);

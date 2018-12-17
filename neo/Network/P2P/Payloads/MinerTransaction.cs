@@ -11,6 +11,9 @@ namespace Neo.Network.P2P.Payloads
     /// </summary>
     public class MinerTransaction : Transaction
     {
+        // TODO 由于 Nonce 的值是 2的32次方，因此在300万个区块中有很高的概率会使得生成的nonce相同，
+        // 从而使得两个交易的哈希值完全相同。最好的解决方法是在MinerTransaction中添加区块高度。
+
         /// <summary>
         /// 交易nonce 随机值
         /// </summary>
@@ -45,7 +48,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        ///  交易序列化后处理
+        ///  交易反序列化后处理
         /// </summary>
         /// <exception cref="System.FormatException">若挖矿交易的输入不为空，或者资产不为GAS时，则抛出该异常</exception>
         protected override void OnDeserialized()
@@ -75,7 +78,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 转成json对象
         /// </summary>
-        /// <returns></returns>
+        /// <returns>json对象</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

@@ -128,9 +128,13 @@ namespace Neo
         // Example: Parse("0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff01") should create UInt160 01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4
         // </summary>
         /// <summary>
-        /// 这个解析方法读取一个16进制表示的big-endian字符串然后根据字符串的长度转化为一个little-endian的UInt160或者UInt256的对象
+        /// 这个解析方法读取一个16进制表示的big-endian字符串然后根据字符串的长度转化为
+        /// 一个little-endian的UInt160或者UInt256的对象
         /// </summary>
-        /// <example>"0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff01" 会转化为 UInt160 01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4</example>
+        /// <example>
+        /// "0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff01" 会转化为
+        /// UInt160 01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4
+        /// </example>
         /// <param name="s">被解析的字符串</param>
         /// <returns>返回一个UInt160或者UInt256的对象</returns>
         public static UIntBase Parse(string s)
@@ -174,7 +178,8 @@ namespace Neo
         /// <summary>
         /// 将UIntBase对象中little-endian的无符号整数转换为一个以"0x"开头的big-endian表示的字符串
         /// </summary>
-        /// <example>如果对象为一个20-bytes的UInt16 01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4, 字符串为 "0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff01"</example>
+        /// <example>如果对象为一个20-bytes的UInt16 01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4, 
+        /// 字符串为 "0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff01"</example>
         /// <returns></returns>
         public override string ToString()
         {
@@ -186,7 +191,8 @@ namespace Neo
         // Example: TryParse("0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff01", result) should create result UInt160 01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4
         // </summary>
         /// <summary>
-        /// 解析一个big-endian所表示的16进制字符串, 根据指定的泛型类型或者字符串的长度, 将这个字符串转化为UInt160或者Uint256所表示的little-endian的无符号整数
+        /// 解析一个big-endian所表示的16进制字符串, 根据指定的泛型类型或者字符串的长度, 
+        /// 将这个字符串转化为UInt160或者Uint256所表示的little-endian的无符号整数
         /// </summary>
         /// <example>"0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff01" 转换为 UInt160 01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4</example>
         /// <typeparam name="T">UInt160或者UInt256类型</typeparam>

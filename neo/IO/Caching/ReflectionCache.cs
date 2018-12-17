@@ -23,7 +23,7 @@ namespace Neo.IO.Caching
         // </summary>
         // <typeparam name="EnumType">Enum type</typeparam>
         /// <summary>
-        /// 构造器
+        /// 从一个枚举类型创建实例
         /// </summary>
         /// <typeparam name="EnumType">枚举类型</typeparam>
         /// <returns>反射缓存</returns>
@@ -65,11 +65,11 @@ namespace Neo.IO.Caching
         // <param name="key">Key</param>
         // <param name="def">Default value</param>
         /// <summary>
-        /// 根据键创建对象
+        /// 根据键创建对象。如果创建失败则返回默认对象。
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="def">默认值</param>
-        /// <returns>返回def</returns>
+        /// <returns>返回新创建的对象或者默认对象。</returns>
         public object CreateInstance(T key, object def = null)
         {
             Type tp;
@@ -87,12 +87,12 @@ namespace Neo.IO.Caching
         // <param name="key">Key</param>
         // <param name="def">Default value</param>
         /// <summary>
-        /// 根据键创建对象
+        /// 根据键创建对象。创建失败则返回默认值。
         /// </summary>
         /// <typeparam name="K">类型</typeparam>
         /// <param name="key">键</param>
         /// <param name="def">默认值</param>
-        /// <returns>返回def</returns>
+        /// <returns>新创建的对象或者默认值</returns>
         public K CreateInstance<K>(T key, K def = default(K))
         {
             Type tp;

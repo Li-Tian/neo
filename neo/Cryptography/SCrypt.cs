@@ -247,6 +247,7 @@ namespace Neo.Cryptography
                 Encode32(&B[4 * k], X[k]);
             }
         }
+#if NET47
         /// <summary>
         ///使用Scrypt算法生成一个key
         /// </summary>
@@ -255,14 +256,26 @@ namespace Neo.Cryptography
         /// <param name="N">算法Scrypt使用的参数N</param>
         /// <param name="r">算法Scrypt使用的参数r</param>
         /// <param name="p">算法Scrypt使用的参数p</param>
-        /// <param name="derivedKeyLength">生成key的长途</param>
+        /// <param name="derivedKeyLength">生成key的长度</param>
         /// <returns>生成的scrypt key</returns>
-#if NET47
         public static byte[] DeriveKey(byte[] password, byte[] salt, int N, int r, int p, int derivedKeyLength)
         {
             return Replicon.Cryptography.SCrypt.SCrypt.DeriveKey(password, salt, (ulong)N, (uint)r, (uint)p, (uint)derivedKeyLength);
         }
 #else
+        /// <summary>
+        /// 使用Scrypt算法生成一个key
+        /// </summary>
+        /// <param name="password">生成Scrypt key所需要的密码</param>
+        /// <param name="salt">生成key算法要用的salt参数</param>
+        /// <param name="N">算法Scrypt使用的参数N</param>
+        /// <param name="r">算法Scrypt使用的参数r</param>
+        /// <param name="p">算法Scrypt使用的参数p</param>
+        /// <param name="derivedKeyLength">生成key的长度</param>
+        /// <returns>生成的scrypt key</returns>
+        /// <remarks>
+        /// (*)从黄皮书复制相关内容。
+        /// </remarks>
         public unsafe static byte[] DeriveKey(byte[] password, byte[] salt, int N, int r, int p, int derivedKeyLength)
         {
             var Ba = new byte[128 * r * p + 63];

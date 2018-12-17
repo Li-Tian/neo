@@ -30,7 +30,7 @@ namespace Neo.Network.P2P.Payloads
         /// 比较区块头
         /// </summary>
         /// <param name="other">待比较区块头</param>
-        /// <returns>若待比较区块头为null，返回false</returns>
+        /// <returns>若待比较区块头为null，返回false。否则按哈希值比较</returns>
         public bool Equals(Header other)
         {
             if (other is null) return false;
@@ -102,7 +102,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 转成简化版block
+        /// 转成简化版block。从区块头简化的TrimmedBlock实例不包含交易队列的哈希值。
         /// </summary>
         /// <returns>简化版block对象</returns>
         public TrimmedBlock Trim()

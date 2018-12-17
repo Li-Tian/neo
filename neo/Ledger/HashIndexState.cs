@@ -23,7 +23,10 @@ namespace Neo.Ledger
         /// 存储大小
         /// </summary>
         public override int Size => base.Size + Hash.Size + sizeof(uint);
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         HashIndexState ICloneable<HashIndexState>.Clone()
         {
             return new HashIndexState
@@ -43,7 +46,10 @@ namespace Neo.Ledger
             Hash = reader.ReadSerializable<UInt256>();
             Index = reader.ReadUInt32();
         }
-
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本对象</param>
         void ICloneable<HashIndexState>.FromReplica(HashIndexState replica)
         {
             Hash = replica.Hash;

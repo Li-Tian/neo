@@ -41,7 +41,7 @@ namespace Neo.Network.P2P.Payloads
 
 
         /// <summary>
-        /// 创建注册验证人交易
+        /// 构造函数：创建注册验证人交易
         /// </summary>
         public EnrollmentTransaction()
             : base(TransactionType.EnrollmentTransaction)
@@ -52,6 +52,7 @@ namespace Neo.Network.P2P.Payloads
         /// 反序列化，读取公钥地址
         /// </summary>
         /// <param name="reader">二进制输入流</param>
+        /// <exception cref="FormatException">如果交易版本号不等于0</exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version != 0) throw new FormatException();
@@ -59,10 +60,10 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 获取验证脚本hash
+        /// 获取需要签名的交易的hash。包括交易输入的地址和申请人的公钥地址。
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
-        /// <returns></returns>
+        /// <param name="snapshot">数据库快照</param>
+        /// <returns>包括交易输入的地址和申请人的公钥地址。</returns>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             return base.GetScriptHashesForVerifying(snapshot).Union(new UInt160[] { ScriptHash }).OrderBy(p => p).ToArray();
@@ -95,11 +96,11 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 校验该交易
+        /// 校验该交易。已弃用该交易。拒绝新的交易。所以固定返回false
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <param name="mempool">内存池交易</param>
-        /// <returns>返回false，已弃用该交易</returns>
+        /// <returns>返回false，已弃用该交易。拒绝新的交易。</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             return false;

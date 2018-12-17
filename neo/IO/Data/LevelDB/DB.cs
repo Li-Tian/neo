@@ -10,7 +10,7 @@ namespace Neo.IO.Data.LevelDB
         private IntPtr handle;
 
         /// <summary>
-        /// 若没有获取到合法的句柄时, 返回Ture
+        /// 若没有获取到合法的句柄时, 返回True
         /// </summary>
         public bool IsDisposed => handle == IntPtr.Zero;
 
@@ -35,7 +35,7 @@ namespace Neo.IO.Data.LevelDB
         /// 删除Key
         /// </summary>
         /// <param name="options">写选项</param>
-        /// <param name="key">要删除的前缀key</param>
+        /// <param name="key">要删除的key</param>
         /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
         public void Delete(WriteOptions options, Slice key)
         {
@@ -72,7 +72,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// 获取快照
         /// </summary>
-        /// <returns></returns>
+        /// <returns>快照对象</returns>
         public Snapshot GetSnapshot()
         {
             return new Snapshot(handle);
@@ -160,10 +160,11 @@ namespace Neo.IO.Data.LevelDB
         /// 批量写操作
         /// </summary>
         /// <remarks>
-        /// 注意，这里并不会抛出异常，内部会进行最多5次尝试写
+        /// 注意，抛出异常之前，内部会进行最多5次尝试写
         /// </remarks>
         /// <param name="options">写选项</param>
         /// <param name="write_batch">批量写</param>
+        /// <exception cref="LevelDBException">5此重试之后如果仍然失败则抛出异常</exception>
         public void Write(WriteOptions options, WriteBatch write_batch)
         {
             // There's a bug in .Net Core.

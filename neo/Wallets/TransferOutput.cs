@@ -19,7 +19,7 @@ namespace Neo.Wallets
         public BigDecimal Value;
 
         /// <summary>
-        /// 这个TransferOutput的地址
+        /// 这个TransferOutput的账户地址
         /// </summary>
         public UInt160 ScriptHash;
 

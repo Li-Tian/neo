@@ -50,7 +50,7 @@
         /// </summary>
         InteropInterface = 0xf0,
         /// <summary>
-        /// 无类型
+        /// Void类型
         /// </summary>
         Void = 0xff
     }

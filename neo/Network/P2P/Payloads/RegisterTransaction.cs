@@ -80,7 +80,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 创建资产登记交易
+        /// 构造函数：创建资产登记交易
         /// </summary>
         public RegisterTransaction()
             : base(TransactionType.RegisterTransaction)
@@ -91,6 +91,10 @@ namespace Neo.Network.P2P.Payloads
         /// 反序列化非data数据
         /// </summary>
         /// <param name="reader">二进制输入流</param>
+        /// <exception cref="FormatException">
+        /// 1. 如果版本号不为0<br/>
+        /// 2. 如果资产不是NEO/GAS且未指定Owner
+        /// </exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version != 0) throw new FormatException();
@@ -105,9 +109,9 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 获取验证脚本hash集合
+        /// 获取待验证签名的脚本hash集合
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <returns>交易的其他验证脚本 和 资产所有者地址脚本hash</returns>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
@@ -116,7 +120,7 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 序列化后处理
+        /// 反序列化后的处理
         /// </summary>
         /// <exception cref="System.FormatException">若资产是NEO，GAS，但是hash值不对应时，抛出该异常</exception>
         protected override void OnDeserialized()
@@ -193,9 +197,9 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// 校验交易
+        /// 校验交易。已经弃用。禁止注册新的资产。
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <param name="mempool">内存池交易</param>
         /// <returns>固定值false，已弃用</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)

@@ -26,7 +26,7 @@ namespace Neo.Network.P2P
         /// </summary>
         public class Start {
             /// <summary>
-            /// tcp监听端口号
+            /// tcp/ip监听端口号
             /// </summary>
             public int Port;
             /// <summary>
@@ -38,7 +38,7 @@ namespace Neo.Network.P2P
             /// </summary>
             public int MinDesiredConnections;
             /// <summary>
-            /// 最多的连接数
+            /// 最大的连接数
             /// </summary>
             public int MaxConnections;
         }
@@ -101,7 +101,7 @@ namespace Neo.Network.P2P
         /// </summary>
         protected ImmutableHashSet<IPEndPoint> ConnectingPeers = ImmutableHashSet<IPEndPoint>.Empty;
         /// <summary>
-        /// 可信任的IP地址集合
+        /// 可信任的IP地址集合。在连接数达到最大连接数以后，仍然被允许创建连接的地址集合。
         /// </summary>
         /// <value>
         /// 返回可信任的IP地址集合
@@ -129,7 +129,7 @@ namespace Neo.Network.P2P
         /// <value>未连接的peer列表中peer个数的最大值</value>
         protected int UnconnectedMax { get; } = 1000;
         /// <summary>
-        /// 
+        /// 允许的正在连接中的连接数
         /// </summary>
         protected virtual int ConnectingMax
         {
@@ -141,7 +141,9 @@ namespace Neo.Network.P2P
                 return allowedConnecting - ConnectedPeers.Count;
             }
         }
-
+        /// <summary>
+        /// 静态的启动模块
+        /// </summary>
         static Peer()
         {
             localAddresses.UnionWith(NetworkInterface.GetAllNetworkInterfaces().SelectMany(p => p.GetIPProperties().UnicastAddresses).Select(p => p.Address.Unmap()));
@@ -165,7 +167,7 @@ namespace Neo.Network.P2P
         /// 如果该Peer节点是可信任的,则将该节点的IP地址加入本地的可信任地址列表中.
         /// </summary>
         /// <param name="endPoint">需要连接的Peer</param>
-        /// <param name="isTrusted">该Peer节点是否是可信任的</param>
+        /// <param name="isTrusted">该Peer节点是否是可信任的（保留）</param>
         protected void ConnectToPeer(IPEndPoint endPoint, bool isTrusted = false)
         {
             endPoint = endPoint.Unmap();

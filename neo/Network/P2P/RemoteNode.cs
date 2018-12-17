@@ -47,7 +47,7 @@ namespace Neo.Network.P2P
         /// 构造函数，并向连接的远端节点发送本地节点的版本数据
         /// </summary>
         /// <param name="system">NEO核心系统类</param>
-        /// <param name="connection">一个Tcp连接对象</param>
+        /// <param name="connection">一个TCP/IP连接对象或一个WebSocket连接对象</param>
         /// <param name="remote">远端节点的IP和端口</param>
         /// <param name="local">本地节点的IP和端口</param>
         public RemoteNode(NeoSystem system, object connection, IPEndPoint remote, IPEndPoint local)
@@ -108,7 +108,8 @@ namespace Neo.Network.P2P
         }
 
         /// <summary>
-        /// 当节点收到ack消息后的回调函数. 将ack标志位设置为true, 然后检查消息队列中的消息, 并将最早进入消息队列中的最消息弹出并发送,
+        /// 当节点收到ack消息后的回调函数. 将ack标志位设置为true, 然后检查消息队列中的消息, 
+        /// 并将最早进入消息队列中的最消息弹出并发送,
         /// </summary>
         protected override void OnAck()
         {

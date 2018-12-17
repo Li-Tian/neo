@@ -166,8 +166,8 @@ NEP6 wallet uses scrypt algorithm as the core method of wallet encryption and de
 1. The address is dervied from the public key, and the address hash is computed by `SHA256(SHA256(Address))`
 
 2. Calculate a `derivedkey` by the scrypt algorithm, and divide the 64-byte data into two halves as `derivedhalf1` and `derivedhalf2`. Scrypt uses the following parameters:
-  
-    - ciphertext: The enter password (UTF-8 format)
+
+    - ciphertext: The entered password (UTF-8 format)
 	- salt: address hash
 	- n: 16384
 	- r: 8

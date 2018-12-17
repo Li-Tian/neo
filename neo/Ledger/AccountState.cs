@@ -40,12 +40,12 @@ namespace Neo.Ledger
             + IO.Helper.GetVarSize(Balances.Count) + Balances.Count * (32 + 8);
 
         /// <summary>
-        /// 创建用户状态
+        /// 构造函数
         /// </summary>
         public AccountState() { }
 
         /// <summary>
-        /// 创建用户状态
+        /// 构造函数
         /// </summary>
         /// <param name="hash">脚本hash</param>
         public AccountState(UInt160 hash)
@@ -56,6 +56,10 @@ namespace Neo.Ledger
             this.Balances = new Dictionary<UInt256, Fixed8>();
         }
 
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         AccountState ICloneable<AccountState>.Clone()
         {
             return new AccountState

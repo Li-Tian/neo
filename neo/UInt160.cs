@@ -21,7 +21,7 @@ namespace Neo
         // The empty constructor stores a null byte array
         // </summary>
         /// <summary>
-        /// 构造一个byte array为空的对象
+        /// 构造函数：表示0。
         /// </summary>
         public UInt160()
             : this(null)

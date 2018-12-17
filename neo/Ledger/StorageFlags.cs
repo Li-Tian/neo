@@ -9,12 +9,12 @@ namespace Neo.Ledger
     public enum StorageFlags : byte
     {
         /// <summary>
-        /// none
+        /// 无特殊标记
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// 产量
+        /// 常量（一次写入不可修改）
         /// </summary>
         Constant = 0x01
     }

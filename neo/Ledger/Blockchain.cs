@@ -26,12 +26,12 @@ namespace Neo.Ledger
     public sealed class Blockchain : UntypedActor
     {
         /// <summary>
-        /// 注册消息
+        /// 注册消息（自定义AKKA消息类型）
         /// </summary>
         public class Register { }
 
         /// <summary>
-        /// 智能合约应用执行完毕消息
+        /// 智能合约应用执行完毕消息（自定义AKKA消息类型）
         /// </summary>
         public class ApplicationExecuted {
             /// <summary>
@@ -45,7 +45,7 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 区块持久化完毕消息
+        /// 区块持久化完毕消息（自定义AKKA消息类型）
         /// </summary>
         public class PersistCompleted {
             /// <summary>
@@ -55,7 +55,7 @@ namespace Neo.Ledger
         }
 
         /// <summary>
-        /// 导入区块消息
+        /// 导入区块消息（自定义AKKA消息类型）
         /// </summary>
         public class Import {
             /// <summary>
@@ -64,7 +64,7 @@ namespace Neo.Ledger
             public IEnumerable<Block> Blocks;
         }
         /// <summary>
-        /// 区块导入完毕消息
+        /// 区块导入完毕消息（自定义AKKA消息类型）
         /// </summary>
         public class ImportCompleted { }
 
@@ -74,7 +74,7 @@ namespace Neo.Ledger
         public static readonly uint SecondsPerBlock = Settings.Default.SecondsPerBlock;
 
         /// <summary>
-        /// 块奖励调整周期
+        /// 块奖励调整周期。衰减周期
         /// </summary>
         public const uint DecrementInterval = 2000000;
 
@@ -89,7 +89,7 @@ namespace Neo.Ledger
         public static readonly uint[] GenerationAmount = { 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
         /// <summary>
-        /// 区块时间
+        /// 区块间隔时间(TimeSpan类型)
         /// </summary>
         public static readonly TimeSpan TimePerBlock = TimeSpan.FromSeconds(SecondsPerBlock);
 
@@ -232,6 +232,7 @@ namespace Neo.Ledger
         {
             get
             {
+                // TODO 有待改进
                 while (singleton == null) Thread.Sleep(10);
                 return singleton;
             }
@@ -560,7 +561,7 @@ namespace Neo.Ledger
             Distribute(completed);
         }
         /// <summary>
-        /// 消息处理函数
+        /// 消息处理函数（AKKA框架函数）
         /// </summary>
         /// <param name="message">收到的消息</param>
         protected override void OnReceive(object message)
@@ -829,7 +830,7 @@ namespace Neo.Ledger
         /// </summary>
         /// <param name="system">neo actor系统</param>
         /// <param name="store">持久化存储</param>
-        /// <returns></returns>
+        /// <returns>返回一个不可修改的线程安全的对象引用</returns>
         public static Props Props(NeoSystem system, Store store)
         {
             return Akka.Actor.Props.Create(() => new Blockchain(system, store)).WithMailbox("blockchain-mailbox");

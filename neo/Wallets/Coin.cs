@@ -5,7 +5,8 @@ using System;
 namespace Neo.Wallets
 {
     /// <summary>
-    /// 一个可以使用的 UTXO 资产。它可以通过 CoinReference来描述，也可以通过 TransactionOutput来描述，两者指向同一个实体。
+    /// 一个可以使用的 UTXO 资产。它可以通过 CoinReference来描述，
+    /// 也可以通过 TransactionOutput来描述，两者指向同一个实体。
     /// </summary>
     public class Coin : IEquatable<Coin>
     {
@@ -46,9 +47,9 @@ namespace Neo.Wallets
         /// </summary>
         /// <param name="other">等待比较的Coin对象</param>
         /// <returns>
-        /// 如果两个Coin对象的Reference相等，返回<c>true</c>.
-        /// 如果被比较的Coin对象是null， 返回<c>false</c>.
-        /// 否则，根据比较两个Coin的Reference来返回是否相等
+        /// 如果两个Coin对象的Reference相等，返回<c>true</c>.<br/>
+        /// 如果被比较的Coin对象是null， 返回<c>false</c>.<br/>
+        /// 否则，根据比较两个Coin的Reference来返回是否相等<br/>
         /// </returns>
         public bool Equals(Coin other)
         {

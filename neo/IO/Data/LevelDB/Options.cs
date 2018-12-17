@@ -84,7 +84,9 @@ namespace Neo.IO.Data.LevelDB
         }
 
         /// <summary>
-        /// 每隔几个key就直接存储一个重启点key(为了兼顾查找效率，每隔K个key，leveldb就不使用前缀压缩，而是存储整个key，这就是重启点（restartpoint）) 
+        /// 每隔几个key就直接存储一个重启点key(为了兼顾查找效率，
+        /// 每隔K个key，leveldb就不使用前缀压缩，而是存储整个key，
+        /// 这就是重启点（restartpoint）) 
         /// </summary>
         public int BlockRestartInterval
         {

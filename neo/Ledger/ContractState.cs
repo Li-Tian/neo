@@ -67,7 +67,7 @@ namespace Neo.Ledger
         public bool HasDynamicInvoke => ContractProperties.HasFlag(ContractPropertyState.HasDynamicInvoke);
 
         /// <summary>
-        /// 是否可支付
+        /// 是否可支付（保留功能）
         /// </summary>
         public bool Payable => ContractProperties.HasFlag(ContractPropertyState.Payable);
 
@@ -93,6 +93,10 @@ namespace Neo.Ledger
         /// </summary>
         public override int Size => base.Size + Script.GetVarSize() + ParameterList.GetVarSize() + sizeof(ContractParameterType) + sizeof(bool) + Name.GetVarSize() + CodeVersion.GetVarSize() + Author.GetVarSize() + Email.GetVarSize() + Description.GetVarSize();
 
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆对象</returns>
         ContractState ICloneable<ContractState>.Clone()
         {
             return new ContractState
@@ -127,6 +131,10 @@ namespace Neo.Ledger
             Description = reader.ReadVarString();
         }
 
+        /// <summary>
+        /// 从参数副本复制数据到此对象
+        /// </summary>
+        /// <param name="replica">参数副本</param>
         void ICloneable<ContractState>.FromReplica(ContractState replica)
         {
             Script = replica.Script;

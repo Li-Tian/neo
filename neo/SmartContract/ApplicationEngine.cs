@@ -71,7 +71,7 @@ namespace Neo.SmartContract
         /// <param name="trigger">合约触发器类型，现阶段一共有四种触发器。</param>
         /// <param name="container">脚本容器</param>
         /// <param name="snapshot">数据库快照</param>
-        /// <param name="gas">合约支付的Gas数量</param>
+        /// <param name="gas">合约交易中指定的支付的Gas数量</param>
         /// <param name="testMode">是否为测试模式</param>
         public ApplicationEngine(TriggerType trigger, IScriptContainer container, Snapshot snapshot, Fixed8 gas, bool testMode = false)
             : base(container, Cryptography.Crypto.Default, snapshot, new NeoService(trigger, snapshot))
@@ -479,10 +479,10 @@ namespace Neo.SmartContract
             return count;
         }
         /// <summary>
-        /// 获取操作码对应的Gas消耗量，此处需要注意Gas的单位，最后将乘以Ratio
+        /// 获取操作码对应的Gas消耗量，此处需要注意Gas的单位：千分之一GAS
         /// </summary>
         /// <param name="nextInstruction">Opcode类型的下一步执行的操作码</param>
-        /// <returns>消耗Gas的值</returns>
+        /// <returns>消耗Gas的值(单位：千分之一GAS)</returns>
         protected virtual long GetPrice(OpCode nextInstruction)
         {
             if (nextInstruction <= OpCode.NOP) return 0;
@@ -519,9 +519,9 @@ namespace Neo.SmartContract
             }
         }
         /// <summary>
-        /// 获取系统调用对应的Gas消耗量
+        /// 获取系统调用对应的Gas消耗量。单位千分之一GAS
         /// </summary>
-        /// <returns>消耗Gas的值</returns>
+        /// <returns>消耗Gas的值。单位千分之一GAS</returns>
         protected virtual long GetPriceForSysCall()
         {
             if (CurrentContext.InstructionPointer >= CurrentContext.Script.Length - 3)

@@ -50,8 +50,11 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 获取验证脚本hash
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
-        /// <returns>若 StateDescriptor.Field = "Votes"时, 包含投票人地址地址  若 Field="Registered"时，包含申请人的地址脚本hash </returns>
+        /// <param name="snapshot">数据库快照</param>
+        /// <returns>
+        /// 若 StateDescriptor.Field = "Votes"时, 包含投票人地址地址<br/>
+        /// 若 Field="Registered"时，包含申请人的地址脚本hash
+        /// </returns>
         /// <exception cref="System.InvalidOperationException">若类型不对时，抛出该异常</exception>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
@@ -126,7 +129,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// 校验交易
         /// </summary>
-        /// <param name="snapshot">区块快照</param>
+        /// <param name="snapshot">数据库快照</param>
         /// <param name="mempool">内存池交易</param>
         /// <returns>
         /// 1. 对每个StateDescriptor进行验证 <br/>

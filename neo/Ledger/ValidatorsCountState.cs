@@ -9,7 +9,7 @@ namespace Neo.Ledger
     public class ValidatorsCountState : StateBase, ICloneable<ValidatorsCountState>
     {
         /// <summary>
-        /// 投票数组， 数组脚本即验证人投票个数
+        /// 投票数组， 数组下标(index)即验证人投票个数
         /// </summary>
         public Fixed8[] Votes;
 
@@ -25,7 +25,10 @@ namespace Neo.Ledger
         {
             this.Votes = new Fixed8[Blockchain.MaxValidators];
         }
-
+        /// <summary>
+        /// 克隆
+        /// </summary>
+        /// <returns>克隆</returns>
         ValidatorsCountState ICloneable<ValidatorsCountState>.Clone()
         {
             return new ValidatorsCountState
@@ -44,6 +47,10 @@ namespace Neo.Ledger
             Votes = reader.ReadSerializableArray<Fixed8>();
         }
 
+        /// <summary>
+        /// 从副本复制
+        /// </summary>
+        /// <param name="replica">副本</param>
         void ICloneable<ValidatorsCountState>.FromReplica(ValidatorsCountState replica)
         {
             Votes = replica.Votes;

@@ -17,7 +17,7 @@ namespace Neo.Cryptography
         public const string Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
         /// <summary>
         /// 将一个Base58的字符串解析为一个字节数组
-        /// 具体解码步骤：
+        /// 具体解码步骤：(*)换行
         /// 1、倒序输入的字符串，将其按字母表转换成10进制 Biginteger 数
         /// 2、把 Biginteger 数转换成 byte[] 数据，并将 byte[] 数据倒序排序
         /// 3、统计原输入的字符串中字母表游标为零所对应的字符的个数 count
@@ -52,7 +52,7 @@ namespace Neo.Cryptography
 
         /// <summary>
         /// 将一个表示一个长数字的字节数组编码为基于Base58的字符串.
-        /// 具体编码步骤：
+        /// 具体编码步骤：（*）换行
         /// 1、在 byte[] 数据前添加一个0x00，生成一个新的byte数组，并将新数组做倒序排序
         /// 2、把数组的数据转成10进制BigInteger数
         /// 3、把BigInteger数按字母表转换成58进制字符串
