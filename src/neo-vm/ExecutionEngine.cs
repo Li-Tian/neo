@@ -57,7 +57,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="container">脚本容器</param>
         /// <param name="crypto">加密算法</param>
-        /// <param name="table"></param>
+        /// <param name="table">智能合约的脚本查询表。可以通过脚本哈希查询到智能合约的脚本全文。</param>
         /// <param name="service">互操作服务，默认为空</param>
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, IInteropService service = null)
         {
@@ -89,7 +89,9 @@ namespace Neo.VM
                 InvocationStack.Pop().Dispose();
         }
         /// <summary>
-        /// 运行虚拟机引擎，当虚拟机状态为NONE时，按步执行指令
+        /// 运行虚拟机引擎。<br/>
+        /// 当虚拟机状态为NONE时，从开始执行。<br/>
+        /// 当虚拟机状态为BREAK时，从断点开始执行。<br/>
         /// </summary>
         public void Execute()
         {

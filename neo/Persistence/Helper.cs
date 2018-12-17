@@ -16,7 +16,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">待查询区块hash</param>
-        /// <returns>存在则返回false.不存在则返回true</returns>
+        /// <returns>存在则返回true.不存在则返回false</returns>
         public static bool ContainsBlock(this IPersistence persistence, UInt256 hash)
         {
             BlockState state = persistence.Blocks.TryGet(hash);
@@ -64,10 +64,11 @@ namespace Neo.Persistence
         }
 
         /// <summary>
-        /// 获取验证人
+        /// 获取验证人候选人列表。包括已经登记为验证候选人的列表和备用验证人列表。
+        /// 不包含是否当选为验证人的信息。
         /// </summary>
         /// <param name="persistence">持久化器</param>
-        /// <returns>验证人</returns>
+        /// <returns>验证人列表</returns>
         public static IEnumerable<ValidatorState> GetEnrollments(this IPersistence persistence)
         {
             HashSet<ECPoint> sv = new HashSet<ECPoint>(Blockchain.StandbyValidators);
@@ -79,7 +80,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="index">区块头高度</param>
-        /// <returns>指定高度的区块的区块头，如果该高度区块不存在，则返回false</returns>
+        /// <returns>指定高度的区块的区块头，如果该高度区块不存在，则返回 null </returns>
         public static Header GetHeader(this IPersistence persistence, uint index)
         {
             UInt256 hash = Blockchain.Singleton.GetBlockHash(index);
@@ -92,7 +93,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">区块头hash</param>
-        /// <returns>指定区块的区块头</returns>
+        /// <returns>指定区块的区块头。不存在时返回null</returns>
         public static Header GetHeader(this IPersistence persistence, UInt256 hash)
         {
             return persistence.Blocks.TryGet(hash)?.TrimmedBlock.Header;
@@ -103,7 +104,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="hash">待查询的区块hash</param>
-        /// <returns>下一个区块的哈希</returns>
+        /// <returns>下一个区块的哈希。不存在时返回null</returns>
         public static UInt256 GetNextBlockHash(this IPersistence persistence, UInt256 hash)
         {
             BlockState state = persistence.Blocks.TryGet(hash);
@@ -123,10 +124,10 @@ namespace Neo.Persistence
         }
 
         /// <summary>
-        /// 查询到某个区块位置（包含该区块），总的系统手续费
+        /// 查询从区块0开始到指定哈希的区块位置（包含该区块）总的系统手续费
         /// </summary>
         /// <param name="persistence">持久化器</param>
-        /// <param name="hash">区块hash</param>
+        /// <param name="hash">指定的区块hash</param>
         /// <returns>总的系统手续费金额</returns>
         public static long GetSysFeeAmount(this IPersistence persistence, UInt256 hash)
         {
@@ -188,7 +189,10 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">持久化器</param>
         /// <param name="tx">交易hash</param>
-        /// <returns>若交易输入为空，返回false； 若交易输入指向的是已经花费的交易，则返回false</returns>
+        /// <returns>
+        /// 若交易中input所指向的每一笔output都存在，且没有被花费掉，则返回false。
+        /// 否则返回true。
+        /// </returns>
         public static bool IsDoubleSpend(this IPersistence persistence, Transaction tx)
         {
             if (tx.Inputs.Length == 0) return false;

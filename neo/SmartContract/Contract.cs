@@ -115,7 +115,7 @@ namespace Neo.SmartContract
             };
         }
         /// <summary>
-        /// 创建一个单签脚本，单签脚本格式：0x21+公钥+0xac
+        /// 创建一个单签脚本，单签脚本格式：0x21(PUSH)+公钥+0xac(CHECKSIG)
         /// </summary>
         /// <param name="publicKey">单签脚本的公钥</param>
         /// <returns>构建好的单签脚本实例</returns>

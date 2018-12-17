@@ -69,7 +69,7 @@ namespace Neo.SmartContract
         }
         /// <summary>
         /// 判断脚本是否为签名脚本，根据签名脚本的结构来判断
-        /// 签名脚本的结构：0x21+公钥+0xac
+        /// 签名脚本的结构：0x21(PUSH)+公钥+0xac(CHECKSIG)
         /// </summary>
         /// <param name="script">需要判断的脚本</param>
         /// <returns>是签名脚本则返回true，否则返回false</returns>
@@ -93,7 +93,7 @@ namespace Neo.SmartContract
         /// 取互操作服务名字的哈希
         /// </summary>
         /// <param name="method">互操作服务名字</param>
-        /// <returns>互操作服务名字的哈希</returns>
+        /// <returns>互操作服务名字的哈希的前32位</returns>
         public static uint ToInteropMethodHash(this string method)
         {
             if (method_hashes.TryGetValue(method, out uint hash))

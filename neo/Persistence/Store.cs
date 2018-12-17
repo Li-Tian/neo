@@ -10,6 +10,7 @@ namespace Neo.Persistence
     /// </summary>
     public abstract class Store : IPersistence
     {
+        //TODO(*)添加see标签
         DataCache<UInt256, BlockState> IPersistence.Blocks => GetBlocks();
         DataCache<UInt256, TransactionState> IPersistence.Transactions => GetTransactions();
         DataCache<UInt160, AccountState> IPersistence.Accounts => GetAccounts();

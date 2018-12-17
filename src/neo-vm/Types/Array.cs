@@ -100,7 +100,7 @@ namespace Neo.VM.Types
             return true;
         }
         /// <summary>
-        /// 获取对应的字节数组
+        /// 获取对应的字节数组。子类如果需要则应该覆盖此方法。
         /// </summary>
         /// <returns>抛出异常</returns>
         /// <exception cref="System.NotSupportedException">默认抛出</exception>

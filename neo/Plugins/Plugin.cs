@@ -40,7 +40,9 @@ namespace Neo.Plugins
         /// 获取配置文件的路径
         /// </summary>
         public virtual string ConfigFile => Path.Combine(pluginsPath, GetType().Assembly.GetName().Name, "config.json");
-
+        /// <summary>
+        /// 静态的初始化模块
+        /// </summary>
         static Plugin()
         {
             if (Directory.Exists(pluginsPath))
@@ -57,7 +59,8 @@ namespace Neo.Plugins
         }
 
         /// <summary>
-        /// 创建插件
+        /// 构造函数：创建插件。
+        /// 每生成一个插件的实例，就会将其添加到对应的插件列表里。
         /// </summary>
         protected Plugin()
         {
@@ -73,10 +76,10 @@ namespace Neo.Plugins
 
 
         /// <summary>
-        /// 内存池交易过滤策略
+        /// 交易过滤策略。
         /// </summary>
         /// <param name="tx">交易</param>
-        /// <returns>通过过滤策略则返回true,否则返回false</returns>
+        /// <returns>返回true则将交易添加到内存池并转发，返回false则抛弃交易</returns>
         public static bool CheckPolicy(Transaction tx)
         {
             foreach (IPolicyPlugin plugin in Policies)

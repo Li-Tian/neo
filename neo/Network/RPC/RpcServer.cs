@@ -72,7 +72,7 @@ namespace Neo.Network.RPC
         }
 
         /// <summary>
-        ///  回收函数，释放RpcServer中的Webhost资源
+        ///  回收函数，释放RpcServer中的IWebHost
         /// </summary>
         public void Dispose()
         {
@@ -146,7 +146,7 @@ namespace Neo.Network.RPC
         /// <summary>
         /// 打开指定钱包
         /// </summary>
-        /// <param name="wallet">指定钱包引用</param>
+        /// <param name="wallet">指定钱包</param>
         public void OpenWallet(Wallet wallet)
         {
             this.wallet = wallet;

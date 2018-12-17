@@ -45,7 +45,10 @@ namespace Neo.VM
         {
             return list.GetEnumerator();
         }
-
+        /// <summary>
+        /// 获取循环访问枚举数。
+        /// </summary>
+        /// <returns>循环访问枚举数。</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

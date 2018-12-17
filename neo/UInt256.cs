@@ -22,7 +22,7 @@ namespace Neo
         // The empty constructor stores a null byte array
         // </summary>
         /// <summary>
-        /// 构造一个byte array为空的对象
+        /// 构造一个对象。表示0.
         /// </summary>
         public UInt256()
             : this(null)
@@ -105,7 +105,8 @@ namespace Neo
         // Example: TryParse("0xa400ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff01", result) should create result UInt256 01ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00a4
         // </summary>
         /// <summary>
-        /// 解析一个big-endian所表示的16进制字符串, 将这个字符串转化为一个UInt256类型,20个字节的little-endian的无符号整数
+        /// 解析一个big-endian所表示的16进制字符串, 将这个字符串转化为一个UInt256类型,
+        /// 20个字节的little-endian的无符号整数
         /// </summary>
         /// <param name="s">被转化的字符串</param>
         /// <param name="result">用来保存结果的一个UInt256的对象</param>
