@@ -193,7 +193,7 @@ NEP6钱包采用了以scrypt为核心算法的相关技术作为钱包的加密�
 
 2. 使用Scrypt算法算出一个derivedkey，并将其64个字节数据分成2半，作为derivedhalf1和derivedhalf2。Scrypt所使用参数如下：
  
-	- 密文：输入的密码（UTF-8格式）
+	- 明文：输入的密码（UTF-8格式）
 	- 盐：地址哈希
 	- n：16384
 	- r：8
