@@ -39,12 +39,16 @@ namespace Neo.SmartContract
         /// </summary>
         protected readonly Snapshot Snapshot;
         /// <summary>
-        /// 释放资源列表
+        /// 待释放资源的列表
         /// </summary>
         protected readonly List<IDisposable> Disposables = new List<IDisposable>();
         /// <summary>
         /// 已创建合约的字典
         /// </summary>
+        /// <remarks>
+        /// key是脚本的哈希值，value是执行引擎的当前上下文的哈希值。
+        /// 这个设计是用来保障调用的脚本和被调用的脚本之间的存储空间的安全性。
+        /// </remarks>
         protected readonly Dictionary<UInt160, UInt160> ContractsCreated = new Dictionary<UInt160, UInt160>();
         private readonly List<NotifyEventArgs> notifications = new List<NotifyEventArgs>();
         private readonly Dictionary<uint, Func<ExecutionEngine, bool>> methods = new Dictionary<uint, Func<ExecutionEngine, bool>>();
@@ -127,13 +131,21 @@ namespace Neo.SmartContract
         /// 根据互操作服务哈希查找对应的Gas消耗
         /// </summary>
         /// <param name="hash">互操作服务哈希</param>
-        /// <returns>对应的Gas消耗</returns>
+        /// <returns>对应的Gas消耗。单位是千分之一GAS</returns>
         public long GetPrice(uint hash)
         {
             prices.TryGetValue(hash, out long price);
             return price;
         }
-
+        /// <summary>
+        /// 执行一个方法。
+        /// </summary>
+        /// <param name="method">
+        /// 如果 method为4个字节，则将其拼接为uint，并查询其方法。<br/>
+        /// 如果 method不为4个字节，则当作字符串查找其哈希值前32位uint，再查询其方法。
+        /// </param>
+        /// <param name="engine">执行引擎</param>
+        /// <returns></returns>
         bool IInteropService.Invoke(byte[] method, ExecutionEngine engine)
         {
             uint hash = method.Length == 4
@@ -294,6 +306,7 @@ namespace Neo.SmartContract
         /// <returns>获取成功则返回true</returns>
         protected bool Runtime_GetTime(ExecutionEngine engine)
         {
+            // TODO 移植到Java时考虑如何解决此处可分叉的安全漏洞的方案。
             if (Snapshot.PersistingBlock == null)
             {
                 Header header = Snapshot.GetHeader(Snapshot.CurrentBlockHash);
@@ -358,7 +371,7 @@ namespace Neo.SmartContract
             }
         }
         /// <summary>
-        /// 对数据流进行序列化
+        /// 对数据流进行序列化。取出EvaluationStack栈顶的元素，序列化以后押回栈顶。
         /// </summary>
         /// <param name="engine">当前执行引擎</param>
         /// <returns>执行成功则返回true,否则返回false</returns>
@@ -465,7 +478,7 @@ namespace Neo.SmartContract
             return stack_temp.Peek();
         }
         /// <summary>
-        /// 将数据反序列化
+        /// 将数据反序列化。取出栈顶元素进行反序列化，得到的结果押回栈顶。
         /// </summary>
         /// <param name="engine">当前执行引擎</param>
         /// <returns>执行成功则返回true,否则返回false</returns>
@@ -855,7 +868,8 @@ namespace Neo.SmartContract
             return true;
         }
         /// <summary>
-        /// 无存储标记插入操作，以 key-value 的形式向持久化存储区中插入数据
+        /// 普通的插入操作，以 key-value 的形式向持久化存储区中插入数据。
+        /// 保存以后可修改。
         /// </summary>
         /// <param name="engine">当前执行引擎</param>
         /// <returns>执行成功则返回true,否则返回false</returns>

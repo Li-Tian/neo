@@ -46,7 +46,7 @@ namespace Neo.VM.Types
         /// <summary>
         /// 获取对应的BigInteger，true为BigInteger.One，false为BigInteger.Zero
         /// </summary>
-        /// <returns>转换后的值</returns>
+        /// <returns>转换后的值。True:1, false:0</returns>
         public override BigInteger GetBigInteger()
         {
             return value ? BigInteger.One : BigInteger.Zero;

@@ -234,7 +234,7 @@ namespace Neo.VM
         // Reads a scripthash and executes the corresponding contract. Disposes the top item on invocation stack.
         // </summary>
         /// <summary>
-        /// 读取脚本哈希并执行对应的合约。释放调用栈栈顶元素。
+        /// 读取脚本哈希并执行对应的合约。释放调用栈栈顶元素。不再返回调用方。
         /// </summary>
         TAILCALL = 0x69,
 
@@ -768,15 +768,21 @@ namespace Neo.VM
 
         // Stack isolation
         /// <summary>
-        /// 调用一个新的运行上下文，其脚本为当前上下文的脚本，pcount指定参数个数，rvcount指定结果个数。执行指令跳转至新的运行上下文。
+        /// 调用一个新的运行上下文，其脚本为当前上下文的脚本，
+        /// pcount指定参数个数，rvcount指定结果个数。
+        /// 执行指令跳转至新的运行上下文。
         /// </summary>
         CALL_I = 0xE0,
         /// <summary>
-        /// 调用一个新的运行上下文，其脚本由指令后20位Hash指定。pcount指定参数个数，rvcount指定结果个数。执行指令跳转至新的运行上下文。
+        /// 调用一个新的运行上下文，其脚本由指令后20位Hash指定。
+        /// pcount指定参数个数，rvcount指定结果个数。
+        /// 执行指令跳转至新的运行上下文。
         /// </summary>
         CALL_E = 0xE1,
         /// <summary>
-        /// 调用一个新的运行上下文，其脚本由计算栈栈顶的Hash指定。pcount指定参数个数，rvcount指定结果个数。执行指令跳转至新的运行上下文。
+        /// 调用一个新的运行上下文，其脚本由计算栈栈顶的Hash指定。
+        /// pcount指定参数个数，rvcount指定结果个数。
+        /// 执行指令跳转至新的运行上下文。
         /// </summary>
         CALL_ED = 0xE2,
         /// <summary>

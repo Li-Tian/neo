@@ -169,7 +169,7 @@ namespace Neo.Wallets.NEP6
         /// 通过合约对象和密钥对创建钱包对象
         /// </summary>
         /// <param name="contract">合约对象</param>
-        /// <param name="key">密钥对</param>
+        /// <param name="key">密钥对。如果不指定则生成一个只读地址</param>
         /// <returns>创建的钱包账户对象</returns>
         public override WalletAccount CreateAccount(Contract contract, KeyPair key = null)
         {
@@ -239,7 +239,8 @@ namespace Neo.Wallets.NEP6
             indexer.WalletTransaction -= WalletIndexer_WalletTransaction;
         }
         /// <summary>
-        ///  查询指定账户集合内某一全局资产（neo、gas）所有未花费的Coin集合中满足指定金额的子集(按照降序查找、优先使用鉴权合约地址（普通地址）)
+        /// 查询指定账户集合内某一全局资产（neo、gas）所有未花费的Coin集合中
+        /// 满足指定金额的子集(按照降序查找、优先使用鉴权合约地址（普通地址）)
         /// </summary>
         /// <param name="asset_id">指定全局资产的ID</param>
         /// <param name="amount">指定金额</param>
@@ -253,7 +254,7 @@ namespace Neo.Wallets.NEP6
         /// 从钱包账户列表内查找指定账户对象
         /// </summary>
         /// <param name="scriptHash">指定账户的脚本哈希</param>
-        /// <returns>指定账户对象</returns>
+        /// <returns>指定账户对象。不存在时返回null</returns>
         public override WalletAccount GetAccount(UInt160 scriptHash)
         {
             lock (accounts)

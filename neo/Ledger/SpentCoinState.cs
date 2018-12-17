@@ -20,7 +20,8 @@ namespace Neo.Ledger
         public uint TransactionHeight;
 
         /// <summary>
-        ///  已花费的outputs高度信息, output.index -> 花费该output的block.Index
+        ///  已花费的outputs高度信息, 
+        ///  output.index -> 花费该output的block.Index
         /// </summary>
         public Dictionary<ushort, uint> Items;
 

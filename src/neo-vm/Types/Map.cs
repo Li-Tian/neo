@@ -116,9 +116,9 @@ namespace Neo.VM.Types
             return true;
         }
         /// <summary>
-        /// 获取对应的字节数组
+        /// 获取对应的字节数组。未实现。默认抛出异常。
         /// </summary>
-        /// <returns>抛出异常</returns>
+        /// <returns>对应的字节数组</returns>
         /// <exception cref="System.NotSupportedException">默认直接抛出</exception>
         public override byte[] GetByteArray()
         {
@@ -152,7 +152,8 @@ namespace Neo.VM.Types
         /// 获取与指定键关联的值
         /// </summary>
         /// <param name="key">要获取的值的键。</param>
-        /// <param name="value">当此方法返回时，如果找到指定键，则包含与该键相关的值；否则包含 value 参数类型的默认值。</param>
+        /// <param name="value">当此方法返回时，如果找到指定键，则包含与该键相关的值；
+        /// 否则包含 value 参数类型的默认值。</param>
         /// <returns>如果包含具有指定键的元素则返回true，否则返回false</returns>
         public bool TryGetValue(StackItem key, out StackItem value)
         {

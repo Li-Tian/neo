@@ -11,7 +11,7 @@ using System.Linq;
 namespace Neo.Persistence
 {
     /// <summary>
-    /// 快照
+    /// 快照(*)TODO 使用see标签引用说明
     /// </summary>
     public abstract class Snapshot : IDisposable, IPersistence, IScriptTable
     {
@@ -109,7 +109,12 @@ namespace Neo.Persistence
         /// 计算可以Claim的GAS奖励
         /// </summary>
         /// <param name="inputs">Claim指向的交易集合</param>
-        /// <param name="ignoreClaimed">是否忽略已经Claims的input</param>
+        /// <param name="ignoreClaimed">
+        /// 是否忽略已经Claims的input。
+        /// 当如果发现参数inputs指向的UTXO不存在或者已经被claim过了，
+        /// 这时如果 ignoreClaimed 指定为 true，则忽略这个错误继续计算剩下的部分，
+        /// 如果 ignoreClaimed 指定为 false，则抛出异常。
+        /// </param>
         /// <returns>可以Claim的GAS数量</returns>
         /// <exception cref="System.ArgumentException">
         /// ignoreClaimed设置为false时，若出现以下一种情况：
@@ -146,7 +151,10 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="inputs">Claim指向的交易集合</param>
         /// <param name="height_end">花费的高度</param>
-        /// <exception cref="ArgumentException">当指向的交易不存在，或者指向交易输出序号不合法，或者指向交易输出不是NEO输出时，抛出异常</exception>
+        /// <exception cref="ArgumentException">
+        /// 当指向的交易不存在，或者指向交易输出序号不合法，
+        /// 或者指向交易输出不是NEO输出时，抛出异常
+        /// </exception>
         /// <returns>可以Claim的GAS数量</returns>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint height_end)
         {
@@ -252,7 +260,8 @@ namespace Neo.Persistence
         }
 
         /// <summary>
-        /// 获取一笔交易尚未Claim的outputs的字典
+        /// 获取一笔交易尚未Claim的outputs的字典。
+        /// 此字典的key为该交易的output的的序号，而value是这个output的花费状态。
         /// </summary>
         /// <param name="hash">待查询交易hash</param>
         /// <returns>返回尚未Claim的outputs字典，如果交易不存在，则返回null</returns>
@@ -292,9 +301,11 @@ namespace Neo.Persistence
         }
 
         /// <summary>
-        /// 获取参与共识的验证人列表
+        /// 获取参与共识的验证人列表。
         /// </summary>
-        /// <param name="others">打包的交易</param>
+        /// <param name="others">
+        /// 打包的交易。验证人点票时，包含这些交易中的影响。
+        /// </param>
         /// <returns>参与共识的验证人列表</returns>
         public IEnumerable<ECPoint> GetValidators(IEnumerable<Transaction> others)
         {
