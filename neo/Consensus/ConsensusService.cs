@@ -16,7 +16,6 @@ namespace Neo.Consensus
 {
     /// <summary>
     /// Consensus sevice, implemented the dBFT algorithm
-    /// 共识服务，实现了dBFT算法
     /// </summary>
     /// <remarks>
     ///  http://docs.neo.org/en-us/basic/consensus/whitepaper.html
@@ -30,19 +29,17 @@ namespace Neo.Consensus
         public class Start { }
 
         /// <summary>
-        /// Change the current view number message
-        /// 更新/设置视图编号（AKKA自定义消息类型）
+        /// Change the current view number message (AKKA customized message type)
         /// </summary>
         public class SetViewNumber {
             /// <summary>
-            /// vie number
+            /// view number
             /// </summary>
             public byte ViewNumber;
         }
 
         /// <summary>
-        /// Time out message
-        /// 超时消息（AKKA自定义消息类型）
+        /// Time out message (AKKA customized message type)
         /// </summary>
         /// <remarks>
         /// It contains the `Height` and `ViewNumber` of the timeout block.
@@ -85,7 +82,7 @@ namespace Neo.Consensus
         {
         }
         /// <summary>
-        /// Construction 
+        /// Construction a ConsensusService
         /// </summary>
         /// <param name="localNode">local node</param>
         /// <param name="taskManager">task manager</param>
@@ -437,10 +434,9 @@ namespace Neo.Consensus
 
 
         /// <summary>
-        /// Message receiver, inlcudes Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted
-        /// 消息接收器（AKKA框架的方法）
+        /// Message receiver, inlcudes Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted, which is a method of AKKA. 
         /// </summary>
-        /// <param name="message">(*)六类消息：Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted</param>
+        /// <param name="message">Six types of messages：Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted</param>
         protected override void OnReceive(object message)
         {
             switch (message)
@@ -526,8 +522,7 @@ namespace Neo.Consensus
         }
 
         /// <summary>
-        /// Post stop method, free resource
-        /// Actor停止前回调，回收资源（AKKA框架）
+        /// Post stop method, free resource. It's a method of AKKA.
         /// </summary>
         protected override void PostStop()
         {
