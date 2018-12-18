@@ -64,7 +64,7 @@ namespace Neo.Cryptography.ECC
         /// <param name="other">另一个ECPoint点</param>
         /// <returns>
         /// 如果两个点是同一个对象则返回0.
-        /// 否则,先比较X坐标值的大小,如果不相等则返回1或者-1（*）具体什么情况返回1？
+        /// 否则,先比较X坐标值的大小,如果不相等则返回X坐标值的比较结果
         /// 如果X坐标值相等， 则比较Y轴坐标值.
         /// </returns>
         public int CompareTo(ECPoint other)
