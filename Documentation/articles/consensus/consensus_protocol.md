@@ -69,15 +69,17 @@
 [![consensus_msg_seq](../../images/consensus/consensus_msg_seq.jpg)](../../images/consensus/consensus_msg_seq.jpg)
 
 
-  1. 在发送`consensus`消息之前，先发送`inv`消息，携带上`consensus`消息的`payload`的hash数据。
+  1. 共识节点A， 直接将共识消息`consensus` 广播连接上的节点B
 
-  2. 若一个节点已经收到过该hash对应的数据，或在短时间内，已经重复获取该`inv`消息时，则不处理；否则，进入步骤三。
+  2. 节点B在收到`consensus`消息后，先进行共识消息处理，再进行共识消息的转发。转发共识消息前，先发送`inv`消息，并携带上`consensus`消息的`payload`的hash数据。
 
-  3. 向外广播`getdata`消息，附带上`inv`消息中的hash数据。
+  3. 若节点C已经收到过该hash对应的数据，或在短时间内，已经重复获取该`inv`消息时，则不处理；否则，进入步骤四。
 
-  4. 共识节点收到`getdata`消息后，则发送`consenus`消息给对方。
+  4. C向外广播`getdata`消息，附带上`inv`消息中的hash数据。
 
-  5. 节点收到`consensus`消息后，则触发共识模块对消息处理, 以及转发该共识消息
+  5. 节点B收到`getdata`消息后，则发送`consenus`消息给对方。
+
+  6. C节点收到`consensus`消息后，则触发共识模块对消息处理, 以及转发该共识消息,回到步骤二。
 
 
 ### inv 消息格式
