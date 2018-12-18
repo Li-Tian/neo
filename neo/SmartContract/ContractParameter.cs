@@ -8,28 +8,45 @@ using System.Text;
 
 namespace Neo.SmartContract
 {
+    // <summary>
+    // 合约参数类，主要包括对合约参数赋值，以及合约参数的格式转换方法
+    // </summary>
     /// <summary>
-    /// 合约参数类，主要包括对合约参数赋值，以及合约参数的格式转换方法
+    /// Contract parameter class, mainly including assignment of contract parameters, and format conversion method of contract parameters
     /// </summary>
     public class ContractParameter
     {
+        // <summary>
+        // 合约的参数类型
+        // </summary>
         /// <summary>
-        /// 合约的参数类型
+        /// Contract parameter type
         /// </summary>
         public ContractParameterType Type;
+        // <summary>
+        // 合约参数的值
+        // </summary>
         /// <summary>
-        /// 合约参数的值
+        /// The value of the contract parameter
         /// </summary>
         public object Value;
+        // <summary>
+        // 默认构造函数
+        // </summary>
         /// <summary>
-        /// 默认构造函数
+        /// Default constructor
         /// </summary>
         public ContractParameter() { }
+        // <summary>
+        // 参数为ContractParameterType的构造函数
+        // </summary>
+        // <param name="type">合约参数类型</param>
+        // <exception cref="System.ArgumentException">输入类型不是规定合约的参数类型时抛出</exception>
         /// <summary>
-        /// 参数为ContractParameterType的构造函数
+        /// Constructor with the parameter ContractParameterType
         /// </summary>
-        /// <param name="type">合约参数类型</param>
-        /// <exception cref="System.ArgumentException">输入类型不是规定合约的参数类型时抛出</exception>
+        /// <param name="type">Contract parameter type</param>
+        /// <exception cref="System.ArgumentException">Thrown when the input type is not a parameter type that specifies the contract</exception>
         public ContractParameter(ContractParameterType type)
         {
             this.Type = type;
@@ -69,13 +86,20 @@ namespace Neo.SmartContract
                     throw new ArgumentException();
             }
         }
+        // <summary>
+        // 从Json对象中获取合约参数
+        // </summary>
+        // <param name="json">包含合约参数类型和参数值的Json对象</param>
+        // <returns>获取到的合约参数</returns>
+        // <exception cref="System.ArgumentException">从JSON对象中解析出的type类型
+        // 不是规定的合约参数类型时抛出</exception>
         /// <summary>
-        /// 从Json对象中获取合约参数
+        /// Get contract parameters from Json object
         /// </summary>
-        /// <param name="json">包含合约参数类型和参数值的Json对象</param>
-        /// <returns>获取到的合约参数</returns>
-        /// <exception cref="System.ArgumentException">从JSON对象中解析出的type类型
-        /// 不是规定的合约参数类型时抛出</exception>
+        /// <param name="json">Json object containing contract parameter types and parameter values</param>
+        /// <returns>Contract parameters</returns>
+        /// <exception cref="System.ArgumentException">
+        /// Thrown when the type parsed from the JSON object is not the specified contract parameter type</exception>
         public static ContractParameter FromJson(JObject json)
         {
             ContractParameter parameter = new ContractParameter
@@ -118,13 +142,20 @@ namespace Neo.SmartContract
                 }
             return parameter;
         }
+        // <summary>
+        // 给合约参数赋值，函数将根据参数类型做对应的赋值操作
+        // </summary>
+        // <param name="text">string类型的参数值</param>
+        // <exception cref="System.ArgumentException">找不到所赋值的合约参数类型</exception>
+        // <exception cref="System.FormatException">合约参数类型为签名类型时，输入的字符串
+        // 字节长度不等于64时抛出</exception>
         /// <summary>
-        /// 给合约参数赋值，函数将根据参数类型做对应的赋值操作
+        /// Assign a value to the contract parameter, the function will perform the corresponding assignment operation according to the parameter type.
         /// </summary>
-        /// <param name="text">string类型的参数值</param>
-        /// <exception cref="System.ArgumentException">找不到所赋值的合约参数类型</exception>
-        /// <exception cref="System.FormatException">合约参数类型为签名类型时，输入的字符串
-        /// 字节长度不等于64时抛出</exception>
+        /// <param name="text">Parameter value of string type</param>
+        /// <exception cref="System.ArgumentException">Cannot find the contract parameter type of the assigned value</exception>
+        /// <exception cref="System.FormatException">When the contract parameter type is Signature type, the input string length is not equal to 64.
+        /// </exception>
         public void SetValue(string text)
         {
             switch (Type)
@@ -159,10 +190,14 @@ namespace Neo.SmartContract
                     throw new ArgumentException();
             }
         }
+        // <summary>
+        // 将合约参数转化为Json对象类型
+        // </summary>
+        // <returns>转化完成的Json对象</returns>
         /// <summary>
-        /// 将合约参数转化为Json对象类型
+        /// Convert contract parameters to Json object
         /// </summary>
-        /// <returns>转化完成的Json对象</returns>
+        /// <returns>Json object</returns>
         public JObject ToJson()
         {
             return ToJson(this, null);
@@ -214,10 +249,14 @@ namespace Neo.SmartContract
                 }
             return json;
         }
+        // <summary>
+        // 将合约参数的值转化为String类型
+        // </summary>
+        // <returns>转化为String类型的参数值</returns>
         /// <summary>
-        /// 将合约参数的值转化为String类型
+        /// Convert the value of the contract parameter to a String type
         /// </summary>
-        /// <returns>转化为String类型的参数值</returns>
+        /// <returns>String type</returns>
         public override string ToString()
         {
             return ToString(this, null);
