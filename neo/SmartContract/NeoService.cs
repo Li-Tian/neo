@@ -14,16 +14,24 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.SmartContract
 {
+    // <summary>
+    // Neo互操作服务类，主要提供了Neo命名空间的互操作服务方法
+    // </summary>
     /// <summary>
-    /// Neo互操作服务类，主要提供了Neo命名空间的互操作服务方法
+    /// Neo interoperable service class, which mainly provides the interoperable service method of Neo namespace
     /// </summary>
     public class NeoService : StandardService
     {
+        // <summary>
+        // Neo互操作服务构造函数
+        // </summary>
+        // <param name="trigger">触发器类型</param>
+        // <param name="snapshot">数据库的快照</param>
         /// <summary>
-        /// Neo互操作服务构造函数
+        /// Neo Interoperability Service Constructor
         /// </summary>
-        /// <param name="trigger">触发器类型</param>
-        /// <param name="snapshot">数据库的快照</param>
+        /// <param name="trigger">Trigger type</param>
+        /// <param name="snapshot">Snapshot of the database</param>
         public NeoService(TriggerType trigger, Snapshot snapshot)
             : base(trigger, snapshot)
         {

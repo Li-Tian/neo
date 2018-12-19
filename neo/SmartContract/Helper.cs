@@ -8,18 +8,26 @@ using System.Text;
 
 namespace Neo.SmartContract
 {
+    // <summary>
+    // 智能合约帮助类，提供了脚本的多签、单签判断等功能
+    // </summary>
     /// <summary>
-    /// 智能合约帮助类，提供了脚本的多签、单签判断等功能
+    /// Smart contract helper class, providing script signature judgment and other functions
     /// </summary>
     public static class Helper
     {
         private static readonly Dictionary<string, uint> method_hashes = new Dictionary<string, uint>();
 
+        // <summary>
+        // 判断脚本是否为多签脚本,主要是根据多签脚本的结构来判断。
+        // </summary>
+        // <param name="script">需要判断的脚本</param>
+        // <returns>是多签脚本则返回true，否则返回false</returns>
         /// <summary>
-        /// 判断脚本是否为多签脚本,主要是根据多签脚本的结构来判断。
+        /// It is judged whether the script is a multi-sign script, and is mainly judged according to the structure of the multi-sign script.
         /// </summary>
-        /// <param name="script">需要判断的脚本</param>
-        /// <returns>是多签脚本则返回true，否则返回false</returns>
+        /// <param name="script">Script to be judged</param>
+        /// <returns>Returns true if the script is multi-sign script, otherwise returns false</returns>
         public static bool IsMultiSigContract(this byte[] script)
         {
             int m, n = 0;
@@ -67,12 +75,18 @@ namespace Neo.SmartContract
             if (script.Length != i) return false;
             return true;
         }
+        // <summary>
+        // 判断脚本是否为签名脚本，根据签名脚本的结构来判断
+        // 签名脚本的结构：0x21(PUSH)+公钥+0xac(CHECKSIG)
+        // </summary>
+        // <param name="script">需要判断的脚本</param>
+        // <returns>是签名脚本则返回true，否则返回false</returns>
         /// <summary>
-        /// 判断脚本是否为签名脚本，根据签名脚本的结构来判断
-        /// 签名脚本的结构：0x21(PUSH)+公钥+0xac(CHECKSIG)
+        /// Determine whether the script is a signature script, and judge according to the structure of the signature script.
+        /// The structure of the signature script: 0x21 (PUSH) + public key + 0xAC (CHECKSIG)
         /// </summary>
-        /// <param name="script">需要判断的脚本</param>
-        /// <returns>是签名脚本则返回true，否则返回false</returns>
+        /// <param name="script">Script to be judged</param>
+        /// <returns>Is true for signature scripts, false otherwise</returns>
         public static bool IsSignatureContract(this byte[] script)
         {
             if (script.Length != 35) return false;
@@ -80,20 +94,31 @@ namespace Neo.SmartContract
                 return false;
             return true;
         }
+        // <summary>
+        // 判断脚本是否为标准脚本，如果脚本是签名脚本或者多签脚本，则该脚本为标准脚本
+        // </summary>
+        // <param name="script">需要判断的脚本</param>
+        // <returns>是标准脚本则返回true，否则返回false</returns>
         /// <summary>
-        /// 判断脚本是否为标准脚本，如果脚本是签名脚本或者多签脚本，则该脚本为标准脚本
+        /// Determine whether the script is a standard script. 
+        /// If the script is a signature script or a multi-sign script, the script is a standard script.
         /// </summary>
-        /// <param name="script">需要判断的脚本</param>
-        /// <returns>是标准脚本则返回true，否则返回false</returns>
+        /// <param name="script">Script to be judged</param>
+        /// <returns>Is true for standard scripts, false otherwise</returns>
         public static bool IsStandardContract(this byte[] script)
         {
             return script.IsSignatureContract() || script.IsMultiSigContract();
         }
+        // <summary>
+        // 取互操作服务名字的哈希
+        // </summary>
+        // <param name="method">互操作服务名字</param>
+        // <returns>互操作服务名字的哈希的前32位</returns>
         /// <summary>
-        /// 取互操作服务名字的哈希
+        /// Get the hash of the interoperability service name.
         /// </summary>
-        /// <param name="method">互操作服务名字</param>
-        /// <returns>互操作服务名字的哈希的前32位</returns>
+        /// <param name="method">Interoperability service name</param>
+        /// <returns>The first 32 bits of the hash of the interoperable service name</returns>
         public static uint ToInteropMethodHash(this string method)
         {
             if (method_hashes.TryGetValue(method, out uint hash))
@@ -103,11 +128,16 @@ namespace Neo.SmartContract
             return hash;
         }
 
+        // <summary>
+        // 获取脚本的哈希值，对脚本做Hash160
+        // </summary>
+        // <param name="script">脚本字节数组</param>
+        // <returns>脚本的哈希值</returns>
         /// <summary>
-        /// 获取脚本的哈希值，对脚本做Hash160
+        /// Get the hash of the script, do Hash160 on the script
         /// </summary>
-        /// <param name="script">脚本字节数组</param>
-        /// <returns>脚本的哈希值</returns>
+        /// <param name="script">Script byte array</param>
+        /// <returns>The hash of the script</returns>
         public static UInt160 ToScriptHash(this byte[] script)
         {
             return new UInt160(Crypto.Default.Hash160(script));

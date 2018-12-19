@@ -16,53 +16,85 @@ using VMBoolean = Neo.VM.Types.Boolean;
 
 namespace Neo.SmartContract
 {
+    // <summary>
+    // 标准服务类，用于提供智能合约需要的互操作服务等
+    // </summary>
     /// <summary>
-    /// 标准服务类，用于提供智能合约需要的互操作服务等
+    /// Standard service class for interoperable services required to provide smart contracts, etc.
     /// </summary>
     public class StandardService : IDisposable, IInteropService
     {
+        // <summary>
+        // 通知事件委托
+        // </summary>
         /// <summary>
-        /// 通知事件委托
+        /// Notification event delegation
         /// </summary>
         public static event EventHandler<NotifyEventArgs> Notify;
+        // <summary>
+        // 日志事件委托
+        // </summary>
         /// <summary>
-        /// 日志事件委托
+        /// Log event delegation
         /// </summary>
         public static event EventHandler<LogEventArgs> Log;
 
+        // <summary>
+        // 触发器类型
+        // </summary>
         /// <summary>
-        /// 触发器类型
+        /// Trigger type
         /// </summary>
         protected readonly TriggerType Trigger;
+        // <summary>
+        // 数据库快照
+        // </summary>
         /// <summary>
-        /// 数据库快照
+        /// Database snapshot
         /// </summary>
         protected readonly Snapshot Snapshot;
+        // <summary>
+        // 待释放资源的列表
+        // </summary>
         /// <summary>
-        /// 待释放资源的列表
+        /// List of resources to be released
         /// </summary>
         protected readonly List<IDisposable> Disposables = new List<IDisposable>();
+        // <summary>
+        // 已创建合约的字典
+        // </summary>
+        // <remarks>
+        // key是脚本的哈希值，value是执行引擎的当前上下文的哈希值。
+        // 这个设计是用来保障调用的脚本和被调用的脚本之间的存储空间的安全性。
+        // </remarks>
         /// <summary>
-        /// 已创建合约的字典
+        /// Dictionary of contract created
         /// </summary>
-        /// <remarks>
-        /// key是脚本的哈希值，value是执行引擎的当前上下文的哈希值。
-        /// 这个设计是用来保障调用的脚本和被调用的脚本之间的存储空间的安全性。
+        /// <remarks>Key is the hash value of the script, and value is the hash value of the current context of the execution engine.
+        /// This design is used to secure the storage space between the calling script and the called script.
         /// </remarks>
         protected readonly Dictionary<UInt160, UInt160> ContractsCreated = new Dictionary<UInt160, UInt160>();
         private readonly List<NotifyEventArgs> notifications = new List<NotifyEventArgs>();
         private readonly Dictionary<uint, Func<ExecutionEngine, bool>> methods = new Dictionary<uint, Func<ExecutionEngine, bool>>();
         private readonly Dictionary<uint, long> prices = new Dictionary<uint, long>();
 
+        // <summary>
+        // 通知信息列表
+        // </summary>
         /// <summary>
-        /// 通知信息列表
+        /// Notification information list
         /// </summary>
         public IReadOnlyList<NotifyEventArgs> Notifications => notifications;
+        // <summary>
+        // 标准服务构造函数
+        // </summary>
+        // <param name="trigger">触发器类型</param>
+        // <param name="snapshot">数据库快照</param>
         /// <summary>
-        /// 标准服务构造函数
+        /// Standard service constructor
         /// </summary>
-        /// <param name="trigger">触发器类型</param>
-        /// <param name="snapshot">数据库快照</param>
+        /// <param name="trigger">Trigger type</param>
+        /// <param name="snapshot">Database snapshot</param>
         public StandardService(TriggerType trigger, Snapshot snapshot)
         {
             this.Trigger = trigger;
@@ -111,15 +143,21 @@ namespace Neo.SmartContract
             if (!contract.HasStorage) return false;
             return true;
         }
+        // <summary>
+        // 将修改后的快照提交
+        // </summary>
         /// <summary>
-        /// 将修改后的快照提交
+        /// Commit the modified snapshot
         /// </summary>
         public void Commit()
         {
             Snapshot.Commit();
         }
+        // <summary>
+        // 释放Disposables中所有资源
+        // </summary>
         /// <summary>
-        /// 释放Disposables中所有资源
+        /// Release all resources in Disposables
         /// </summary>
         public void Dispose()
         {
@@ -127,25 +165,37 @@ namespace Neo.SmartContract
                 disposable.Dispose();
             Disposables.Clear();
         }
+        // <summary>
+        // 根据互操作服务哈希查找对应的Gas消耗
+        // </summary>
+        // <param name="hash">互操作服务哈希</param>
+        // <returns>对应的Gas消耗。单位是千分之一GAS</returns>
         /// <summary>
-        /// 根据互操作服务哈希查找对应的Gas消耗
+        /// Find the corresponding Gas consumption according to the interoperation service hash
         /// </summary>
-        /// <param name="hash">互操作服务哈希</param>
-        /// <returns>对应的Gas消耗。单位是千分之一GAS</returns>
+        /// <param name="hash">Interoperable service hash</param>
+        /// <returns>Gas consumption. The unit is one thousandth of a GAS</returns>
         public long GetPrice(uint hash)
         {
             prices.TryGetValue(hash, out long price);
             return price;
         }
+        // <summary>
+        // 执行一个方法。
+        // </summary>
+        // <param name="method">
+        // 如果 method为4个字节，则将其拼接为uint，并查询其方法。<br/>
+        // 如果 method不为4个字节，则当作字符串查找其哈希值前32位uint，再查询其方法。
+        // </param>
+        // <param name="engine">执行引擎</param>
+        // <returns></returns>
         /// <summary>
-        /// 执行一个方法。
+        /// Execute a method.
         /// </summary>
-        /// <param name="method">
-        /// 如果 method为4个字节，则将其拼接为uint，并查询其方法。<br/>
-        /// 如果 method不为4个字节，则当作字符串查找其哈希值前32位uint，再查询其方法。
-        /// </param>
-        /// <param name="engine">执行引擎</param>
-        /// <returns></returns>
+        /// <param name="method">If method is 4 bytes, concatenate it to uint and query its method. <br/> 
+        /// If method is not 4 bytes, look for the first 32 bits of uint of its hash value as a string, and then query its method.</param>
+        /// <param name="engine">Execution Engine</param>
+        /// <returns>Execute method.</returns>
         bool IInteropService.Invoke(byte[] method, ExecutionEngine engine)
         {
             uint hash = method.Length == 4
@@ -154,114 +204,172 @@ namespace Neo.SmartContract
             if (!methods.TryGetValue(hash, out Func<ExecutionEngine, bool> func)) return false;
             return func(engine);
         }
+        // <summary>
+        // 注册一个互操作服务
+        // </summary>
+        // <param name="method">互操作服务名</param>
+        // <param name="handler">互操作服务方法</param>
         /// <summary>
-        /// 注册一个互操作服务
+        /// Register an interoperable service
         /// </summary>
-        /// <param name="method">互操作服务名</param>
-        /// <param name="handler">互操作服务方法</param>
+        /// <param name="method">Interoperable service name</param>
+        /// <param name="handler">Interoperable service method</param>
         protected void Register(string method, Func<ExecutionEngine, bool> handler)
         {
             methods.Add(method.ToInteropMethodHash(), handler);
         }
+        // <summary>
+        // 注册一个互操作服务
+        // </summary>
+        // <param name="method">互操作服务名</param>
+        // <param name="handler">互操作服务方法</param>
+        // <param name="price">互操作服务Gas消耗</param>
         /// <summary>
-        /// 注册一个互操作服务
+        /// Register an interoperable service
         /// </summary>
-        /// <param name="method">互操作服务名</param>
-        /// <param name="handler">互操作服务方法</param>
-        /// <param name="price">互操作服务Gas消耗</param>
+        /// <param name="method">Interoperable service name</param>
+        /// <param name="handler">Interoperable service method</param>
+        /// <param name="price">Gas consumption of interoperable services</param>
         protected void Register(string method, Func<ExecutionEngine, bool> handler, long price)
         {
             Register(method, handler);
             prices.Add(method.ToInteropMethodHash(), price);
         }
+        // <summary>
+        // 获得该智能合约的脚本容器（最开始的触发者）
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功返回true</returns>
         /// <summary>
-        /// 获得该智能合约的脚本容器（最开始的触发者）
+        /// Get the script container for this smart contract (the first trigger)
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Successful execution returns true</returns>
         protected bool ExecutionEngine_GetScriptContainer(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(engine.ScriptContainer));
             return true;
         }
+        // <summary>
+        // 获得该智能合约执行的脚本哈希
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功返回true</returns>
         /// <summary>
-        /// 获得该智能合约执行的脚本哈希
+        /// Get the hash of the script executed by the smart contract
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Successful execution returns true</returns>
         protected bool ExecutionEngine_GetExecutingScriptHash(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.ScriptHash);
             return true;
         }
+        // <summary>
+        // 获得该智能合约的调用者的脚本哈希
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功返回true</returns>
         /// <summary>
-        /// 获得该智能合约的调用者的脚本哈希
+        /// Get the script hash of the caller of the smart contract
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Successful execution returns true</returns>
         protected bool ExecutionEngine_GetCallingScriptHash(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(engine.CallingContext.ScriptHash);
             return true;
         }
+        // <summary>
+        // 获得该智能合约的入口点（合约调用链的起点）的脚本哈希
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功返回true</returns>
         /// <summary>
-        /// 获得该智能合约的入口点（合约调用链的起点）的脚本哈希
+        /// Get the script hash of the entry point of the smart contract (the starting point of the contract call chain)
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Successful execution returns true</returns>
         protected bool ExecutionEngine_GetEntryScriptHash(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(engine.EntryContext.ScriptHash);
             return true;
         }
 
+        // <summary>
+        // 获得运行该智能合约的平台
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功返回true</returns>
         /// <summary>
-        /// 获得运行该智能合约的平台
+        /// Get the name of the platform running the smart contract
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Successful execution returns true</returns>
         protected bool Runtime_Platform(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(Encoding.ASCII.GetBytes("NEO"));
             return true;
         }
+        // <summary>
+        // 获得该智能合约的触发条件（应用合约 or 鉴权合约）
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功返回true</returns>
         /// <summary>
-        /// 获得该智能合约的触发条件（应用合约 or 鉴权合约）
+        /// Get the trigger condition for the smart contract (Application contract or Verification contract)
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Successful execution returns true</returns>
         protected bool Runtime_GetTrigger(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push((int)Trigger);
             return true;
         }
+        // <summary>
+        // 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此哈希。
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <param name="hash">需要验证的哈希</param>
+        // <returns>验证结果，如果包含则返回true，否则返回false</returns>
         /// <summary>
-        /// 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此哈希。
+        /// Verify that the script hash required to invoke the transaction/block of the smart contract contains this hash.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <param name="hash">需要验证的哈希</param>
-        /// <returns>验证结果，如果包含则返回true，否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <param name="hash">Hash that needs to be verified</param>
+        /// <returns>Return true if it is included, false otherwise</returns>
         protected bool CheckWitness(ExecutionEngine engine, UInt160 hash)
         {
             IVerifiable container = (IVerifiable)engine.ScriptContainer;
             UInt160[] _hashes_for_verifying = container.GetScriptHashesForVerifying(Snapshot);
             return _hashes_for_verifying.Contains(hash);
         }
+        // <summary>
+        // 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此公钥。
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <param name="pubkey">需要验证的公钥</param>
+        // <returns>验证结果，如果包含则返回true，否则返回false</returns>
         /// <summary>
-        /// 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此公钥。
+        ///  Verify that the script hash required to invoke the transaction/block of the smart contract contains this public key.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <param name="pubkey">需要验证的公钥</param>
-        /// <returns>验证结果，如果包含则返回true，否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <param name="pubkey">Public key that needs to be verified</param>
+        /// <returns>Return true if it is included, false otherwise</returns>
         protected bool CheckWitness(ExecutionEngine engine, ECPoint pubkey)
         {
             return CheckWitness(engine, Contract.CreateSignatureRedeemScript(pubkey).ToScriptHash());
         }
+        // <summary>
+        // 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此哈希/公钥。
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>验证结果，如果包含则返回true，否则返回false</returns>
         /// <summary>
-        /// 验证调用该智能合约的交易/区块所需的脚本哈希是否包含此哈希/公钥。
+        /// Verify that the script hash required to invoke the transaction/block of the smart contract contains this hash/public key.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>验证结果，如果包含则返回true，否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if it is included, false otherwise</returns>
         protected bool Runtime_CheckWitness(ExecutionEngine engine)
         {
             byte[] hashOrPubkey = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -275,11 +383,16 @@ namespace Neo.SmartContract
             engine.CurrentContext.EvaluationStack.Push(result);
             return true;
         }
+        // <summary>
+        // 在智能合约中向执行该智能合约的客户端发送通知
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>发送成功则返回true</returns>
         /// <summary>
-        /// 在智能合约中向执行该智能合约的客户端发送通知
+        /// Send a notification to the client executing the smart contract
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>发送成功则返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful</returns>
         protected bool Runtime_Notify(ExecutionEngine engine)
         {
             StackItem state = engine.CurrentContext.EvaluationStack.Pop();
@@ -288,22 +401,32 @@ namespace Neo.SmartContract
             notifications.Add(notification);
             return true;
         }
+        // <summary>
+        // 在智能合约中向执行该智能合约的客户端发送日志
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>发送成功则返回true</returns>
         /// <summary>
-        /// 在智能合约中向执行该智能合约的客户端发送日志
+        /// Send a log to the client executing the smart contract
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>发送成功则返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful</returns>
         protected bool Runtime_Log(ExecutionEngine engine)
         {
             string message = Encoding.UTF8.GetString(engine.CurrentContext.EvaluationStack.Pop().GetByteArray());
             Log?.Invoke(this, new LogEventArgs(engine.ScriptContainer, new UInt160(engine.CurrentContext.ScriptHash), message));
             return true;
         }
+        // <summary>
+        // 获取当前时间
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>获取成功则返回true</returns>
         /// <summary>
-        /// 获取当前时间
+        /// Get current time
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>获取成功则返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful</returns>
         protected bool Runtime_GetTime(ExecutionEngine engine)
         {
             // TODO 移植到Java时考虑如何解决此处可分叉的安全漏洞的方案。
@@ -370,11 +493,16 @@ namespace Neo.SmartContract
                 }
             }
         }
+        // <summary>
+        // 对数据流进行序列化。取出EvaluationStack栈顶的元素，序列化以后押回栈顶。
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 对数据流进行序列化。取出EvaluationStack栈顶的元素，序列化以后押回栈顶。
+        /// Serialize the data stream. Take the elements at the top of the EvaluationStack and push them back to the top of the stack after serialization.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Runtime_Serialize(ExecutionEngine engine)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -477,11 +605,16 @@ namespace Neo.SmartContract
             }
             return stack_temp.Peek();
         }
+        // <summary>
+        // 将数据反序列化。取出栈顶元素进行反序列化，得到的结果押回栈顶。
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 将数据反序列化。取出栈顶元素进行反序列化，得到的结果押回栈顶。
+        /// Deserialize the data. The top element of the stack is taken out for deserialization, and the result is pushed back to the top of the stack.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Runtime_Deserialize(ExecutionEngine engine)
         {
             byte[] data = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -505,21 +638,31 @@ namespace Neo.SmartContract
             }
             return true;
         }
+        // <summary>
+        // 获得当前区块高度
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true</returns>
         /// <summary>
-        /// 获得当前区块高度
+        /// Get the current block height
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful</returns>
         protected bool Blockchain_GetHeight(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(Snapshot.Height);
             return true;
         }
+        // <summary>
+        // 通过区块高度或区块 Hash，查找区块头
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 通过区块高度或区块 Hash，查找区块头
+        /// Find block headers by block height or block Hash
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Blockchain_GetHeader(ExecutionEngine engine)
         {
             byte[] data = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -541,11 +684,16 @@ namespace Neo.SmartContract
             }
             return true;
         }
+        // <summary>
+        // 通过区块高度或区块 Hash，查找区块
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 通过区块高度或区块 Hash，查找区块
+        /// Find block by block height or block Hash
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Blockchain_GetBlock(ExecutionEngine engine)
         {
             byte[] data = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -567,11 +715,16 @@ namespace Neo.SmartContract
             }
             return true;
         }
+        // <summary>
+        // 通过交易哈希查找交易
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true</returns>
         /// <summary>
-        /// 通过交易哈希查找交易
+        /// Find transaction by transaction hash
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful</returns>
         protected bool Blockchain_GetTransaction(ExecutionEngine engine)
         {
             byte[] hash = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -579,11 +732,16 @@ namespace Neo.SmartContract
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(tx));
             return true;
         }
+        // <summary>
+        // 通过交易哈希查找交易高度
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true</returns>
         /// <summary>
-        /// 通过交易哈希查找交易高度
+        /// Find transaction heights by transaction hash
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful</returns>
         protected bool Blockchain_GetTransactionHeight(ExecutionEngine engine)
         {
             byte[] hash = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
@@ -591,11 +749,16 @@ namespace Neo.SmartContract
             engine.CurrentContext.EvaluationStack.Push(height ?? -1);
             return true;
         }
+        // <summary>
+        // 根据合约哈希获取合约内容
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true</returns>
         /// <summary>
-        /// 根据合约哈希获取合约内容
+        /// Get contract content by contract hash
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful</returns>
         protected bool Blockchain_GetContract(ExecutionEngine engine)
         {
             UInt160 hash = new UInt160(engine.CurrentContext.EvaluationStack.Pop().GetByteArray());
@@ -606,11 +769,16 @@ namespace Neo.SmartContract
                 engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(contract));
             return true;
         }
+        // <summary>
+        // 获得该区块的高度
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得该区块的高度
+        /// Get the height of the block
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Header_GetIndex(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -622,11 +790,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得该区块的哈希
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得该区块的哈希
+        /// Get the hash of the block
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Header_GetHash(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -638,11 +811,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得前一个区块的哈希
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得前一个区块的哈希
+        /// Get the hash of the previous block
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Header_GetPrevHash(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -654,11 +832,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得区块的时间戳
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得区块的时间戳
+        /// Get the timestamp of the block
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Header_GetTimestamp(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -670,11 +853,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得当前区块中交易的数量
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得当前区块中交易的数量
+        /// Get the number of transactions in the current block
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Block_GetTransactionCount(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -686,11 +874,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得当前区块中所有的交易
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得当前区块中所有的交易
+        /// Get all the transactions in the current block
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Block_GetTransactions(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -704,11 +897,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得当前区块中指定索引的交易
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得当前区块中指定索引的交易
+        /// Get the transaction for the specified index in the current block
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Block_GetTransaction(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -723,11 +921,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得当前交易的 Hash
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得当前交易的 Hash
+        /// Get the current transaction Hash
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Transaction_GetHash(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -739,11 +942,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获取当前存储区上下文
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获取当前存储区上下文
+        /// Get the current storage context
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Storage_GetContext(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new StorageContext
@@ -753,11 +961,16 @@ namespace Neo.SmartContract
             }));
             return true;
         }
+        // <summary>
+        // 获取当前存储区上下文（只读）
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获取当前存储区上下文（只读）
+        /// Get the current storage context.(read only)
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Storage_GetReadOnlyContext(ExecutionEngine engine)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new StorageContext
@@ -767,11 +980,16 @@ namespace Neo.SmartContract
             }));
             return true;
         }
+        // <summary>
+        // 查询操作，在持久化存储区中通过 key 查询对应的 value
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 查询操作，在持久化存储区中通过 key 查询对应的 value
+        /// Query operation, query the corresponding value by key in the persistent storage area
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Storage_Get(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -789,11 +1007,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 将当前存储区上下文设为只读
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 将当前存储区上下文设为只读
+        /// Make the current storage context read-only
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool StorageContext_AsReadOnly(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -810,11 +1033,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 获得合约的存储上下文
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 获得合约的存储上下文
+        /// Get the storage context of the contract
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Contract_GetStorageContext(ExecutionEngine engine)
         {
             if (engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface)
@@ -831,11 +1059,16 @@ namespace Neo.SmartContract
             }
             return false;
         }
+        // <summary>
+        // 销毁合约，如果合约使用了存储区，则同时将合约的存储区删除。
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 销毁合约，如果合约使用了存储区，则同时将合约的存储区删除。
+        /// Destroy the contract, if the contract uses the storage, the storage of the contract is also deleted.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Contract_Destroy(ExecutionEngine engine)
         {
             if (Trigger != TriggerType.Application) return false;
@@ -867,12 +1100,18 @@ namespace Neo.SmartContract
             item.IsConstant = flags.HasFlag(StorageFlags.Constant);
             return true;
         }
+        // <summary>
+        // 普通的插入操作，以 key-value 的形式向持久化存储区中插入数据。
+        // 保存以后可修改。
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 普通的插入操作，以 key-value 的形式向持久化存储区中插入数据。
-        /// 保存以后可修改。
+        /// A normal insert operation that inserts data into the persistent store as a key-value.
+        /// Can be modified after saving.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Storage_Put(ExecutionEngine engine)
         {
             if (!(engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface))
@@ -882,11 +1121,16 @@ namespace Neo.SmartContract
             byte[] value = engine.CurrentContext.EvaluationStack.Pop().GetByteArray();
             return PutEx(context, key, value, StorageFlags.None);
         }
+        // <summary>
+        // 有存储标记插入操作，以 key-value 的形式向持久化存储区中插入数据
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 有存储标记插入操作，以 key-value 的形式向持久化存储区中插入数据
+        /// There is a store flag insert operation that inserts data into the persistent store as a key-value
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Storage_PutEx(ExecutionEngine engine)
         {
             if (!(engine.CurrentContext.EvaluationStack.Pop() is InteropInterface _interface))
@@ -897,11 +1141,16 @@ namespace Neo.SmartContract
             StorageFlags flags = (StorageFlags)(byte)engine.CurrentContext.EvaluationStack.Pop().GetBigInteger();
             return PutEx(context, key, value, flags);
         }
+        // <summary>
+        // 删除操作，在持久化存储区中通过 key 删除对应的 value
+        // </summary>
+        // <param name="engine">当前执行引擎</param>
+        // <returns>执行成功则返回true,否则返回false</returns>
         /// <summary>
-        /// 删除操作，在持久化存储区中通过 key 删除对应的 value
+        /// Delete operation, delete the corresponding value by key in the persistent storage.
         /// </summary>
-        /// <param name="engine">当前执行引擎</param>
-        /// <returns>执行成功则返回true,否则返回false</returns>
+        /// <param name="engine">Current execution engine</param>
+        /// <returns>Return true if successful,false otherwise.</returns>
         protected bool Storage_Delete(ExecutionEngine engine)
         {
             if (Trigger != TriggerType.Application && Trigger != TriggerType.ApplicationR)

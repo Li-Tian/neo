@@ -1,57 +1,60 @@
 ﻿namespace Neo.SmartContract
 {
+    // <summary>
+    // 合约参数类型，为byte类型
+    // </summary>
     /// <summary>
-    /// 合约参数类型，为byte类型
+    /// Contract parameter type
     /// </summary>
     public enum ContractParameterType : byte
     {
-        /// <summary>
-        /// 签名类型
-        /// </summary>
+        // <summary>
+        // Signature
+        // </summary>
         Signature = 0x00,
-        /// <summary>
-        /// 布尔类型
-        /// </summary>
+        // <summary>
+        // Boolean
+        // </summary>
         Boolean = 0x01,
-        /// <summary>
-        /// 整型
-        /// </summary>
+        // <summary>
+        // Integer
+        // </summary>
         Integer = 0x02,
-        /// <summary>
-        /// Hash160类型
-        /// </summary>
+        // <summary>
+        // Hash160
+        // </summary>
         Hash160 = 0x03,
-        /// <summary>
-        /// Hash256类型
-        /// </summary>
+        // <summary>
+        // Hash256
+        // </summary>
         Hash256 = 0x04,
-        /// <summary>
-        /// 字节数组类型
-        /// </summary>
+        // <summary>
+        // Byte Array
+        // </summary>
         ByteArray = 0x05,
-        /// <summary>
-        /// 公钥类型
-        /// </summary>
+        // <summary>
+        // Public Key
+        // </summary>
         PublicKey = 0x06,
-        /// <summary>
-        /// 字符串类型
-        /// </summary>
+        // <summary>
+        // String
+        // </summary>
         String = 0x07,
-        /// <summary>
-        /// 数组类型
-        /// </summary>
+        // <summary>
+        // Array
+        // </summary>
         Array = 0x10,
-        /// <summary>
-        /// Map类型
-        /// </summary>
+        // <summary>
+        // Map
+        // </summary>
         Map = 0x12,
-        /// <summary>
-        /// 互操作接口类型
-        /// </summary>
+        // <summary>
+        // InteropInterface
+        // </summary>
         InteropInterface = 0xf0,
-        /// <summary>
-        /// Void类型
-        /// </summary>
+        // <summary>
+        // Void
+        // </summary>
         Void = 0xff
     }
 }
