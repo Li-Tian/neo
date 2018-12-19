@@ -861,7 +861,44 @@ It has implemented common operations for array, map, struct, etc.
 | Input:   | Map or Array                              |
 | Output:   | [Value1 Value2... Value n]              |
 
-## 9. Exception Processing
+## 9. Stack Isolation
+
+### CALL_I
+
+| Instruction   | CALL_I                 |
+|----------|-----------------------|
+| Bytecode: | 0xE0                  |
+| Function:   | Call a new execution context, the script is the script of the current  execution context, pcount specifies the number of parameters, and rvcount specifies the number of results. Jump to the new execution context. |
+
+### CALL_E
+
+| Instruction   | CALL_E                 |
+|----------|-----------------------|
+| Bytecode: | 0xE1                  |
+| Function:   | Call a new execution context, the script is specified by the 20-bit hash after the instruction, pcount specifies the number of parameters, and rvcount specifies the number of results. Jump to the new execution context. |
+
+### CALL_ED
+
+| Instruction   | CALL_ED                 |
+|----------|-----------------------|
+| Bytecode: | 0xE2                  |
+| Function:   | Call a new execution context, the script is specified by the Hash at the top of the evaluation stack, pcount specifies the number of parameters, and rvcount specifies the number of results. Jump to the new execution context. |
+
+### CALL_ET
+
+| Instruction   | CALL_ET                 |
+|----------|-----------------------|
+| Bytecode: | 0xE3                  |
+| Function:   | The tail call form of CALL_E. |
+
+### CALL_EDT
+
+| Instruction   | CALL_EDT                 |
+|----------|-----------------------|
+| Bytecode: | 0xE4                 |
+| Function:   | The tail call form of CALL_ED. |
+
+## 10. Exception Processing
 
 ### THROW
 
