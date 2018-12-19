@@ -453,7 +453,7 @@ Amount 为发行总量，共有2种模式：
 | 尺寸 | 字段 | 名称  | 类型 | 描述 |
 |----|-----|-------|------|------|
 |  -  | - | - | -  | 	交易的公共字段  |
-| 34*? | Claims | Claim已花费的交易 | CoinReference[] | 用于分配的 NEO |
+| 34*? | Claims | Claim已花费的交易 | CoinReference[] | 已经花费的含有NEO的交易输出，获取能够分红的Gas |
 |  -  | - | - | -  | 	交易的公共字段  |
 
 
@@ -555,6 +555,15 @@ $$
 |  -  | - | - | -  | 	交易的公共字段  |
 | ?*? | Descriptors | 投票信息 | StateDescriptor[] |  |
 |  -  | - | - | -  | 	交易的公共字段  |
+
+其中，Descriptor类型如下： 
+
+| 尺寸 | 字段 | 名称  | 类型 | 描述 |
+|----|-----|-------|------|------|
+|  1  | Type | 类型 | Byte  | 	`0x40` 代表 投票， `0x48` 代表 申请或注销验证人  |
+| ? | Key | 操作人 | byte[] | Field = 'Votes' 时，存放投票人地址脚本的hash <br/> Feild = 'Registered' 时，存放申请人的公钥  |
+| ? | Field | 验证人表中的字段 | Type = `0x40`时， Field = 'Votes' <br/>  Type = `0x48` 时， Field = 'Registered` |
+|  ?  | Value | 验证人表中 `Key`所代表的字段存放值 | byte[]  | 	Type = 0x40时，Value存放投票地址列表 <br/> Type = 0x48时，存放是否申请验证人的布尔值  |
 
 申请验证人或共识节点投票的交易。用户可以在NEO GUI报名成为验证人，成为验证人后就可以根据投票数竞选成为共识节点。报名成为验证人需要花费手续费 1000 GAS。具体操作请参阅[选举与投票](./consensus/vote_validator.md)。
 
