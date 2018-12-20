@@ -14,13 +14,19 @@ using System.Security.Cryptography;
 
 namespace Neo.Wallets.SQLite
 {
+    // <summary>
+    // UserWallet类是Wallet类的子类，是NEO钱包db3格式的实现
+    // </summary>
     /// <summary>
-    /// UserWallet类是Wallet类的子类，是NEO钱包db3格式的实现
+    ///  UserWallet class is a subclass of the Wallet class, which is a db3 format implementation
     /// </summary>
     public class UserWallet : Wallet
     {
+        // <summary>
+        // 钱包交易的委托，在收到交易时，调用绑定的方法
+        // </summary>
         /// <summary>
-        /// 钱包交易的委托，在收到交易时，调用绑定的方法
+        /// Represent the method that will handle an event when the wallet transcation event provides data
         /// </summary>
         public override event EventHandler<WalletTransactionEventArgs> WalletTransaction;
 
@@ -31,16 +37,25 @@ namespace Neo.Wallets.SQLite
         private readonly byte[] masterKey;
         private readonly Dictionary<UInt160, UserWalletAccount> accounts;
         private readonly Dictionary<UInt256, Transaction> unconfirmed = new Dictionary<UInt256, Transaction>();
+        // <summary>
+        // 钱包名称，由db3钱包文件的文件名提供
+        // </summary>
         /// <summary>
-        /// 钱包名称，由db3钱包文件的文件名提供
+        /// wallet name，its value equals the filename of the db3 wallet file
         /// </summary>
         public override string Name => Path.GetFileNameWithoutExtension(path);
+        // <summary>
+        // 钱包高度，由钱包索引提供
+        // </summary>
         /// <summary>
-        /// 钱包高度，由钱包索引提供
+        /// wallet height，provided by wallet indexer
         /// </summary>
         public override uint WalletHeight => indexer.IndexHeight;
+        // <summary>
+        // 钱包版本，从db3钱包文件中读取Version字段获得。
+        // </summary>
         /// <summary>
-        /// 钱包版本，从db3钱包文件中读取Version字段获得。
+        /// wallet version.Read the Version field from the db3 wallet file
         /// </summary>
         public override Version Version
         {
@@ -55,22 +70,39 @@ namespace Neo.Wallets.SQLite
                 return new Version(major, minor, build, revision);
             }
         }
+        // <summary>
+        // 构造函数
+        // </summary>
+        // <param name="indexer">钱包索引对象</param>
+        // <param name="path">db3文件路径</param>
+        // <param name="passwordKey">用户输入的钱包的密码</param>
+        // <param name="create">构造标志位，true代表首次创建钱包文件，
+        //                      并将钱包对象的相关信息存入钱包文件，
+        //                      false代表，读取已有钱包文件，直接使用
+        //                      钱包文件内相关信息构建钱包对象</param>
+        // <remarks>
+        // 钱包内存储的相关字段：
+        // IV：AES使用的初始向量
+        // PasswordHash：密码的哈希，密码做SHA256生成
+        // MasterKey：AES加密后的密文
+        // Version：版本号
+        // </remarks>
         /// <summary>
-        /// 构造函数
+        /// constructor
         /// </summary>
-        /// <param name="indexer">钱包索引对象</param>
-        /// <param name="path">db3文件路径</param>
-        /// <param name="passwordKey">用户输入的钱包的密码</param>
+        /// <param name="indexer">wallet indexer</param>
+        /// <param name="path">db3 wallet file path</param>
+        /// <param name="passwordKey">password</param>
         /// <param name="create">构造标志位，true代表首次创建钱包文件，
         ///                      并将钱包对象的相关信息存入钱包文件，
         ///                      false代表，读取已有钱包文件，直接使用
         ///                      钱包文件内相关信息构建钱包对象</param>
         /// <remarks>
-        /// 钱包内存储的相关字段：
-        /// IV：AES使用的初始向量
-        /// PasswordHash：密码的哈希，密码做SHA256生成
-        /// MasterKey：AES加密后的密文
-        /// Version：版本号
+        /// Related fields in wallet file：
+        /// IV：AES initial vector
+        /// PasswordHash：hash of password
+        /// MasterKey：encrypted private key
+        /// Version：version
         /// </remarks>
         private UserWallet(WalletIndexer indexer, string path, byte[] passwordKey, bool create)
         {
@@ -178,10 +210,14 @@ namespace Neo.Wallets.SQLite
                     ctx.SaveChanges();
                 }
         }
+        // <summary>
+        // 发送交易，将交易添加进未确认交易列表，并发出通知触发委托
+        // </summary>
+        // <param name="tx">交易对象</param>
         /// <summary>
-        /// 发送交易，将交易添加进未确认交易列表，并发出通知触发委托
+        /// send transcation,add transcation into unconfirmed transcation list and trigger delegation method
         /// </summary>
-        /// <param name="tx">交易对象</param>
+        /// <param name="tx">transaction</param>
         public override void ApplyTransaction(Transaction tx)
         {
             lock (unconfirmed)
@@ -205,12 +241,18 @@ namespace Neo.Wallets.SQLite
                 ctx.Database.EnsureCreated();
             }
         }
+        // <summary>
+        // 变更db3钱包的密码
+        // </summary>
+        // <param name="password_old">旧密码</param>
+        // <param name="password_new">新密码</param>
+        // <returns>旧密码验证错误时，返回false,否则返回true</returns>
         /// <summary>
-        /// 变更db3钱包的密码
+        /// modify the password of wallet
         /// </summary>
-        /// <param name="password_old">旧密码</param>
-        /// <param name="password_new">新密码</param>
-        /// <returns>旧密码验证错误时，返回false,否则返回true</returns>
+        /// <param name="password_old">old password</param>
+        /// <param name="password_new">new password</param>
+        /// <returns>if old password verification error，return false.Otherwise,return true</returns>
         public bool ChangePassword(string password_old, string password_new)
         {
             if (!VerifyPassword(password_old)) return false;
@@ -226,11 +268,16 @@ namespace Neo.Wallets.SQLite
                 Array.Clear(passwordKey, 0, passwordKey.Length);
             }
         }
+        // <summary>
+        // 判断钱包账户列表内是否存在指定的账户
+        // </summary>
+        // <param name="scriptHash">指定账户的脚本哈希值</param>
+        // <returns>存在返回true，否则返回false</returns>
         /// <summary>
-        /// 判断钱包账户列表内是否存在指定的账户
+        /// Determine if there is a specified account in the wallet account list
         /// </summary>
-        /// <param name="scriptHash">指定账户的脚本哈希值</param>
-        /// <returns>存在返回true，否则返回false</returns>
+        /// <param name="scriptHash">script hash of specified account</param>
+        /// <returns>if exist,return true .Otherwise,return false</returns>
         public override bool Contains(UInt160 scriptHash)
         {
             lock (accounts)
@@ -238,33 +285,52 @@ namespace Neo.Wallets.SQLite
                 return accounts.ContainsKey(scriptHash);
             }
         }
+        // <summary>
+        // 创建db3钱包对象
+        // </summary>
+        // <param name="indexer">钱包索引</param>
+        // <param name="path">钱包文件路径</param>
+        // <param name="password">钱包密码（普通字符串）</param>
+        // <returns>创建的钱包对象</returns>
         /// <summary>
-        /// 创建db3钱包对象
+        /// create a UserWallet object
         /// </summary>
-        /// <param name="indexer">钱包索引</param>
-        /// <param name="path">钱包文件路径</param>
-        /// <param name="password">钱包密码（普通字符串）</param>
-        /// <returns>创建的钱包对象</returns>
+        /// <param name="indexer">wallet indexer</param>
+        /// <param name="path">wallet file path</param>
+        /// <param name="password">password（string）</param>
+        /// <returns>UserWallet object</returns>
         public static UserWallet Create(WalletIndexer indexer, string path, string password)
         {
             return new UserWallet(indexer, path, password.ToAesKey(), true);
         }
+        // <summary>
+        // 创建db3钱包对象
+        // </summary>
+        // <param name="indexer">钱包索引</param>
+        // <param name="path">钱包文件路径</param>
+        // <param name="password">钱包密码（安全字符串）</param>
+        // <returns>创建的钱包对象</returns>
         /// <summary>
-        /// 创建db3钱包对象
+        /// create a UserWallet object
         /// </summary>
-        /// <param name="indexer">钱包索引</param>
-        /// <param name="path">钱包文件路径</param>
-        /// <param name="password">钱包密码（安全字符串）</param>
-        /// <returns>创建的钱包对象</returns>
+        /// <param name="indexer">wallet indexer</param>
+        /// <param name="path">wallet file path</param>
+        /// <param name="password">password（SecureString）</param>
+        /// <returns>UserWallet object</returns>
         public static UserWallet Create(WalletIndexer indexer, string path, SecureString password)
         {
             return new UserWallet(indexer, path, password.ToAesKey(), true);
         }
+        // <summary>
+        // 通过私钥创建账户
+        // </summary>
+        // <param name="privateKey">私钥</param>
+        // <returns>创建的钱包账户对象</returns>
         /// <summary>
-        /// 通过私钥创建账户
+        /// create wallet account by privatekey 
         /// </summary>
-        /// <param name="privateKey">私钥</param>
-        /// <returns>创建的钱包账户对象</returns>
+        /// <param name="privateKey">privatekey</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount CreateAccount(byte[] privateKey)
         {
             KeyPair key = new KeyPair(privateKey);
@@ -281,12 +347,18 @@ namespace Neo.Wallets.SQLite
             AddAccount(account, false);
             return account;
         }
+        // <summary>
+        // 通过合约对象和密钥对创建钱包对象
+        // </summary>
+        // <param name="contract">合约对象</param>
+        // <param name="key">密钥对。不指定时表示只读地址（监视地址）</param>
+        // <returns>创建的钱包账户对象</returns>
         /// <summary>
-        /// 通过合约对象和密钥对创建钱包对象
+        /// create wallet account by Contract object and KeyPair object
         /// </summary>
-        /// <param name="contract">合约对象</param>
-        /// <param name="key">密钥对。不指定时表示只读地址（监视地址）</param>
-        /// <returns>创建的钱包账户对象</returns>
+        /// <param name="contract">Contract object</param>
+        /// <param name="key">KeyPair object。When not specified, it means read-only address (monitor address)</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount CreateAccount(SmartContract.Contract contract, KeyPair key = null)
         {
             VerificationContract verification_contract = contract as VerificationContract;
@@ -306,11 +378,16 @@ namespace Neo.Wallets.SQLite
             AddAccount(account, false);
             return account;
         }
+        // <summary>
+        // 利用脚本哈希创建钱包账户
+        // </summary>
+        // <param name="scriptHash">脚本哈希</param>
+        // <returns>创建的钱包账户对象</returns>
         /// <summary>
-        /// 利用脚本哈希创建钱包账户
+        /// create wallet account by script hash
         /// </summary>
-        /// <param name="scriptHash">脚本哈希</param>
-        /// <returns>创建的钱包账户对象</returns>
+        /// <param name="scriptHash">script hash</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount CreateAccount(UInt160 scriptHash)
         {
             UserWalletAccount account = new UserWalletAccount(scriptHash);
@@ -324,11 +401,16 @@ namespace Neo.Wallets.SQLite
             if (encryptedPrivateKey.Length != 96) throw new ArgumentException();
             return encryptedPrivateKey.AesDecrypt(masterKey, iv);
         }
+        // <summary>
+        // 删除钱包账户列表内指定账户对象，并删除db3文件中的相关数据
+        // </summary>
+        // <param name="scriptHash">指定账户对象的脚本哈希</param>
+        // <returns>账户列表内存在指定账户时返回true,否则返回false</returns>
         /// <summary>
-        /// 删除钱包账户列表内指定账户对象，并删除db3文件中的相关数据
+        /// Remove the specified wallet account in WalletAccount list by script hash,and delete related data in db3 wallet file
         /// </summary>
-        /// <param name="scriptHash">指定账户对象的脚本哈希</param>
-        /// <returns>账户列表内存在指定账户时返回true,否则返回false</returns>
+        /// <param name="scriptHash">script hash</param>
+        /// <returns>if remove successfully,return true.Otherwise,return false</returns>
         public override bool DeleteAccount(UInt160 scriptHash)
         {
             UserWalletAccount account;
@@ -367,6 +449,9 @@ namespace Neo.Wallets.SQLite
         /// <summary>
         /// 回收方法，删除钱包交易委托上绑定的事件
         /// </summary>
+        /// <summary>
+        /// Dispose method.Remove the event registed on WalletTransaction
+        /// </summary>
         public override void Dispose()
         {
             indexer.WalletTransaction -= WalletIndexer_WalletTransaction;
@@ -376,23 +461,37 @@ namespace Neo.Wallets.SQLite
         {
             return decryptedPrivateKey.AesEncrypt(masterKey, iv);
         }
+        // <summary>
+        // 查询指定账户集合内某一全局资产（neo、gas）所有未花费的Coin集合中
+        // 满足指定金额的子集(按照降序查找、优先使用鉴权合约地址（普通地址）)
+        // </summary>
+        // <param name="asset_id">指定全局资产的ID</param>
+        // <param name="amount">指定金额</param>
+        // <param name="from">指定账户集合</param>
+        // <returns>查询到的Coin的集合</returns>
         /// <summary>
-        /// 查询指定账户集合内某一全局资产（neo、gas）所有未花费的Coin集合中
-        /// 满足指定金额的子集(按照降序查找、优先使用鉴权合约地址（普通地址）)
+        /// 1、Query a all-unspent Coin set of a global asset (neo, gas) in a specified account set.
+        /// 2、return a subset meeting the specified amount of 1 set
+        /// (Descending search and first uses veryfication contract address（ordinary address）)
         /// </summary>
-        /// <param name="asset_id">指定全局资产的ID</param>
-        /// <param name="amount">指定金额</param>
-        /// <param name="from">指定账户集合</param>
-        /// <returns>查询到的Coin的集合</returns>
+        /// <param name="asset_id">a global asset ID</param>
+        /// <param name="amount">specified amount</param>
+        /// <param name="from">specified account set</param>
+        /// <returns>Coin set</returns>
         public override Coin[] FindUnspentCoins(UInt256 asset_id, Fixed8 amount, UInt160[] from)
         {
             return FindUnspentCoins(FindUnspentCoins(from).ToArray().Where(p => GetAccount(p.Output.ScriptHash).Contract.Script.IsSignatureContract()), asset_id, amount) ?? base.FindUnspentCoins(asset_id, amount, from);
         }
+        // <summary>
+        // 从钱包账户列表内查找指定账户对象
+        // </summary>
+        // <param name="scriptHash">指定账户的脚本哈希</param>
+        // <returns>指定账户对象</returns>
         /// <summary>
-        /// 从钱包账户列表内查找指定账户对象
+        /// Query a specified wallet account object in the wallet account list
         /// </summary>
-        /// <param name="scriptHash">指定账户的脚本哈希</param>
-        /// <returns>指定账户对象</returns>
+        /// <param name="scriptHash">script hash</param>
+        /// <returns>return a specified wallet account object.If unexisted,return null</returns>
         public override WalletAccount GetAccount(UInt160 scriptHash)
         {
             lock (accounts)
@@ -401,10 +500,14 @@ namespace Neo.Wallets.SQLite
                 return account;
             }
         }
+        // <summary>
+        // 获取db3钱包账户列表内所有的账户对象
+        // </summary>
+        // <returns>账户对象的集合</returns>
         /// <summary>
-        /// 获取db3钱包账户列表内所有的账户对象
+        /// get an enumerable collection of all WalletAccount objects in wallet account list
         /// </summary>
-        /// <returns>账户对象的集合</returns>
+        /// <returns>WalletAccount IEnumerable collection</returns>
         public override IEnumerable<WalletAccount> GetAccounts()
         {
             lock (accounts)
@@ -413,11 +516,16 @@ namespace Neo.Wallets.SQLite
                     yield return account;
             }
         }
+        // <summary>
+        // 获取指定账户集合所持有的Coin的集合
+        // </summary>
+        // <param name="accounts">指定账户集合</param>
+        // <returns>持有的Coin的集合</returns>
         /// <summary>
-        /// 获取指定账户集合所持有的Coin的集合
+        /// get a set of Coin held by specified account collection
         /// </summary>
-        /// <param name="accounts">指定账户集合</param>
-        /// <returns>持有的Coin的集合</returns>
+        /// <param name="accounts"> an enumerable collection of specified account objects</param>
+        /// <returns>Coin set</returns>
         public override IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts)
         {
             if (unconfirmed.Count == 0)
@@ -470,10 +578,14 @@ namespace Neo.Wallets.SQLite
                 }
             }
         }
+        // <summary>
+        // 获取钱包索引以及未确认交易中与钱包中账户有关的交易的哈希
+        // </summary>
+        // <returns>所有有关交易的哈希的集合</returns>
         /// <summary>
-        /// 获取钱包索引以及未确认交易中与钱包中账户有关的交易的哈希
+        /// get transcation hashes in wallet indexer and unconfirmed transcation dictionary
         /// </summary>
-        /// <returns>所有有关交易的哈希的集合</returns>
+        /// <returns>a collection of hash</returns>
         public override IEnumerable<UInt256> GetTransactions()
         {
             foreach (UInt256 hash in indexer.GetTransactions(accounts.Keys))
@@ -507,24 +619,38 @@ namespace Neo.Wallets.SQLite
                 return ctx.Keys.FirstOrDefault(p => p.Name == name)?.Value;
             }
         }
+        // <summary>
+        // 打开钱包，并返回一个db3钱包对象
+        // </summary>
+        // <param name="indexer">钱包索引</param>
+        // <param name="path">db3钱包文件路径</param>
+        // <param name="password">钱包密码（普通字符串）</param>
+        // <returns>生成的钱包对象</returns>
         /// <summary>
-        /// 打开钱包，并返回一个db3钱包对象
+        /// open wallet，return a UserWallet object
         /// </summary>
-        /// <param name="indexer">钱包索引</param>
-        /// <param name="path">db3钱包文件路径</param>
-        /// <param name="password">钱包密码（普通字符串）</param>
-        /// <returns>生成的钱包对象</returns>
+        /// <param name="indexer">wallet indexer</param>
+        /// <param name="path">db3 wallet file path</param>
+        /// <param name="password">password（string）</param>
+        /// <returns>UserWallet object</returns>
         public static UserWallet Open(WalletIndexer indexer, string path, string password)
         {
             return new UserWallet(indexer, path, password.ToAesKey(), false);
         }
+        // <summary>
+        // 打开钱包，并返回一个db3钱包对象
+        // </summary>
+        // <param name="indexer">钱包索引</param>
+        // <param name="path">db3钱包文件路径</param>
+        // <param name="password">钱包密码（安全字符串）</param>
+        // <returns>生成的钱包对象</returns>
         /// <summary>
-        /// 打开钱包，并返回一个db3钱包对象
+        /// open wallet，return a UserWallet object
         /// </summary>
-        /// <param name="indexer">钱包索引</param>
-        /// <param name="path">db3钱包文件路径</param>
-        /// <param name="password">钱包密码（安全字符串）</param>
-        /// <returns>生成的钱包对象</returns>
+        /// <param name="indexer">wallet indexer</param>
+        /// <param name="path">db3 wallet file path</param>
+        /// <param name="password">password（SecureString）</param>
+        /// <returns>UserWallet object</returns>
         public static UserWallet Open(WalletIndexer indexer, string path, SecureString password)
         {
             return new UserWallet(indexer, path, password.ToAesKey(), false);
@@ -560,6 +686,11 @@ namespace Neo.Wallets.SQLite
         /// </summary>
         /// <param name="password">用户输入的密码</param>
         /// <returns>验证通过为true，失败为false</returns>
+        /// <summary>
+        /// Verify wallet password
+        /// </summary>
+        /// <param name="password">password</param>
+        /// <returns>Validation result.Validation by returning true, otherwise returning false</returns>
         public override bool VerifyPassword(string password)
         {
             return password.ToAesKey().Sha256().SequenceEqual(LoadStoredData("PasswordHash"));

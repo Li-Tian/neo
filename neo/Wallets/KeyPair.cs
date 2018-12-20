@@ -6,29 +6,47 @@ using System.Text;
 
 namespace Neo.Wallets
 {
+    // <summary>
+    // NEO使用KeyPair对象存储私钥和公钥，公钥使用一个ECPoint对象形式表示，私钥使用一个字节数组形式表示.
+    // </summary>
     /// <summary>
-    /// NEO使用KeyPair对象存储私钥和公钥，公钥使用一个ECPoint对象形式表示，私钥使用一个字节数组形式表示.
+    /// NEO System uses KeyPair objects to store privatekey and publickey.
+    /// Publickey is represented in an ECPoint object.
+    /// Privatekey is represented in an array of bytes.
     /// </summary>
     public class KeyPair : IEquatable<KeyPair>
     {
+        // <summary>
+        // 私钥，使用一个字节数组形式表示
+        // </summary>
         /// <summary>
-        /// 私钥，使用一个字节数组形式表示
+        /// privatekey, represented in an array of bytes.
         /// </summary>
         public readonly byte[] PrivateKey;
+        // <summary>
+        // 公钥，使用一个ECPoint对象形式表示
+        // </summary>
         /// <summary>
-        /// 公钥，使用一个ECPoint对象形式表示
+        /// publickey, represented in an ECPoint object.
         /// </summary>
         public readonly Cryptography.ECC.ECPoint PublicKey;
 
+        // <summary>
+        // 公钥的哈希，由压缩型公钥求解Hash160(一次Sha256和RIPEMD160运算)得到
+        // </summary>
         /// <summary>
-        /// 公钥的哈希，由压缩型公钥求解Hash160(一次Sha256和RIPEMD160运算)得到
+        /// publickey hash，calculated by Hash160 algorithm(Sha256 algorithm and RIPEMD160 algorithm) by passing in a compressed publickey
         /// </summary>
         public UInt160 PublicKeyHash => PublicKey.EncodePoint(true).ToScriptHash();
 
+        // <summary>
+        // 构造方法，传入一个私钥,由ECC算法产生其对应的公钥
+        // </summary>
+        // <param name="privateKey">导入的私钥</param>
         /// <summary>
-        /// 构造方法，传入一个私钥,由ECC算法产生其对应的公钥
+        /// Constructor.Passing in privatekey ,and use ECC algorithm to compute a publickey
         /// </summary>
-        /// <param name="privateKey">导入的私钥</param>
+        /// <param name="privateKey">privatekey</param>
         public KeyPair(byte[] privateKey)
         {
             if (privateKey.Length != 32 && privateKey.Length != 96 && privateKey.Length != 104)
@@ -45,12 +63,19 @@ namespace Neo.Wallets
             }
         }
 
+        // <summary>
+        // 判断2个KeyPair对象是否相等
+        // </summary>
+        // <param name="other">另一个KeyPair对象</param>
+        // <returns>
+        // 如果两个KeyPair相等返回<c>true</c>, 否则返回<c>false</c>
+        // </returns>
         /// <summary>
-        /// 判断2个KeyPair对象是否相等
+        /// Determine if two KeyPair objects are equal
         /// </summary>
-        /// <param name="other">另一个KeyPair对象</param>
+        /// <param name="other">another KeyPair object</param>
         /// <returns>
-        /// 如果两个KeyPair相等返回<c>true</c>, 否则返回<c>false</c>
+        /// If two KeyPair objects are equal,return <c>true</c>Otherwise,return <c>false</c>
         /// </returns>
         public bool Equals(KeyPair other)
         {
@@ -60,18 +85,27 @@ namespace Neo.Wallets
         }
 
 
+        // <summary>
+        // 判断KeyPair对象与另一个对象是否相等
+        // </summary>
+        // <param name="obj">另一个被比较的Object</param>
+        // <returns>如果两个Object相等则返回<c>true</c>, 否则返回<c>false</c></returns>
         /// <summary>
-        /// 判断KeyPair对象与另一个对象是否相等
+        /// Determine if KeyPair object and another object are equal
         /// </summary>
-        /// <param name="obj">另一个被比较的Object</param>
-        /// <returns>如果两个Object相等则返回<c>true</c>, 否则返回<c>false</c></returns>
+        /// <param name="obj">another object</param>
+        /// If KeyPair object and another object are equal,return <c>true</c>Otherwise,return <c>false</c></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as KeyPair);
         }
 
+        // <summary>
+        // 导出wif格式私钥
+        // </summary>
+        // <returns>wif格式私钥字符串</returns>
         /// <summary>
-        /// 导出wif格式私钥
+        /// export wif-string format privatekey
         /// </summary>
         /// <returns>wif格式私钥字符串</returns>
         public string Export()
@@ -85,14 +119,22 @@ namespace Neo.Wallets
             return wif;
         }
 
+        // <summary>
+        // 导出NEP2格式私钥
+        // </summary>
+        // <param name="passphrase">用户设置的密码</param>
+        // <param name="N">产生密钥所需要的参数N， 默认为16384</param>
+        // <param name="r">产生密钥所需要的参数r， 默认为8</param>
+        // <param name="p">产生密钥所需要的参数p， 默认为8</param>
+        // <returns>NEP2格式私钥字符串</returns>
         /// <summary>
-        /// 导出NEP2格式私钥
+        /// export NEP2-string format privatekey
         /// </summary>
-        /// <param name="passphrase">用户设置的密码</param>
-        /// <param name="N">产生密钥所需要的参数N， 默认为16384</param>
-        /// <param name="r">产生密钥所需要的参数r， 默认为8</param>
-        /// <param name="p">产生密钥所需要的参数p， 默认为8</param>
-        /// <returns>NEP2格式私钥字符串</returns>
+        /// <param name="passphrase">passphrase</param>
+        /// <param name="N">parameter N， default 16384</param>
+        /// <param name="r">parameter r， default 8</param>
+        /// <param name="p">parameter p， default 8</param>
+        /// <returns>NEP2-string format privatekey</returns>
         public string Export(string passphrase, int N = 16384, int r = 8, int p = 8)
         {
             UInt160 script_hash = Contract.CreateSignatureRedeemScript(PublicKey).ToScriptHash();
@@ -111,19 +153,27 @@ namespace Neo.Wallets
             return buffer.Base58CheckEncode();
         }
 
+        // <summary>
+        // 求公钥的HashCode
+        // </summary>
+        // <returns>公钥的HashCode</returns>
         /// <summary>
-        /// 求公钥的HashCode
+        /// get HashCode of publickey
         /// </summary>
-        /// <returns>公钥的HashCode</returns>
+        /// <returns>HashCode of publickey</returns>
         public override int GetHashCode()
         {
             return PublicKey.GetHashCode();
         }
 
+        // <summary>
+        // 将公钥转换成字符串返回
+        // </summary>
+        // <returns>返回公钥转换成的字符串</returns>
         /// <summary>
-        /// 将公钥转换成字符串返回
+        /// Convert publickey to string
         /// </summary>
-        /// <returns>返回公钥转换成的字符串</returns>
+        /// <returns>a string converted by publickey</returns>
         public override string ToString()
         {
             return PublicKey.ToString();

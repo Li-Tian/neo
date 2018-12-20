@@ -12,13 +12,19 @@ using UserWallet = Neo.Wallets.SQLite.UserWallet;
 
 namespace Neo.Wallets.NEP6
 {
+    // <summary>
+    // NEP6Wallet是Wallet类的子类，是钱包满足NEP6规范的实现
+    // </summary>
     /// <summary>
-    /// NEP6Wallet是Wallet类的子类，是钱包满足NEP6规范的实现
+    /// NEP6Wallet class is a subclass of the Wallet class, which is a implementation that satisfies the NEP6 specification.
     /// </summary>
     public class NEP6Wallet : Wallet
     {
+        // <summary>
+        // 钱包交易的委托，在收到交易时，调用绑定的方法
+        // </summary>
         /// <summary>
-        /// 钱包交易的委托，在收到交易时，调用绑定的方法
+        /// Represent the method that will handle an event when the wallet transcation event provides data
         /// </summary>
         public override event EventHandler<WalletTransactionEventArgs> WalletTransaction;
 
@@ -27,31 +33,49 @@ namespace Neo.Wallets.NEP6
         private string password;
         private string name;
         private Version version;
+        // <summary>
+        // NEP6钱包使用Scrypt算法加密解密NEP2密文所需的参数
+        // </summary>
         /// <summary>
-        /// NEP6钱包使用Scrypt算法加密解密NEP2密文所需的参数
+        /// Parameters for Scrypt algorithm to encrypt and decrypt NEP2 string.
         /// </summary>
         public readonly ScryptParameters Scrypt;
         private readonly Dictionary<UInt160, NEP6Account> accounts;
         private readonly JObject extra;
         private readonly Dictionary<UInt256, Transaction> unconfirmed = new Dictionary<UInt256, Transaction>();
+        // <summary>
+        // 钱包的名称
+        // </summary>
         /// <summary>
-        /// 钱包的名称
+        /// wallet name
         /// </summary>
         public override string Name => name;
+        // <summary>
+        // 钱包的版本
+        // </summary>
         /// <summary>
-        /// 钱包的版本
+        /// wallet version
         /// </summary>
         public override Version Version => version;
+        // <summary>
+        // 钱包高度，由钱包索引提供
+        // </summary>
         /// <summary>
-        /// 钱包高度，由钱包索引提供
+        /// wallet height，provide by wallet indexer
         /// </summary>
         public override uint WalletHeight => indexer.IndexHeight;
+        // <summary>
+        // 构造方法，构造NEP6钱包对象，并向钱包索引中注册其包含的钱包账户
+        // </summary>
+        // <param name="indexer">钱包索引</param>
+        // <param name="path">钱包文件的路径</param>
+        // <param name="name">钱包名称</param>
         /// <summary>
-        /// 构造方法，构造NEP6钱包对象，并向钱包索引中注册其包含的钱包账户
+        /// Constructor.Create an NEP6Wallet object，and register wallet account in wallet indexer
         /// </summary>
-        /// <param name="indexer">钱包索引</param>
-        /// <param name="path">钱包文件的路径</param>
-        /// <param name="name">钱包名称</param>
+        /// <param name="indexer">Wallet Indexer</param>
+        /// <param name="path">wallet file path</param>
+        /// <param name="name">wallet file name</param>
         public NEP6Wallet(WalletIndexer indexer, string path, string name = null)
         {
             this.indexer = indexer;
@@ -113,10 +137,14 @@ namespace Neo.Wallets.NEP6
                 accounts[account.ScriptHash] = account;
             }
         }
+        // <summary>
+        // 发送交易，将交易添加进未确认交易列表，并发出通知触发委托
+        // </summary>
+        // <param name="tx">交易对象</param>
         /// <summary>
-        /// 发送交易，将交易添加进未确认交易列表，并发出通知触发委托
+        /// send transcation,add transcation into unconfirmed transcation list and trigger delegation method
         /// </summary>
-        /// <param name="tx">交易对象</param>
+        /// <param name="tx">transcation</param>
         public override void ApplyTransaction(Transaction tx)
         {
             lock (unconfirmed)
@@ -131,11 +159,16 @@ namespace Neo.Wallets.NEP6
                 Time = DateTime.UtcNow.ToTimestamp()
             });
         }
+        // <summary>
+        // 判断钱包账户列表内是否存在指定的账户
+        // </summary>
+        // <param name="scriptHash">指定账户的脚本哈希值</param>
+        // <returns>存在返回true，否则返回false</returns>
         /// <summary>
-        /// 判断钱包账户列表内是否存在指定的账户
+        /// Determine if there is a specified account in the wallet account list
         /// </summary>
-        /// <param name="scriptHash">指定账户的脚本哈希值</param>
-        /// <returns>存在返回true，否则返回false</returns>
+        /// <param name="scriptHash">script hash of specified account</param>
+        /// <returns>if exist,return true .Otherwise,return false</returns>
         public override bool Contains(UInt160 scriptHash)
         {
             lock (accounts)
@@ -143,11 +176,16 @@ namespace Neo.Wallets.NEP6
                 return accounts.ContainsKey(scriptHash);
             }
         }
+        // <summary>
+        // 通过私钥创建账户
+        // </summary>
+        // <param name="privateKey">私钥</param>
+        // <returns>创建的钱包账户对象</returns>
         /// <summary>
-        /// 通过私钥创建账户
+        /// create a WalletAccount object by a privatekey
         /// </summary>
-        /// <param name="privateKey">私钥</param>
-        /// <returns>创建的钱包账户对象</returns>
+        /// <param name="privateKey">privatekey</param>
+        /// <returns>return WalletAccount object</returns>
         public override WalletAccount CreateAccount(byte[] privateKey)
         {
             KeyPair key = new KeyPair(privateKey);
@@ -165,12 +203,18 @@ namespace Neo.Wallets.NEP6
             AddAccount(account, false);
             return account;
         }
+        // <summary>
+        // 通过合约对象和密钥对创建钱包对象
+        // </summary>
+        // <param name="contract">合约对象</param>
+        // <param name="key">密钥对。如果不指定则生成一个只读地址</param>
+        // <returns>创建的钱包账户对象</returns>
         /// <summary>
-        /// 通过合约对象和密钥对创建钱包对象
+        /// create a WalletAccount object by a Contract object and a KeyPair object
         /// </summary>
-        /// <param name="contract">合约对象</param>
-        /// <param name="key">密钥对。如果不指定则生成一个只读地址</param>
-        /// <returns>创建的钱包账户对象</returns>
+        /// <param name="contract">Contract object</param>
+        /// <param name="key">KeyPair object.If it is null,WalletAccount object will contain a readonly address</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount CreateAccount(Contract contract, KeyPair key = null)
         {
             NEP6Contract nep6contract = contract as NEP6Contract;
@@ -193,31 +237,46 @@ namespace Neo.Wallets.NEP6
             AddAccount(account, false);
             return account;
         }
+        // <summary>
+        // 利用脚本哈希创建钱包账户
+        // </summary>
+        // <param name="scriptHash">脚本哈希</param>
+        // <returns>创建的钱包账户对象</returns>
         /// <summary>
-        /// 利用脚本哈希创建钱包账户
+        /// create a WalletAccount object by a script hash
         /// </summary>
-        /// <param name="scriptHash">脚本哈希</param>
-        /// <returns>创建的钱包账户对象</returns>
+        /// <param name="scriptHash">script hash</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount CreateAccount(UInt160 scriptHash)
         {
             NEP6Account account = new NEP6Account(this, scriptHash);
             AddAccount(account, true);
             return account;
         }
+        // <summary>
+        // 解密NEP2格式密文，生成密钥对
+        // </summary>
+        // <param name="nep2key">NEP2格式密文</param>
+        // <returns>解密出的密钥对</returns>
         /// <summary>
-        /// 解密NEP2格式密文，生成密钥对
+        /// Decrypt NEP2 string,and create a KeyPair object
         /// </summary>
-        /// <param name="nep2key">NEP2格式密文</param>
-        /// <returns>解密出的密钥对</returns>
+        /// <param name="nep2key">NEP2 string</param>
+        /// <returns>KeyPair object</returns>
         public KeyPair DecryptKey(string nep2key)
         {
             return new KeyPair(GetPrivateKeyFromNEP2(nep2key, password, Scrypt.N, Scrypt.R, Scrypt.P));
         }
+        // <summary>
+        // 利用脚本哈希从账户列表中删除指定账户对象
+        // </summary>
+        // <param name="scriptHash">指定账户对象对应的脚本哈希</param>
+        // <returns>删除成功则返回true，否则返回false</returns>
         /// <summary>
-        /// 利用脚本哈希从账户列表中删除指定账户对象
+        /// Remove the specified wallet account in WalletAccount list by script hash
         /// </summary>
-        /// <param name="scriptHash">指定账户对象对应的脚本哈希</param>
-        /// <returns>删除成功则返回true，否则返回false</returns>
+        /// <param name="scriptHash">script hash</param>
+        /// <returns>if remove successfully,return true.Otherwise,return false</returns>
         public override bool DeleteAccount(UInt160 scriptHash)
         {
             bool removed;
@@ -231,30 +290,47 @@ namespace Neo.Wallets.NEP6
             }
             return removed;
         }
+        // <summary>
+        // 回收方法，删除钱包交易委托上绑定的事件
+        // </summary>
         /// <summary>
-        /// 回收方法，删除钱包交易委托上绑定的事件
+        /// Dispose method.Remove the event registed on WalletTransaction
         /// </summary>
         public override void Dispose()
         {
             indexer.WalletTransaction -= WalletIndexer_WalletTransaction;
         }
+        // <summary>
+        // 查询指定账户集合内某一全局资产（neo、gas）所有未花费的Coin集合中
+        // 满足指定金额的子集(按照降序查找、优先使用鉴权合约地址（普通地址）)
+        // </summary>
+        // <param name="asset_id">指定全局资产的ID</param>
+        // <param name="amount">指定金额</param>
+        // <param name="from">指定账户集合</param>
+        // <returns>查询到的Coin的集合</returns>
         /// <summary>
-        /// 查询指定账户集合内某一全局资产（neo、gas）所有未花费的Coin集合中
-        /// 满足指定金额的子集(按照降序查找、优先使用鉴权合约地址（普通地址）)
+        /// 1、Query a all-unspent Coin set of a global asset (neo, gas) in a specified account set.
+        /// 2、return a subset meeting the specified amount of 1 set
+        /// (Descending search and first uses veryfication contract address（ordinary address）)
         /// </summary>
-        /// <param name="asset_id">指定全局资产的ID</param>
-        /// <param name="amount">指定金额</param>
-        /// <param name="from">指定账户集合</param>
-        /// <returns>查询到的Coin的集合</returns>
+        /// <param name="asset_id">a global asset ID</param>
+        /// <param name="amount">specified amount</param>
+        /// <param name="from">specified account</param>
+        /// <returns>Coin set</returns>
         public override Coin[] FindUnspentCoins(UInt256 asset_id, Fixed8 amount, UInt160[] from)
         {
             return FindUnspentCoins(FindUnspentCoins(from).ToArray().Where(p => GetAccount(p.Output.ScriptHash).Contract.Script.IsSignatureContract()), asset_id, amount) ?? base.FindUnspentCoins(asset_id, amount, from);
         }
+        // <summary>
+        // 从钱包账户列表内查找指定账户对象
+        // </summary>
+        // <param name="scriptHash">指定账户的脚本哈希</param>
+        // <returns>指定账户对象。不存在时返回null</returns>
         /// <summary>
-        /// 从钱包账户列表内查找指定账户对象
+        /// Query a specified wallet account object in the wallet account list
         /// </summary>
-        /// <param name="scriptHash">指定账户的脚本哈希</param>
-        /// <returns>指定账户对象。不存在时返回null</returns>
+        /// <param name="scriptHash">script hash</param>
+        /// <returns>return a specified wallet account object.If unexisted,return null</returns>
         public override WalletAccount GetAccount(UInt160 scriptHash)
         {
             lock (accounts)
@@ -263,10 +339,14 @@ namespace Neo.Wallets.NEP6
                 return account;
             }
         }
+        // <summary>
+        // 获取NEP6钱包账户列表内所有的账户对象
+        // </summary>
+        // <returns>账户对象的集合</returns>
         /// <summary>
-        /// 获取NEP6钱包账户列表内所有的账户对象
+        /// get an enumerable collection of all WalletAccount objects in wallet account list
         /// </summary>
-        /// <returns>账户对象的集合</returns>
+        /// <returns>WalletAccount IEnumerable collection</returns>
         public override IEnumerable<WalletAccount> GetAccounts()
         {
             lock (accounts)
@@ -275,11 +355,16 @@ namespace Neo.Wallets.NEP6
                     yield return account;
             }
         }
+        // <summary>
+        // 获取指定账户集合所持有的Coin的集合
+        // </summary>
+        // <param name="accounts">指定账户集合</param>
+        // <returns>持有的Coin的集合</returns>
         /// <summary>
-        /// 获取指定账户集合所持有的Coin的集合
+        /// get a set of Coin held by specified account collection
         /// </summary>
-        /// <param name="accounts">指定账户集合</param>
-        /// <returns>持有的Coin的集合</returns>
+        /// <param name="accounts"> an enumerable collection of specified account objects</param>
+        /// <returns>Coin set</returns>
         public override IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts)
         {
             if (unconfirmed.Count == 0)
@@ -332,10 +417,14 @@ namespace Neo.Wallets.NEP6
                 }
             }
         }
+        // <summary>
+        // 获取钱包索引以及未确认交易中与钱包中账户有关的交易的哈希
+        // </summary>
+        // <returns>所有有关交易的哈希的集合</returns>
         /// <summary>
-        /// 获取钱包索引以及未确认交易中与钱包中账户有关的交易的哈希
+        /// get transcation hashes in wallet indexer and unconfirmed transcation dictionary
         /// </summary>
-        /// <returns>所有有关交易的哈希的集合</returns>
+        /// <returns>a collection of hash</returns>
         public override IEnumerable<UInt256> GetTransactions()
         {
             foreach (UInt256 hash in indexer.GetTransactions(accounts.Keys))
@@ -346,11 +435,16 @@ namespace Neo.Wallets.NEP6
                     yield return hash;
             }
         }
+        // <summary>
+        // 导入钱包账户，通过X509格式数字证书
+        // </summary>
+        // <param name="cert">X509格式数字证书</param>
+        // <returns>导入的钱包账户对象</returns>
         /// <summary>
-        /// 导入钱包账户，通过X509格式数字证书
+        /// import wallet account by X509 digital certificate
         /// </summary>
-        /// <param name="cert">X509格式数字证书</param>
-        /// <returns>导入的钱包账户对象</returns>
+        /// <param name="cert">X509 digital certificate</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount Import(X509Certificate2 cert)
         {
             KeyPair key;
@@ -372,11 +466,17 @@ namespace Neo.Wallets.NEP6
             AddAccount(account, true);
             return account;
         }
+
+        // <summary>
+        // 导入钱包账户，通过wif格式私钥
+        // </summary>
+        // <param name="wif">wif格式私钥</param>
+        // <returns>导入的钱包账户对象</returns>
         /// <summary>
-        /// 导入钱包账户，通过wif格式私钥
+        /// import wallet account by wif string
         /// </summary>
-        /// <param name="wif">wif格式私钥</param>
-        /// <returns>导入的钱包账户对象</returns>
+        /// <param name="wif">wif string</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount Import(string wif)
         {
             KeyPair key = new KeyPair(GetPrivateKeyFromWIF(wif));
@@ -394,12 +494,18 @@ namespace Neo.Wallets.NEP6
             AddAccount(account, true);
             return account;
         }
+        // <summary>
+        // 导入钱包账户，通过NEP2密文
+        // </summary>
+        // <param name="nep2">NEP2密文</param>
+        // <param name="passphrase">NEP2密文的密码</param>
+        // <returns>导入的钱包账户对象</returns>
         /// <summary>
-        /// 导入钱包账户，通过NEP2密文
+        /// import wallet account by NEP2 string
         /// </summary>
-        /// <param name="nep2">NEP2密文</param>
-        /// <param name="passphrase">NEP2密文的密码</param>
-        /// <returns>导入的钱包账户对象</returns>
+        /// <param name="nep2">NEP2 string</param>
+        /// <param name="passphrase">password</param>
+        /// <returns>WalletAccount object</returns>
         public override WalletAccount Import(string nep2, string passphrase)
         {
             KeyPair key = new KeyPair(GetPrivateKeyFromNEP2(nep2, passphrase));
@@ -424,14 +530,22 @@ namespace Neo.Wallets.NEP6
         {
             password = null;
         }
+        // <summary>
+        // 将db3格式钱包内数据迁移到新的NEP6钱包文件中，并生成对应的NEP6钱包对象
+        // </summary>
+        // <param name="indexer">钱包索引</param>
+        // <param name="path">新的NEP6钱包文件路径</param>
+        // <param name="db3path">db3格式钱包文件路径</param>
+        // <param name="password">密码</param>
+        // <returns>生成的NEP6钱包对象</returns>
         /// <summary>
-        /// 将db3格式钱包内数据迁移到新的NEP6钱包文件中，并生成对应的NEP6钱包对象
+        /// Migrate the data in the db3  wallet file to a NEP6 wallet file and create a NEP6 wallet object
         /// </summary>
-        /// <param name="indexer">钱包索引</param>
-        /// <param name="path">新的NEP6钱包文件路径</param>
-        /// <param name="db3path">db3格式钱包文件路径</param>
-        /// <param name="password">密码</param>
-        /// <returns>生成的NEP6钱包对象</returns>
+        /// <param name="indexer">wallet indexer</param>
+        /// <param name="path">NEP6Wallet file path</param>
+        /// <param name="db3path">db3 wallet file path</param>
+        /// <param name="password">password</param>
+        /// <returns>NEP6Wallet object</returns>
         public static NEP6Wallet Migrate(WalletIndexer indexer, string path, string db3path, string password)
         {
             using (UserWallet wallet_old = UserWallet.Open(indexer, db3path, password))
@@ -447,8 +561,11 @@ namespace Neo.Wallets.NEP6
                 return wallet_new;
             }
         }
+        // <summary>
+        // 保存钱包信息，将钱包的名称、版本、scrypt参数、账户、额外数据存入钱包文件中
+        // </summary>
         /// <summary>
-        /// 保存钱包信息，将钱包的名称、版本、scrypt参数、账户、额外数据存入钱包文件中
+        /// Save wallet information。Save the wallet's name, version, scrypt parameters, account, and extra data in the wallet file.
         /// </summary>
         public void Save()
         {
@@ -460,11 +577,17 @@ namespace Neo.Wallets.NEP6
             wallet["extra"] = extra;
             File.WriteAllText(path, wallet.ToString());
         }
+        // <summary>
+        // 解锁钱包
+        // </summary>
+        // <param name="password">用户输入的密码</param>
+        // <returns>返回WalletLocker</returns>
+        // <exception cref="System.Security.Cryptography.CryptographicException">密码验证失败时抛出</exception>
         /// <summary>
-        /// 解锁钱包
+        /// unlock wallet
         /// </summary>
-        /// <param name="password">用户输入的密码</param>
-        /// <returns>返回WalletLocker</returns>
+        /// <param name="password">password</param>
+        /// <returns>return WalletLocker object</returns>
         /// <exception cref="System.Security.Cryptography.CryptographicException">密码验证失败时抛出</exception>
         public IDisposable Unlock(string password)
         {
@@ -473,12 +596,18 @@ namespace Neo.Wallets.NEP6
             this.password = password;
             return new WalletLocker(this);
         }
+        // <summary>
+        // 验证NEP6钱包的密码
+        // </summary>
+        // <param name="password">用户输入的密码</param>
+        // <returns>验证结果，验证通过返回true,否则返回false</returns>
+        // <exception cref="System.FormatException">获取NEP6账户的密钥对失败时抛出</exception>
         /// <summary>
-        /// 验证NEP6钱包的密码
+        /// Verify password
         /// </summary>
-        /// <param name="password">用户输入的密码</param>
-        /// <returns>验证结果，验证通过返回true,否则返回false</returns>
-        /// <exception cref="System.FormatException">获取NEP6账户的密钥对失败时抛出</exception>
+        /// <param name="password">password</param>
+        /// <returns>Validation result.Validation by returning true, otherwise returning false</returns>
+        /// <exception cref="System.FormatException">get KeyPair object of account unsuccessfully</exception>
         public override bool VerifyPassword(string password)
         {
             lock (accounts)

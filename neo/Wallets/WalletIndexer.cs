@@ -13,13 +13,19 @@ using System.Threading;
 
 namespace Neo.Wallets
 {
+    // <summary>
+    // 钱包索引
+    // </summary>
     /// <summary>
-    /// 钱包索引
+    /// wallet indexer
     /// </summary>
     public class WalletIndexer : IDisposable
     {
+        // <summary>
+        // 钱包交易的委托，在收到交易时，调用绑定的方法
+        // </summary>
         /// <summary>
-        /// 钱包交易的委托，在收到交易时，调用绑定的方法
+        /// Represent the method that will handle an event when the wallet transcation event provides data
         /// </summary>
         public event EventHandler<WalletTransactionEventArgs> WalletTransaction;
 
@@ -31,8 +37,11 @@ namespace Neo.Wallets
         private readonly Thread thread;
         private readonly object SyncRoot = new object();
         private bool disposed = false;
+        // <summary>
+        // 索引的高度
+        // </summary>
         /// <summary>
-        /// 索引的高度
+        /// wallet indexer height
         /// </summary>
         public uint IndexHeight
         {
@@ -45,10 +54,14 @@ namespace Neo.Wallets
                 }
             }
         }
+        // <summary>
+        // 构造方法
+        // </summary>
+        // <param name="path">数据库文件的路径</param>
         /// <summary>
-        /// 构造方法
+        /// constructor
         /// </summary>
-        /// <param name="path">数据库文件的路径</param>
+        /// <param name="path">DataBase file path</param>
         public WalletIndexer(string path)
         {
             path = Path.GetFullPath(path);
@@ -100,8 +113,11 @@ namespace Neo.Wallets
             };
             thread.Start();
         }
+        // <summary>
+        // 回收方法
+        // </summary>
         /// <summary>
-        /// 回收方法
+        /// Dispose method
         /// </summary>
         public void Dispose()
         {
@@ -109,11 +125,16 @@ namespace Neo.Wallets
             thread.Join();
             db.Dispose();
         }
+        // <summary>
+        // 获取钱包索引内与指定账户集合有关联的Coin集合
+        // </summary>
+        // <param name="accounts">指定账户集合</param>
+        // <returns>关联的Coin集合</returns>
         /// <summary>
-        /// 获取钱包索引内与指定账户集合有关联的Coin集合
+        /// Get the Coin collection associated with the specified account set in the wallet index
         /// </summary>
-        /// <param name="accounts">指定账户集合</param>
-        /// <returns>关联的Coin集合</returns>
+        /// <param name="accounts">specified account set</param>
+        /// <returns>associated Coin collection</returns>
         public IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts)
         {
             lock (SyncRoot)
@@ -133,11 +154,16 @@ namespace Neo.Wallets
             }
             return groupId;
         }
+        // <summary>
+        // 查找数据库中与指定账户有关的交易的集合
+        // </summary>
+        // <param name="accounts">指定账户的地址的集合</param>
+        // <returns>有关的交易的哈希的集合</returns>
         /// <summary>
-        /// 查找数据库中与指定账户有关的交易的集合
+        /// Find a collection of transaction hash in the database that are related to the specified accounts
         /// </summary>
-        /// <param name="accounts">指定账户的地址的集合</param>
-        /// <returns>有关的交易的哈希的集合</returns>
+        /// <param name="accounts">specified accounts set</param>
+        /// <returns>a collection of transaction hash</returns>
         public IEnumerable<UInt256> GetTransactions(IEnumerable<UInt160> accounts)
         {
             ReadOptions options = new ReadOptions { FillCache = false };
@@ -286,8 +312,11 @@ namespace Neo.Wallets
                     Thread.Sleep(100);
             }
         }
+        // <summary>
+        // 重建钱包索引
+        // </summary>
         /// <summary>
-        /// 重建钱包索引
+        /// rebuild wallet indexer
         /// </summary>
         public void RebuildIndex()
         {
@@ -319,11 +348,16 @@ namespace Neo.Wallets
                 db.Write(WriteOptions.Default, batch);
             }
         }
+        // <summary>
+        // 向钱包索引中注册账户，并存储到数据库中
+        // </summary>
+        // <param name="accounts">需要注册的账户列表集合</param>
+        // <param name="height">钱包高度</param>
         /// <summary>
-        /// 向钱包索引中注册账户，并存储到数据库中
+        /// registered accounts in the wallet indexer,and stored in database
         /// </summary>
-        /// <param name="accounts">需要注册的账户列表集合</param>
-        /// <param name="height">钱包高度</param>
+        /// <param name="accounts">account collection</param>
+        /// <param name="height">wallet height</param>
         public void RegisterAccounts(IEnumerable<UInt160> accounts, uint height = 0)
         {
             lock (SyncRoot)
@@ -355,10 +389,14 @@ namespace Neo.Wallets
                 }
             }
         }
+        // <summary>
+        // 向钱包索引中删除指定账户，并删除数据库中的记录
+        // </summary>
+        // <param name="accounts">需要删除的账户列表集合</param>
         /// <summary>
-        /// 向钱包索引中删除指定账户，并删除数据库中的记录
+        /// remove specified accounts in the wallet indexer,and delete related records in database
         /// </summary>
-        /// <param name="accounts">需要删除的账户列表集合</param>
+        /// <param name="accounts">specified account collection</param>
         public void UnregisterAccounts(IEnumerable<UInt160> accounts)
         {
             lock (SyncRoot)

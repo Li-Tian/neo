@@ -5,30 +5,38 @@ using System;
 
 namespace Neo.Wallets
 {
+    // 资产的描述
     /// <summary>
-    /// 资产的描述
+    /// asset description
     /// </summary>
     public class AssetDescriptor
     {
+        // 资产的ID
         /// <summary>
-        /// 资产的ID
+        /// asset ID
         /// </summary>
         public UIntBase AssetId;
 
+        // 资产的名字
         /// <summary>
-        /// 资产的名字
+        /// asset name
         /// </summary>
         public string AssetName;
 
+        // 资产的精度
         /// <summary>
-        /// 资产的精度
+        /// asset decimals
         /// </summary>
         public byte Decimals;
 
+        // <summary>
+        // 构造函数, 传入一个assetId, 创建一个AssetDescriptor
+        // </summary>
+        // <param name="asset_id">资产的id标识</param>
         /// <summary>
-        /// 构造函数, 传入一个assetId, 创建一个AssetDescriptor
+        /// Constructor,create a AssetDescriptor Object by passing in a assetId
         /// </summary>
-        /// <param name="asset_id">资产的id标识</param>
+        /// <param name="asset_id">asset id</param>
         public AssetDescriptor(UIntBase asset_id)
         {
             if (asset_id is UInt160 asset_id_160)
@@ -55,10 +63,14 @@ namespace Neo.Wallets
             }
         }
 
+        // <summary>
+        // 使用AssetName作为字符串返回
+        // </summary>
+        // <returns>返回这个AssetDescriptor的AssetName</returns>
         /// <summary>
-        /// 使用AssetName作为字符串返回
+        /// return a string value of AssetName
         /// </summary>
-        /// <returns>返回这个AssetDescriptor的AssetName</returns>
+        /// <returns>return a string value of AssetName</returns>
         public override string ToString()
         {
             return AssetName;

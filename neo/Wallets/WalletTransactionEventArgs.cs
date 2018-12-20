@@ -3,28 +3,43 @@ using System;
 
 namespace Neo.Wallets
 {
+    // <summary>
+    // 钱包交易的事件参数
+    // </summary>
     /// <summary>
-    /// 钱包交易的事件参数
+    /// wallet transaction event arguments
     /// </summary>
     public class WalletTransactionEventArgs : EventArgs
     {
+        // <summary>
+        // 交易
+        // </summary>
         /// <summary>
-        /// 交易
+        /// transaction
         /// </summary>
         public Transaction Transaction;
 
+        // <summary>
+        // 相关的账户
+        // </summary>
         /// <summary>
-        /// 相关的账户
+        /// related accounts
         /// </summary>
         public UInt160[] RelatedAccounts;
 
+        // <summary>
+        // 区块高度
+        // </summary>
         /// <summary>
-        /// 区块高度
+        /// block height
         /// </summary>
         public uint? Height;
 
+        // <summary>
+        // 时间戳
+        // </summary>
         /// <summary>
-        /// 时间戳
+        /// time stamp
         /// </summary>
         public uint Time;
     }
