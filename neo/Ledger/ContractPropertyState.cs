@@ -8,23 +8,35 @@ namespace Neo.Ledger
     [Flags]
     public enum ContractPropertyState : byte
     {
+        // <summary>
+        // 合约不包含属性
+        // </summary>
         /// <summary>
-        /// 合约不包含属性
+        /// This contract do not have property
         /// </summary>
         NoProperty = 0,
 
+        // <summary>
+        // 包含存储区
+        // </summary>
         /// <summary>
-        /// 包含存储区
+        /// This contract have storage
         /// </summary>
         HasStorage = 1 << 0,
 
+        // <summary>
+        // 动态调用
+        // </summary>
         /// <summary>
-        /// 动态调用
+        /// This contract can be dynamically invoked
         /// </summary>
         HasDynamicInvoke = 1 << 1,
 
+        // <summary>
+        // 可支付(保留功能)
+        // </summary>
         /// <summary>
-        /// 可支付(保留功能)
+        /// This contract can be paid(Developing)
         /// </summary>
         Payable = 1 << 2
     }

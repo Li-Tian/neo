@@ -8,46 +8,71 @@ using System.Linq;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 用户状态
+    // </summary>
     /// <summary>
-    /// 用户状态
+    /// The state of user account
     /// </summary>
     public class AccountState : StateBase, ICloneable<AccountState>
     {
+        // <summary>
+        // 脚本合约hash
+        // </summary>
         /// <summary>
-        /// 脚本合约hash
+        /// The hash of the contract script
         /// </summary>
         public UInt160 ScriptHash;
 
+        // <summary>
+        // 账户是否冻结
+        // </summary>
         /// <summary>
-        /// 账户是否冻结
+        /// If this account is frozen
         /// </summary>
         public bool IsFrozen;
 
+        // <summary>
+        // 投票列表
+        // </summary>
         /// <summary>
-        /// 投票列表
+        /// The list of votes(ECPoints)
         /// </summary>
         public ECPoint[] Votes;
 
+        // <summary>
+        // 全局资产余额
+        // </summary>
         /// <summary>
-        /// 全局资产余额
+        /// The balance map of global asset
         /// </summary>
         public Dictionary<UInt256, Fixed8> Balances;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of this object
         /// </summary>
         public override int Size => base.Size + ScriptHash.Size + sizeof(bool) + Votes.GetVarSize()
             + IO.Helper.GetVarSize(Balances.Count) + Balances.Count * (32 + 8);
 
+        // <summary>
+        // 构造函数
+        // </summary>
         /// <summary>
-        /// 构造函数
+        /// The empty constructor
         /// </summary>
         public AccountState() { }
 
+        // <summary>
+        // 构造函数
+        // </summary>
+        // <param name="hash">脚本hash</param>
         /// <summary>
-        /// 构造函数
+        /// The constructor which initilize the fields
         /// </summary>
-        /// <param name="hash">脚本hash</param>
+        /// <param name="hash">The hash of the contract</param>
         public AccountState(UInt160 hash)
         {
             this.ScriptHash = hash;
@@ -56,10 +81,14 @@ namespace Neo.Ledger
             this.Balances = new Dictionary<UInt256, Fixed8>();
         }
 
+        // <summary>
+        // 克隆
+        // </summary>
+        // <returns>克隆对象</returns>
         /// <summary>
-        /// 克隆
+        /// The clone method
         /// </summary>
-        /// <returns>克隆对象</returns>
+        /// <returns>Return the cloned object</returns>
         AccountState ICloneable<AccountState>.Clone()
         {
             return new AccountState
@@ -71,10 +100,14 @@ namespace Neo.Ledger
             };
         }
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialization method
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">The binary reader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -93,10 +126,14 @@ namespace Neo.Ledger
             }
         }
 
+        // <summary>
+        // 从副本拷贝值
+        // </summary>
+        // <param name="replica">副本</param>
         /// <summary>
-        /// 从副本拷贝值
+        /// Copy from a relication of an account
         /// </summary>
-        /// <param name="replica">副本</param>
+        /// <param name="replica">replication of a accountstate</param>
         void ICloneable<AccountState>.FromReplica(AccountState replica)
         {
             ScriptHash = replica.ScriptHash;
@@ -105,11 +142,16 @@ namespace Neo.Ledger
             Balances = replica.Balances;
         }
 
+        // <summary>
+        // 查询资产剩余
+        // </summary>
+        // <param name="asset_id">资产ID</param>
+        // <returns>资产余额，若没有查询到时，返回0</returns>
         /// <summary>
-        /// 查询资产剩余
+        /// Get the balance of specified asset
         /// </summary>
-        /// <param name="asset_id">资产ID</param>
-        /// <returns>资产余额，若没有查询到时，返回0</returns>
+        /// <param name="asset_id">The asset Id</param>
+        /// <returns>Get the balance of asset. It not record then return 0</returns>
         public Fixed8 GetBalance(UInt256 asset_id)
         {
             if (!Balances.TryGetValue(asset_id, out Fixed8 value))
@@ -117,32 +159,58 @@ namespace Neo.Ledger
             return value;
         }
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>StateVersion</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>ScriptHash</term>
+        // <description>脚本合约hash</description>
+        // </item>
+        // <item>
+        // <term>IsFrozen</term>
+        // <description>账户是否冻结</description>
+        // </item>
+        // <item>
+        // <term>Votes</term>
+        // <description>投票列表</description>
+        // </item>
+        // <item>
+        // <term>Balances</term>
+        // <description>全局资产余额</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化
+        /// Serialization
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
-        /// <description>状态版本号</description>
+        /// <description>The version of state</description>
         /// </item>
         /// <item>
         /// <term>ScriptHash</term>
-        /// <description>脚本合约hash</description>
+        /// <description>Hash of the contract script</description>
         /// </item>
         /// <item>
         /// <term>IsFrozen</term>
-        /// <description>账户是否冻结</description>
+        /// <description>If the account is frozen</description>
         /// </item>
         /// <item>
         /// <term>Votes</term>
-        /// <description>投票列表</description>
+        /// <description>List of votes</description>
         /// </item>
         /// <item>
         /// <term>Balances</term>
-        /// <description>全局资产余额</description>
+        /// <description>The balances of global asset</description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">Binary output stream</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
@@ -158,10 +226,15 @@ namespace Neo.Ledger
             }
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>格式： { 'script_hash': 'xxxx', 'frozen': false, 'votes':['xxxx'], 'balances':{ 'asset_xxx': 'value...' } } </returns>
+        //
         /// <summary>
-        /// 转成json对象
+        /// Transfer to a json object
         /// </summary>
-        /// <returns>格式： { 'script_hash': 'xxxx', 'frozen': false, 'votes':['xxxx'], 'balances':{ 'asset_xxx': 'value...' } } </returns>
+        /// <returns>return a json object of this account state. The format is { 'script_hash': 'xxxx', 'frozen': false, 'votes':['xxxx'], 'balances':{ 'asset_xxx': 'value...' } } </returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

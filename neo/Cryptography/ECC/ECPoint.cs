@@ -7,48 +7,74 @@ using System.Numerics;
 
 namespace Neo.Cryptography.ECC
 {
+    // <summary>
+    // 这个类代表了椭圆曲线（EC Curve）上的一个点
+    // </summary>
     /// <summary>
-    /// 这个类代表了椭圆曲线（EC Curve）上的一个点
+    /// This class represents a Point on the Elliptic curve
     /// </summary>
     public class ECPoint : IComparable<ECPoint>, IEquatable<ECPoint>, ISerializable
     {
         internal ECFieldElement X, Y;
         internal readonly ECCurve Curve;
 
+        // <summary>
+        // 判定一个点是否为无穷远点（零元）
+        // </summary>
+        // <value>
+        // 如果是无穷远点返回<c>true</c>,不是的话返回<c>false</c>
+        // </value>
+        //
         /// <summary>
-        /// 判定一个点是否为无穷远点（零元）
+        /// Judge this point is an Infinite point or not 
         /// </summary>
         /// <value>
-        /// 如果是无穷远点返回<c>true</c>,不是的话返回<c>false</c>
+        /// If this point is an Infinite Point return <c>true</c>,otherwise return<c>false</c>
         /// </value>
         public bool IsInfinity
         {
             get { return X == null && Y == null; }
         }
 
+        // <summary>
+        // 获取一个点的字节大小
+        // </summary>
+        // <value>
+        // 判定一个点是否为无穷远点， 如果是返回1， 不是返回33
+        // </value>
         /// <summary>
-        /// 获取一个点的字节大小
+        /// Get the size of this ECpoint
         /// </summary>
         /// <value>
-        /// 判定一个点是否为无穷远点， 如果是返回1， 不是返回33
+        /// If this Point is a Infinity point return 1, otherwise return 33.
         /// </value>
         public int Size => IsInfinity ? 1 : 33;
 
+        // <summary>
+        // 空构造函数, 作用是构造一个零元，即无穷远点, 其x坐标和y坐标分别为null, 曲线为<c>Secp256r1</c>
+        // </summary>
         /// <summary>
-        /// 空构造函数, 作用是构造一个零元，即无穷远点, 其x坐标和y坐标分别为null, 曲线为<c>Secp256r1</c>
+        /// Default Constructor, which build a Inifite Point. The X axis value and Y axis value are null, the curve is Secp256r1
         /// </summary>
         public ECPoint()
             : this(null, null, ECCurve.Secp256r1)
         {
         }
 
+        // <summary>
+        // 构造函数， 返回一个指定椭圆曲线上的，坐标为x,y的点
+        // </summary>
+        // <param name="x">代表x坐标的ECField对象</param>
+        // <param name="y">代表y坐标的ECField对象</param>
+        // <param name="curve">该点所用的椭圆曲线</param>
+        // <exception cref="ArgumentException">x坐标或者y坐标不能单独为Null</exception>
         /// <summary>
-        /// 构造函数， 返回一个指定椭圆曲线上的，坐标为x,y的点
+        /// The constrcut function, which return a ECpoint based on the specified curve and with axis value(X,Y)
         /// </summary>
-        /// <param name="x">代表x坐标的ECField对象</param>
-        /// <param name="y">代表y坐标的ECField对象</param>
-        /// <param name="curve">该点所用的椭圆曲线</param>
-        /// <exception cref="ArgumentException">x坐标或者y坐标不能单独为Null</exception>
+        /// <param name="x">An ECField object which represents the X axis value</param>
+        /// <param name="y">An ECField object which represents the Y axis v</param>
+        /// <param name="curve">The Elliptic Curve which this point use</param>
+        /// <exception cref="ArgumentException">The X axis value or Y axis value can not be null alone</exception>
         internal ECPoint(ECFieldElement x, ECFieldElement y, ECCurve curve)
         {
             if ((x != null && y == null) || (x == null && y != null))
@@ -58,14 +84,25 @@ namespace Neo.Cryptography.ECC
             this.Curve = curve;
         }
 
+        // <summary>
+        // 将这个点和另一个ECPoint点比较
+        // </summary>
+        // <param name="other">另一个ECPoint点</param>
+        // <returns>
+        // 如果两个点是同一个对象则返回0.
+        // 否则,先比较X坐标值的大小,如果不相等则返回1或者-1（*）具体什么情况返回1？
+        // 如果X坐标值相等， 则比较Y轴坐标值.
+        // </returns>
         /// <summary>
-        /// 将这个点和另一个ECPoint点比较
+        /// Compare this ECPoint with the other ECpoint
         /// </summary>
-        /// <param name="other">另一个ECPoint点</param>
+        /// <param name="other">The other ECpoint point</param>
         /// <returns>
-        /// 如果两个点是同一个对象则返回0.
-        /// 否则,先比较X坐标值的大小,如果不相等则返回1或者-1（*）具体什么情况返回1？
-        /// 如果X坐标值相等， 则比较Y轴坐标值.
+        /// return 0 if these two point is a same object.
+        /// Otherwise, Compare the X axis value first. If the this Point's X axis value greater than the other Point's X axis value, return 1.<br/>
+        /// If the this Point's X axis value smaller than the other Point's X axis value, return -1. Otherwise, compare the Y axis value.
+        /// If the this Point's Y axis value greater than the other Point's Y axis value, return 1.
+        /// If the this Point's Y axis value smaller than the other Point's Y axis value, return -1. If both X value and Y value are equal, return 0.
         /// </returns>
         public int CompareTo(ECPoint other)
         {
@@ -75,17 +112,28 @@ namespace Neo.Cryptography.ECC
             return Y.CompareTo(other.Y);
         }
 
+        // <summary>
+        // 将一个代表一个ECPoint的字节数组解码为一个ECPoint对象.
+        // 如果第一个字节为0x00, 则为零元. 
+        // 如果第一个字节为0x02或者0x03, 则解码为压缩过的ECPoint.
+        // 如果第一个字节为0x04,0x06,0x07, 则解码为非压缩过的ECPoint
+        // 如果都不符合, 则抛出异常.
+        // </summary>
+        // <exception cref="FormatException">编码格式有问题</exception>
+        // <param name="encoded">编码后的字节数组</param>
+        // <param name="curve">使用的椭圆曲线</param>
+        // <returns>解码后的ECPoint对象</returns>
         /// <summary>
-        /// 将一个代表一个ECPoint的字节数组解码为一个ECPoint对象.
-        /// 如果第一个字节为0x00, 则为零元. 
-        /// 如果第一个字节为0x02或者0x03, 则解码为压缩过的ECPoint.
-        /// 如果第一个字节为0x04,0x06,0x07, 则解码为非压缩过的ECPoint
-        /// 如果都不符合, 则抛出异常.
+        /// Decode a byte array to a ECPoint object.
+        /// If the first byte is 0x00, it is a infinity point.
+        /// If the first byte is 0x02 or 0x03, then it is decoded as a compressed ECPoint.
+        /// If the first byte is 0x04, 0x06, 0x07, then it is decoded as an uncompressed ECPoint.
+        /// If not qualified with both above, then it will throw an exception.
         /// </summary>
-        /// <exception cref="FormatException">编码格式有问题</exception>
-        /// <param name="encoded">编码后的字节数组</param>
-        /// <param name="curve">使用的椭圆曲线</param>
-        /// <returns>解码后的ECPoint对象</returns>
+        /// <exception cref="FormatException">There is format problem for this byte array</exception>
+        /// <param name="encoded">The encoded byte array which stands for ECPoint</param>
+        /// <param name="curve">The Elliptic curve which this ECpoint use</param>
+        /// <returns>The Decoded ECpoint</returns>
         public static ECPoint DecodePoint(byte[] encoded, ECCurve curve)
         {
             ECPoint p = null;
@@ -151,10 +199,14 @@ namespace Neo.Cryptography.ECC
             return new ECPoint(x, beta, curve);
         }
 
+        // <summary>
+        // 从一个字节流中读出并转换成为一个ECPoint对象, 并且将其X,Y坐标分别赋予当前ECPoint对象的X，Y 
+        // </summary>
+        // <param name="reader">一个BinaryReader， 从字节流中读入被转换的ECPoint</param>
         /// <summary>
-        /// 从一个字节流中读出并转换成为一个ECPoint对象, 并且将其X,Y坐标分别赋予当前ECPoint对象的X，Y 
+        /// Read data from byte stream from a BinaryReader and transfer it to a ECPoint object, and assign the X, Y value to the current ECPoint object.
         /// </summary>
-        /// <param name="reader">一个BinaryReader， 从字节流中读入被转换的ECPoint</param>
+        /// <param name="reader">A binaryReader which reads the ECPoint from the BinaryReader</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ECPoint p = DeserializeFrom(reader, Curve);
@@ -162,13 +214,20 @@ namespace Neo.Cryptography.ECC
             Y = p.Y;
         }
 
+        // <summary>
+        // 从一个字节流中读出并转换成为一个ECPoint
+        // </summary>
+        // <param name="reader">一个BinaryReader， 从字节流中读入被转换的ECPoint</param>
+        // <param name="curve">这个ECPoint所在的ECCurve</param>
+        // <exception cref="FormatException">如果读出来的字节流第一个字节不符合格式</exception>
+        // <returns>反序列化之后的ECPoint</returns>
         /// <summary>
-        /// 从一个字节流中读出并转换成为一个ECPoint
+        /// Read data from a bytestream and transfer it to an  ECPoint
         /// </summary>
-        /// <param name="reader">一个BinaryReader， 从字节流中读入被转换的ECPoint</param>
-        /// <param name="curve">这个ECPoint所在的ECCurve</param>
-        /// <exception cref="FormatException">如果读出来的字节流第一个字节不符合格式</exception>
-        /// <returns>反序列化之后的ECPoint</returns>
+        /// <param name="reader">The BinaryReader which reads the ECPoint data</param>
+        /// <param name="curve">The curve which this point to use</param>
+        /// <exception cref="FormatException">If the byte read from BinaryReader is not the correct format</exception>
+        /// <returns>The deserialized ECPoint</returns>
         public static ECPoint DeserializeFrom(BinaryReader reader, ECCurve curve)
         {
             int expectedLength = (curve.Q.GetBitLength() + 7) / 8;
@@ -192,15 +251,21 @@ namespace Neo.Cryptography.ECC
             }
         }
 
+        // <summary>
+        // 将这对象内ECPoint对象编码为一个字节数组
+        // </summary>
+        // <param name="commpressed">标记返回压缩之后的ECPoint</param>
+        // <returns>
+        // 如果需要压缩， 则返回经过压缩的算法得来的ECPoint对象的字节数组
+        // 如果不压缩，则直接返回ECPoint对象的字节数组
+        // </returns>
         /// <summary>
-        /// 将这对象内ECPoint对象编码为一个字节数组
+        /// Encode this ECPoint to an byte array
         /// </summary>
-        /// <param name="commpressed">标记返回压缩之后的ECPoint</param>
-        /// <returns>
-        /// 如果需要压缩， 则返回经过压缩的算法得来的ECPoint对象的字节数组
-        /// 如果不压缩，则直接返回ECPoint对象的字节数组
+        /// <param name="commpressed">Flag to mark if encode this ECPoint to a compressed format or not</param>
+        /// <returns>If compressed , return the byte array which is useing compress algorithm to encode
+        /// Otherwise, return the byte array encoded from ECPoint
         /// </returns>
-
         public byte[] EncodePoint(bool commpressed)
         {
             if (IsInfinity) return new byte[1];
@@ -221,16 +286,27 @@ namespace Neo.Cryptography.ECC
             return data;
         }
 
+        // <summary>
+        // 比较方法，与另一个ECPoint进行比较。
+        // </summary>
+        // <param name="other">另一个拿来比较的ECPoint</param>
+        // <returns>
+        // 如果是同一个对象，返回<c>true</c>. <BR/>
+        // 如果参数other 是null , 返回<c>false</c>.<BR/>
+        // 如果是两个都是零元, 返回<c>true</c>.<BR/>
+        // 如果一个是零元，则返回<c>false</c>.<BR/>
+        // 否则对两个坐标值 X,Y进行比较
+        // </returns>
         /// <summary>
-        /// 比较方法，与另一个ECPoint进行比较。
+        /// Compare method, compare this ECPoint with other ECPoint
         /// </summary>
-        /// <param name="other">另一个拿来比较的ECPoint</param>
+        /// <param name="other">The other ECPoint object to be compared</param>
         /// <returns>
-        /// 如果是同一个对象，返回<c>true</c>. <BR/>
-        /// 如果参数other 是null , 返回<c>false</c>.<BR/>
-        /// 如果是两个都是零元, 返回<c>true</c>.<BR/>
+        /// If these two ECPoint are same reference, return<c>true</c>. <BR/>
+        /// If the other point is null, return <c>false</c>.<BR/>
+        /// If these two points are both Infinity point, return <c>true</c>.<BR/>
         /// 如果一个是零元，则返回<c>false</c>.<BR/>
-        /// 否则对两个坐标值 X,Y进行比较
+        /// Otherwise, compare the X axis value and Y axis value.
         /// </returns>
         public bool Equals(ECPoint other)
         {
@@ -242,10 +318,10 @@ namespace Neo.Cryptography.ECC
         }
 
         /// <summary>
-        /// 比较两个Object是否相等
+        /// Compare if two objects are equal
         /// </summary>
-        /// <param name="obj">待比较的object对象</param>
-        /// <returns>如果两个相等则返回<c>true</c>, 如果不等则返回<c>false</c></returns>
+        /// <param name="obj">The object which is going to be compared</param>
+        /// <returns>If the two objects are equal then return <c>true</c>, otherwise it returns <c>false<c></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as ECPoint);
@@ -278,10 +354,14 @@ namespace Neo.Cryptography.ECC
             }
         }
 
+        // <summary>
+        // 计算这个对象的HashCode并且返回,这个对象的HashCode为X坐标值的HashCode和Y坐标值的HashCode之和
+        // </summary>
+        // <returns>返回当前Ecpoint的HashCode</returns>
         /// <summary>
-        /// 计算这个对象的HashCode并且返回,这个对象的HashCode为X坐标值的HashCode和Y坐标值的HashCode之和
+        /// Calculate the HashCode of this ECPoint and return. The HashCode is the sum of hashCode of X axis and hashCode of Y axis
         /// </summary>
-        /// <returns>返回当前Ecpoint的HashCode</returns>
+        /// <returns>The HashCode of current ECPoint</returns>
         public override int GetHashCode()
         {
             return X.GetHashCode() + Y.GetHashCode();
@@ -386,42 +466,63 @@ namespace Neo.Cryptography.ECC
             return q;
         }
 
+        // <summary>
+        // 解析一个字符串，转换成ECPoint
+        // </summary>
+        // <param name="value">被解析的字符串（16进制表示）</param>
+        // <param name="curve">椭圆曲线类型</param>
+        // <returns>被解析的ECpoint</returns>
         /// <summary>
-        /// 解析一个字符串，转换成ECPoint
+        /// Parse a String and transfer to ECPoint
         /// </summary>
-        /// <param name="value">被解析的字符串（16进制表示）</param>
-        /// <param name="curve">椭圆曲线类型</param>
-        /// <returns>被解析的ECpoint</returns>
+        /// <param name="value">The String(in hex format) to be parsed</param>
+        /// <param name="curve">The ECCurve type</param>
+        /// <returns>The parsed ECpoint</returns>
         public static ECPoint Parse(string value, ECCurve curve)
         {
             return DecodePoint(value.HexToBytes(), curve);
         }
 
+        // <summary>
+        // 序列化这个ECPoint并且写入字节流中（使用压缩格式）
+        // </summary>
+        // <param name="writer">写入字节流的BianryWriter</param>
         /// <summary>
-        /// 序列化这个ECPoint并且写入字节流中（使用压缩格式）
+        /// Serialize this ECPoint and write into the byteStream with compressed format
         /// </summary>
-        /// <param name="writer">写入字节流的BianryWriter</param>
+        /// <param name="writer">The BinaryWriter which used to write in the byte stream</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(EncodePoint(true));
         }
 
+        // <summary>
+        // 将这个ECPoint编码后转换为16进制的字符串（使用压缩格式）
+        // </summary>
+        // <returns>转换之后的字符串</returns>
         /// <summary>
-        /// 将这个ECPoint编码后转换为16进制的字符串（使用压缩格式）
+        /// Transfer this ECPoint to a hex string with compressed format
         /// </summary>
-        /// <returns>转换之后的字符串</returns>
+        /// <returns>The transfered string</returns>
         public override string ToString()
         {
             return EncodePoint(true).ToHexString();
         }
 
+        // <summary>
+        // 解析一个字符串, 将其解析为一个ECPoint
+        // </summary>
+        // <param name="value">被解析的字符串</param>
+        // <param name="curve">椭圆曲线类型</param>
+        // <param name="point">将解析过后的ECPoint保存到point</param>
+        // <returns>如果能够解析返回<c>true</c>, 否则返回<c>false</c></returns>
         /// <summary>
-        /// 解析一个字符串, 将其解析为一个ECPoint
+        /// Parse a string and transfer it to a ECPoint
         /// </summary>
-        /// <param name="value">被解析的字符串</param>
-        /// <param name="curve">椭圆曲线类型</param>
-        /// <param name="point">将解析过后的ECPoint保存到point</param>
-        /// <returns>如果能够解析返回<c>true</c>, 否则返回<c>false</c></returns>
+        /// <param name="value">The string to be parsed</param>
+        /// <param name="curve">The type of ECCurve</param>
+        /// <param name="point">The object which is used to save the ECPoint</param>
+        /// <returns>If this string can be parsed then return <c>true</c>, otherwise return <c>false</c></returns>
         public static bool TryParse(string value, ECCurve curve, out ECPoint point)
         {
             try
@@ -485,27 +586,43 @@ namespace Neo.Cryptography.ECC
             return wnafShort;
         }
 
+        // <summary>
+        // <c>-</c>操作符,求出这个点的负元, 将其y坐标对称转换
+        // </summary>
+        // <param name="x">被转换的点</param>
+        // <returns>返回一个负元,即这个曲线上y坐标为原来点的负数的点</returns>
         /// <summary>
-        /// <c>-</c>操作符,求出这个点的负元, 将其y坐标对称转换
+        /// The negative operator, which get the negative point of this ECPoint, and it's Y axis value is the negative value of origial one
         /// </summary>
-        /// <param name="x">被转换的点</param>
-        /// <returns>返回一个负元,即这个曲线上y坐标为原来点的负数的点</returns>
+        /// <param name="x">The point which is going to be transferd</param>
+        /// <returns>return a negative minus point, whose Y axis value is the negative value of original one</returns>
         public static ECPoint operator -(ECPoint x)
         {
             return new ECPoint(x.X, -x.Y, x.Curve);
         }
 
+        // <summary>
+        // <c>*</c>操作符, 用来计算曲线上的乘法运算
+        // </summary>
+        // <param name="p">作为被乘数的坐标点</param>
+        // <param name="n">作为乘数的坐标点所存储的字节数组。长度必须为32字节</param>
+        // <exception cref="ArgumentNullException">如果两个参数中有一个是null</exception>
+        // <exception cref="ArgumentException">如果传入的字节长度不是32</exception>
+        // <returns>
+        // 求乘法计算后的结果.如果该点为无穷远点, 则返回这个零点
+        // 如果乘数是0,返回无穷零点
+        // 否则, 调用Multiply方法计算两者乘积。
+        // </returns>
         /// <summary>
-        /// <c>*</c>操作符, 用来计算曲线上的乘法运算
+        /// <c>*</c>operator, which make the multipy operation on this curve 
         /// </summary>
-        /// <param name="p">作为被乘数的坐标点</param>
-        /// <param name="n">作为乘数的坐标点所存储的字节数组。长度必须为32字节</param>
-        /// <exception cref="ArgumentNullException">如果两个参数中有一个是null</exception>
-        /// <exception cref="ArgumentException">如果传入的字节长度不是32</exception>
-        /// <returns>
-        /// 求乘法计算后的结果.如果该点为无穷远点, 则返回这个零点
-        /// 如果乘数是0,返回无穷零点
-        /// 否则, 调用Multiply方法计算两者乘积。
+        /// <param name="p">The ECPoint which is used as multiplicand</param>
+        /// <param name="n">The ECPoint which is used as multiplier. It is a byte array and the length must be 32 bytes</param>
+        /// <exception cref="ArgumentNullException">If any one Point object is null</exception>
+        /// <exception cref="ArgumentException">If the length argument which is used as multiplier is not 32</exception> 
+        /// <returns>Get the result of the multiplication. If this Point is infinity point, then return this point.
+        /// If the multiplier is 0, then return the Infinity Point.
+        /// Otherwith, use Multiply() method to calculate these two ECPoint
         /// </returns>
         public static ECPoint operator *(ECPoint p, byte[] n)
         {
@@ -521,16 +638,27 @@ namespace Neo.Cryptography.ECC
             return Multiply(p, k);
         }
 
+        // <summary>
+        //  <c>+</c>操作符, 计算曲线上的加法运算
+        // </summary>
+        // <param name="x">第一个点</param>
+        // <param name="y">第二个点</param>
+        // <returns>
+        // 如果有一个点为无穷远点（零元），则返回另一个点.<br/>
+        // 如果一个点为另一个点的对于x轴对称点，则返回一个无穷点.<br/>
+        // 如果两个点完全相同， 则返回一个点的twice之后的结果.<br/>
+        // 否则返回在这个曲线上两个点求和后的新点
+        // </returns>
         /// <summary>
-        ///  <c>+</c>操作符, 计算曲线上的加法运算
+        /// <c>+</c>+operator, calculates the sum of two points on this curve.
         /// </summary>
-        /// <param name="x">第一个点</param>
-        /// <param name="y">第二个点</param>
+        /// <param name="x">The first point</param>
+        /// <param name="y">The second point</param>
         /// <returns>
-        /// 如果有一个点为无穷远点（零元），则返回另一个点.<br/>
-        /// 如果一个点为另一个点的对于x轴对称点，则返回一个无穷点.<br/>
-        /// 如果两个点完全相同， 则返回一个点的twice之后的结果.<br/>
-        /// 否则返回在这个曲线上两个点求和后的新点
+        /// If one point is Infinity point, then return the other point directly.
+        /// If first point and sceond point are symmetric for X axis, return an Infinity point
+        /// If two points are same, then return the twice() value of one point.
+        /// otherwise, return the new ECPoint which is the sum of these two points.
         /// </returns>
         public static ECPoint operator +(ECPoint x, ECPoint y)
         {
@@ -551,12 +679,18 @@ namespace Neo.Cryptography.ECC
             return new ECPoint(x3, y3, x.Curve);
         }
 
+        // <summary>
+        // <c>-</c>操作符,计算两个椭圆曲线上点的差值
+        // </summary>
+        // <param name="x">第一个点</param>
+        // <param name="y">第二个点</param>
+        // <returns>两个点的差.如果第二个点是无穷远点(零元)则返回第一个点x, 否则返回第一个点和第二个点取负数的和</returns>
         /// <summary>
-        /// <c>-</c>操作符,计算两个椭圆曲线上点的差值
+        /// - operator, calculate the difference on the curve of two ECPoints
         /// </summary>
-        /// <param name="x">第一个点</param>
-        /// <param name="y">第二个点</param>
-        /// <returns>两个点的差.如果第二个点是无穷远点(零元)则返回第一个点x, 否则返回第一个点和第二个点取负数的和</returns>
+        /// <param name="x">The first ECPoint</param>
+        /// <param name="y">The second ECPoint</param>
+        /// <returns>return the difference of two ECPoint. If the second point is Infinity Point return the first Point. Otherwise return the sum of the first point and the negative one of second point</returns>
         public static ECPoint operator -(ECPoint x, ECPoint y)
         {
             if (y.IsInfinity)

@@ -8,33 +8,51 @@ namespace Neo.Ledger
     /// </summary>
     public class ApplicationExecutionResult
     {
+        // <summary>
+        // 触发器类型
+        // </summary>
         /// <summary>
-        /// 触发器类型
+        /// The type of trigger
         /// </summary>
         public TriggerType Trigger { get; internal set; }
 
+        // <summary>
+        // 执行的合约脚本hash
+        // </summary>
         /// <summary>
-        /// 执行的合约脚本hash
+        /// The hash of contract which the NVM executed 
         /// </summary>
         public UInt160 ScriptHash { get; internal set; }
 
+        // <summary>
+        // VM状态
+        // </summary>
         /// <summary>
-        /// VM状态
+        /// The state of VM
         /// </summary>
         public VMState VMState { get; internal set; }
 
+        // <summary>
+        // Gas消耗
+        // </summary>
         /// <summary>
-        /// Gas消耗
+        /// The Gas consumed for this execution
         /// </summary>
         public Fixed8 GasConsumed { get; internal set; }
 
+        // <summary>
+        // 栈数据
+        // </summary>
         /// <summary>
-        /// 栈数据
+        /// The data of stack
         /// </summary>
         public StackItem[] Stack { get; internal set; }
 
+        // <summary>
+        // 智能合约执行过程中，通过互操作服务 Runtime_Notify 向客户端发出的通知事件的列表
+        // </summary>
         /// <summary>
-        /// 智能合约执行过程中，通过互操作服务 Runtime_Notify 向客户端发出的通知事件的列表
+        /// During the execution of smart contract, the list of notifications which sent from client throught the Runtime_Notify Interoperability service
         /// </summary>
         public NotifyEventArgs[] Notifications { get; internal set; }
     }
