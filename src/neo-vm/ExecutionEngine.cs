@@ -9,56 +9,94 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
+    // <summary>
+    // 执行引擎类，定义了执行引擎的构成结构，以及所有操作码对应的具体操作等
+    // </summary>
     /// <summary>
-    /// 执行引擎类，定义了执行引擎的构成结构，以及所有操作码对应的具体操作等
+    /// Defines the structure of the execution engine, and the specific operations corresponding to all opcodes.
     /// </summary>
     public class ExecutionEngine : IDisposable
     {
         private readonly IScriptTable table;
         private readonly Dictionary<byte[], HashSet<uint>> break_points = new Dictionary<byte[], HashSet<uint>>(new HashComparer());
+        // <summary>
+        // 脚本容器
+        // </summary>
         /// <summary>
-        /// 脚本容器
+        /// Script Container
         /// </summary>
         public IScriptContainer ScriptContainer { get; }
+        // <summary>
+        // 加密算法
+        // </summary>
         /// <summary>
-        /// 加密算法
+        /// Crypto
         /// </summary>
         public ICrypto Crypto { get; }
+        // <summary>
+        // 互操作服务
+        // </summary>
         /// <summary>
-        /// 互操作服务
+        /// Interop Service
         /// </summary>
         public IInteropService Service { get; }
+        // <summary>
+        // 调用栈，其中包含许多的运行上下文
+        // </summary>
         /// <summary>
-        /// 调用栈，其中包含许多的运行上下文
+        /// InvocationStack, Which contains a lot of execution context
         /// </summary>
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
+        // <summary>
+        // 结果栈
+        // </summary>
         /// <summary>
-        /// 结果栈
+        /// Used to store execution results
         /// </summary>
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
+        // <summary>
+        // 当前上下文，为调用栈栈顶对应的运行上下文
+        // </summary>
         /// <summary>
-        /// 当前上下文，为调用栈栈顶对应的运行上下文
+        /// Current context, the execution context corresponding to the top of the InvocationStack
         /// </summary>
         public ExecutionContext CurrentContext => InvocationStack.Peek();
+        // <summary>
+        // 调用上下文，如果调用栈中运行上下文数量大于1，则为调用栈第二个运行上下文，否则为空
+        // </summary>
         /// <summary>
-        /// 调用上下文，如果调用栈中运行上下文数量大于1，则为调用栈第二个运行上下文，否则为空
+        /// Calling context, if the number of ExecutionContext in the InvocationStack is more than 1, 
+        /// it is the second ExecutionContext of the InvocationStack, otherwise it is empty
         /// </summary>
         public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
+        // <summary>
+        // 入口上下文，为调用栈栈底对应的运行上下文
+        // </summary>
         /// <summary>
-        /// 入口上下文，为调用栈栈底对应的运行上下文
+        /// EntryContext, is the ExecutionContext corresponding to the bottom of the InvocationStack
         /// </summary>
         public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
+        // <summary>
+        // 虚拟机状态
+        // </summary>
         /// <summary>
-        /// 虚拟机状态
+        /// VM State
         /// </summary>
         public VMState State { get; protected set; } = VMState.BREAK;
+        // <summary>
+        // 执行引擎的构造函数
+        // </summary>
+        // <param name="container">脚本容器</param>
+        // <param name="crypto">加密算法</param>
+        // <param name="table">智能合约的脚本查询表。可以通过脚本哈希查询到智能合约的脚本全文。</param>
+        // <param name="service">互操作服务，默认为空</param>
         /// <summary>
-        /// 执行引擎的构造函数
+        /// ExecutionEngine Constructor
         /// </summary>
-        /// <param name="container">脚本容器</param>
-        /// <param name="crypto">加密算法</param>
-        /// <param name="table">智能合约的脚本查询表。可以通过脚本哈希查询到智能合约的脚本全文。</param>
-        /// <param name="service">互操作服务，默认为空</param>
+        /// <param name="container">Script container</param>
+        /// <param name="crypto">crypto</param>
+        /// <param name="table">Script table.The full text of the script for the smart contract can be queried through a script hash.</param>
+        /// <param name="service">Interop Service</param>
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, IInteropService service = null)
         {
             this.ScriptContainer = container;
@@ -66,11 +104,16 @@ namespace Neo.VM
             this.table = table;
             this.Service = service;
         }
+        // <summary>
+        // 给脚本添加断点
+        // </summary>
+        // <param name="script_hash">脚本哈希</param>
+        // <param name="position">断点所在位置</param>
         /// <summary>
-        /// 给脚本添加断点
+        /// Add a breakpoint to the script
         /// </summary>
-        /// <param name="script_hash">脚本哈希</param>
-        /// <param name="position">断点所在位置</param>
+        /// <param name="script_hash">script hash</param>
+        /// <param name="position">The position of breakpoint</param>
         public void AddBreakPoint(byte[] script_hash, uint position)
         {
             if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
@@ -80,18 +123,26 @@ namespace Neo.VM
             }
             hashset.Add(position);
         }
+        // <summary>
+        // 释放调用栈所有资源
+        // </summary>
         /// <summary>
-        /// 释放调用栈所有资源
+        /// Release all resources of the InvocationStack
         /// </summary>
         public virtual void Dispose()
         {
             while (InvocationStack.Count > 0)
                 InvocationStack.Pop().Dispose();
         }
+        // <summary>
+        // 运行虚拟机引擎。<br/>
+        // 当虚拟机状态为NONE时，从开始执行。<br/>
+        // 当虚拟机状态为BREAK时，从断点开始执行。<br/>
+        // </summary>
         /// <summary>
-        /// 运行虚拟机引擎。<br/>
-        /// 当虚拟机状态为NONE时，从开始执行。<br/>
-        /// 当虚拟机状态为BREAK时，从断点开始执行。<br/>
+        /// Execute the virtual machine engine.<br/>
+        /// When the virtual machine state is NONE, it is executed from the beginning.<br/>
+        /// When the virtual machine status is BREAK, execution starts from the breakpoint.<br/>
         /// </summary>
         public void Execute()
         {
@@ -1071,24 +1122,37 @@ namespace Neo.VM
                     State |= VMState.BREAK;
             }
         }
+        // <summary>
+        // 向执行引擎中加载脚本，这里会新建一个包含加载脚本运行上下文，并将上下文压入调用栈中
+        // </summary>
+        // <param name="script">待加载脚本</param>
+        // <param name="rvcount">调用RET指令时指定需要保留的栈元素数量</param>
+        // <returns>生成好的运行上下文</returns>
         /// <summary>
-        /// 向执行引擎中加载脚本，这里会新建一个包含加载脚本运行上下文，并将上下文压入调用栈中
+        /// Load the script into the execution engine, 
+        /// here will create a new ExecutionContext containing the load script, and push the ExecutionContext into the InvocationStack
         /// </summary>
-        /// <param name="script">待加载脚本</param>
-        /// <param name="rvcount">调用RET指令时指定需要保留的栈元素数量</param>
-        /// <returns>生成分的运行上下文</returns>
+        /// <param name="script">To be loaded script</param>
+        /// <param name="rvcount">Count of results</param>
+        /// <returns>ExecutionContext</returns>
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
             ExecutionContext context = new ExecutionContext(this, script, rvcount);
             InvocationStack.Push(context);
             return context;
         }
+        // <summary>
+        // 移除脚本断点
+        // </summary>
+        // <param name="script_hash">脚本哈希</param>
+        // <param name="position">断点所在位置</param>
+        // <returns>移除成功则返回true，否则返回false</returns>
         /// <summary>
-        /// 移除脚本断点
+        /// Remove script breakpoints
         /// </summary>
-        /// <param name="script_hash">脚本哈希</param>
-        /// <param name="position">断点所在位置</param>
-        /// <returns>移除成功则返回true，否则返回false</returns>
+        /// <param name="script_hash">script hash</param>
+        /// <param name="position">The position of breakpoint</param>
+        /// <returns>Return true if successful, false otherwise</returns>
         public bool RemoveBreakPoint(byte[] script_hash, uint position)
         {
             if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
@@ -1099,8 +1163,11 @@ namespace Neo.VM
                 break_points.Remove(script_hash);
             return true;
         }
+        // <summary>
+        // 单步执行，从指令指针处读取操作码并执行指令
+        // </summary>
         /// <summary>
-        /// 单步执行，从指令指针处读取操作码并执行指令
+        /// Single step execution, reading the opcode from the instruction pointer and executing the instruction
         /// </summary>
         public void StepInto()
         {
@@ -1116,8 +1183,11 @@ namespace Neo.VM
                 State |= VMState.FAULT;
             }
         }
+        // <summary>
+        // 跳出子函数，调试用
+        // </summary>
         /// <summary>
-        /// 跳出子函数，调试用
+        /// Jump out of subfunction, debugging
         /// </summary>
         public void StepOut()
         {
@@ -1126,8 +1196,11 @@ namespace Neo.VM
             while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count >= c)
                 StepInto();
         }
+        // <summary>
+        // 越过子函数，但子函数会执行，调试用
+        // </summary>
         /// <summary>
-        /// 越过子函数，但子函数会执行，调试用
+        /// Crossed the subfunction, but the subfunction will be executed, debugging
         /// </summary>
         public void StepOver()
         {
