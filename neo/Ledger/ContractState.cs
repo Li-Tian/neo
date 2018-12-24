@@ -6,75 +6,117 @@ using System.Linq;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 合约状态
+    // </summary>
     /// <summary>
-    /// 合约状态
+    /// The contract state
     /// </summary>
     public class ContractState : StateBase, ICloneable<ContractState>
     {
+        // <summary>
+        // 合约脚本
+        // </summary>
         /// <summary>
-        /// 合约脚本
+        /// The contract script
         /// </summary>
         public byte[] Script;
 
+        // <summary>
+        // 合约参数列表
+        // </summary>
         /// <summary>
-        /// 合约参数列表
+        /// The List of arguments
         /// </summary>
         public ContractParameterType[] ParameterList;
 
+        // <summary>
+        // 合约返回值类型
+        // </summary>
         /// <summary>
-        /// 合约返回值类型
+        /// The return type of contract
         /// </summary>
         public ContractParameterType ReturnType;
 
+        // <summary>
+        // 合约属性状态
+        // </summary>
         /// <summary>
-        /// 合约属性状态
+        /// The property of contract
         /// </summary>
         public ContractPropertyState ContractProperties;
 
+        // <summary>
+        // 合约名字
+        // </summary>
         /// <summary>
-        /// 合约名字
+        /// The name of contract
         /// </summary>
         public string Name;
 
+        // <summary>
+        // 代码版本号
+        // </summary>
         /// <summary>
-        /// 代码版本号
+        /// The version of code
         /// </summary>
         public string CodeVersion;
 
+        // <summary>
+        // 作者
+        // </summary>
         /// <summary>
-        /// 作者
+        /// The author
         /// </summary>
         public string Author;
 
+        // <summary>
+        // 邮箱
+        // </summary>
         /// <summary>
-        /// 邮箱
+        /// The email
         /// </summary>
         public string Email;
 
+        // <summary>
+        // 合约描述
+        // </summary>
         /// <summary>
-        /// 合约描述
+        /// The description of contract
         /// </summary>
         public string Description;
 
+        // <summary>
+        // 是否包含存储空间
+        // </summary>
         /// <summary>
-        /// 是否包含存储空间
+        /// The storage
         /// </summary>
         public bool HasStorage => ContractProperties.HasFlag(ContractPropertyState.HasStorage);
 
+        // <summary>
+        // 是否动态调用
+        // </summary>
         /// <summary>
-        /// 是否动态调用
+        /// Is that dynamically invoked
         /// </summary>
         public bool HasDynamicInvoke => ContractProperties.HasFlag(ContractPropertyState.HasDynamicInvoke);
 
+        // <summary>
+        // 是否可支付（保留功能）
+        // </summary>
         /// <summary>
-        /// 是否可支付（保留功能）
+        /// Is payable (reserved function)
         /// </summary>
         public bool Payable => ContractProperties.HasFlag(ContractPropertyState.Payable);
 
         private UInt160 _scriptHash;
 
+        // <summary>
+        // 合约脚本hash
+        // </summary>
         /// <summary>
-        /// 合约脚本hash
+        /// The ScriptHash of contract
         /// </summary>
         public UInt160 ScriptHash
         {
@@ -88,15 +130,22 @@ namespace Neo.Ledger
             }
         }
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of storage
         /// </summary>
         public override int Size => base.Size + Script.GetVarSize() + ParameterList.GetVarSize() + sizeof(ContractParameterType) + sizeof(bool) + Name.GetVarSize() + CodeVersion.GetVarSize() + Author.GetVarSize() + Email.GetVarSize() + Description.GetVarSize();
 
+        // <summary>
+        // 克隆
+        // </summary>
+        // <returns>克隆对象</returns>
         /// <summary>
-        /// 克隆
+        /// Clone method
         /// </summary>
-        /// <returns>克隆对象</returns>
+        /// <returns>The cloned object</returns>
         ContractState ICloneable<ContractState>.Clone()
         {
             return new ContractState
@@ -113,10 +162,14 @@ namespace Neo.Ledger
             };
         }
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialization
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">The binary reader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -131,10 +184,14 @@ namespace Neo.Ledger
             Description = reader.ReadVarString();
         }
 
+        // <summary>
+        // 从参数副本复制数据到此对象
+        // </summary>
+        // <param name="replica">参数副本</param>
         /// <summary>
-        /// 从参数副本复制数据到此对象
+        /// Copy the replication to the current object
         /// </summary>
-        /// <param name="replica">参数副本</param>
+        /// <param name="replica">replication</param>
         void ICloneable<ContractState>.FromReplica(ContractState replica)
         {
             Script = replica.Script;
@@ -149,52 +206,99 @@ namespace Neo.Ledger
         }
 
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>StateVersion</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>Script</term>
+        // <description>脚本</description>
+        // </item>
+        // <item>
+        // <term>ParameterList</term>
+        // <description>参数列表</description>
+        // </item>
+        // <item>
+        // <term>ReturnType</term>
+        // <description>合约脚本返回值类型</description>
+        // </item>
+        // <item>
+        // <term>ContractProperties</term>
+        // <description>合约属性状态</description>
+        // </item>
+        // <item>
+        // <term>Name</term>
+        // <description>合约名字</description>
+        // </item>
+        // <item>
+        // <term>CodeVersion</term>
+        // <description>代码版本号</description>
+        // </item>
+        // <item>
+        // <term>Author</term>
+        // <description>作者</description>
+        // </item>
+        // <item>
+        // <term>Email</term>
+        // <description>邮箱</description>
+        // </item>
+        // <item>
+        // <term>Description</term>
+        // <description>描述</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
+
         /// <summary>
-        /// 序列化
+        /// Serialization
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
-        /// <description>状态版本号</description>
+        /// <description>The version of state</description>
         /// </item>
         /// <item>
         /// <term>Script</term>
-        /// <description>脚本</description>
+        /// <description>The script</description>
         /// </item>
         /// <item>
         /// <term>ParameterList</term>
-        /// <description>参数列表</description>
+        /// <description>The list of parameters</description>
         /// </item>
         /// <item>
         /// <term>ReturnType</term>
-        /// <description>合约脚本返回值类型</description>
+        /// <description>The return type of contract</description>
         /// </item>
         /// <item>
         /// <term>ContractProperties</term>
-        /// <description>合约属性状态</description>
+        /// <description>The property of contract</description>
         /// </item>
         /// <item>
         /// <term>Name</term>
-        /// <description>合约名字</description>
+        /// <description>Name of contract</description>
         /// </item>
         /// <item>
         /// <term>CodeVersion</term>
-        /// <description>代码版本号</description>
+        /// <description>Version of the code</description>
         /// </item>
         /// <item>
         /// <term>Author</term>
-        /// <description>作者</description>
+        /// <description>Author</description>
         /// </item>
         /// <item>
         /// <term>Email</term>
-        /// <description>邮箱</description>
+        /// <description>Email</description>
         /// </item>
         /// <item>
         /// <term>Description</term>
-        /// <description>描述</description>
+        /// <description>Description</description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">BianryWriter</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
@@ -210,10 +314,14 @@ namespace Neo.Ledger
         }
 
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>将这个ContractState转化成Json对象返回</returns>
         /// <summary>
-        /// 转成json对象
+        /// Transfer to json object
         /// </summary>
-        /// <returns>将这个ContractState转化成Json对象返回</returns>
+        /// <returns>transfer this contract state to a json object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

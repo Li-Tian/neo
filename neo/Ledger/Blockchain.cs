@@ -20,87 +20,138 @@ using System.Threading;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 区块链核心Actor
+    // </summary>
     /// <summary>
-    /// 区块链核心Actor
+    /// The core Actor of blockChain
     /// </summary>
     public sealed class Blockchain : UntypedActor
     {
+        // <summary>
+        // 注册消息（自定义AKKA消息类型）
+        // </summary>
         /// <summary>
-        /// 注册消息（自定义AKKA消息类型）
+        /// The register message(Customized AKKA message type)
         /// </summary>
         public class Register { }
 
+        // <summary>
+        // 智能合约应用执行完毕消息（自定义AKKA消息类型）
+        // </summary>
         /// <summary>
-        /// 智能合约应用执行完毕消息（自定义AKKA消息类型）
+        /// Smart contract execution completed message (customized AKKA message type)
         /// </summary>
         public class ApplicationExecuted {
+            // <summary>
+            // 所处理的交易
+            // </summary>
             /// <summary>
-            /// 所处理的交易
+            /// The transactions
             /// </summary>
             public Transaction Transaction;
+            // <summary>
+            // 执行结果
+            // </summary>
             /// <summary>
-            /// 执行结果
+            /// Result of execution
             /// </summary>
             public ApplicationExecutionResult[] ExecutionResults;
         }
 
+        // <summary>
+        // 区块持久化完毕消息（自定义AKKA消息类型）
+        // </summary>
         /// <summary>
-        /// 区块持久化完毕消息（自定义AKKA消息类型）
+        /// Persistence completed message(customized AKKA message type)
         /// </summary>
         public class PersistCompleted {
+            // <summary>
+            // 持久化的block
+            // </summary>
             /// <summary>
-            /// 持久化的block
+            /// Persistent block
             /// </summary>
             public Block Block;
         }
 
+        // <summary>
+        // 导入区块消息（自定义AKKA消息类型）
+        // </summary>
         /// <summary>
-        /// 导入区块消息（自定义AKKA消息类型）
+        /// The block import message (customized AKKA message type)
         /// </summary>
         public class Import {
+            // <summary>
+            // 待导入的区块列表
+            // </summary>
             /// <summary>
-            /// 待导入的区块列表
+            /// The list of blocks which is going to be imported
             /// </summary>
             public IEnumerable<Block> Blocks;
         }
+        // <summary>
+        // 区块导入完毕消息（自定义AKKA消息类型）
+        // </summary>
         /// <summary>
-        /// 区块导入完毕消息（自定义AKKA消息类型）
+        /// The importing completed message(customized AKKA message type)
         /// </summary>
         public class ImportCompleted { }
 
+        // <summary>
+        // 出块时间
+        // </summary>
         /// <summary>
-        /// 出块时间
+        /// The time for each block produce
         /// </summary>
         public static readonly uint SecondsPerBlock = Settings.Default.SecondsPerBlock;
 
+        // <summary>
+        // 块奖励调整周期。衰减周期
+        // </summary>
         /// <summary>
-        /// 块奖励调整周期。衰减周期
+        /// The decrement interval of reward for each block m
         /// </summary>
         public const uint DecrementInterval = 2000000;
 
+        // <summary>
+        // 最大验证人个数
+        // </summary>
         /// <summary>
-        /// 最大验证人个数
+        /// Maximum number of validators
         /// </summary>
         public const uint MaxValidators = 1024;
 
+        // <summary>
+        // 区块奖励
+        // </summary>
         /// <summary>
-        /// 区块奖励
+        /// The reward of block mining
         /// </summary>
         public static readonly uint[] GenerationAmount = { 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
+        // <summary>
+        // 区块间隔时间(TimeSpan类型)
+        // </summary>
         /// <summary>
-        /// 区块间隔时间(TimeSpan类型)
+        /// The time for each block produce (TimeSpan)
         /// </summary>
         public static readonly TimeSpan TimePerBlock = TimeSpan.FromSeconds(SecondsPerBlock);
 
+        // <summary>
+        // 备用验证人列表
+        // </summary>
         /// <summary>
-        /// 备用验证人列表
+        /// The list of standby validators
         /// </summary>
         public static readonly ECPoint[] StandbyValidators = Settings.Default.StandbyValidators.OfType<string>().Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
 
 #pragma warning disable CS0612
+        // <summary>
+        // NEO代币定义
+        // </summary>
         /// <summary>
-        /// NEO代币定义
+        /// The definition of NEO coin
         /// </summary>
         public static readonly RegisterTransaction GoverningToken = new RegisterTransaction
         {
@@ -116,8 +167,11 @@ namespace Neo.Ledger
             Witnesses = new Witness[0]
         };
 
+        // <summary>
+        // GAS代币定义
+        // </summary>
         /// <summary>
-        /// GAS代币定义
+        /// The definication of GAS coin
         /// </summary>
         public static readonly RegisterTransaction UtilityToken = new RegisterTransaction
         {
@@ -134,8 +188,11 @@ namespace Neo.Ledger
         };
 #pragma warning restore CS0612
 
+        // <summary>
+        // 创世块定义
+        // </summary>
         /// <summary>
-        /// 创世块定义
+        /// The definition of GenesisBlock
         /// </summary>
         public static readonly Block GenesisBlock = new Block
         {
@@ -198,35 +255,53 @@ namespace Neo.Ledger
         private readonly HashSet<IActorRef> subscribers = new HashSet<IActorRef>();
         private Snapshot currentSnapshot;
 
+        // <summary>
+        // 持久化存储器
+        // </summary>
         /// <summary>
-        /// 持久化存储器
+        /// The storage for persistence
         /// </summary>
         public Store Store { get; }
         
+        // <summary>
+        // 当前区块高度
+        // </summary>
         /// <summary>
-        /// 当前区块高度
+        /// Current block height
         /// </summary>
         public uint Height => currentSnapshot.Height;
 
+        // <summary>
+        // 区块头高度
+        // </summary>
         /// <summary>
-        /// 区块头高度
+        /// The height of block header
         /// </summary>
         public uint HeaderHeight => (uint)header_index.Count - 1;
 
+        // <summary>
+        // 当前区块hash
+        // </summary>
         /// <summary>
-        /// 当前区块hash
+        /// The hash of current block
         /// </summary>
         public UInt256 CurrentBlockHash => currentSnapshot.CurrentBlockHash;
 
+        // <summary>
+        // 当前区块头hash
+        // </summary>
         /// <summary>
-        /// 当前区块头hash
+        /// The hash of current block header
         /// </summary>
         public UInt256 CurrentHeaderHash => header_index[header_index.Count - 1];
 
         private static Blockchain singleton;
 
+        // <summary>
+        // 获取单例的区块链
+        // </summary>
         /// <summary>
-        /// 获取单例的区块链
+        /// Get the singleton of blocks
         /// </summary>
         public static Blockchain Singleton
         {
@@ -243,11 +318,16 @@ namespace Neo.Ledger
             GenesisBlock.RebuildMerkleRoot();
         }
 
+        // <summary>
+        // 构造函数.构造一个区块链核心
+        // </summary>
+        // <param name="system">neo actor系统</param>
+        // <param name="store">持久化存储</param>
         /// <summary>
-        /// 构造函数.构造一个区块链核心
+        /// Constructor which create a core blockchain
         /// </summary>
-        /// <param name="system">neo actor系统</param>
-        /// <param name="store">持久化存储</param>
+        /// <param name="system">NEO actor system</param>
+        /// <param name="store">The storage for persistence</param>
         public Blockchain(NeoSystem system, Store store)
         {
             this.system = system;
@@ -283,22 +363,32 @@ namespace Neo.Ledger
             }
         }
 
+        // <summary>
+        // 根据区块hash查询区块是否存在
+        // </summary>
+        // <param name="hash">区块hash</param>
+        // <returns>如果这个区块已经存在返回true, 否则返回False</returns>
         /// <summary>
-        /// 根据区块hash查询区块是否存在
+        /// Query if the block exists.
         /// </summary>
-        /// <param name="hash">区块hash</param>
-        /// <returns>如果这个区块已经存在返回true, 否则返回False</returns>
+        /// <param name="hash">The block hash</param>
+        /// <returns>If block exists return True, otherwise return False</returns>
         public bool ContainsBlock(UInt256 hash)
         {
             if (block_cache.ContainsKey(hash)) return true;
             return Store.ContainsBlock(hash);
         }
 
+        // <summary>
+        // 根据交易hash查询交易是否存在
+        // </summary>
+        // <param name="hash">交易的hash</param>
+        // <returns>如果该交易存在返回true, 否则返回false</returns>
         /// <summary>
-        /// 根据交易hash查询交易是否存在
+        /// Query if the transaction exists according to the transaction hash
         /// </summary>
-        /// <param name="hash">交易的hash</param>
-        /// <returns>如果该交易存在返回true, 否则返回false</returns>
+        /// <param name="hash">The hash of transaction</param>
+        /// <returns>If the transaction exists return true, otherwise return false</returns>
         public bool ContainsTransaction(UInt256 hash)
         {
             if (mem_pool.ContainsKey(hash)) return true;
@@ -311,11 +401,16 @@ namespace Neo.Ledger
                 subscriber.Tell(message);
         }
 
+        // <summary>
+        // 根据区块hash查询区块
+        // </summary>
+        // <param name="hash">区块hash</param>
+        // <returns>区块</returns>
         /// <summary>
-        /// 根据区块hash查询区块
+        /// Get block according to the block hash
         /// </summary>
-        /// <param name="hash">区块hash</param>
-        /// <returns>区块</returns>
+        /// <param name="hash">The hash of blocks</param>
+        /// <returns>Block</returns>
         public Block GetBlock(UInt256 hash)
         {
             if (block_cache.TryGetValue(hash, out Block block))
@@ -323,50 +418,73 @@ namespace Neo.Ledger
             return Store.GetBlock(hash);
         }
 
+        // <summary>
+        // 根据区块高度查询区块
+        // </summary>
+        // <param name="index">区块高度</param>
+        // <returns>区块</returns>
         /// <summary>
-        /// 根据区块高度查询区块
+        /// Get block according to the blocks height
         /// </summary>
-        /// <param name="index">区块高度</param>
-        /// <returns>区块</returns>
+        /// <param name="index">The height index of blocks</param>
+        /// <returns>Block</returns>
         public UInt256 GetBlockHash(uint index)
         {
             if (header_index.Count <= index) return null;
             return header_index[(int)index];
         }
 
+        // <summary>
+        // 获取共识地址
+        // </summary>
+        // <param name="validators">验证人列表，或共识节点</param>
+        // <returns>共识节点的三分之二多方签名合约的脚本hash</returns>
         /// <summary>
-        /// 获取共识地址
+        /// Get the consensus address
         /// </summary>
-        /// <param name="validators">验证人列表，或共识节点</param>
-        /// <returns>共识节点的三分之二多方签名合约的脚本hash</returns>
+        /// <param name="validators">The list of validtors or the consensus nodes</param>
+        /// <returns>Get hash of contract which has 2/3 consensus nodes multiple signed  </returns>
         public static UInt160 GetConsensusAddress(ECPoint[] validators)
         {
             return Contract.CreateMultiSigRedeemScript(validators.Length - (validators.Length - 1) / 3, validators).ToScriptHash();
         }
 
+        // <summary>
+        // 获取内存池交易
+        // </summary>
+        // <returns>内存池所有交易的序列</returns>
         /// <summary>
-        /// 获取内存池交易
+        /// Get the transactions from memery pool
         /// </summary>
-        /// <returns>内存池所有交易的序列</returns>
+        /// <returns>All transaction from memery pool</returns>
         public IEnumerable<Transaction> GetMemoryPool()
         {
             return mem_pool;
         }
 
+        // <summary>
+        // 获取区块快照
+        // </summary>
+        // <returns>区块的快照</returns>
         /// <summary>
-        /// 获取区块快照
+        /// Get the snapshot of blocks
         /// </summary>
-        /// <returns>区块的快照</returns>
+        /// <returns>The snapshot of blocks</returns>
         public Snapshot GetSnapshot()
         {
             return Store.GetSnapshot();
         }
 
+        // <summary>
+        // 根据交易hash查询交易.先去从内存池中拿， 如果没有， 则去从持久化存储中去哪.
+        // </summary>
+        // <param name="hash">交易的hash</param>
+        // <returns>通过交易获取的交易</returns>
         /// <summary>
-        /// 根据交易hash查询交易.先去从内存池中拿， 如果没有， 则去从持久化存储中去哪.
+        /// Get the transaction according to the hash. First get the transaction from memory pool. If not exist, get it from the persistant storage
         /// </summary>
-        /// <param name="hash">交易的hash</param>
-        /// <returns>通过交易获取的交易</returns>
+        /// <param name="hash">The hash of transaction</param>
+        /// <returns>The transaction get according to hash</returns>
         public Transaction GetTransaction(UInt256 hash)
         {
             if (mem_pool.TryGetValue(hash, out Transaction transaction))
@@ -374,11 +492,16 @@ namespace Neo.Ledger
             return Store.GetTransaction(hash);
         }
 
+        // <summary>
+        // 根据交易hash查询未验证的交易
+        // </summary>
+        // <param name="hash">未验证的交易hash</param>
+        // <returns>查询到的交易</returns>
         /// <summary>
-        /// 根据交易hash查询未验证的交易
+        /// Get the unverified transaction according  to the transaction hash
         /// </summary>
-        /// <param name="hash">未验证的交易hash</param>
-        /// <returns>查询到的交易</returns>
+        /// <param name="hash">The hash of transaction</param>
+        /// <returns>The transaction get from memory pool</returns>
         internal Transaction GetUnverifiedTransaction(UInt256 hash)
         {
             mem_pool_unverified.TryGetValue(hash, out Transaction transaction);
@@ -560,10 +683,14 @@ namespace Neo.Ledger
             system.Consensus?.Tell(completed);
             Distribute(completed);
         }
+        // <summary>
+        // 消息处理函数（AKKA框架函数）
+        // </summary>
+        // <param name="message">收到的消息</param>
         /// <summary>
-        /// 消息处理函数（AKKA框架函数）
+        /// The message handler which is a AKKA method
         /// </summary>
-        /// <param name="message">收到的消息</param>
+        /// <param name="message">The message received</param>
         protected override void OnReceive(object message)
         {
             switch (message)
@@ -773,8 +900,11 @@ namespace Neo.Ledger
             UpdateCurrentSnapshot();
             OnPersistCompleted(block);
         }
+        // <summary>
+        // AKKA框架的自定义回调函数
+        // </summary>
         /// <summary>
-        /// AKKA框架的自定义回调函数
+        /// The customized PostStop method of AKKA which release the resource
         /// </summary>
         protected override void PostStop()
         {
@@ -825,12 +955,18 @@ namespace Neo.Ledger
             }
         }
 
+        // <summary>
+        // 创建blockchain ActorRef
+        // </summary>
+        // <param name="system">neo actor系统</param>
+        // <param name="store">持久化存储</param>
+        // <returns>返回一个不可修改的线程安全的对象引用</returns>
         /// <summary>
-        /// 创建blockchain ActorRef
+        /// Create the blockchain Actor Ref
         /// </summary>
-        /// <param name="system">neo actor系统</param>
-        /// <param name="store">持久化存储</param>
-        /// <returns>返回一个不可修改的线程安全的对象引用</returns>
+        /// <param name="system">NEO actor system</param>
+        /// <param name="store">The storage for persistence</param>
+        /// <returns>return a actorRef which is immutable and thread safe</returns>
         public static Props Props(NeoSystem system, Store store)
         {
             return Akka.Actor.Props.Create(() => new Blockchain(system, store)).WithMailbox("blockchain-mailbox");
