@@ -10,7 +10,7 @@ namespace Neo.IO.Caching
     // <typeparam name="TKey">键</typeparam>
     // <typeparam name="TValue">值</typeparam>
     /// <summary>
-    /// DataCache class, abstract class. Defines the relevant methods that data caching needs to implement
+    /// DataCache class, abstract class. Defines the relevant methods that DataCache needs to implement
     /// </summary>
     /// <typeparam name="TKey">key</typeparam>
     /// <typeparam name="TValue">value</typeparam>
