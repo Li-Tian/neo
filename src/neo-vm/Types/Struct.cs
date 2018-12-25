@@ -2,26 +2,40 @@
 
 namespace Neo.VM.Types
 {
+    // <summary>
+    // 继承Array类，定义了虚拟机Struct类型的相关方法
+    // </summary>
     /// <summary>
-    /// 继承Array类，定义了虚拟机Struct类型的相关方法
+    /// Virtual machine Struct type class, Inherit the Array class
     /// </summary>
     public class Struct : Array
     {
+        // <summary>
+        // 无参构造函数，新建一个堆栈项列表实例
+        // </summary>
         /// <summary>
-        /// 无参构造函数，新建一个堆栈项列表实例
+        /// constructor
         /// </summary>
         public Struct() : this(new List<StackItem>()) { }
+        // <summary>
+        // 构造函数，调用Array的构造函数
+        // </summary>
+        // <param name="value">堆栈项集合</param>
         /// <summary>
-        /// 构造函数，调用Array的构造函数
+        /// constructor, Call the constructor of Array
         /// </summary>
-        /// <param name="value">堆栈项集合</param>
+        /// <param name="value">Stack item collection</param>
         public Struct(IEnumerable<StackItem> value) : base(value)
         {
         }
+        // <summary>
+        // 复制Struct的数据给另一个Struct，深拷贝
+        // </summary>
+        // <returns>复制得到的Struct</returns>
         /// <summary>
-        /// 复制Struct的数据给另一个Struct，深拷贝
+        /// Copy Struct data to another Struct, deep copy
         /// </summary>
-        /// <returns>复制得到的Struct</returns>
+        /// <returns>Copy of Struct</returns>
         public Struct Clone()
         {
             Struct @struct = new Struct();
@@ -49,11 +63,16 @@ namespace Neo.VM.Types
             }
             return @struct;
         }
+        // <summary>
+        // 判断当前Struct与指定的堆栈项是否相等
+        // </summary>
+        // <param name="other">指定的堆栈项</param>
+        // <returns>相等则返回true，否则返回false</returns>
         /// <summary>
-        /// 判断当前Struct与指定的堆栈项是否相等
+        /// Determines whether the current Struct is equal to the specified StackItem
         /// </summary>
-        /// <param name="other">指定的堆栈项</param>
-        /// <returns>相等则返回true，否则返回false</returns>
+        /// <param name="other">specified StackItem</param>
+        /// <returns>Return true if it is equal, false otherwise</returns>
         public override bool Equals(StackItem other)
         {
             if (other is null) return false;

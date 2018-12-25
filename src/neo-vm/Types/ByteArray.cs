@@ -3,25 +3,37 @@ using System.Linq;
 
 namespace Neo.VM.Types
 {
+    // <summary>
+    // 定义了虚拟机ByteArray类型的相关方法
+    // </summary>
     /// <summary>
-    /// 定义了虚拟机ByteArray类型的相关方法
+    /// Virtual machine ByteArray type class
     /// </summary>
     public class ByteArray : StackItem
     {
         private byte[] value;
+        // <summary>
+        // ByteArray构造函数
+        // </summary>
+        // <param name="value">字节数组</param>
         /// <summary>
-        /// ByteArray构造函数
+        /// ByteArray constructor
         /// </summary>
-        /// <param name="value">字节数组</param>
+        /// <param name="value">byte array</param>
         public ByteArray(byte[] value)
         {
             this.value = value;
         }
+        // <summary>
+        // 判断当前ByteArray与指定的堆栈项是否相等
+        // </summary>
+        // <param name="other">指定的堆栈项</param>
+        // <returns>相等则返回true，否则返回false</returns>
         /// <summary>
-        /// 判断当前ByteArray与指定的堆栈项是否相等
+        /// Determines whether the current ByteArray is equal to the specified StackItem
         /// </summary>
-        /// <param name="other">指定的堆栈项</param>
-        /// <returns>相等则返回true，否则返回false</returns>
+        /// <param name="other">specified StackItem</param>
+        /// <returns>Return true if it is equal, false otherwise</returns>
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
@@ -37,10 +49,14 @@ namespace Neo.VM.Types
             }
             return value.SequenceEqual(bytes_other);
         }
+        // <summary>
+        // 获取对应的字节数组
+        // </summary>
+        // <returns>返回ByteArray的值</returns>
         /// <summary>
-        /// 获取对应的字节数组
+        ///  Get the corresponding byte array
         /// </summary>
-        /// <returns>返回ByteArray的值</returns>
+        /// <returns>Return the value of ByteArray</returns>
         public override byte[] GetByteArray()
         {
             return value;
