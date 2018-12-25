@@ -2,8 +2,11 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    // <summary>
+    // 封装的leveldb迭代器
+    // </summary>
     /// <summary>
-    /// 封装的leveldb迭代器
+    /// leveldb iterator
     /// </summary>
     public class Iterator : IDisposable
     {
@@ -21,8 +24,11 @@ namespace Neo.IO.Data.LevelDB
             NativeHelper.CheckError(error);
         }
 
+        // <summary>
+        // 释放资源，包括Leveldbd迭代器以及句柄释放
+        // </summary>
         /// <summary>
-        /// 释放资源，包括Leveldbd迭代器以及句柄释放
+        /// Release resources, including Leveldbd iterators and release handle
         /// </summary>
         public void Dispose()
         {
@@ -33,11 +39,16 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 获取当前Key值
+        // </summary>
+        // <returns>Slice数据</returns>
+        // <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
         /// <summary>
-        /// 获取当前Key值
+        /// Get the current Key value
         /// </summary>
-        /// <returns>Slice数据</returns>
-        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
+        /// <returns>Slice data</returns>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">This type of exception is thrown when an error is encountered</exception>
         public Slice Key()
         {
             UIntPtr length;
@@ -46,8 +57,11 @@ namespace Neo.IO.Data.LevelDB
             return new Slice(key, length);
         }
 
+        // <summary>
+        // 游标下移一位
+        // </summary>
         /// <summary>
-        /// 游标下移一位
+        /// Cursor down one bit
         /// </summary>
         public void Next()
         {
@@ -55,8 +69,11 @@ namespace Neo.IO.Data.LevelDB
             CheckError();
         }
 
+        // <summary>
+        // 游标上移一位
+        // </summary>
         /// <summary>
-        /// 游标上移一位
+        /// Cursor up one bit
         /// </summary>
         public void Prev()
         {
@@ -64,45 +81,64 @@ namespace Neo.IO.Data.LevelDB
             CheckError();
         }
 
+        // <summary>
+        // 移动游标到某一个Key上
+        // </summary>
+        // <param name="target">目标key</param>
         /// <summary>
-        /// 移动游标到某一个Key上
+        /// Move the cursor to a key
         /// </summary>
-        /// <param name="target">目标key</param>
+        /// <param name="target">target key</param>
         public void Seek(Slice target)
         {
             Native.leveldb_iter_seek(handle, target.buffer, (UIntPtr)target.buffer.Length);
         }
 
+        // <summary>
+        // 移动游标到首位置
+        // </summary>
         /// <summary>
-        /// 移动游标到首位置
+        /// Move the cursor to the first position
         /// </summary>
         public void SeekToFirst()
         {
             Native.leveldb_iter_seek_to_first(handle);
         }
 
+        // <summary>
+        // 移动游标到最后一位位置
+        // </summary>
         /// <summary>
-        /// 移动游标到最后一位位置
+        /// Move the cursor to the last position
         /// </summary>
         public void SeekToLast()
         {
             Native.leveldb_iter_seek_to_last(handle);
         }
 
+        // <summary>
+        // 检查句柄是否合法
+        // </summary>
+        // <returns>合法则返回true,否则返回false</returns>
         /// <summary>
-        /// 检查句柄是否合法
+        /// Check if the handle is legal
         /// </summary>
-        /// <returns>合法则返回true,否则返回false</returns>
+        /// <returns>Return true if it is legal, false otherwise</returns>
         public bool Valid()
         {
             return Native.leveldb_iter_valid(handle);
         }
 
+        // <summary>
+        // 当前位置的值
+        // </summary>
+        // <returns>Slice数据</returns>
+        // <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
         /// <summary>
-        /// 当前位置的值
+        /// The value of the current position
         /// </summary>
-        /// <returns>Slice数据</returns>
-        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">若遇到错误，统一抛出该类型错误</exception>
+        /// <returns>Slice data</returns>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">This type of exception is thrown when an error is encountered</exception>
         public Slice Value()
         {
             UIntPtr length;

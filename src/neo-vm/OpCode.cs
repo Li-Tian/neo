@@ -825,10 +825,10 @@ namespace Neo.VM
         CALL_EDT = 0xE4,
 
 
-        /// Exceptions
+        // Exceptions
         /// <summary>
         /// Halts the execution of the vm by setting VMState.FAULT.
-        // </summary>
+        /// </summary>
         // <summary>
         // 将虚拟机状态置为FAULT。
         // </summary>

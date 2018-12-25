@@ -9,20 +9,29 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 区块数据类，BlockBase的子类
+    // </summary>
     /// <summary>
-    /// 区块数据类，BlockBase的子类
+    /// Block data class, a subclass of BlockBase
     /// </summary>
     public class Block : BlockBase, IInventory, IEquatable<Block>
     {
+        // <summary>
+        // 交易集合
+        // </summary>
         /// <summary>
-        /// 交易集合
+        /// a transactions array
         /// </summary>
         public Transaction[] Transactions;
 
         private Header _header = null;
 
+        // <summary>
+        // 区块头
+        // </summary>
         /// <summary>
-        /// 区块头
+        /// block header
         /// </summary>
         public Header Header
         {
@@ -44,22 +53,33 @@ namespace Neo.Network.P2P.Payloads
                 return _header;
             }
         }
+        // <summary>
+        // 消息传输Inventory种类
+        // </summary>
         /// <summary>
-        /// 消息传输Inventory种类
+        /// message inventory type
         /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.Block;
 
 
+        // <summary>
+        // 区块大小
+        // </summary>
         /// <summary>
-        /// 区块大小
+        /// the size of block
         /// </summary>
         public override int Size => base.Size + Transactions.GetVarSize();
 
+        // <summary>
+        // 计算一批交易的网络手续费, network_fee = input.GAS - output.GAS - input.systemfee
+        // </summary>
+        // <param name="transactions">待计算的交易列表</param>
+        // <returns>交易的网络手续费</returns>
         /// <summary>
-        /// 计算一批交易的网络手续费, network_fee = input.GAS - output.GAS - input.systemfee
+        /// Calculate the network fee for a batch of transactions,, network_fee = input.GAS - output.GAS - input.systemfee
         /// </summary>
-        /// <param name="transactions">待计算的交易列表</param>
-        /// <returns>交易的网络手续费</returns>
+        /// <param name="transactions">transaction list</param>
+        /// <returns>network fee</returns>
         public static Fixed8 CalculateNetFee(IEnumerable<Transaction> transactions)
         {
             Transaction[] ts = transactions.Where(p => p.Type != TransactionType.MinerTransaction && p.Type != TransactionType.ClaimTransaction).ToArray();
@@ -69,17 +89,29 @@ namespace Neo.Network.P2P.Payloads
             return amount_in - amount_out - amount_sysfee;
         }
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入流</param>
+        // <exception cref="FormatException">
+        // 如果出现以下情况之一，会抛出异常：<br/>
+        // 1）交易数量为0时<br/>
+        // 2）第一笔交易不是挖矿交易；<br/>
+        // 3）除第一笔交易外，其他交易是挖矿交易；<br/>
+        // 4）添加的交易Hash已存在；<br/>
+        // 5）梅克尔根和计算出来的值不相等。</exception>
         /// <summary>
-        /// 反序列化
+        /// Deserialize method
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">BinaryReader</param>
         /// <exception cref="FormatException">
-        /// 如果出现以下情况之一，会抛出异常：<br/>
-        /// 1）交易数量为0时<br/>
-        /// 2）第一笔交易不是挖矿交易；<br/>
-        /// 3）除第一笔交易外，其他交易是挖矿交易；<br/>
-        /// 4）添加交易Hash已存在；<br/>
-        /// 5）梅克尔根和计算出来的值不相等。</exception>
+        /// An exception will be thrown if one of the following conditions occurs:<br/>
+        /// 1) When the number of transactions is 0,<br/>
+        /// 2) The first transaction is not a miner transaction;<br/>
+        /// 3) Except for the first transaction, other transactions are miner transactions;<br/>
+        /// 4) The added transaction hash already exists;<br/>
+        /// 5) Merkel root and the calculated values ​​are not equal.
+        /// </exception>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -106,11 +138,17 @@ namespace Neo.Network.P2P.Payloads
                 throw new FormatException();
         }
 
+        // <summary>
+        // 判断两个区块是否相等
+        // </summary>
+        // <param name="other">待比较区块</param>
+        // <returns>若待比较区块为null，直接返回false。否则进行引用和hash值比较</returns>
         /// <summary>
-        /// 判断两个区块是否相等
+        ///  Determine if two blocks are equal
         /// </summary>
-        /// <param name="other">待比较区块</param>
-        /// <returns>若待比较区块为null，直接返回false。否则进行引用和hash值比较</returns>
+        /// <param name="other">pending block</param>
+        /// <returns>If the block to be compared is null, it returns false directly.
+        /// Otherwise reference and hash value comparison</returns>
         public bool Equals(Block other)
         {
             if (ReferenceEquals(this, other)) return true;
@@ -118,81 +156,135 @@ namespace Neo.Network.P2P.Payloads
             return Hash.Equals(other.Hash);
         }
 
+        // <summary>
+        // 判断区块是否等于某个对象
+        // </summary>
+        // <param name="obj">待对比对象</param>
+        // <returns>相等则返回true，否则返回false</returns>
         /// <summary>
-        /// 判断区块是否等于某个对象
+        ///  Determine if the block is equal to another object
         /// </summary>
-        /// <param name="obj">待对比对象</param>
-        /// <returns>相等则返回true，否则返回false</returns>
+        /// <param name="obj">another object</param>
+        /// <returns>Return true if it is equal, false otherwise</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Block);
         }
 
+        // <summary>
+        // 获取区块hash code
+        // </summary>
+        // <returns>区块hash code</returns>
         /// <summary>
-        /// 获取区块hash code
+        /// Get block hash code
         /// </summary>
-        /// <returns>区块hash code</returns>
+        /// <returns>block hash code</returns>
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
         }
 
+        // <summary>
+        // 重新构建梅克尔树
+        // </summary>
         /// <summary>
-        /// 重新构建梅克尔树
+        /// Rebuild Merkle root
         /// </summary>
         public void RebuildMerkleRoot()
         {
             MerkleRoot = MerkleTree.ComputeRoot(Transactions.Select(p => p.Hash).ToArray());
         }
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>Version</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>PrevHash</term>
+        // <description>上一个区块hash</description>
+        // </item>
+        // <item>
+        // <term>MerkleRoot</term>
+        // <description>梅克尔树</description>
+        // </item>
+        // <item>
+        // <term>Timestamp</term>
+        // <description>时间戳</description>
+        // </item>
+        // <item>
+        // <term>Index</term>
+        // <description>区块高度</description>
+        // </item>
+        // <item>
+        // <term>ConsensusData</term>
+        // <description>共识数据，默认为block nonce</description>
+        // </item>
+        // <item>
+        // <term>NextConsensus</term>
+        // <description>下一个区块共识地址</description>
+        // </item>
+        // <item>
+        // <term>Transactions</term>
+        // <description>交易集合</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化
+        /// Serialize method
         /// <list type="bullet">
         /// <item>
         /// <term>Version</term>
-        /// <description>状态版本号</description>
+        /// <description>Version</description>
         /// </item>
         /// <item>
         /// <term>PrevHash</term>
-        /// <description>上一个区块hash</description>
+        /// <description>Previous block hash</description>
         /// </item>
         /// <item>
         /// <term>MerkleRoot</term>
-        /// <description>梅克尔树</description>
+        /// <description>Merkle root</description>
         /// </item>
         /// <item>
         /// <term>Timestamp</term>
-        /// <description>时间戳</description>
+        /// <description>Timestamps</description>
         /// </item>
         /// <item>
         /// <term>Index</term>
-        /// <description>区块高度</description>
+        /// <description>Block height</description>
         /// </item>
         /// <item>
         /// <term>ConsensusData</term>
-        /// <description>共识数据，默认为block nonce</description>
+        /// <description>Consensus data，default block nonce</description>
         /// </item>
         /// <item>
         /// <term>NextConsensus</term>
-        /// <description>下一个区块共识地址</description>
+        /// <description>Next block consensus address</description>
         /// </item>
         /// <item>
         /// <term>Transactions</term>
-        /// <description>交易集合</description>
+        /// <description>Transaction colection</description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">BinaryWriter</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
             writer.Write(Transactions);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Convert to JObject object
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>JObject object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -201,10 +293,14 @@ namespace Neo.Network.P2P.Payloads
         }
 
 
+        // <summary>
+        // 转成简化版的block。抛弃交易，仅保留交易的哈希值。
+        // </summary>
+        // <returns>简化版的block</returns>
         /// <summary>
-        /// 转成简化版的block。抛弃交易，仅保留交易的哈希值。
+        /// Convert to trimmed block.Discard the transaction, leaving only the hash of the transaction
         /// </summary>
-        /// <returns>简化版的block</returns>
+        /// <returns>TrimmedBlock object</returns>
         public TrimmedBlock Trim()
         {
             return new TrimmedBlock

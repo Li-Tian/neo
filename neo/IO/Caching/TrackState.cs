@@ -1,24 +1,39 @@
 ﻿namespace Neo.IO.Caching
 {
+    // <summary>
+    // 追踪状态
+    // </summary>
     /// <summary>
-    /// 追踪状态
+    /// Track State
     /// </summary>
     public enum TrackState : byte
     {
+        // <summary>
+        // 新建
+        // </summary>
         /// <summary>
-        /// 新建
+        /// None
         /// </summary>
         None,
+        // <summary>
+        // 已增加
+        // </summary>
         /// <summary>
-        /// 已增加
+        /// Added
         /// </summary>
         Added,
+        // <summary>
+        // 已更改
+        // </summary>
         /// <summary>
-        /// 已更改
+        /// Changed
         /// </summary>
         Changed,
+        // <summary>
+        // 已删除
+        // </summary>
         /// <summary>
-        /// 已删除
+        /// Deleted
         /// </summary>
         Deleted
     }

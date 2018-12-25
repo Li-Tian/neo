@@ -1,20 +1,28 @@
 ﻿namespace Neo.IO
 {
+    // <summary>
+    // 对象的克隆方法接口
+    // </summary>
+    // <typeparam name="T">指定的对象类型</typeparam>
     /// <summary>
-    /// 对象的克隆方法接口
+    /// clone method interface
     /// </summary>
-    /// <typeparam name="T">指定的对象类型</typeparam>
+    /// <typeparam name="T">specified method</typeparam>
     public interface ICloneable<T>
     {
+        // <summary>
+        // 对象的克隆方法
+        // </summary>
+        // <returns>克隆出的对象</returns>
         /// <summary>
-        /// 对象的克隆方法
+        /// clone method
         /// </summary>
-        /// <returns>克隆出的对象</returns>
+        /// <returns>Clone object</returns>
         T Clone();
         /// <summary>
-        /// 从副本拷贝数据
+        /// Copy data from a replica
         /// </summary>
-        /// <param name="replica">副本</param>
+        /// <param name="replica">replica</param>
         void FromReplica(T replica);
     }
 }

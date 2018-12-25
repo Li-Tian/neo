@@ -9,9 +9,13 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // P2p consensus message payload
+    // 共识消息传输数据包（包装具体的共识消息. p2p广播时，将存放在Inventory消息的payload中）
+    // </summary>
     /// <summary>
     /// P2p consensus message payload
-    /// 共识消息传输数据包（包装具体的共识消息. p2p广播时，将存放在Inventory消息的payload中）
+    /// consensus message data（Wrap specific consensus messages. When p2p broadcasts, it will be stored in the payload of the Inventory message.）
     /// </summary>
     public class ConsensusPayload : IInventory
     {
@@ -30,9 +34,12 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         public uint BlockIndex;
 
+        // <summary>
+        // The sender(the Speaker or Delegates) index in the validators array
+        // 议长的共识节点编号
+        // </summary>
         /// <summary>
         /// The sender(the Speaker or Delegates) index in the validators array
-        /// 议长的共识节点编号
         /// </summary>
         public ushort ValidatorIndex;
 
@@ -68,9 +75,12 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        // <summary>
+        // P2p inventory message type, equals to InventoryType.Consensus
+        // Inventory类型， InventoryType.Consensus
+        // </summary>
         /// <summary>
         /// P2p inventory message type, equals to InventoryType.Consensus
-        /// Inventory类型， InventoryType.Consensus
         /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.Consensus;
 
@@ -106,9 +116,13 @@ namespace Neo.Network.P2P.Payloads
             Witness = reader.ReadSerializable<Witness>();
         }
 
+        // <summary>
+        // Deserialize from the reader of the unsigned binary data without the witness field
+        // 反序列化待签名数据
+        // </summary>
+        // <param name="reader">BinaryReader input</param>
         /// <summary>
         /// Deserialize from the reader of the unsigned binary data without the witness field
-        /// 反序列化待签名数据
         /// </summary>
         /// <param name="reader">BinaryReader input</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
@@ -121,20 +135,29 @@ namespace Neo.Network.P2P.Payloads
             Data = reader.ReadVarBytes();
         }
 
+        // <summary>
+        // 获取原始的哈希数据
+        // </summary>
+        // <returns>原始的哈希数据</returns>
         /// <summary>
-        /// 获取原始的哈希数据
+        /// Get hash data
         /// </summary>
-        /// <returns>原始的哈希数据</returns>
+        /// <returns>hash data</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
         }
 
+        // <summary>
+        // Get the verification scripts' hashes
+        // 获取议长公钥的签名脚本
+        // </summary>
+        // <param name="snapshot">数据库快照</param>
+        // <returns>The script hash of the sender's signing contract</returns>
         /// <summary>
         /// Get the verification scripts' hashes
-        /// 获取议长公钥的签名脚本
         /// </summary>
-        /// <param name="snapshot">数据库快照</param>
+        /// <param name="snapshot">database snapshot</param>
         /// <returns>The script hash of the sender's signing contract</returns>
         UInt160[] IVerifiable.GetScriptHashesForVerifying(Snapshot snapshot)
         {
@@ -189,9 +212,41 @@ namespace Neo.Network.P2P.Payloads
         }
 
 
+        // <summary>
+        // Serialize the unsigned message. It includes the fields as follows:
+        // 序列化待签名数据
+        // <list type="bullet">
+        // <item>
+        // <term>Version</term>
+        // <description>consensus message version, current is zero</description>
+        // </item>
+        // <item>
+        // <term>PrevHash</term>
+        // <description>the previous block hash</description>
+        // </item>
+        // <item>
+        // <term>BlockIndex</term>
+        // <description>the proposal block index</description>
+        // </item>
+        // <item>
+        // <term>ValidatorIndex</term>
+        // <description>the sender(the Speaker or Delegates) index in the validators array</description>
+        // <description>共识节点编号</description>
+        // <description>共识节点编号the sender(the Speaker or Delegates) index in the validators array</description>
+        // </item>
+        // <item>
+        // <term>Timestamp</term>
+        // <description>block time stamp</description>
+        // </item>
+        // <item>
+        // <term>Data</term>
+        // <description>consensus message data</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">binary writer</param>
         /// <summary>
         /// Serialize the unsigned message. It includes the fields as follows:
-        /// 序列化待签名数据
         /// <list type="bullet">
         /// <item>
         /// <term>Version</term>
@@ -208,8 +263,6 @@ namespace Neo.Network.P2P.Payloads
         /// <item>
         /// <term>ValidatorIndex</term>
         /// <description>the sender(the Speaker or Delegates) index in the validators array</description>
-        /// <description>共识节点编号</description>
-        /// <description>共识节点编号the sender(the Speaker or Delegates) index in the validators array</description>
         /// </item>
         /// <item>
         /// <term>Timestamp</term>
@@ -232,6 +285,15 @@ namespace Neo.Network.P2P.Payloads
             writer.WriteVarBytes(Data);
         }
 
+        // <summary>
+        // Verify this payload
+        // </summary>
+        // <remarks>
+        // 1) Check if BlockIndex is more than the snapshot.Height<br/>
+        // 2) Verify the witness script
+        // </remarks>
+        // <param name="snapshot">数据库快照</param>
+        // <returns>校验通过返回true，否则返回false</returns>
         /// <summary>
         /// Verify this payload
         /// </summary>
@@ -239,8 +301,8 @@ namespace Neo.Network.P2P.Payloads
         /// 1) Check if BlockIndex is more than the snapshot.Height<br/>
         /// 2) Verify the witness script
         /// </remarks>
-        /// <param name="snapshot">数据库快照</param>
-        /// <returns>校验通过返回true，否则返回false</returns>
+        /// <param name="snapshot">database snapshot</param>
+        /// <returns>Returns true if the validation is passed, false otherwise</returns>
         public bool Verify(Snapshot snapshot)
         {
             if (BlockIndex <= snapshot.Height)
