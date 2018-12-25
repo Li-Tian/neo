@@ -4,44 +4,70 @@ using System.Linq;
 
 namespace Neo.IO.Data.LevelDB
 {
+    // <summary>
+    // Leveldb辅助方法
+    // </summary>
     /// <summary>
-    /// Leveldb辅助方法
+    /// Leveldb helper method
     /// </summary>
     public static class Helper
     {
+        // <summary>
+        // 向批处理中添加删除Key的行为
+        // </summary>
+        // <param name="batch">批量操作</param>
+        // <param name="prefix">待删除前缀</param>
+        // <param name="key">待删除的Key</param>
         /// <summary>
-        /// 向批处理中添加删除Key的行为
+        /// Add a delete key operation to the batch
         /// </summary>
-        /// <param name="batch">批量操作</param>
-        /// <param name="prefix">待删除前缀</param>
-        /// <param name="key">待删除的Key</param>
+        /// <param name="batch">Batch operation</param>
+        /// <param name="prefix">Prefix to be deleted</param>
+        /// <param name="key">Key to be deleted</param>
         public static void Delete(this WriteBatch batch, byte prefix, ISerializable key)
         {
             batch.Delete(SliceBuilder.Begin(prefix).Add(key));
         }
 
+        // <summary>
+        // 查询前缀匹配的元素
+        // </summary>
+        // <typeparam name="T">值泛型</typeparam>
+        // <param name="db">待查询db</param>
+        // <param name="options">读选项</param>
+        // <param name="prefix">待查询前缀</param>
+        // <returns>T列表</returns>
         /// <summary>
-        /// 查询前缀匹配的元素
+        /// Query the element that the prefix matches
         /// </summary>
-        /// <typeparam name="T">值泛型</typeparam>
-        /// <param name="db">待查询db</param>
-        /// <param name="options">读选项</param>
-        /// <param name="prefix">待查询前缀</param>
-        /// <returns>T列表</returns>
+        /// <typeparam name="T">T</typeparam>
+        /// <param name="db">Db to be queried</param>
+        /// <param name="options">Read Options</param>
+        /// <param name="prefix">Prefix to be queried</param>
+        /// <returns>T list</returns>
         public static IEnumerable<T> Find<T>(this DB db, ReadOptions options, byte prefix) where T : class, ISerializable, new()
         {
             return Find(db, options, SliceBuilder.Begin(prefix), (k, v) => v.ToArray().AsSerializable<T>());
         }
 
+        // <summary>
+        // 查询前缀匹配的元素
+        // </summary>
+        // <typeparam name="T">值泛型</typeparam>
+        // <param name="db">待查询db</param>
+        // <param name="options">读选项</param>
+        // <param name="prefix">待查询前缀</param>
+        // <param name="resultSelector">值处理回调函数</param>
+        // <returns>T列表</returns>
         /// <summary>
-        /// 查询前缀匹配的元素
+        /// Query the element that the prefix matches
         /// </summary>
-        /// <typeparam name="T">值泛型</typeparam>
-        /// <param name="db">待查询db</param>
-        /// <param name="options">读选项</param>
-        /// <param name="prefix">待查询前缀</param>
-        /// <param name="resultSelector">值处理回调函数</param>
-        /// <returns>T列表</returns>
+        /// <typeparam name="T">T</typeparam>
+        /// <param name="db">Db to be queried</param>
+        /// <param name="options">Read Options</param>
+        /// <param name="prefix">Prefix to be queried</param>
+        /// <param name="resultSelector">Value handling callback function</param>
+        /// <returns>T list</returns>
         public static IEnumerable<T> Find<T>(this DB db, ReadOptions options, Slice prefix, Func<Slice, Slice, T> resultSelector)
         {
             using (Iterator it = db.NewIterator(options))
@@ -58,14 +84,23 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 查询某个Key
+        // </summary>
+        // <typeparam name="T">值泛型</typeparam>
+        // <param name="db">待查询db</param>
+        // <param name="options">读选项</param>
+        // <param name="prefix">待查询前缀</param>
+        // <param name="key">待查询Key</param>
+        // <returns>T</returns>
         /// <summary>
-        /// 查询某个Key
+        /// Query a Key
         /// </summary>
-        /// <typeparam name="T">值泛型</typeparam>
-        /// <param name="db">待查询db</param>
-        /// <param name="options">读选项</param>
-        /// <param name="prefix">待查询前缀</param>
-        /// <param name="key">待查询Key</param>
+        /// <typeparam name="T">T</typeparam>
+        /// <param name="db">Db to be queried</param>
+        /// <param name="options">Read Options</param>
+        /// <param name="prefix">Prefix to be queried</param>
+        /// <param name="key">Key to be queried</param>
         /// <returns>T</returns>
         public static T Get<T>(this DB db, ReadOptions options, byte prefix, ISerializable key) where T : class, ISerializable, new()
         {
@@ -73,42 +108,68 @@ namespace Neo.IO.Data.LevelDB
         }
 
 
+        // <summary>
+        // 查询某个Key
+        // </summary>
+        // <typeparam name="T">值泛型</typeparam>
+        // <param name="db">待查询db</param>
+        // <param name="options">读选项</param>
+        // <param name="prefix">待查询前缀</param>
+        // <param name="key">待查询Key</param>
+        // <param name="resultSelector">值处理回调函数</param>
+        // <returns>T</returns>
         /// <summary>
-        /// 查询某个Key
+        /// Query a Key
         /// </summary>
-        /// <typeparam name="T">值泛型</typeparam>
-        /// <param name="db">待查询db</param>
-        /// <param name="options">读选项</param>
-        /// <param name="prefix">待查询前缀</param>
-        /// <param name="key">待查询Key</param>
-        /// <param name="resultSelector">值处理回调函数</param>
+        /// <typeparam name="T">T</typeparam>
+        /// <param name="db">Db to be queried</param>
+        /// <param name="options">Read Options</param>
+        /// <param name="prefix">Prefix to be queried</param>
+        /// <param name="key">Key to be queried</param>
+        /// <param name="resultSelector">Value handling callback function</param>
         /// <returns>T</returns>
         public static T Get<T>(this DB db, ReadOptions options, byte prefix, ISerializable key, Func<Slice, T> resultSelector)
         {
             return resultSelector(db.Get(options, SliceBuilder.Begin(prefix).Add(key)));
         }
 
+        // <summary>
+        // 向批处理中添加写入键值的行为
+        // </summary>
+        // <param name="batch">批量操作</param>
+        // <param name="prefix">前缀</param>
+        // <param name="key">键</param>
+        // <param name="value">值</param>
         /// <summary>
-        /// 向批处理中添加写入键值的行为
+        /// Add a write key-value operation to the batch
         /// </summary>
-        /// <param name="batch">批量操作</param>
-        /// <param name="prefix">前缀</param>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
+        /// <param name="batch">Batch operation</param>
+        /// <param name="prefix">prefix</param>
+        /// <param name="key">key</param>
+        /// <param name="value">value</param>
         public static void Put(this WriteBatch batch, byte prefix, ISerializable key, ISerializable value)
         {
             batch.Put(SliceBuilder.Begin(prefix).Add(key), value.ToArray());
         }
 
+        // <summary>
+        // 尝试获取Key
+        // </summary>
+        // <typeparam name="T">值泛型</typeparam>
+        // <param name="db">待查询db</param>
+        // <param name="options">读选项</param>
+        // <param name="prefix">待查询前缀</param>
+        // <param name="key">待查询Key</param>
+        // <returns>T，若不存在时，返回null</returns>
         /// <summary>
-        /// 尝试获取Key
+        /// Try to get a Key
         /// </summary>
-        /// <typeparam name="T">值泛型</typeparam>
-        /// <param name="db">待查询db</param>
-        /// <param name="options">读选项</param>
-        /// <param name="prefix">待查询前缀</param>
-        /// <param name="key">待查询Key</param>
-        /// <returns>T，若不存在时，返回null</returns>
+        /// <typeparam name="T">T</typeparam>
+        /// <param name="db">Db to be queried</param>
+        /// <param name="options">Read Options</param>
+        /// <param name="prefix">Prefix to be queried</param>
+        /// <param name="key">Key to be queried</param>
+        /// <returns>T, if it does not exist, return null</returns>
         public static T TryGet<T>(this DB db, ReadOptions options, byte prefix, ISerializable key) where T : class, ISerializable, new()
         {
             Slice slice;
@@ -117,16 +178,26 @@ namespace Neo.IO.Data.LevelDB
             return slice.ToArray().AsSerializable<T>();
         }
 
+        // <summary>
+        // 尝试获取Key
+        // </summary>
+        // <typeparam name="T">值泛型</typeparam>
+        // <param name="db">待查询db</param>
+        // <param name="options">读选项</param>
+        // <param name="prefix">待查询前缀</param>
+        // <param name="key">待查询Key</param>
+        // <param name="resultSelector">值处理回调函数</param>
+        // <returns>T，若不存在时，返回null</returns>
         /// <summary>
-        /// 尝试获取Key
+        /// Try to get a Key
         /// </summary>
-        /// <typeparam name="T">值泛型</typeparam>
-        /// <param name="db">待查询db</param>
-        /// <param name="options">读选项</param>
-        /// <param name="prefix">待查询前缀</param>
-        /// <param name="key">待查询Key</param>
-        /// <param name="resultSelector">值处理回调函数</param>
-        /// <returns>T，若不存在时，返回null</returns>
+        /// <typeparam name="T">T</typeparam>
+        /// <param name="db">Db to be queried</param>
+        /// <param name="options">Read Options</param>
+        /// <param name="prefix">Prefix to be queried</param>
+        /// <param name="key">Key to be queried</param>
+        /// <param name="resultSelector">Value handling callback function</param>
+        /// <returns>T, if it does not exist, return null</returns>
         public static T TryGet<T>(this DB db, ReadOptions options, byte prefix, ISerializable key, Func<Slice, T> resultSelector) where T : class
         {
             Slice slice;

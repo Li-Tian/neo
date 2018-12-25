@@ -5,29 +5,45 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 交易引用
+    // </summary>
     /// <summary>
-    /// 交易引用
+    /// CoinReference
     /// </summary>
     public class CoinReference : IEquatable<CoinReference>, ISerializable
     {
+        // <summary>
+        // 指向的UTXO所在的交易的hash值
+        // </summary>
         /// <summary>
-        /// 指向的UTXO所在的交易的hash值
+        /// The transaction hash in which UTXO  point to
         /// </summary>
         public UInt256 PrevHash;
 
+        // <summary>
+        // 指向的UTXO所在的交易的output的位置。从0开始。
+        // </summary>
         /// <summary>
-        /// 指向的UTXO所在的交易的output的位置。从0开始。
+        /// The transaction output index in which UTXO point to.Starting from 0
         /// </summary>
         public ushort PrevIndex;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// size
         /// </summary>
         public int Size => PrevHash.Size + sizeof(ushort);
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialize method
         /// </summary>
-        /// <param name="reader">二进制输入</param>
+        /// <param name="reader">BinaryReader</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             PrevHash = reader.ReadSerializable<UInt256>();
@@ -35,13 +51,21 @@ namespace Neo.Network.P2P.Payloads
         }
 
 
+        // <summary>
+        // 判断两个交易输入是否相等
+        // </summary>
+        // <param name="other">待比较的交易输入</param>
+        // <returns>
+        // 若待比较交易为null, 则返回false。
+        // 否则按所指向的交易哈希和所指向的交易的output index比较
+        // </returns>
         /// <summary>
-        /// 判断两个交易输入是否相等
+        /// Determine if two CoinReference object are equal
         /// </summary>
-        /// <param name="other">待比较的交易输入</param>
+        /// <param name="other">CoinReference object</param>
         /// <returns>
-        /// 若待比较交易为null, 则返回false。
-        /// 否则按所指向的交易哈希和所指向的交易的output index比较
+        /// If the parameter is null, it returns false.
+        /// Otherwise compare the transaction hash  and the output index of the transaction in which UTXO point to
         /// </returns>
         public bool Equals(CoinReference other)
         {
@@ -50,13 +74,21 @@ namespace Neo.Network.P2P.Payloads
             return PrevHash.Equals(other.PrevHash) && PrevIndex.Equals(other.PrevIndex);
         }
 
+        // <summary>
+        // 判断交易与该对象是否相等
+        // </summary>
+        // <param name="obj">待比较对象</param>
+        // <returns>
+        // 若待比较对象为null 或 不是CoinReference， 则返回false
+        // 否则按照 public bool Equals(CoinReference other) 方法比较
+        // </returns>
         /// <summary>
-        /// 判断交易与该对象是否相等
+        /// Determine if the CoinReference object is equal to another object
         /// </summary>
-        /// <param name="obj">待比较对象</param>
+        /// <param name="obj">another object</param>
         /// <returns>
-        /// 若待比较对象为null 或 不是CoinReference， 则返回false
-        /// 否则按照 public bool Equals(CoinReference other) 方法比较
+        /// returns false if the object to be compared is null or not a CoinReference object
+        /// Otherwise, follow the public bool Equals(CoinReference other) method
         /// </returns>
         public override bool Equals(object obj)
         {
@@ -66,18 +98,26 @@ namespace Neo.Network.P2P.Payloads
             return Equals((CoinReference)obj);
         }
 
+        // <summary>
+        // 获取hash code
+        // </summary>
+        // <returns>hash code</returns>
         /// <summary>
-        /// 获取hash code
+        /// get hash code
         /// </summary>
         /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return PrevHash.GetHashCode() + PrevIndex.GetHashCode();
         }
+        // <summary>
+        // 序列化
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
-        /// 序列化
+        /// Serialize method
         /// </summary>
-        /// <param name="writer">二进制输出</param>
+        /// <param name="writer">BinaryWriter</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(PrevHash);
@@ -85,10 +125,14 @@ namespace Neo.Network.P2P.Payloads
         }
 
 
+        // <summary>
+        // 转json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转json对象
+        /// Convert to JObject object
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>JObject object</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();

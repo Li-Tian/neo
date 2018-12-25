@@ -2,15 +2,21 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    // <summary>
+    // LevelDB封装的DB操作类，提供基本的 Get, Delete, Put, BatchWrite, Snapshot等操作
+    // </summary>
     /// <summary>
-    /// LevelDB封装的DB操作类，提供基本的 Get, Delete, Put, BatchWrite, Snapshot等操作
+    /// LevelDB encapsulated DB operation class, providing basic Get, Delete, Put, BatchWrite, Snapshot, etc.
     /// </summary>
     public class DB : IDisposable
     {
         private IntPtr handle;
 
+        // <summary>
+        // 若没有获取到合法的句柄时, 返回True
+        // </summary>
         /// <summary>
-        /// 若没有获取到合法的句柄时, 返回True
+        /// Return True if no legal handle is obtained
         /// </summary>
         public bool IsDisposed => handle == IntPtr.Zero;
 
@@ -19,8 +25,11 @@ namespace Neo.IO.Data.LevelDB
             this.handle = handle;
         }
 
+        // <summary>
+        // 释放资源，包括Leveldb资源以及句柄释放
+        // </summary>
         /// <summary>
-        /// 释放资源，包括Leveldb资源以及句柄释放
+        /// Release resources, including Leveldb resources and handle release 
         /// </summary>
         public void Dispose()
         {
@@ -31,12 +40,18 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 删除Key
+        // </summary>
+        // <param name="options">写选项</param>
+        // <param name="key">要删除的key</param>
+        // <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
         /// <summary>
-        /// 删除Key
+        /// Delete Key
         /// </summary>
-        /// <param name="options">写选项</param>
-        /// <param name="key">要删除的key</param>
-        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
+        /// <param name="options">WriteOptions</param>
+        /// <param name="key">The key to delete</param>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">This type of exception is thrown when an error is encountered</exception>
         public void Delete(WriteOptions options, Slice key)
         {
             IntPtr error;
@@ -44,13 +59,20 @@ namespace Neo.IO.Data.LevelDB
             NativeHelper.CheckError(error);
         }
 
+        // <summary>
+        // 查询某一个Key
+        // </summary>
+        // <param name="options">读选项</param>
+        // <param name="key">待查询的key</param>
+        // <returns>value的切片</returns>
+        // <exception cref="Neo.IO.Data.LevelDB.LevelDBException">查询不存在，或遇到错误时，统一抛出该异常 </exception>
         /// <summary>
-        /// 查询某一个Key
+        /// Query a key
         /// </summary>
-        /// <param name="options">读选项</param>
-        /// <param name="key">待查询的key</param>
-        /// <returns></returns>
-        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">查询不存在，或遇到错误时，统一抛出该异常 </exception>
+        /// <param name="options">ReadOptions</param>
+        /// <param name="key">Key to be queried</param>
+        /// <returns>Slice of value</returns>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">The query is not present, or an error is encountered, throw the exception</exception>
         public Slice Get(ReadOptions options, Slice key)
         {
             UIntPtr length;
@@ -69,42 +91,63 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 获取快照
+        // </summary>
+        // <returns>快照对象</returns>
         /// <summary>
-        /// 获取快照
+        /// Get a snapshot
         /// </summary>
-        /// <returns>快照对象</returns>
+        /// <returns>Snapshot object</returns>
         public Snapshot GetSnapshot()
         {
             return new Snapshot(handle);
         }
 
+        // <summary>
+        // 创建新的迭代器
+        // </summary>
+        // <param name="options">读选项</param>
+        // <returns>迭代器</returns>
         /// <summary>
-        /// 创建新的迭代器
+        /// Create a new iterator
         /// </summary>
-        /// <param name="options">读选项</param>
-        /// <returns>迭代器</returns>
+        /// <param name="options">Read Options</param>
+        /// <returns>iterator</returns>
         public Iterator NewIterator(ReadOptions options)
         {
             return new Iterator(Native.leveldb_create_iterator(handle, options.handle));
         }
 
+        // <summary>
+        //  打开数据库
+        // </summary>
+        // <param name="name">数据库路径</param>
+        // <returns>DB实例</returns>
         /// <summary>
-        ///  打开数据库
+        /// Open the database
         /// </summary>
-        /// <param name="name">数据库路径</param>
-        /// <returns>DB实例</returns>
+        /// <param name="name">Database path</param>
+        /// <returns>DB instance</returns>
         public static DB Open(string name)
         {
             return Open(name, Options.Default);
         }
 
+        // <summary>
+        // 打开数据库
+        // </summary>
+        // <param name="name">数据库路径</param>
+        // <param name="options">数据库打开相关设置</param>
+        // <returns>DB实例</returns>
+        // <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
         /// <summary>
-        /// 打开数据库
+        /// Open the database
         /// </summary>
-        /// <param name="name">数据库路径</param>
-        /// <param name="options">数据库打开相关设置</param>
-        /// <returns>DB实例</returns>
-        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
+        /// <param name="name">Database path</param>
+        /// <param name="options">Database related settings</param>
+        /// <returns>DB instance</returns>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">This type of exception is thrown when an error is encountered</exception>
         public static DB Open(string name, Options options)
         {
             IntPtr error;
@@ -113,13 +156,20 @@ namespace Neo.IO.Data.LevelDB
             return new DB(handle);
         }
 
+        // <summary>
+        // 存放键值对
+        // </summary>
+        // <param name="options">写选项</param>
+        // <param name="key">键</param>
+        // <param name="value">值</param>
+        // <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
         /// <summary>
-        /// 存放键值对
+        /// Store key-value pair
         /// </summary>
-        /// <param name="options">写选项</param>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">遇到错误时，统一抛出该类型错误</exception>
+        /// <param name="options">Write Options</param>
+        /// <param name="key">key</param>
+        /// <param name="value">value</param>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">This type of exception is thrown when an error is encountered</exception>
         public void Put(WriteOptions options, Slice key, Slice value)
         {
             IntPtr error;
@@ -128,13 +178,20 @@ namespace Neo.IO.Data.LevelDB
         }
 
 
+        // <summary>
+        // 尝试获取某个Key，并返回bool类型
+        // </summary>
+        // <param name="options">读选项</param>
+        // <param name="key">键</param>
+        // <param name="value">值</param>
+        // <returns>查询到返回true和value， 否则返回false</returns>
         /// <summary>
-        /// 尝试获取某个Key，并返回bool类型
+        /// Try to get a Key and return the bool type
         /// </summary>
-        /// <param name="options">读选项</param>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        /// <returns>查询到返回true和value， 否则返回false</returns>
+        /// <param name="options">Read Options</param>
+        /// <param name="key">key</param>
+        /// <param name="value">value</param>
+        /// <returns>Returns true and value if queried, false otherwise</returns>
         public bool TryGet(ReadOptions options, Slice key, out Slice value)
         {
             UIntPtr length;
@@ -156,15 +213,22 @@ namespace Neo.IO.Data.LevelDB
             return true;
         }
 
+        // <summary>
+        // 批量写操作
+        // </summary>
+        // <remarks>
+        // 注意，抛出异常之前，内部会进行最多5次尝试写
+        // </remarks>
+        // <param name="options">写选项</param>
+        // <param name="write_batch">批量写</param>
+        // <exception cref="LevelDBException">5此重试之后如果仍然失败则抛出异常</exception>
         /// <summary>
-        /// 批量写操作
+        /// Batch write operation
         /// </summary>
-        /// <remarks>
-        /// 注意，抛出异常之前，内部会进行最多5次尝试写
-        /// </remarks>
-        /// <param name="options">写选项</param>
-        /// <param name="write_batch">批量写</param>
-        /// <exception cref="LevelDBException">5此重试之后如果仍然失败则抛出异常</exception>
+        /// <remarks>Note that there will be up to 5 attempts to write internally before throwing an exception.</remarks>
+        /// <param name="options">Write Options</param>
+        /// <param name="write_batch">write batch</param>
+        /// <exception cref="LevelDBException">Throws the exception if it still fails after 5 retries</exception>
         public void Write(WriteOptions options, WriteBatch write_batch)
         {
             // There's a bug in .Net Core.
