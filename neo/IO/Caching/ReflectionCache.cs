@@ -26,7 +26,9 @@ namespace Neo.IO.Caching
         /// Constructor
         /// </summary>
         /// <typeparam name="EnumType">Enum type</typeparam>
-        /// <summary>
+        /// <exception cref="System.ArgumentException">Thrown when EnumType is not an enumerated type</exception>
+        /// <exception cref="System.FormatException">Thrown if each attribute in EnumType is unavailable</exception>
+        // <summary>
         // 从一个枚举类型创建实例
         // </summary>
         // <typeparam name="EnumType">枚举类型</typeparam>

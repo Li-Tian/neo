@@ -2,23 +2,35 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    // <summary>
+    // Leveldb的相关选项
+    // </summary>
     /// <summary>
-    /// Leveldb的相关选项
+    /// Leveldb related options
     /// </summary>
     public class Options
     {
+        // <summary>
+        // 默认设置
+        // </summary>
         /// <summary>
-        /// 默认设置
+        /// default Options
         /// </summary>
         public static readonly Options Default = new Options();
 
+        // <summary>
+        // db句柄
+        // </summary>
         /// <summary>
-        /// db句柄
+        /// dn handle
         /// </summary>
         internal readonly IntPtr handle = Native.leveldb_options_create();
 
+        // <summary>
+        // 若db不存在则创建
+        // </summary>
         /// <summary>
-        /// 若db不存在则创建
+        /// Create if db does not exist
         /// </summary>
         public bool CreateIfMissing
         {
@@ -28,8 +40,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 若db已存在时返回错误 
+        // </summary>
         /// <summary>
-        ///  若db已存在时返回错误 
+        /// Return error if db already exists
         /// </summary>
         public bool ErrorIfExists
         {
@@ -39,8 +54,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 是否进行数据损坏检查
+        // </summary>
         /// <summary>
-        /// 是否进行数据损坏检查
+        /// Whether to perform data corruption check
         /// </summary>
         public bool ParanoidChecks
         {
@@ -50,8 +68,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 写缓存大小
+        // </summary>
         /// <summary>
-        /// 写缓存大小
+        /// Size of write buffer
         /// </summary>
         public int WriteBufferSize
         {
@@ -61,8 +82,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 最大打开文件数
+        // </summary>
         /// <summary>
-        /// 最大打开文件数
+        /// Maximum number of open files
         /// </summary>
         public int MaxOpenFiles
         {
@@ -72,8 +96,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // Leveldb存储的Block大小
+        // </summary>
         /// <summary>
-        /// Leveldb存储的Block大小
+        /// Block size of Leveldb storage
         /// </summary>
         public int BlockSize
         {
@@ -83,10 +110,13 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 每隔几个key就直接存储一个重启点key(为了兼顾查找效率，
+        // 每隔K个key，leveldb就不使用前缀压缩，而是存储整个key，
+        // 这就是重启点（restartpoint）) 
+        // </summary>
         /// <summary>
-        /// 每隔几个key就直接存储一个重启点key(为了兼顾查找效率，
-        /// 每隔K个key，leveldb就不使用前缀压缩，而是存储整个key，
-        /// 这就是重启点（restartpoint）) 
+        /// a restartpoint key is stored directly every few keys
         /// </summary>
         public int BlockRestartInterval
         {
@@ -96,8 +126,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 是否压缩
+        // </summary>
         /// <summary>
-        /// 是否压缩
+        /// Whether to compress
         /// </summary>
         public CompressionType Compression
         {
@@ -107,8 +140,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 过滤策略
+        // </summary>
         /// <summary>
-        /// 过滤策略
+        /// Filter Policy
         /// </summary>
         public IntPtr FilterPolicy
         {
@@ -118,8 +154,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 析构函数。将关闭leveldb的句柄。
+        // </summary>
         /// <summary>
-        /// 析构函数。将关闭leveldb的句柄。
+        /// Destructor. The handle of leveldb will be closed.
         /// </summary>
         ~Options()
         {
