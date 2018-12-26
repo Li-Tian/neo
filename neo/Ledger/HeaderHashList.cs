@@ -98,7 +98,6 @@ namespace Neo.Ledger
         /// </item>
         /// </list> 
         /// </summary>
-        /// </summary>
         /// <param name="writer">The binary output</param>
         public override void Serialize(BinaryWriter writer)
         {

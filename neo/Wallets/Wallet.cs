@@ -99,12 +99,12 @@ namespace Neo.Wallets
         /// <param name="key">KeyPair object。When not specified, it means read-only address (monitor address)</param>
         /// <returns>WalletAccount object</returns>
         public abstract WalletAccount CreateAccount(Contract contract, KeyPair key = null);
-        /// <summary>
+        // <summary>
         // 利用脚本哈希创建钱包账户
         // </summary>
         // <param name="scriptHash">脚本哈希</param>
         // <returns>生成的钱包账户对象</returns>
-        // <summary>
+        /// <summary>
         /// create wallet account by script hash
         /// </summary>
         /// <param name="scriptHash">script hash</param>
@@ -149,7 +149,7 @@ namespace Neo.Wallets
         /// <summary>
         /// get a set of Coin held by specified account collection
         /// </summary>
-        /// <param name="accounts">an enumerable collection of specified account objects<</param>
+        /// <param name="accounts">an enumerable collection of specified account objects</param>
         /// <returns>Coin set</returns>
         public abstract IEnumerable<Coin> GetCoins(IEnumerable<UInt160> accounts);
         // <summary>

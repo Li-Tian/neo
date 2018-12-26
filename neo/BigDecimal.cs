@@ -68,7 +68,7 @@ namespace Neo
         /// <summary>
         /// Parse the String passed as argument to a BigDecimal object which is represented by specified decimal point position.
         /// </summary>
-        /// <param name="s">(*)被解析的字符串</param>
+        /// <param name="s">string value to be parsed. It supports float number format.(e.g. "1.23") And it supports Scientific notation (e.g. "1.23e5")</param>
         /// <param name="decimals">decimal point position</param>
         /// <exception cref="FormatException">If the string can not be transferd to the BigDecimal oibject which is using the specified decimal point postition.</exception>
         /// <returns>The BigDecimal obejct parsed from string</returns>
@@ -113,7 +113,7 @@ namespace Neo
         /// <summary>
         /// Parse the String passed as argument to a BigDecimal object which is represented by specified decimal point position.
         /// </summary>
-        /// <param name="s">(*)被解析的字符串</param>
+        /// <param name="s">string value to be parsed. It supports float number format.(e.g. "1.23") And it supports Scientific notation (e.g. "1.23e5")</param>
         /// <param name="decimals">Decimal point position</param>
         /// <param name="result">The BigDecimal object transferd from String</param>
         /// <returns>If the string can be parsed then it return <c>true</c>,  if the string can not be parsed the return<c>false</c></returns>

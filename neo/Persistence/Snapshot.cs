@@ -23,66 +23,79 @@ namespace Neo.Persistence
         /// <summary>
         /// 区块
         /// </summary>
+        /// <see cref="IPersistence.Blocks"/>
         public abstract DataCache<UInt256, BlockState> Blocks { get; }
 
         /// <summary>
         /// 交易
         /// </summary>
+        /// <see cref="IPersistence.Transactions"/>
         public abstract DataCache<UInt256, TransactionState> Transactions { get; }
 
         /// <summary>
         /// 账户
         /// </summary>
+        /// <see cref="IPersistence.Accounts"/>
         public abstract DataCache<UInt160, AccountState> Accounts { get; }
 
         /// <summary>
         /// UTXO
         /// </summary>
+        /// <see cref="IPersistence.UnspentCoins"/>
         public abstract DataCache<UInt256, UnspentCoinState> UnspentCoins { get; }
 
         /// <summary>
         /// 已花费交易
         /// </summary>
+        /// <see cref="IPersistence.SpentCoins"/>
         public abstract DataCache<UInt256, SpentCoinState> SpentCoins { get; }
 
         /// <summary>
         /// 验证人
         /// </summary>
+        /// <see cref="IPersistence.Validators"/>
         public abstract DataCache<ECPoint, ValidatorState> Validators { get; }
 
         /// <summary>
         /// 资产
         /// </summary>
+        /// <see cref="IPersistence.Assets"/>
         public abstract DataCache<UInt256, AssetState> Assets { get; }
 
         /// <summary>
         /// 合约
         /// </summary>
+        /// <see cref="IPersistence.Contracts"/>
         public abstract DataCache<UInt160, ContractState> Contracts { get; }
 
         /// <summary>
         /// 合约存储
         /// </summary>
+        /// <see cref="IPersistence.Storages"/>
         public abstract DataCache<StorageKey, StorageItem> Storages { get; }
 
         /// <summary>
         /// 区块头hash列表
         /// </summary>
+        /// <see cref="IPersistence.HeaderHashList"/>
         public abstract DataCache<UInt32Wrapper, HeaderHashList> HeaderHashList { get; }
 
         /// <summary>
         /// 验证人个数投票
         /// </summary>
+        /// <see cref="IPersistence.ValidatorsCount"/>
         public abstract MetaDataCache<ValidatorsCountState> ValidatorsCount { get; }
 
         /// <summary>
         /// 区块索引
         /// </summary>
+        /// <see cref="IPersistence.BlockHashIndex"/>
         public abstract MetaDataCache<HashIndexState> BlockHashIndex { get; }
 
         /// <summary>
         /// 区块头索引
         /// </summary>
+        /// <see cref="IPersistence.HeaderHashIndex"/>
         public abstract MetaDataCache<HashIndexState> HeaderHashIndex { get; }
 
         /// <summary>

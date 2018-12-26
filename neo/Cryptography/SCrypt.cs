@@ -274,7 +274,11 @@ namespace Neo.Cryptography
         /// <param name="derivedKeyLength">生成key的长度</param>
         /// <returns>生成的scrypt key</returns>
         /// <remarks>
-        /// (*)从黄皮书复制相关内容。
+        /// Scrypt 算法是基于 PBKDF2-HMAC-SHA-256 算法之上的安全加密算法。由著名的 FreeBSD 黑客 Colin Percival 为他的备份服务 Tarsnap 开发的，当初的设计是为了降低 CPU 负荷，尽量少的依赖 cpu 计算，利用 CPU 闲置时间进行计算，因此 scrypt 不仅计算所需时间长，而且占用的内存也多，使得并行计算多个摘要异常困难，因此利用 rainbow table 进行暴力攻击更加困难。<br/>
+        /// Neo中使用主要使用 SCRYPT 算法来生成满足 NEP-2 规范的加密型密钥，使用的参数为：<br/>
+        /// N: CPU/内存消耗指数，一般取值为2的若干次方, 值 16384 <br/>
+        /// p: 并行计算参数，理论上取值范围为1-255，值越大越依赖于并发计算, 值 8 <br/>
+        /// r：表块大小，理论取值范围为1-255，同样越大越依赖内存与带宽， 值 8 <br/>
         /// </remarks>
         public unsafe static byte[] DeriveKey(byte[] password, byte[] salt, int N, int r, int p, int derivedKeyLength)
         {

@@ -448,6 +448,7 @@ Other processing steps are the same as basic transaction.
 
 ### ClaimTransaction
 
+
 | Size | Name | Type | Description |
 |----|-------|------|------|
 |  -  | - | -  | common attributes  |
@@ -551,6 +552,15 @@ Special transaction of validator voting, for detailed information please refer t
 |  -  | - | -  | common attributes  |
 | ?*? | Descriptors | StateDescriptor[] | Voting information |
 |  -  | - | -  | common attributes  |
+
+Descriptor type contains following information:
+
+| Size | Name | Caption | Type | Description |
+|---|-------|-------|------|------|
+| 1 | Type  | Type | Byte  | `0x40` represents voting, `0x48` represents application or cancellation of becoming a validator |
+| ? | Key   | key value | byte[] | When Field = 'Votes' : The hash of the voter address script<br/>When Feild = 'Registered' : Store the applicant's public key |
+| ? | Field | field value | byte[] | When Type = `0x40`, Field is 'Votes'<br/>When Type = `0x48`, Field is 'Registered` |
+| ? | Value | The value of the field represented by `Key` in the validator's table | byte[] | When Type = 0x40, Value stores the list of voting addresses<br/> When Type = 0x48, Store the Boolean value of the validator |
 
 Special transaction for validator / consensus node voting. Validator candidate registration costs 1000 GAS. For detailed information please refer to [Election and Voting](./consensus/vote_validator.md).
 
