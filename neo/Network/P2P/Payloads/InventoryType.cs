@@ -1,20 +1,29 @@
 ﻿namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // Inventory类型
+    // </summary>
     /// <summary>
-    /// Inventory类型
+    /// The type of Inventory
     /// </summary>
     public enum InventoryType : byte
     {
+        // <summary>
+        // 交易
+        // </summary>
         /// <summary>
-        /// 交易
+        /// Transaction
         /// </summary>
         TX = 0x01,
+        // <summary>
+        // 区块
+        // </summary>
         /// <summary>
-        /// 区块
+        /// The blocks
         /// </summary>
         Block = 0x02,
         /// <summary>
-        /// 共识
+        /// Consensus data
         /// </summary>
         Consensus = 0xe0
     }
