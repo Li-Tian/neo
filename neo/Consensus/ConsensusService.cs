@@ -414,7 +414,15 @@ namespace Neo.Consensus
         /// <summary>
         /// 消息接收器（AKKA框架的方法）
         /// </summary>
-        /// <param name="message">(*)六类消息：Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted</param>
+        /// <param name="message">
+        /// 六类消息：<BR/>
+        /// ・Start：启动共识事件处理。<BR/>
+        /// ・SetViewNumber：设置共识的视图编号，初始化共识活动。<BR/>
+        /// ・Timer：超时处理。若是议长且尚未发送 PrepareRequest, 则发送PrepareRequest消息,否则发送ChangeView。<BR/>
+        /// ・ConsensusPayload：共识消息货物的处理，检查与具体共识消息处理<BR/>
+        /// ・Transaction：新交易消息处理<BR/>
+        /// ・Blockchain.PersistCompleted：块持久化完毕消息处理，重置共识过程<BR/>
+        /// </param>
         protected override void OnReceive(object message)
         {
             switch (message)

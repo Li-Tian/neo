@@ -21,7 +21,7 @@ namespace Neo.Cryptography
         /// 1、倒序输入的字符串，将其按字母表转换成10进制 Biginteger 数<br/>
         /// 2、把 Biginteger 数转换成 byte[] 数据，并将 byte[] 数据倒序排序<br/>
         /// 3、统计原输入的字符串中字母表游标为零所对应的字符的个数 count<br/>
-        /// 4、若 byte[] 数据的长度大于1，且 byte[0] 等于0，byte[1] 大于等于0x80，<br/>
+        /// 4、若 byte[] 数据的长度大于1，且 byte[0] 等于0，byte[1] 大于等于0x80，
         /// 则从 byte[1] 开始截取，否则从 byte[0] 开始截取，得到结果。<br/>
         /// </summary>
         /// <param name="input">被解码的Base58字符串</param>

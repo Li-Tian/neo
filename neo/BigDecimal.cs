@@ -69,7 +69,7 @@ namespace Neo
         /// <summary>
         /// 将传入的字符串解析为以指定小数位数为表示的BigDecimal对象.
         /// </summary>
-        /// <param name="s">(*)被解析的字符串</param>
+        /// <param name="s">被解析的字符串。支持普通浮点数格式（比如1.23）和科学记数法（比如1.23e5）</param>
         /// <param name="decimals">小数位数</param>
         /// <exception cref="FormatException">如果这个字符串无法转换为以指定小数位所表示的BigDecimal对象</exception>
         /// <returns>字符串解析后的BigDecimal对象</returns>
@@ -114,7 +114,7 @@ namespace Neo
         /// <summary>
         /// 将传入的字符串解析为以指定小数位数表示的BigDecimal对象
         /// </summary>
-        /// <param name="s">(*)被解析的字符串</param>
+        /// <param name="s">被解析的字符串。支持普通浮点数格式（比如1.23）和科学记数法（比如1.23e5）</param>
         /// <param name="decimals">小数位</param>
         /// <param name="result">转换后的BigDecimal对象</param>
         /// <returns>如果成功解析则返回<c>true</c>, 如果不能够解析则返回<c>false</c></returns>

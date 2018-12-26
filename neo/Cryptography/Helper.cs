@@ -129,8 +129,8 @@ namespace Neo.Cryptography
         /// 使用Murmur3算法的哈希函数来对一个字节集合进行哈希加密处理,产生一个32-bit哈希值
         /// </summary>
         /// <param name="value">被哈希函数处理的字节集合</param>
-        /// <param name="seed"> Murmur3中用到的一个随机的种子数， 用来防止HashDos攻击(*)确认</param>
-        /// <returns>Murmur3函数处理过后的字节数组</returns>   
+        /// <param name="seed"> Murmur3中用到的一个随机的种子数， 用来防止HashDos攻击</param>
+        /// <returns>Murmur3函数处理过后的字节数组</returns>
         public static uint Murmur32(this IEnumerable<byte> value, uint seed)
         {
             using (Murmur3 murmur = new Murmur3(seed))
