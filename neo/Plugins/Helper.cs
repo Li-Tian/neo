@@ -18,10 +18,10 @@ namespace Neo.Plugins
         // <param name="assembly">程序集，加载config.json配置文件</param>
         // <returns>加载的配置</returns>
         /// <summary>
-        /// 
+        /// Get plugin configuration
         /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns></returns>
+        /// <param name="assembly">Assembly, load config.json configuration file</param>
+        /// <returns>CSonfiguration</returns>
         public static IConfigurationSection GetConfiguration(this Assembly assembly)
         {
             string path = Path.Combine("Plugins", assembly.GetName().Name, "config.json");
