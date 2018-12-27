@@ -2,28 +2,43 @@
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 已花费的output状态
+    // </summary>
     /// <summary>
-    /// 已花费的output状态
+    /// The statet of already spent output
     /// </summary>
     public class SpentCoin
     {
+        // <summary>
+        // 已经花费的output
+        // </summary>
         /// <summary>
-        /// 已经花费的output
+        /// The already spent transactionOutput
         /// </summary>
         public TransactionOutput Output;
 
+        // <summary>
+        // output所在区块高度
+        // </summary>
         /// <summary>
-        /// output所在区块高度
+        /// The block height of the output
         /// </summary>
         public uint StartHeight;
 
+        // <summary>
+        // output被花费的block高度
+        // </summary>
         /// <summary>
-        /// output被花费的block高度
+        /// The block height where this transactionOutput is spent
         /// </summary>
         public uint EndHeight;
 
+        // <summary>
+        // 花费量
+        // </summary>
         /// <summary>
-        /// 花费量
+        /// The value of this transactionOutput
         /// </summary>
         public Fixed8 Value => Output.Value;
     }

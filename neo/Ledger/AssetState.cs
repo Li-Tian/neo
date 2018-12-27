@@ -379,7 +379,7 @@ namespace Neo.Ledger
         /// </item>
         /// <item>
         /// <term>Fee</term>
-        /// <description>Fee/description>
+        /// <description>Fee</description>
         /// </item>
         /// <item>
         /// <term>FeeAddress</term>

@@ -436,7 +436,15 @@ namespace Neo.Consensus
         /// <summary>
         /// Message receiver, inlcudes Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted, which is a method of AKKA. 
         /// </summary>
-        /// <param name="message">Six types of messages：Start, SetViewNumber, Timer, ConsensusPayload, Transaction and Blockchain.PersistCompleted</param>
+        /// <param name="message">
+        /// Six types of messages：<BR/>
+        /// ・Start：State message processing, initialize consensus activity<BR/>
+        /// ・SetViewNumber：Initialize the consensus activity with view number<BR/>
+        /// ・Timer：Timeout processing. If it's Primary and has not send PrepareRequest message, then send PrepareRequest message, otherwise, send ChangeView<BR/>
+        /// ・ConsensusPayload：Consensus message checking and processing<BR/>
+        /// ・Transaction：New transaction message processing<BR/>
+        /// ・Blockchain.PersistCompleted：BlockPersistComleted message proccessing<BR/>
+        /// </param>
         protected override void OnReceive(object message)
         {
             switch (message)

@@ -237,10 +237,10 @@ namespace Neo.Network.P2P
                 AddPeers(GetIPEndPointsFromSeedList(count));
             }
         }
-        /// <summary>
-        /// 用于LocalNode对象接收和处理其他对象通过Akka框架传来的消息
-        /// </summary>
-        /// <param name="message">消息</param>
+        // <summary>
+        // 用于LocalNode对象接收和处理其他对象通过Akka框架传来的消息
+        // </summary>
+        // <param name="message">消息</param>
         /// <summary>
         /// Processing method when receiving a message delivered by the Akka framework
         /// </summary>

@@ -90,7 +90,8 @@ namespace Neo.Cryptography.ECC
         // <param name="other">另一个ECPoint点</param>
         // <returns>
         // 如果两个点是同一个对象则返回0.
-        // 否则,先比较X坐标值的大小,如果不相等则返回1或者-1（*）具体什么情况返回1？
+        // 否则,先比较X坐标值的大小,如果不相等则返回X坐标值的比较结果
+        // 如果X坐标值相等， 则比较Y轴坐标值.
         // 如果X坐标值相等， 则比较Y轴坐标值.
         // </returns>
         /// <summary>
@@ -321,7 +322,7 @@ namespace Neo.Cryptography.ECC
         /// Compare if two objects are equal
         /// </summary>
         /// <param name="obj">The object which is going to be compared</param>
-        /// <returns>If the two objects are equal then return <c>true</c>, otherwise it returns <c>false<c></returns>
+        /// <returns>If the two objects are equal then return <c>true</c>, otherwise it returns <c>false</c></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as ECPoint);
@@ -330,10 +331,18 @@ namespace Neo.Cryptography.ECC
         /// <summary>
         /// 将一个由椭圆曲线生成的公钥解码为一个ECPoint对象
         /// </summary>
-        /// <param name="pubkey">需要被解码的公钥</param>
+        /// <param name="pubkey">
+        /// 需要被解码的公钥<br/>
+        /// 1. 当pubkey的字节长度是33字节时，表示一个完整的压缩型公钥。<br/>
+        /// 2. 当pubkey的字节长度是65字节时，表示一个完整的非压缩型公钥。<br/>
+        /// 3. 当pubkey的字节长度是64字节时，将自动添加前缀标识字节(0x04)表示一个完整的非压缩型公钥。<br/>
+        /// 4. 当pubkey的字节长度是72字节时，表示扩展格式1(保留)，将省略开头的8个字节，然后自动添加前缀标识字节(0x04)表示一个完整的非压缩型公钥。<br/>
+        /// 5. 当pubkey的字节长度是96字节时，表示扩展格式2(保留)，将省略结尾的32个字节，然后自动添加前缀标识字节(0x04)表示一个完整的非压缩型公钥。<br/>
+        /// 6. 当pubkey的字节长度是104字节时，表示扩展格式3(保留)，将省略开头的8个字节和结尾的32个字节，然后自动拼接标识字节(0x04)表示一个完整的非压缩型公钥。<br/>
+        /// </param>
         /// <param name="curve">椭圆曲线</param>
         /// <returns>
-        /// 根据不同类型的公钥解码后的ECPoint对象(*)分类详细说明
+        /// 根据不同类型的公钥解码后的ECPoint对象
         /// </returns>
         /// <exception cref="System.FormatException">(*)</exception>
         public static ECPoint FromBytes(byte[] pubkey, ECCurve curve)

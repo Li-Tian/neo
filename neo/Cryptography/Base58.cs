@@ -32,10 +32,10 @@ namespace Neo.Cryptography
         /// Decode method.  Parse a Base58 String to a byte array.<br/>
         /// The detail decode process is :<br/>
         /// 1. According to the Base58 alphabet, transfer the inverted order string to BigInterger. <br/>
-        /// 2. Transfer the Biginteger to byte array, andx
-        /// 3. In the original string, according to thealphabet, count which characteristics are empty and calculate them.
-        /// 4. If the byte[] length > 1, and byte[0] equals to 0, byte[1] greater than or equal to 0x80, then slice the byte array from byte[1], otherwise, slice it from byte[0]
-        /// </Summary>
+        /// 2. Transfer the Biginteger to byte array, and reverse the order.<br/>
+        /// 3. In the original string, according to the alphabet, count which characteristics are empty and calculate them.<br/>
+        /// 4. If the byte[] length is greater than 1, and byte[0] equals to 0, byte[1] greater than or equal to 0x80, then slice the byte array from byte[1], otherwise, slice it from byte[0]
+        /// </summary>
         /// <param name="input">The Base58 String which is going to be Decode.</param>
         /// <returns>the byte array after Decode</returns>
         public static byte[] Decode(string input)

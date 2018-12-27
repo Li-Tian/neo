@@ -7,26 +7,40 @@ using System.Linq;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 简化版本的block，主要方便存储在leveldb中
+    // </summary>
     /// <summary>
-    /// 简化版本的block，主要方便存储在leveldb中
+    /// The trimmed block which is convenient for storing in levelDb
     /// </summary>
     public class TrimmedBlock : BlockBase
     {
+        // <summary>
+        // 交易hash列表
+        // </summary>
         /// <summary>
-        /// 交易hash列表
+        /// The hash list of transactions
         /// </summary>
         public UInt256[] Hashes;
 
+        // <summary>
+        // 是否是从完整的block简化而来。从区块头对象简化而来的版本没有交易的哈希。
+        // </summary>
         /// <summary>
-        /// 是否是从完整的block简化而来。从区块头对象简化而来的版本没有交易的哈希。
+        /// If this object is simplified from complete block. There is no hash for the object which is simplified from block header
         /// </summary>
         public bool IsBlock => Hashes.Length > 0;
 
+        // <summary>
+        // 从缓存中获取完整的交易，构建出完整的block
+        // </summary>
+        // <param name="cache">缓存的交易</param>
+        // <returns>完整的block</returns>
         /// <summary>
-        /// 从缓存中获取完整的交易，构建出完整的block
+        /// Get the complete transaction from cache, and build the complete block
         /// </summary>
-        /// <param name="cache">缓存的交易</param>
-        /// <returns>完整的block</returns>
+        /// <param name="cache">The cached transactions</param>
+        /// <returns>The complete block</returns>
         public Block GetBlock(DataCache<UInt256, TransactionState> cache)
         {
             return new Block
@@ -45,8 +59,11 @@ namespace Neo.Ledger
 
         private Header _header = null;
 
+        // <summary>
+        // 区块头
+        // </summary>
         /// <summary>
-        /// 区块头
+        /// The block header
         /// </summary>
         public Header Header
         {
@@ -70,16 +87,23 @@ namespace Neo.Ledger
             }
         }
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of storage
         /// </summary>
         public override int Size => base.Size + Hashes.GetVarSize();
 
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialization
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader"></param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -87,20 +111,35 @@ namespace Neo.Ledger
         }
 
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>StateVersion</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>Hashes</term>
+        // <description>交易hash列表</description>
+        // </item>
+        // </list> 
+        // </summary>
+        // <param name="writer">二进制输出流</param>
+        // 
         /// <summary>
-        /// 序列化
+        /// Serialization
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
-        /// <description>状态版本号</description>
+        /// <description>Versioin of state</description>
         /// </item>
         /// <item>
         /// <term>Hashes</term>
-        /// <description>交易hash列表</description>
+        /// <description>The hash list of transactions</description>
         /// </item>
         /// </list> 
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">The binary output writer</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
@@ -108,10 +147,14 @@ namespace Neo.Ledger
         }
 
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// The json object
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>The json Object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

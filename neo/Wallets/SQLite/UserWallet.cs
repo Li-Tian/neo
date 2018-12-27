@@ -681,11 +681,11 @@ namespace Neo.Wallets.SQLite
                 key.Value = value;
             }
         }
-        /// <summary>
-        /// 验证钱包密码
-        /// </summary>
-        /// <param name="password">用户输入的密码</param>
-        /// <returns>验证通过为true，失败为false</returns>
+        // <summary>
+        // 验证钱包密码
+        // </summary>
+        // <param name="password">用户输入的密码</param>
+        // <returns>验证通过为true，失败为false</returns>
         /// <summary>
         /// Verify wallet password
         /// </summary>

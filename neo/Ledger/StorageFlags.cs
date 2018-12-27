@@ -2,19 +2,28 @@
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 存储标记
+    // </summary>
     /// <summary>
-    /// 存储标记
+    /// The flag for storage
     /// </summary>
     [Flags]
     public enum StorageFlags : byte
     {
+        // <summary>
+        // 无特殊标记
+        // </summary>
         /// <summary>
-        /// 无特殊标记
+        /// No special flag
         /// </summary>
         None = 0,
 
+        // <summary>
+        // 常量（一次写入不可修改）
+        // </summary>
         /// <summary>
-        /// 常量（一次写入不可修改）
+        /// Constant flag
         /// </summary>
         Constant = 0x01
     }

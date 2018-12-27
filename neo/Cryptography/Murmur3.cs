@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 namespace Neo.Cryptography
 {
     /// <summary>
-    /// 实现Murmur3算法的类
+    /// Murmur3 algorithm class
     /// </summary>
     public sealed class Murmur3 : HashAlgorithm
     {
@@ -19,26 +19,39 @@ namespace Neo.Cryptography
         private readonly uint seed;
         private uint hash;
         private int length;
+        // <summary>
+        // 获得哈希值的长度。固定值32
+        // </summary>
         /// <summary>
-        /// 获得哈希值的长度。固定值32
+        /// Hash size。Fixed value is 32
         /// </summary>
         public override int HashSize => 32;
+        // <summary>
+        // 构造一个 Murmur3 对象
+        // </summary>
+        // <param name="seed">种子</param>
         /// <summary>
-        /// 构造一个 Murmur3 对象
+        /// build a Murmur3 object
         /// </summary>
-        /// <param name="seed">种子</param>
+        /// <param name="seed">seed</param>
         public Murmur3(uint seed)
         {
             this.seed = seed;
             Initialize();
         }
 
+        // <summary>
+        // Murmur3算法的计算部分（保留）
+        // </summary>
+        // <param name="array">被哈希的数据</param>
+        // <param name="ibStart">开始的字节位</param>
+        // <param name="cbSize">原数据中用来计算哈希的长度</param>
         /// <summary>
-        /// Murmur3算法的计算部分（保留）
+        /// Murmur3 algorithm core（reserved）
         /// </summary>
-        /// <param name="array">被哈希的数据</param>
-        /// <param name="ibStart">开始的字节位</param>
-        /// <param name="cbSize">原数据中用来计算哈希的长度</param>
+        /// <param name="array">array data</param>
+        /// <param name="ibStart">offset</param>
+        /// <param name="cbSize">count</param>
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
             length += cbSize;
@@ -70,10 +83,14 @@ namespace Neo.Cryptography
             }
         }
 
+        // <summary>
+        // 计算当前对象数据的哈希值
+        // </summary>
+        // <returns>计算过后的哈希值</returns>
         /// <summary>
-        /// 计算当前对象数据的哈希值
+        /// Calculate the hash  of the current object data
         /// </summary>
-        /// <returns>计算过后的哈希值</returns>
+        /// <returns>hash</returns>
         protected override byte[] HashFinal()
         {
             hash ^= (uint)length;
@@ -84,8 +101,11 @@ namespace Neo.Cryptography
             hash ^= hash >> 16;
             return BitConverter.GetBytes(hash);
         }
+        // <summary>
+        // 初始化。将hash设置为seed的值，将length设置为0
+        // </summary>
         /// <summary>
-        /// 初始化。将hash设置为seed的值，将length设置为0
+        /// Initialization.hash is set to seed,length is set to 0
         /// </summary>
         public override void Initialize()
         {

@@ -5,33 +5,53 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 过滤器加载的传输数据包
+    // </summary>
     /// <summary>
-    /// 过滤器加载的传输数据包
+    /// The payload which is loaded from filter
     /// </summary>
     public class FilterLoadPayload : ISerializable
     {
+        // <summary>
+        // 过滤器初始化的位阵列数据
+        // </summary>
         /// <summary>
-        /// 过滤器初始化的位阵列数据
+        /// The initial byteArray of filter
         /// </summary>
         public byte[] Filter;
+        // <summary>
+        // 互相独立的哈希函数的个数
+        // </summary>
         /// <summary>
-        /// 互相独立的哈希函数的个数
+        /// The number of independent hash functions
         /// </summary>
         public byte K;
+        // <summary>
+        // 微调参数
+        // </summary>
         /// <summary>
-        /// 微调参数
+        /// The tweak parameter
         /// </summary>
         public uint Tweak;
+        // <summary>
+        // 过滤器加载负载大小
+        // </summary>
         /// <summary>
-        /// 过滤器加载负载大小
+        /// The size of payload of filter
         /// </summary>
         public int Size => Filter.GetVarSize() + sizeof(byte) + sizeof(uint);
 
+        // <summary>
+        // 根据一个布隆过滤器创建对应的过滤器加载传输数据包
+        // </summary>
+        // <param name="filter">布隆过滤器</param>
+        // <returns>对应的过滤器加载的传输数据包</returns>
         /// <summary>
-        /// 根据一个布隆过滤器创建对应的过滤器加载传输数据包
+        /// The filtered playload which is load from the bloomfilter
         /// </summary>
-        /// <param name="filter">布隆过滤器</param>
-        /// <returns>对应的过滤器加载的传输数据包</returns>
+        /// <param name="filter">The bloomfilter</param>
+        /// <returns>The payload load from filter</returns>
         public static FilterLoadPayload Create(BloomFilter filter)
         {
             byte[] buffer = new byte[filter.M / 8];
@@ -43,10 +63,14 @@ namespace Neo.Network.P2P.Payloads
                 Tweak = filter.Tweak
             };
         }
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialization
         /// </summary>
-        /// <param name="reader">二进制输入</param>
+        /// <param name="reader">The binary input reader</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             Filter = reader.ReadVarBytes(36000);
@@ -54,10 +78,14 @@ namespace Neo.Network.P2P.Payloads
             if (K > 50) throw new FormatException();
             Tweak = reader.ReadUInt32();
         }
+        // <summary>
+        // 序列化
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
-        /// 序列化
+        /// Serialization
         /// </summary>
-        /// <param name="writer">二进制输出</param>
+        /// <param name="writer">The binary output writer</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.WriteVarBytes(Filter);

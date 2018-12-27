@@ -3,8 +3,11 @@ using System.Security.Cryptography;
 
 namespace Neo.Cryptography
 {
+    // <summary>
+    // SCrypt算法的实现类
+    // </summary>
     /// <summary>
-    /// SCrypt算法的实现类
+    /// SCrypt algorithm implement
     /// </summary>
     public static class SCrypt
     {
@@ -263,18 +266,41 @@ namespace Neo.Cryptography
             return Replicon.Cryptography.SCrypt.SCrypt.DeriveKey(password, salt, (ulong)N, (uint)r, (uint)p, (uint)derivedKeyLength);
         }
 #else
+        // <summary>
+        // 使用Scrypt算法生成一个key
+        // </summary>
+        // <param name="password">生成Scrypt key所需要的密码</param>
+        // <param name="salt">生成key算法要用的salt参数</param>
+        // <param name="N">算法Scrypt使用的参数N</param>
+        // <param name="r">算法Scrypt使用的参数r</param>
+        // <param name="p">算法Scrypt使用的参数p</param>
+        // <param name="derivedKeyLength">生成key的长度</param>
+        // <returns>生成的scrypt key</returns>
+        // <remarks>
+        // (*)从黄皮书复制相关内容。
+        // </remarks>
         /// <summary>
-        /// 使用Scrypt算法生成一个key
+        /// Use Scrypt algorithm to build a key
         /// </summary>
-        /// <param name="password">生成Scrypt key所需要的密码</param>
-        /// <param name="salt">生成key算法要用的salt参数</param>
-        /// <param name="N">算法Scrypt使用的参数N</param>
-        /// <param name="r">算法Scrypt使用的参数r</param>
-        /// <param name="p">算法Scrypt使用的参数p</param>
-        /// <param name="derivedKeyLength">生成key的长度</param>
-        /// <returns>生成的scrypt key</returns>
+        /// <param name="password">password</param>
+        /// <param name="salt">salt</param>
+        /// <param name="N">Parameter N</param>
+        /// <param name="r">Parameter r</param>
+        /// <param name="p">Parameter p</param>
+        /// <param name="derivedKeyLength">the length of key</param>
+        /// <returns>key</returns>
         /// <remarks>
-        /// (*)从黄皮书复制相关内容。
+        ///  Scrypt is a kind of secure-encryption algorithm based on PBKDF2-HMAC-SHA-256 algorithm. 
+        ///  It's developed by Colin Percival, a famous FreeBSD hacker, for his backup service Tarsnap. 
+        ///  Original designing intention is computing during CPU idle time to reduce CPU load and the 
+        ///  rely upon CPU computing. Scrypt's long computing time & heavy RAM cost makes parallel 
+        ///  computing very difficult, which results in Scrypt's decent defensibility against rainbow 
+        ///  table attacks.
+        ///  Neo mainly use SCRYPT algorithm to generate encryption secret key satisfying NEP-2 standard.
+        ///  Parameters are defined as follows:
+        /// N: CPU/RAM cost，usually 2 ^ N. Default value is 16384.
+        /// p: Parallelization parameter, a positive integer ranges from 1 to 255. Bigger value represents heavier rely upon concurrent computation.Default value is 8.
+        /// r: Block size，theoretically ranges from 1 to 255. Bigger value represents heavier rely upon RAM & bandwidth.Default value is 8.
         /// </remarks>
         public unsafe static byte[] DeriveKey(byte[] password, byte[] salt, int N, int r, int p, int derivedKeyLength)
         {

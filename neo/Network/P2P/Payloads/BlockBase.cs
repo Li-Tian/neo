@@ -269,10 +269,10 @@ namespace Neo.Network.P2P.Payloads
             ((IVerifiable)this).SerializeUnsigned(writer);
             writer.Write((byte)1); writer.Write(Witness);
         }
-        /// <summary>
-        /// 序列化（区块头）
-        /// </summary>
-        /// <param name="writer">二进制输出</param>
+        // <summary>
+        // 序列化（区块头）
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
         /// Serialize method（block header）
         /// </summary>

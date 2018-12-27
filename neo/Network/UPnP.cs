@@ -8,23 +8,37 @@ using System.Xml;
 
 namespace Neo.Network
 {
+    // <summary>
+    // UPnP（Universal Plug and Play）即插即用协议的实现
+    // </summary>
     /// <summary>
-    /// UPnP（Universal Plug and Play）即插即用协议的实现
+    /// UPnP（Universal Plug and Play）implementation
     /// </summary>
     public class UPnP
     {
         private static string _serviceUrl;
 
+        // <summary>
+        // Timeout的时间, 默认为3秒
+        // </summary>
         /// <summary>
-        /// Timeout的时间, 默认为3秒
+        /// Timeout time, default value is 3 second
         /// </summary>
         public static TimeSpan TimeOut { get; set; } = TimeSpan.FromSeconds(3);
 
+        // <summary>
+        // 发送查找消息. 根据Upnp协议多播消息来通知控制点, 然后通过响应的消息找出根设备的url 
+        // 通过此URL就可以找到根设备的描述信息，从根设备的描述信息中又可以得到设备的控制URL
+        // </summary>
+        // <returns>找到设备的控制URL则返回<c>true</c>, 如果超时没找到就返回<c>false</c></returns>
         /// <summary>
-        /// 发送查找消息. 根据Upnp协议多播消息来通知控制点, 然后通过响应的消息找出根设备的url 
-        /// 通过此URL就可以找到根设备的描述信息，从根设备的描述信息中又可以得到设备的控制URL
+        /// Send a lookup message. Notify the control point according to the Upnp protocol multicast message, 
+        /// and then find the url of the root device by responding to the message.
+        /// You can find the description information of the root device through this URL, 
+        /// and you can get the control URL of the device from the description information of the root device.
         /// </summary>
-        /// <returns>找到设备的控制URL则返回<c>true</c>, 如果超时没找到就返回<c>false</c></returns>
+        /// <returns>Find the control URL of the device and return <c>true</c>. 
+        /// If it is not found within a timeout time, return <c>false</c></returns>
         public static bool Discover()
         {
             using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
@@ -114,12 +128,18 @@ namespace Neo.Network
             return resp.Substring(0, n) + p;
         }
 
+        // <summary>
+        //通过SOAP协议发送指令进行端口映射
+        // </summary>
+        // <param name="port">端口号</param>
+        // <param name="protocol">协议类型</param>
+        // <param name="description">对该设备端口映射的描述</param>
         /// <summary>
-        ///通过SOAP协议发送指令进行端口映射
+        /// Sending instructions through the SOAP protocol for port mapping
         /// </summary>
-        /// <param name="port">端口号</param>
-        /// <param name="protocol">协议类型</param>
-        /// <param name="description">对该设备端口映射的描述</param>
+        /// <param name="port">port</param>
+        /// <param name="protocol">protocol</param>
+        /// <param name="description">description</param>
         public static void ForwardPort(int port, ProtocolType protocol, string description)
         {
             if (string.IsNullOrEmpty(_serviceUrl))
@@ -131,11 +151,16 @@ namespace Neo.Network
             "</NewPortMappingDescription><NewLeaseDuration>0</NewLeaseDuration></u:AddPortMapping>", "AddPortMapping");
         }
 
+        // <summary>
+        // 通过SOAP协议发送指令删除端口映射
+        // </summary>
+        // <param name="port">端口号</param>
+        // <param name="protocol">协议类型</param>
         /// <summary>
-        /// 通过SOAP协议发送指令删除端口映射
+        /// Sending instructions through the SOAP protocol to delete port mapping
         /// </summary>
-        /// <param name="port">端口号</param>
-        /// <param name="protocol">协议类型</param>
+        /// <param name="port">port</param>
+        /// <param name="protocol">protocol</param>
         public static void DeleteForwardingRule(int port, ProtocolType protocol)
         {
             if (string.IsNullOrEmpty(_serviceUrl))
@@ -149,10 +174,14 @@ namespace Neo.Network
             "</u:DeletePortMapping>", "DeletePortMapping");
         }
 
+        // <summary>
+        // 获取到映射的公网地址
+        // </summary>
+        // <returns>获取到的公网地址</returns>
         /// <summary>
-        /// 获取到映射的公网地址
+        /// Get the mapped public network address
         /// </summary>
-        /// <returns>获取到的公网地址</returns>
+        /// <returns>public network address</returns>
         public static IPAddress GetExternalIP()
         {
             if (string.IsNullOrEmpty(_serviceUrl))

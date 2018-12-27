@@ -29,8 +29,11 @@ using System.Threading.Tasks;
 
 namespace Neo.Network.RPC
 {
+    // <summary>
+    // RPC服务类
+    // </summary>
     /// <summary>
-    /// RPC服务类
+    /// RPC service class
     /// </summary>
     public sealed class RpcServer : IDisposable
     {
@@ -39,12 +42,19 @@ namespace Neo.Network.RPC
         private IWebHost host;
         private Fixed8 maxGasInvoke;
 
+        // <summary>
+        // 构造函数，创建一个RPC服务对象,设置所用的NeoSystem, 钱包, 和能够调用的最大Gas
+        // </summary>
+        // <param name="system">所使用的Neo系统实例</param>
+        // <param name="wallet">钱包引用</param>
+        // <param name="maxGasInvoke">最大能够调用的Gas</param>
         /// <summary>
-        /// 构造函数，创建一个RPC服务对象,设置所用的NeoSystem, 钱包, 和能够调用的最大Gas
+        /// constructor，create a RpcServer object.
+        /// Set the NeoSystem, wallet, and max Gas that can be invoked
         /// </summary>
-        /// <param name="system">所使用的Neo系统实例</param>
-        /// <param name="wallet">钱包引用</param>
-        /// <param name="maxGasInvoke">最大能够调用的Gas</param>
+        /// <param name="system">NeoSystem</param>
+        /// <param name="wallet">wallet</param>
+        /// <param name="maxGasInvoke">max GAS that could be invoked</param>
         public RpcServer(NeoSystem system, Wallet wallet = null, Fixed8 maxGasInvoke = default(Fixed8))
         {
             this.system = system;
@@ -71,8 +81,11 @@ namespace Neo.Network.RPC
             return response;
         }
 
+        // <summary>
+        //  回收函数，释放RpcServer中的IWebHost
+        // </summary>
         /// <summary>
-        ///  回收函数，释放RpcServer中的IWebHost
+        ///  Dispose method，release IWebHost in RpcServer
         /// </summary>
         public void Dispose()
         {
@@ -143,10 +156,14 @@ namespace Neo.Network.RPC
             }
         }
 
+        // <summary>
+        // 打开指定钱包
+        // </summary>
+        // <param name="wallet">指定钱包</param>
         /// <summary>
-        /// 打开指定钱包
+        /// open specified wallet
         /// </summary>
-        /// <param name="wallet">指定钱包</param>
+        /// <param name="wallet">specified wallet</param>
         public void OpenWallet(Wallet wallet)
         {
             this.wallet = wallet;
@@ -675,14 +692,22 @@ namespace Neo.Network.RPC
             return response;
         }
 
+        // <summary>
+        // 启动一个RPC服务, 绑定相应的ip和端口和SSl证书.
+        // </summary>
+        // <param name="bindAddress">RPC服务监听的地址</param>
+        // <param name="port">端口号</param>
+        // <param name="sslCert">ssl证书</param>
+        // <param name="password">用来访问SSL证书的密码</param>
+        // <param name="trustedAuthorities">可信任的机构</param>
         /// <summary>
-        /// 启动一个RPC服务, 绑定相应的ip和端口和SSl证书.
+        /// Start an RPC service, bind the corresponding ip and port and SSL certificate.
         /// </summary>
-        /// <param name="bindAddress">RPC服务监听的地址</param>
-        /// <param name="port">端口号</param>
-        /// <param name="sslCert">ssl证书</param>
-        /// <param name="password">用来访问SSL证书的密码</param>
-        /// <param name="trustedAuthorities">可信任的机构</param>
+        /// <param name="bindAddress">bind address</param>
+        /// <param name="port">port</param>
+        /// <param name="sslCert">SSL certificate</param>
+        /// <param name="password">SSL certificate password</param>
+        /// <param name="trustedAuthorities">trusted list</param>
         public void Start(IPAddress bindAddress, int port, string sslCert = null, string password = null, string[] trustedAuthorities = null)
         {
             host = new WebHostBuilder().UseKestrel(options => options.Listen(bindAddress, port, listenOptions =>

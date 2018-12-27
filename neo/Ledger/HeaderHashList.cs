@@ -5,24 +5,37 @@ using System.Linq;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 批量存放区块头信息
+    // </summary>
     /// <summary>
-    /// 批量存放区块头信息
+    /// Store the block headers information in a list
     /// </summary>
     public class HeaderHashList : StateBase, ICloneable<HeaderHashList>
     {
+        // <summary>
+        // 区块头hash列表，单次最多2000条
+        // </summary>
         /// <summary>
-        /// 区块头hash列表，单次最多2000条
+        /// THe hash list of block headers,
         /// </summary>
         public UInt256[] Hashes;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of this object for storage
         /// </summary>
         public override int Size => base.Size + Hashes.GetVarSize();
+        // <summary>
+        // 克隆
+        // </summary>
+        // <returns>克隆对象</returns>
         /// <summary>
-        /// 克隆
+        /// The clone method
         /// </summary>
-        /// <returns>克隆对象</returns>
+        /// <returns>The clone target</returns>
         HeaderHashList ICloneable<HeaderHashList>.Clone()
         {
             return new HeaderHashList
@@ -31,48 +44,75 @@ namespace Neo.Ledger
             };
         }
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化
+        /// Deserilization
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">The binary reader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
             Hashes = reader.ReadSerializableArray<UInt256>();
         }
+
+        // <summary>
+        // 从副本复制
+        // </summary>
+        // <param name="replica">副本对象</param>
         /// <summary>
-        /// 从副本复制
+        /// Copy from the replication
         /// </summary>
-        /// <param name="replica">副本对象</param>
+        /// <param name="replica">The replication of HeaderHashList</param>
         void ICloneable<HeaderHashList>.FromReplica(HeaderHashList replica)
         {
             Hashes = replica.Hashes;
         }
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>StateVersion</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>Hashes</term>
+        // <description>区块头hash列表</description>
+        // </item>
+        // </list> 
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化
+        /// Serialization
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
-        /// <description>状态版本号</description>
+        /// <description>The version of state</description>
         /// </item>
         /// <item>
         /// <term>Hashes</term>
-        /// <description>区块头hash列表</description>
+        /// <description>The list of hash headers</description>
         /// </item>
         /// </list> 
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">The binary output</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
             writer.Write(Hashes);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns></returns>
         /// <summary>
-        /// 转成json对象
+        /// Transfer this object to a json object
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The json object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

@@ -4,29 +4,46 @@ using System.IO;
 namespace Neo.Ledger
 {
 
+    // <summary>
+    // 合约存储项目的数据结构
+    // </summary>
     /// <summary>
-    /// 合约存储项目的数据结构
+    /// The data structure of contract item
     /// </summary>
     public class StorageItem : StateBase, ICloneable<StorageItem>
     {
+        // <summary>
+        // 存储的具体值
+        // </summary>
         /// <summary>
-        /// 存储的具体值
+        /// The value of this item
         /// </summary>
         public byte[] Value;
 
+        // <summary>
+        // 是否是常量
+        // </summary>
         /// <summary>
-        /// 是否是常量
+        /// Is it constant
         /// </summary>
         public bool IsConstant;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of storage of this item
         /// </summary>
         public override int Size => base.Size + Value.GetVarSize() + sizeof(bool);
+
+        // <summary>
+        // 克隆
+        // </summary>
+        // <returns>克隆对象</returns>
         /// <summary>
-        /// 克隆
+        /// The clone method
         /// </summary>
-        /// <returns>克隆对象</returns>
+        /// <returns>The clone target</returns>
         StorageItem ICloneable<StorageItem>.Clone()
         {
             return new StorageItem
@@ -37,44 +54,70 @@ namespace Neo.Ledger
         }
 
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialization
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">The binary input reader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
             Value = reader.ReadVarBytes();
             IsConstant = reader.ReadBoolean();
         }
+        // <summary>
+        // 从副本复制
+        // </summary>
+        // <param name="replica">副本</param>
         /// <summary>
-        /// 从副本复制
+        /// Copy method which copy from replication
         /// </summary>
-        /// <param name="replica">副本</param>
+        /// <param name="replica">The replication</param>
         void ICloneable<StorageItem>.FromReplica(StorageItem replica)
         {
             Value = replica.Value;
             IsConstant = replica.IsConstant;
         }
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>StateVersion</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>Value</term>
+        // <description>存储的具体值</description>
+        // </item>
+        // <item>
+        // <term>IsConstant</term>
+        // <description>是否是常量</description>
+        // </item>
+        // </list> 
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化
+        /// The serialization
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
-        /// <description>状态版本号</description>
+        /// <description>The version of state</description>
         /// </item>
         /// <item>
         /// <term>Value</term>
-        /// <description>存储的具体值</description>
+        /// <description>The value of storage item</description>
         /// </item>
         /// <item>
         /// <term>IsConstant</term>
-        /// <description>是否是常量</description>
+        /// <description>Is this constant</description>
         /// </item>
         /// </list> 
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">The binary output writer</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
