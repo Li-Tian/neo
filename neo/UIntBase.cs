@@ -293,16 +293,16 @@ namespace Neo
             return left.Equals(right);
         }
 
-        /// <summary>
-        ///  <c>!=</c>操作符,比较两个UintBase对象是否不相等
-        /// </summary>
-        /// <param name="left">第一个UintBase对象</param>
-        /// <param name="right">第二个UintBase对象</param>
-        /// <returns>
-        /// 如果两个UIntBase对象引用一个对象，则返回<c>false</c>.
-        /// 如果两个对象中其中一个指向<c>null</c>,则返回<c>true</c>.
-        /// 如果两个UIntBase数值不相等则返回<c>true</c>,否则返回<c>false</c>
-        /// </returns>
+        // <summary>
+        //  <c>!=</c>操作符,比较两个UintBase对象是否不相等
+        // </summary>
+        // <param name="left">第一个UintBase对象</param>
+        // <param name="right">第二个UintBase对象</param>
+        // <returns>
+        // 如果两个UIntBase对象引用一个对象，则返回<c>false</c>.
+        // 如果两个对象中其中一个指向<c>null</c>,则返回<c>true</c>.
+        // 如果两个UIntBase数值不相等则返回<c>true</c>,否则返回<c>false</c>
+        // </returns>
         /// <summary>
         /// Operator != returns true if left UIntBase is not equals to right UIntBase
         /// Example: UIntBase(02ff00ff00ff00ff00ff00ff00ff00ff00ff00a3) != UIntBase(01ff00ff00ff00ff00ff00ff00ff00ff00ff00a4) is true

@@ -290,6 +290,14 @@ namespace Neo.Cryptography
         /// <param name="derivedKeyLength">the length of key</param>
         /// <returns>key</returns>
         /// <remarks>
+        ///  Scrypt is a kind of secure-encryption algorithm based on PBKDF2-HMAC-SHA-256 algorithm. 
+        ///  It's developed by Colin Percival, a famous FreeBSD hacker, for his backup service Tarsnap. 
+        ///  Original designing intention is computing during CPU idle time to reduce CPU load and the 
+        ///  rely upon CPU computing. Scrypt's long computing time & heavy RAM cost makes parallel 
+        ///  computing very difficult, which results in Scrypt's decent defensibility against rainbow 
+        ///  table attacks.
+        ///  Neo mainly use SCRYPT algorithm to generate encryption secret key satisfying NEP-2 standard.
+        ///  Parameters are defined as follows:
         /// N: CPU/RAM cost，usually 2 ^ N. Default value is 16384.
         /// p: Parallelization parameter, a positive integer ranges from 1 to 255. Bigger value represents heavier rely upon concurrent computation.Default value is 8.
         /// r: Block size，theoretically ranges from 1 to 255. Bigger value represents heavier rely upon RAM & bandwidth.Default value is 8.

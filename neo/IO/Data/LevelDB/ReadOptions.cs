@@ -2,19 +2,28 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    // <summary>
+    // 读选项
+    // </summary>
     /// <summary>
-    /// 读选项
+    /// Read Options
     /// </summary>
     public class ReadOptions
     {
+        // <summary>
+        // 默认读选项
+        // </summary>
         /// <summary>
-        /// 默认读选项
+        /// Default ReadOptions
         /// </summary>
         public static readonly ReadOptions Default = new ReadOptions();
         internal readonly IntPtr handle = Native.leveldb_readoptions_create();
 
+        // <summary>
+        // 是否进行校验
+        // </summary>
         /// <summary>
-        /// 是否进行校验
+        /// Whether to check
         /// </summary>
         public bool VerifyChecksums
         {
@@ -24,8 +33,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 是否将读取的内容存放到缓存
+        // </summary>
         /// <summary>
-        /// 是否将读取的内容存放到缓存
+        /// Whether to store the read content in the cache
         /// </summary>
         public bool FillCache
         {
@@ -35,8 +47,11 @@ namespace Neo.IO.Data.LevelDB
             }
         }
 
+        // <summary>
+        // 设置从本快照读取
+        // </summary>
         /// <summary>
-        /// 设置从本快照读取
+        /// Set to read from this snapshot
         /// </summary>
         public Snapshot Snapshot
         {
@@ -45,8 +60,11 @@ namespace Neo.IO.Data.LevelDB
                 Native.leveldb_readoptions_set_snapshot(handle, value.handle);
             }
         }
+        // <summary>
+        // 析构函数。将关闭leveldb的句柄。
+        // </summary>
         /// <summary>
-        /// 析构函数。将关闭leveldb的句柄。
+        /// Destructor. The handle of leveldb will be closed.
         /// </summary>
         ~ReadOptions()
         {

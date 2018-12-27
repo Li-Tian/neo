@@ -66,16 +66,18 @@ When consensus message enters the P2P network, it's broadcasted and transmitted 
 [![consensus_msg_seq](../../images/consensus/consensus_msg_seq.jpg)](../../images/consensus/consensus_msg_seq.jpg)
 
 
+  1. Consensus node A will directly broadcast 'consensus' message to connected nodes(e.g. node B).
 
-  1. Before send `consensus` message, send `inv` message attached with `consensus.payload.hash` first. 
+  2. After receiving the `consensus` message, node B firstly process the received consensus message and then forwards it. Before forwarding the consensus message, it sends an `inv` message which carries the hash data of the `payload` of the `consensus` message (to node C).
 
-  2. If a node has received thee hash corresponding data, or has repeatedly acquiredd the `inv` message in a short time, it will not process it. Otherwise, goto step 3).
+  3. If the node C has already received the data corresponding to the hash, or has repeatedly obtained the same `inv` message within a short period of time, it does not process the message; otherwise, it proceeds to step 4.
 
-  3. Broadcast `getdata` message attached with the hash in the `inv` message.
+  4. C broadcasts the `getdata` message to the outside, with the hash data in the `inv` message.
 
-  4. The consensus node send `consensus` message to it, after receiving `getdata` message.
+  5. After receiving the `getdata` message, node B sends a `consenus` message to node C.
 
-  5. After receiving the `consensus` message, the node triggers the consensus module to process the message.
+  6. After receiving the `consensus` message, the node C triggers the consensus module to process the message, and forwards the consensus message, and then returns to step 2.
+
 
 
 ### Inv message format

@@ -2,8 +2,11 @@
 
 namespace Neo.IO.Data.LevelDB
 {
+    // <summary>
+    // 快照
+    // </summary>
     /// <summary>
-    /// 快照
+    /// Snapshot
     /// </summary>
     public class Snapshot : IDisposable
     {
@@ -16,8 +19,11 @@ namespace Neo.IO.Data.LevelDB
         }
 
 
+        // <summary>
+        // 释放快照资源
+        // </summary>
         /// <summary>
-        /// 释放快照资源
+        /// Release snapshot resources
         /// </summary>
         public void Dispose()
         {

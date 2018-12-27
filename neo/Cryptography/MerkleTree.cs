@@ -105,6 +105,7 @@ namespace Neo.Cryptography
             return hashes.ToArray();
         }
 
+<<<<<<< HEAD
         // <summary> 
         // 根据标志位修剪梅克尔树。flags为所有叶节点的标志位。从叶子节点向上检测。<br/> 
         // 1.对所有高度为2的节点，如果其左子节点和右子节点的标志位都为false,将该节点的左子节点和右子节点置为null。检测完成后进入第二步；<br/> 

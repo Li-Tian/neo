@@ -94,7 +94,7 @@ namespace Neo.Wallets
         /// Determine if KeyPair object and another object are equal
         /// </summary>
         /// <param name="obj">another object</param>
-        /// If KeyPair object and another object are equal,return <c>true</c>Otherwise,return <c>false</c></returns>
+        /// <returns>If KeyPair object and another object are equal, return <c>true</c>Otherwise,return <c>false</c></returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as KeyPair);
