@@ -15,7 +15,7 @@ namespace Neo
     // Neo的工具类
     // </summary>
     /// <summary>
-    /// A Neo tool class
+    /// A Neo helper class
     /// </summary>
     public static class Helper
     {
