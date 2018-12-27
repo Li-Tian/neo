@@ -164,7 +164,7 @@ namespace Neo.IO.Data.LevelDB
         /// </remarks>
         /// <param name="options">写选项</param>
         /// <param name="write_batch">批量写</param>
-        /// <exception cref="LevelDBException">5此重试之后如果仍然失败则抛出异常</exception>
+        /// <exception cref="LevelDBException">5次重试之后如果仍然失败则抛出异常</exception>
         public void Write(WriteOptions options, WriteBatch write_batch)
         {
             // There's a bug in .Net Core.

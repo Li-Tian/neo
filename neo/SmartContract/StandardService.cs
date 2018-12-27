@@ -145,7 +145,7 @@ namespace Neo.SmartContract
         /// 如果 method不为4个字节，则当作字符串查找其哈希值前32位uint，再查询其方法。
         /// </param>
         /// <param name="engine">执行引擎</param>
-        /// <returns></returns>
+        /// <returns>执行该方法</returns>
         bool IInteropService.Invoke(byte[] method, ExecutionEngine engine)
         {
             uint hash = method.Length == 4

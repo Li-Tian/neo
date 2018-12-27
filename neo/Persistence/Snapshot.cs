@@ -11,7 +11,7 @@ using System.Linq;
 namespace Neo.Persistence
 {
     /// <summary>
-    /// 快照(*)TODO 使用see标签引用说明
+    /// 快照
     /// </summary>
     public abstract class Snapshot : IDisposable, IPersistence, IScriptTable
     {

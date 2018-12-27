@@ -1076,7 +1076,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="script">待加载脚本</param>
         /// <param name="rvcount">调用RET指令时指定需要保留的栈元素数量</param>
-        /// <returns>生成分的运行上下文</returns>
+        /// <returns>生成的运行上下文</returns>
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
             ExecutionContext context = new ExecutionContext(this, script, rvcount);

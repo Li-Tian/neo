@@ -168,7 +168,7 @@ namespace Neo.Plugins
         /// 发送消息给插件
         /// </summary>
         /// <param name="message">消息</param>
-        /// <returns></returns>
+        /// <returns>如果有插件处理此消息，则返回true,否则返回false</returns>
         public static bool SendMessage(object message)
         {
             foreach (Plugin plugin in Plugins)

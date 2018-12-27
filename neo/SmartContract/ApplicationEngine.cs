@@ -629,7 +629,7 @@ namespace Neo.SmartContract
         /// <param name="persistingBlock">可选参数，合约执行时区块链当前生成的区块，主要用于获取合约执行的时间戳</param>
         /// <param name="testMode">是否为测试模式</param>
         /// <param name="extraGAS">除去免费额度外所需要的Gas数量</param>
-        /// <returns></returns>
+        /// <returns>返回一个执行完成的引擎实例</returns>
         public static ApplicationEngine Run(byte[] script, IScriptContainer container = null, Block persistingBlock = null, bool testMode = false, Fixed8 extraGAS = default(Fixed8))
         {
             using (Snapshot snapshot = Blockchain.Singleton.GetSnapshot())
