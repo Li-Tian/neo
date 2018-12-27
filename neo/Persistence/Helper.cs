@@ -146,19 +146,18 @@ namespace Neo.Persistence
             return persistence.Blocks.TryGet(hash)?.TrimmedBlock.Header;
         }
 
-        /// <summary>
-        /// 获取下一个区块的哈希
-        /// </summary>
-        /// <param name="persistence">持久化器</param>
-        /// <param name="hash">待查询的区块hash</param>
-        /// <returns>下一个区块的哈希。不存在时返回null</returns>
+        // <summary>
+        // 获取下一个区块的哈希
+        // </summary>
+        // <param name="persistence">持久化器</param>
+        // <param name="hash">待查询的区块hash</param>
+        // <returns>下一个区块的哈希。不存在时返回null</returns>
         /// <summary>
         /// get next block hash
         /// </summary>
         /// <param name="persistence">persistence</param>
         /// <param name="hash">current block hash</param>
         /// <returns>next block hash.Return null if it does not exist</returns>
-
         public static UInt256 GetNextBlockHash(this IPersistence persistence, UInt256 hash)
         {
             BlockState state = persistence.Blocks.TryGet(hash);

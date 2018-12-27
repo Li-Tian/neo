@@ -7,13 +7,19 @@ using System.Reflection;
 
 namespace Neo.Plugins
 {
+    // <summary>
+    // 抽象类插件
+    // </summary>
     /// <summary>
-    /// 抽象类插件
+    /// Abstract Plugin class
     /// </summary>
     public abstract class Plugin
     {
+        // <summary>
+        // 插件集合
+        // </summary>
         /// <summary>
-        /// 插件集合
+        /// Plugin list
         /// </summary>
         public static readonly List<Plugin> Plugins = new List<Plugin>();
         private static readonly List<ILogPlugin> Loggers = new List<ILogPlugin>();
@@ -23,25 +29,40 @@ namespace Neo.Plugins
 
         private static readonly string pluginsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Plugins");
         private static readonly FileSystemWatcher configWatcher;
+        // <summary>
+        // NeoSystem对象
+        // </summary>
         /// <summary>
-        /// NeoSystem对象
+        /// NeoSystem object
         /// </summary>
         protected static NeoSystem System { get; private set; }
 
+        // <summary>
+        // 插件名字
+        // </summary>
         /// <summary>
-        /// 插件名字
+        /// Plugin name
         /// </summary>
         public virtual string Name => GetType().Name;
+        // <summary>
+        // 插件版本
+        // </summary>
         /// <summary>
-        /// 插件版本
+        /// Plugin version
         /// </summary>
         public virtual Version Version => GetType().Assembly.GetName().Version;
+        // <summary>
+        // 获取配置文件的路径
+        // </summary>
         /// <summary>
-        /// 获取配置文件的路径
+        /// Path to the configuration file
         /// </summary>
         public virtual string ConfigFile => Path.Combine(pluginsPath, GetType().Assembly.GetName().Name, "config.json");
+        // <summary>
+        // 静态的初始化模块
+        // </summary>
         /// <summary>
-        /// 静态的初始化模块
+        /// Static initialization module
         /// </summary>
         static Plugin()
         {
@@ -58,9 +79,13 @@ namespace Neo.Plugins
             }
         }
 
+        // <summary>
+        // 构造函数：创建插件。
+        // 每生成一个插件的实例，就会将其添加到对应的插件列表里。
+        // </summary>
         /// <summary>
-        /// 构造函数：创建插件。
-        /// 每生成一个插件的实例，就会将其添加到对应的插件列表里。
+        /// Constructor: Create a plugin.
+        /// Each time an instance of a plugin is generated, it is added to the corresponding plugin list.
         /// </summary>
         protected Plugin()
         {
@@ -75,11 +100,16 @@ namespace Neo.Plugins
         }
 
 
+        // <summary>
+        // 交易过滤策略。
+        // </summary>
+        // <param name="tx">交易</param>
+        // <returns>返回true则将交易添加到内存池并转发，返回false则抛弃交易</returns>
         /// <summary>
-        /// 交易过滤策略。
+        /// Transaction filtering policy.
         /// </summary>
-        /// <param name="tx">交易</param>
-        /// <returns>返回true则将交易添加到内存池并转发，返回false则抛弃交易</returns>
+        /// <param name="tx">Transaction</param>
+        /// <returns>A return of true adds the transaction to the memory pool and forwards it to other nodes, while a return of false discards it</returns>
         public static bool CheckPolicy(Transaction tx)
         {
             foreach (IPolicyPlugin plugin in Policies)
@@ -87,8 +117,11 @@ namespace Neo.Plugins
                     return false;
             return true;
         }
+        // <summary>
+        // 初始化配置
+        // </summary>
         /// <summary>
-        /// 初始化配置
+        /// Initial configuration
         /// </summary>
         public abstract void Configure();
 
@@ -105,10 +138,14 @@ namespace Neo.Plugins
             }
         }
 
+        // <summary>
+        // 获取插件配置
+        // </summary>
+        // <returns>插件的配置</returns>
         /// <summary>
-        /// 获取插件配置
+        /// Get plugin configuration
         /// </summary>
-        /// <returns>插件的配置</returns>
+        /// <returns>Plugin configuration</returns>
         protected IConfigurationSection GetConfiguration()
         {
             return new ConfigurationBuilder().AddJsonFile(ConfigFile, optional: true).Build().GetSection("PluginConfiguration");
@@ -135,40 +172,61 @@ namespace Neo.Plugins
                 }
             }
         }
+        // <summary>
+        // 输出日志
+        // </summary>
+        // <param name="message">日志消息</param>
+        // <param name="level">日志级别</param>
         /// <summary>
-        /// 输出日志
+        /// Output log
         /// </summary>
-        /// <param name="message">日志消息</param>
-        /// <param name="level">日志级别</param>
+        /// <param name="message">Log message</param>
+        /// <param name="level">Log level</param>
         protected void Log(string message, LogLevel level = LogLevel.Info)
         {
             Log($"{nameof(Plugin)}:{Name}", level, message);
         }
 
+        // <summary>
+        // 日志记录
+        // </summary>
+        // <param name="source">日志源</param>
+        // <param name="level">日志级别</param>
+        // <param name="message">日志消息</param>
         /// <summary>
-        /// 日志记录
+        /// Log
         /// </summary>
-        /// <param name="source">日志源</param>
-        /// <param name="level">日志级别</param>
-        /// <param name="message">日志消息</param>
+        /// <param name="source">Log source</param>
+        /// <param name="level">Log level</param>
+        /// <param name="message">Log message</param>
         public static void Log(string source, LogLevel level, string message)
         {
             foreach (ILogPlugin plugin in Loggers)
                 plugin.Log(source, level, message);
         }
 
+        // <summary>
+        // 消息处理
+        // </summary>
+        // <param name="message">消息</param>
+        // <returns>默认返回false</returns>
         /// <summary>
-        /// 消息处理
+        /// Message processing
         /// </summary>
-        /// <param name="message">消息</param>
-        /// <returns>默认返回false</returns>
+        /// <param name="message">Message</param>
+        /// <returns>Return false by default</returns>
         protected virtual bool OnMessage(object message) => false;
 
+        // <summary>
+        // 发送消息给插件
+        // </summary>
+        // <param name="message">消息</param>
+        // <returns>如果有插件处理此消息，则返回true,否则返回false.</returns>
         /// <summary>
-        /// 发送消息给插件
+        /// Send a message to the plugin
         /// </summary>
-        /// <param name="message">消息</param>
-        /// <returns></returns>
+        /// <param name="message">Message</param>
+        /// <returns>Returns true if there is a plugin that handles this message, otherwise returns false.</returns>
         public static bool SendMessage(object message)
         {
             foreach (Plugin plugin in Plugins)
