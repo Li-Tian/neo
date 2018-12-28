@@ -2,7 +2,7 @@
 
 ## ECC Algorithm
 
-​　Elliptic Curve Cryptography (ECC) algorithm is a kind of asymmetric cryptography algorithm. With the irreversible feature of K=k*G process (K: public key, G: base point (constant)), violent cracking private key can be prevented. With the same length of secret key, ECC has higher security level & saves computing power compared to other cryptography algorithms such as RSA. ECC combined with other algorithms, is widely used in signing fields, i.e. ECDSA digital signature.
+​　Elliptic Curve Cryptography (ECC) algorithm is a kind of asymmetric cryptography algorithm. With the irreversible feature of K=k*G process (K: public key, G: base point (constant)), it can prevent solving private key from public key by brutal force. With the same length of secret key, ECC has higher security level and saves computing power compared to other cryptography algorithms such as RSA. ECC combined with other algorithms, is widely used in signing fields, i.e. ECDSA digital signature.
 
 　Same as Bitcoin, NEO adopts ECC as public key generating algorithm. NEO defines a special secp256r1-standard elliptic curve with parameters:
 
@@ -33,7 +33,7 @@ Scenarios:
 
 1. Generating public key with private key
 
-2. Signing & signature verification
+2. Signing and signature verification
 
 Reference：
 
@@ -50,7 +50,7 @@ Brief steps are as follows:
 
 Signing procedure:
 
-   1. Select random number r & compute point r·G(x, y).
+   1. Select random number r and compute point r·G(x, y).
 
    2. Compute s = (h + k·x)/r according to random number r, message M's hash value h, private key k.
     

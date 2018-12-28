@@ -2,11 +2,11 @@
 
 ##  Base58
 
-　Base58 is a kind of encoding/decoding algorithm used to switch data between unvisualizable / visualizable format(ASCII). Base58 enables data compressing, easy reading, and is suitable for Infrastructure encoding mechanism of anti-automatic monitoring transmission system. Nevertheless, lack of checking mechanism induce the defect of disability to check string omit in transmission process. Thus Base58Check, an improved algorithm is needed to cooperate.
+　Base58 is a group of encoding/decoding schemes used to switch data between binary format(hexdecimal) and alphanumeric text format(ASCII). Base58 enables data compressing, is easy to identify, and is suitable for constructing encoding mechanism of transmission system that is anti-auto-monitoring. However, for the lack of verification, it can not detect error during transmission. Thus Base58Check, an improved scheme is required.
 
-　There are 58 letters in base58's alphabet including single digit numbers (From 1 to 9), English letters except O(capitalized o) / I(capitalized i) / l(lower-cased L). This letters are ommited to avoid misreading.
+　The base58's alphabet includes single digit numbers (From 1 to 9), and English letters except O(capitalized o) / I(capitalized i) / l(lower-cased L). These letters are ommited to avoid misreading.
 
-　Neo's alphabet is as follows: **123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz**
+　Neo's base58 alphabet is as follows: **123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz**
 
 Interface definition：
 
@@ -36,9 +36,9 @@ byte[] Decode(string input)
 
 **Decoding Steps**：
 
-1.  Invert input string and convert it into Biginteger format according to Base58 alphabet.
+1.  Invert input string and convert it into BigInteger format according to Base58 alphabet.
 
-2.  Convert from Biginteger format to byte[] format and then reverse the order to big endian.
+2.  Convert from BigInteger format to byte[] format and then reverse the order to big endian.
 
 3.  If byte[] format data's length is more than 1 & byte[0] = 0 & byte[1] >= 0x80, start from byte[1], otherwise start from byte[0] to get the decoded result.
 
@@ -67,16 +67,16 @@ Interface definition:
 string Base58CheckEncode(byte[] input)
 ```
 
-2.  Decoding method：decode checkable Bse58 string data into byte array format.
+2.  Decoding method：decode checkable Base58 string data into byte array format.
 
 ```c#
 byte[] Base58CheckDecode(string input)
 ```
 **Encoding Steps**:
 
-1.  Encode input byte array twice with Sha256 algorithm. Take the first 4 bytes of result hash as version prefix checksum and append it to the end of original byte array.
+1.  Encode input byte array twice with Sha256 to get a hashed byte array. Take the first 4 bytes of the hash as checksum and append it to the end of original byte array.
 
-2.  Base58-encode the byte array with version prefix to get corresponding encoded result.
+2.  Base58-encode the byte array including checksum to get corresponding encoded result.
 
 **Decoding Steps**:
 
@@ -84,7 +84,7 @@ byte[] Base58CheckDecode(string input)
 
 2.  Take the content of byte array except the last 4 bytes as data.
 
-3.  Encode data twice with Sha256 algorithm and check whether the first 4 bytes are the same with the last 4 bytes in byte array of step 1. If so return the decoded data, otherwise regard data as illegal.
+3.  Encode data twice with Sha256 to get a hashed byte array. Check whether the first 4 bytes of the hashed value are identical with the last 4 bytes in byte array of step 1. If so the decoded data is correct. Otherwise the data is corrupted.
 
 [![Base58Check Encoding & Decoding](../../images/blockchain_paradigm/Base58CheckEncodeAndDecode-en.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/20)](../../images/blockchain_paradigm/Base58CheckEncodeAndDecode.png)
 
@@ -97,7 +97,7 @@ Example:
 
 Scenarios：
 
-1. Import / export wif format secret key
+1. Import / export WIF format secret key
 
 2. Switch between contract script hash and address
 

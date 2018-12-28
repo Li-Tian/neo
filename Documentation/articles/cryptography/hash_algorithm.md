@@ -4,7 +4,7 @@
 
 ### RIPEMD160 
 
-​　RIPEMD is an encryption hash function published by Hans Dobbertin, Antoon Bosselaers Bart Prenee from COSIC research team, University of Leuven in 1996.
+​　RIPEMD is a cryptographic hash function published by Hans Dobbertin, Antoon Bosselaers Bart Prenee from COSIC research team, University of Leuven in 1996.
 
 　RIPEMD160 is a 160-bit improvement based on RIPEMD. This algorithm produces a 160-bit hash, which can be presented in hexadecimal format. One feature of this algorithm is avalanche effect, i.e. any slight changes can result in a totally different hash value.
 
@@ -19,15 +19,15 @@ Example:
 
 Scenarios：
 
-1. Generate contract hash.
+1. To generate contract hash.
 
 
 
 ### SHA256 
 
-　SHA256 is a kind of SHA-2 algorithm. SHA-2 is an encryption hash function algorithm standard produced by NSA. It belongs to SHA family & is a successor of SHA-1. SHA-2 has 6 different algorithm standards, including SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224 and SHA-512/256.
+　SHA256 is a kind of SHA-2 algorithm. SHA-2 is a cryptographic hash function algorithm standard produced by NSA. It belongs to SHA family. It is a successor of SHA-1. SHA-2 has 6 different algorithm standards, including SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224 and SHA-512/256.
 
-　SHA256 produces a 256-bit hash, which can be shown in hexadecimal format, for ang message length.
+　For any length of message, SHA256 will generate a 256-bit hash value (can be represented by a hex string)
 
 Example:
 
@@ -49,7 +49,7 @@ Scenarios:
 
 ### Murmur3 
 
-　  Murmur is kind of non-encryption hash algorithm and suits general hash indexing. It is proposed by Austin Appleby in 2008. These has been several derived variants published to public domain. Murmur's random distribution feature works better for key with strong regularity compared to other popular hash algorithms.
+　  Murmur is kind of non-cryptographic hash algorithm and suits general hash indexing. It is proposed by Austin Appleby in 2008. Later several derived variants are released. Compared with other popular hash functions, Murmur's random distribution features perform better for regular keys.
 
 Features：
 
@@ -74,11 +74,14 @@ Scenarios：
 
 ### Scrypt
 
-　  Scrypt is a kind of secure-encryption algorithm based on PBKDF2-HMAC-SHA-256 algorithm. It's developed by Colin Percival, a famous FreeBSD hacker, for his backup service Tarsnap. Original designing intention is computing during CPU idle time to reduce CPU load and the rely upon CPU computing. Scrypt's long computing time & heavy RAM cost makes parallel computing very difficult, which results in Scrypt's decent defensibility against rainbow table attacks.
+　  Scrypt is a kind of secure-cryptographic algorithm based on PBKDF2-HMAC-SHA-256 algorithm. It's developed by Colin Percival, a famous FreeBSD hacker, for his backup service Tarsnap.
+The original design was to reduce CPU load, minimize CPU reliance, and use CPU idle time for calculations.
+Therefore, scrypt not only takes a long time to calculate, but also consumes a lot of memory, making it difficult to calculate multiple digests in parallel.
+Therefore it is more difficult to use the rainbow table for brutal-force-attacks.
 
 ​　Neo mainly use SCRYPT algorithm to generate encryption secret key satisfying NEP-2 standard. Parameters are defined as follows:
 
-　　N: CPU/RAM cost，usually 2 ^ N. Default value is 16384.
+　　N: CPU/RAM cost. Generally take a number of powers of 2. Default value is 16384.
 
 　　p: Parallelization parameter, a positive integer ranges from 1 to 255. Bigger value represents heavier rely upon concurrent computation. Default value is 8.
 
