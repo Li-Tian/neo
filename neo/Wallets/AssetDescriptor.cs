@@ -70,7 +70,7 @@ namespace Neo.Wallets
         /// <summary>
         /// return a string value of AssetName
         /// </summary>
-        /// <returns>return a string value of AssetName</returns>
+        /// <returns>return the AssetName of AssetDescriptor</returns>
         public override string ToString()
         {
             return AssetName;

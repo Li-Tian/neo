@@ -20,14 +20,14 @@ namespace Neo.Wallets
         // 私钥，使用一个字节数组形式表示
         // </summary>
         /// <summary>
-        /// privatekey, represented in an array of bytes.
+        /// privatekey, represented as an array of bytes.
         /// </summary>
         public readonly byte[] PrivateKey;
         // <summary>
         // 公钥，使用一个ECPoint对象形式表示
         // </summary>
         /// <summary>
-        /// publickey, represented in an ECPoint object.
+        /// publickey, represented as an ECPoint object.
         /// </summary>
         public readonly Cryptography.ECC.ECPoint PublicKey;
 
@@ -107,7 +107,7 @@ namespace Neo.Wallets
         /// <summary>
         /// export wif-string format privatekey
         /// </summary>
-        /// <returns>wif格式私钥字符串</returns>
+        /// <returns>wif-string format privatekey</returns>
         public string Export()
         {
             byte[] data = new byte[34];

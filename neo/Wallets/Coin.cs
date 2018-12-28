@@ -74,7 +74,7 @@ namespace Neo.Wallets
         /// <returns>
         /// If two Coin objects are equal，return <c>true</c>.<br/>
         /// If Coin object to be compared is null,return <c>false</c>.<br/>
-        /// Otherwise，return the comparisons between two Coin objects<br/>
+        /// Otherwise，Returns whether two Coin references are equal<br/>
         /// </returns>
         public bool Equals(Coin other)
         {

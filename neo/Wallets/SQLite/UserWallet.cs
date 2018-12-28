@@ -446,9 +446,9 @@ namespace Neo.Wallets.SQLite
             }
             return false;
         }
-        /// <summary>
-        /// 回收方法，删除钱包交易委托上绑定的事件
-        /// </summary>
+        // <summary>
+        // 回收方法，删除钱包交易委托上绑定的事件
+        // </summary>
         /// <summary>
         /// Dispose method.Remove the event registed on WalletTransaction
         /// </summary>
@@ -690,7 +690,7 @@ namespace Neo.Wallets.SQLite
         /// Verify wallet password
         /// </summary>
         /// <param name="password">password</param>
-        /// <returns>Validation result.Validation by returning true, otherwise returning false</returns>
+        /// <returns>Verification result, validation returns true, otherwise returns false</returns>
         public override bool VerifyPassword(string password)
         {
             return password.ToAesKey().Sha256().SequenceEqual(LoadStoredData("PasswordHash"));

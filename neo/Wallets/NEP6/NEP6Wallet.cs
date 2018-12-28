@@ -315,7 +315,7 @@ namespace Neo.Wallets.NEP6
         /// </summary>
         /// <param name="asset_id">a global asset ID</param>
         /// <param name="amount">specified amount</param>
-        /// <param name="from">specified account</param>
+        /// <param name="from">specified account set</param>
         /// <returns>Coin set</returns>
         public override Coin[] FindUnspentCoins(UInt256 asset_id, Fixed8 amount, UInt160[] from)
         {
@@ -588,7 +588,7 @@ namespace Neo.Wallets.NEP6
         /// </summary>
         /// <param name="password">password</param>
         /// <returns>return WalletLocker object</returns>
-        /// <exception cref="System.Security.Cryptography.CryptographicException">密码验证失败时抛出</exception>
+        /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when password verification fails</exception>
         public IDisposable Unlock(string password)
         {
             if (!VerifyPassword(password))
@@ -603,10 +603,10 @@ namespace Neo.Wallets.NEP6
         // <returns>验证结果，验证通过返回true,否则返回false</returns>
         // <exception cref="System.FormatException">获取NEP6账户的密钥对失败时抛出</exception>
         /// <summary>
-        /// Verify password
+        /// Verify password of NEP6 wallet
         /// </summary>
         /// <param name="password">password</param>
-        /// <returns>Validation result.Validation by returning true, otherwise returning false</returns>
+        /// <returns>Verification result, validation returns true, otherwise returns false</returns>
         /// <exception cref="System.FormatException">get KeyPair object of account unsuccessfully</exception>
         public override bool VerifyPassword(string password)
         {
