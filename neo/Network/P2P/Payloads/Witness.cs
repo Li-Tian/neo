@@ -1,4 +1,4 @@
-﻿using Neo.IO;
+using Neo.IO;
 using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.VM;
@@ -13,9 +13,10 @@ namespace Neo.Network.P2P.Payloads
     // 然后执行并判定结果。
     // </summary>
     /// <summary>
-    /// The witness object.
-    /// When witness verify the transactions, first it reads the versication Script and push to stack,
-    /// Then read the InvocationScript and push to stack
+    /// Witness
+    /// When verifying, first read the verification script (VerificationScript)and push it onto the stack.
+    /// Then read the execution script (InvocationScript) and push it onto the stack.
+    /// Then execute and determine the result.
     /// </summary>
     public class Witness : ISerializable
     {
@@ -23,7 +24,7 @@ namespace Neo.Network.P2P.Payloads
         // 执行脚本，补全参数
         // </summary>
         /// <summary>
-        /// The execution script, and with paramters
+        /// Invocation script，push the required data into the stack
         /// </summary>
         public byte[] InvocationScript;
 
@@ -31,7 +32,7 @@ namespace Neo.Network.P2P.Payloads
         // 验证脚本
         // </summary>
         /// <summary>
-        /// The verification script
+        /// Verification scripts
         /// </summary>
         public byte[] VerificationScript;
 
@@ -41,7 +42,7 @@ namespace Neo.Network.P2P.Payloads
         // 验证脚本的哈希
         // </summary>
         /// <summary>
-        /// The hash of verification hash
+        /// Verification scripts hash
         /// </summary>
         public virtual UInt160 ScriptHash
         {
@@ -59,7 +60,7 @@ namespace Neo.Network.P2P.Payloads
         // 存储大小
         // </summary>
         /// <summary>
-        /// The size of storage
+        /// size
         /// </summary>
         public int Size => InvocationScript.GetVarSize() + VerificationScript.GetVarSize();
 
@@ -68,9 +69,9 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <param name="reader">二进制输入</param>
         /// <summary>
-        /// Deserialization
+        /// Deserialize method
         /// </summary>
-        /// <param name="reader">The binary input reader</param>
+        /// <param name="reader">BinaryReader</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             InvocationScript = reader.ReadVarBytes(65536);
@@ -81,9 +82,9 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <param name="writer">二进制输出</param>
         /// <summary>
-        /// The serialization
+        /// Serialize method
         /// </summary>
-        /// <param name="writer">The binary output writer</param>
+        /// <param name="writer">BinaryWriter</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.WriteVarBytes(InvocationScript);
@@ -95,9 +96,9 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <returns></returns>
         /// <summary>
-        /// Transfer to json object
+        /// Convert to JObject object
         /// </summary>
-        /// <returns>Json object</returns>
+        /// <returns>JObject object</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();

@@ -6,8 +6,11 @@ using System.Security.Cryptography;
 
 namespace Neo.Cryptography
 {
+    // <summary>
+    // 实现RIPEMD160Managed算法的类
+    // </summary>
     /// <summary>
-    /// 实现RIPEMD160Managed算法的类
+    /// RIPEMD160Managed algorithm class
     /// </summary>
     [ComVisible(true)]
     public class RIPEMD160Managed : HashAlgorithm
@@ -16,13 +19,19 @@ namespace Neo.Cryptography
         private long _count; // Number of bytes in the hashed message
         private uint[] _stateMD160;
         private uint[] _blockDWords;
+        // <summary>
+        // 生成哈希字符串的位数. RIPEMD160默认为160
+        // </summary>
         /// <summary>
-        /// 生成哈希字符串的位数. RIPEMD160默认为160
+        /// hash size. default value is 160
         /// </summary>
         public override int HashSize => 160;
 
+        // <summary>
+        // 默认构造函数, 设置初始值, 初始化数组.
+        // </summary>
         /// <summary>
-        /// 默认构造函数, 设置初始值, 初始化数组.
+        /// Constructor, initialize.
         /// </summary>
         public RIPEMD160Managed()
         {
@@ -33,8 +42,11 @@ namespace Neo.Cryptography
             InitializeState();
         }
 
+        // <summary>
+        // 初始化函数. 设置初始值和将当前对象中的_blockDWords 和 buffer清零.
+        // </summary>
         /// <summary>
-        /// 初始化函数. 设置初始值和将当前对象中的_blockDWords 和 buffer清零.
+        /// Initialize method. Set initial value ,clear the data in _blockDWords and buffer.
         /// </summary>
         public override void Initialize()
         {
@@ -44,22 +56,32 @@ namespace Neo.Cryptography
             Array.Clear(_blockDWords, 0, _blockDWords.Length);
             Array.Clear(_buffer, 0, _buffer.Length);
         }
+        // <summary>
+        // 哈希计算的核心算法程序。此方法不应该被直接调用。
+        // </summary>
+        // <param name="rgb">计算哈希值的原始输入</param>
+        // <param name="ibStart">计算哈希值时的数据开始偏移量</param>
+        // <param name="cbSize">计算哈希值时的数据长度</param>
         /// <summary>
-        /// 哈希计算的核心算法程序。此方法不应该被直接调用。
+        /// Core method。This method should not be called directly
         /// </summary>
-        /// <param name="rgb">计算哈希值的原始输入</param>
-        /// <param name="ibStart">计算哈希值时的数据开始偏移量</param>
-        /// <param name="cbSize">计算哈希值时的数据长度</param>
+        /// <param name="rgb">original data</param>
+        /// <param name="ibStart">offset</param>
+        /// <param name="cbSize">count</param>
         [System.Security.SecuritySafeCritical]  // auto-generated
         protected override void HashCore(byte[] rgb, int ibStart, int cbSize)
         {
             _HashData(rgb, ibStart, cbSize);
         }
 
+        // <summary>
+        // 计算当前对象数据的哈希值
+        // </summary>
+        // <returns>计算过后的哈希值</returns>
         /// <summary>
-        /// 计算当前对象数据的哈希值
+        /// Calculate the hash of data
         /// </summary>
-        /// <returns>计算过后的哈希值</returns>
+        /// <returns>hash</returns>
         [System.Security.SecuritySafeCritical]  // auto-generated
         protected override byte[] HashFinal()
         {
@@ -83,12 +105,18 @@ namespace Neo.Cryptography
             _stateMD160[4] = 0xc3d2e1f0;
         }
 
+        // <summary>
+        // RIPEMD160Managed算法的计算部分
+        // </summary>
+        // <param name="partIn">被哈希的数据</param>
+        // <param name="ibStart">开始的字节位</param>
+        // <param name="cbSize">原数据中用来计算哈希的长度</param>
         /// <summary>
-        /// RIPEMD160Managed算法的计算部分
+        /// The calculation part of the RIPEMD160Managed algorithm
         /// </summary>
-        /// <param name="partIn">被哈希的数据</param>
-        /// <param name="ibStart">开始的字节位</param>
-        /// <param name="cbSize">原数据中用来计算哈希的长度</param>
+        /// <param name="partIn">data</param>
+        /// <param name="ibStart">offset</param>
+        /// <param name="cbSize">count</param>
         [System.Security.SecurityCritical]  // auto-generated
         private unsafe void _HashData(byte[] partIn, int ibStart, int cbSize)
         {

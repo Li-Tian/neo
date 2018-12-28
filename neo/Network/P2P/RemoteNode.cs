@@ -13,8 +13,11 @@ using System.Net;
 
 namespace Neo.Network.P2P
 {
+    // <summary>
+    // 描述远程节点的各种属性和功能
+    // </summary>
     /// <summary>
-    /// 描述远程节点的各种属性和功能
+    /// Describe the various properties and functions of the remote node
     /// </summary>
     public class RemoteNode : Connection
     {
@@ -29,27 +32,43 @@ namespace Neo.Network.P2P
         private BloomFilter bloom_filter;
         private bool verack = false;
 
+        // <summary>
+        // 所监听的远端节点的IP和监听的端口
+        // </summary>
         /// <summary>
-        /// 所监听的远端节点的IP和监听的端口
+        /// IP and listening port of the remote node being monitored
         /// </summary>
         public IPEndPoint Listener => new IPEndPoint(Remote.Address, ListenerPort);
 
+        // <summary>
+        // 监听的端口
+        // </summary>
         /// <summary>
-        /// 监听的端口
+        /// listening port
         /// </summary>
         public override int ListenerPort => Version?.Port ?? 0;
+        // <summary>
+        // 记录当前节点的版本数据和区块高度
+        // </summary>
         /// <summary>
-        /// 记录当前节点的版本数据和区块高度
+        /// Record the current node's version data and block height
         /// </summary>
         public VersionPayload Version { get; private set; }
 
+        // <summary>
+        // 构造函数，并向连接的远端节点发送本地节点的版本数据
+        // </summary>
+        // <param name="system">NEO核心系统类</param>
+        // <param name="connection">一个TCP/IP连接对象或一个WebSocket连接对象</param>
+        // <param name="remote">远端节点的IP和端口</param>
+        // <param name="local">本地节点的IP和端口</param>
         /// <summary>
-        /// 构造函数，并向连接的远端节点发送本地节点的版本数据
+        /// constructor，create a RemoteNode object and sending the version data of the local node to the connected remote node.
         /// </summary>
-        /// <param name="system">NEO核心系统类</param>
-        /// <param name="connection">一个TCP/IP连接对象或一个WebSocket连接对象</param>
-        /// <param name="remote">远端节点的IP和端口</param>
-        /// <param name="local">本地节点的IP和端口</param>
+        /// <param name="system">Neo core system</param>
+        /// <param name="connection">a TCP/IP or WebSocket connection</param>
+        /// <param name="remote">IP and port of remote node</param>
+        /// <param name="local">IP and port of local node</param>
         public RemoteNode(NeoSystem system, object connection, IPEndPoint remote, IPEndPoint local)
             : base(connection, remote, local)
         {
@@ -107,9 +126,14 @@ namespace Neo.Network.P2P
             CheckMessageQueue();
         }
 
+        // <summary>
+        // 当节点收到ack消息后的回调函数. 将ack标志位设置为true, 然后检查消息队列中的消息, 
+        // 并将最早进入消息队列中的最消息弹出并发送,
+        // </summary>
         /// <summary>
-        /// 当节点收到ack消息后的回调函数. 将ack标志位设置为true, 然后检查消息队列中的消息, 
-        /// 并将最早进入消息队列中的最消息弹出并发送,
+        /// A callback function to handle ack type message.
+        /// Set the ack flag to true, then check the message in the message queue.
+        /// and pop up and send the oldest message that first entered the message queue.
         /// </summary>
         protected override void OnAck()
         {
@@ -117,10 +141,14 @@ namespace Neo.Network.P2P
             CheckMessageQueue();
         }
 
+        // <summary>
+        // 解析准备好的数据, 通过actor进行发送
+        // </summary>
+        // <param name="data">准备发送的的数据</param>
         /// <summary>
-        /// 解析准备好的数据, 通过actor进行发送
+        /// Parse the prepared data and send it through the actor reference
         /// </summary>
-        /// <param name="data">准备发送的的数据</param>
+        /// <param name="data">the prepared data</param>
         protected override void OnData(ByteString data)
         {
             msg_buffer = msg_buffer.Concat(data);
@@ -128,10 +156,14 @@ namespace Neo.Network.P2P
                 protocol.Tell(message);
         }
 
+        // <summary>
+        // Akka消息的回调函数, 根据不同消息类型来进行处理
+        // </summary>
+        // <param name="message">接收到的信息</param>
         /// <summary>
-        /// Akka消息的回调函数, 根据不同消息类型来进行处理
+        /// The callback function to processed different types message
         /// </summary>
-        /// <param name="message">接收到的信息</param>
+        /// <param name="message">message</param>
         protected override void OnReceive(object message)
         {
             base.OnReceive(message);
@@ -208,8 +240,12 @@ namespace Neo.Network.P2P
             SendMessage(Message.Create("verack"));
         }
 
+        // <summary>
+        // 停止连接和数据发送, 并将这个远端节点从本地节点的RemoteNodes列表中删除
+        // </summary>
         /// <summary>
-        /// 停止连接和数据发送, 并将这个远端节点从本地节点的RemoteNodes列表中删除
+        /// Stop the connection and data transmission, 
+        /// and remove this remote node from the local node's list of RemoteNodes
         /// </summary>
         protected override void PostStop()
         {
@@ -228,10 +264,14 @@ namespace Neo.Network.P2P
             SendData(ByteString.FromBytes(message.ToArray()));
         }
 
+        // <summary>
+        // 使用OneForOneStrategy针对异常的那个子actor, 直接终止该子actor.
+        // </summary>
+        // <returns>返回一个处理错误的SupervisorStrategy用来处理Akka中子actor的错误</returns>
         /// <summary>
-        /// 使用OneForOneStrategy针对异常的那个子actor, 直接终止该子actor.
+        /// Use OneForOneStrategy for anomalous child actor,and directly stop it
         /// </summary>
-        /// <returns>返回一个处理错误的SupervisorStrategy用来处理Akka中子actor的错误</returns>
+        /// <returns>Returns a SupervisorStrategy to handle the error of anomalous child actor</returns>
         protected override SupervisorStrategy SupervisorStrategy()
         {
             return new OneForOneStrategy(ex =>

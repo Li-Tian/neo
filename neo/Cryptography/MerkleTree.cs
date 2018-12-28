@@ -5,14 +5,20 @@ using System.Linq;
 
 namespace Neo.Cryptography
 {
+    // <summary>
+    // 梅克尔树的实现类
+    // </summary>
     /// <summary>
-    /// 梅克尔树的实现类
+    /// MerkleTree implement class
     /// </summary>
     public class MerkleTree
     {
         private MerkleTreeNode root;
+        // <summary>
+        // MerkleTree的深度
+        // </summary>
         /// <summary>
-        /// MerkleTree的深度
+        /// MerkleTree depth
         /// </summary>
         public int Depth { get; private set; }
 
@@ -49,12 +55,18 @@ namespace Neo.Cryptography
             }
             return Build(parents); //TailCall
         }
+        // <summary>
+        // 传入所有交易的哈希值, 构建MerkleTree, 并返回构建后根节点的哈希值
+        // </summary>
+        // <param name="hashes">用来构建Merkle树的交易哈希数组</param>
+        // <exception cref="ArgumentException">如果没有数据拿来构建Merkle树，则抛出该异常</exception>
+        // <returns>返回MerkleTree根节点的哈希值</returns>
         /// <summary>
-        /// 传入所有交易的哈希值, 构建MerkleTree, 并返回构建后根节点的哈希值
+        /// Passing in a transcation hashes array ,use it to build a MerkleTree, and return the root hash of MerkleTree
         /// </summary>
-        /// <param name="hashes">用来构建Merkle树的交易哈希数组</param>
-        /// <exception cref="ArgumentException">如果没有数据拿来构建Merkle树，则抛出该异常</exception>
-        /// <returns>返回MerkleTree根节点的哈希值</returns>
+        /// <param name="hashes">a transcation hashes array</param>
+        /// <exception cref="ArgumentException">if the length of the transcation hashes array is 0</exception>
+        /// <returns>root hash of MerkleTree</returns>
         public static UInt256 ComputeRoot(UInt256[] hashes)
         {
             if (hashes.Length == 0) throw new ArgumentException();
@@ -77,11 +89,15 @@ namespace Neo.Cryptography
             }
         }
 
-        /// <summary>
-        /// 通过深度优先搜索算法将一个Merkle树的所有叶节点的哈希值转换成数组返回
-        /// </summary>
-        /// <returns>所有叶节点的交易哈希值构成的数组</returns>
+        // <summary>
+        // 通过深度优先搜索算法将一个Merkle树的所有叶节点的哈希值转换成数组返回
+        // </summary>
+        // <returns>所有叶节点的交易哈希值构成的数组</returns>
         // depth-first order
+        /// <summary>
+        /// Convert hashes  of all leaf nodes of a Merkle tree to a hash array by invoking  DepthFirstSearch method
+        /// </summary>
+        /// <returns>a hash array</returns>
         public UInt256[] ToHashArray()
         {
             List<UInt256> hashes = new List<UInt256>();
@@ -89,14 +105,23 @@ namespace Neo.Cryptography
             return hashes.ToArray();
         }
 
-        /// <summary>
-        /// 根据标志位修剪梅克尔树。flags为所有叶节点的标志位。从叶子节点向上检测。<br/>
-        /// 1.对所有高度为2的节点，如果其左子节点和右子节点的标志位都为false,将该节点的左子节点和右子节点置为null。检测完成后进入第二步；<br/>
-        /// 2.对所有高度为3的节点，如果其左子节点的左子节点和其右子节点的右子节点都为null时，将该节点的左子节点和右子节点都置为null；<br/>
-        /// 3.对高度为4的节点继续执行步骤2，依次类推，一直到根节点；<br/>
-        /// 4.完成后便得到修剪后的梅克尔树。
-        /// </summary>
-        /// <param name="flags">标志位</param>
+<<<<<<< HEAD
+        // <summary> 
+        // 根据标志位修剪梅克尔树。flags为所有叶节点的标志位。从叶子节点向上检测。<br/> 
+        // 1.对所有高度为2的节点，如果其左子节点和右子节点的标志位都为false,将该节点的左子节点和右子节点置为null。检测完成后进入第二步；<br/> 
+        // 2.对所有高度为3的节点，如果其左子节点的左子节点和其右子节点的右子节点都为null时，将该节点的左子节点和右子节点都置为null；<br/> 
+        // 3.对高度为4的节点继续执行步骤2，依次类推，一直到根节点；<br/> 
+        // 4.完成后便得到修剪后的梅克尔树。 
+        // </summary> 
+        // <param name="flags">BitArray标志位</param>
+        /// <summary>     
+        /// Trim the Merkel tree according to flags. Dlags is the flag set of all leaf nodes. Detect from the leaf node up.
+        /// 1.For all nodes with deepth of 2, if the flags of their left and right children are both false, the left and right children of the node are set to null. After that, the second step is entered;<br/> 
+        /// 2.For all nodes with a height of 3, if the left child of its left child and the right child of its right child are both null, the left and right children of the node are both set to Null;<br/>
+        /// 3.Continue to step 2 for nodes with deepth of 4, and so on, up to the root node;<br/> 
+        /// 4.Upon completion, the trimmed Merkel tree is obtained.
+        /// </summary> 
+        /// <param name="flags">BitArray flags</param>
         public void Trim(BitArray flags)
         {
             flags = new BitArray(flags);

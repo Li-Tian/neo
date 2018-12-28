@@ -10,130 +10,217 @@ using System.Linq;
 
 namespace Neo.Persistence
 {
+    // <summary>
+    // 快照
+    // </summary>
     /// <summary>
-    /// 快照(*)TODO 使用see标签引用说明
+    /// Snapshot
     /// </summary>
     public abstract class Snapshot : IDisposable, IPersistence, IScriptTable
     {
+        // <summary>
+        // 当前正在持久化的区块
+        // </summary>
         /// <summary>
-        /// 当前正在持久化的区块
+        /// Block currently being persisted
         /// </summary>
         public Block PersistingBlock { get; internal set; }
 
+        // <summary>
+        // 区块
+        // </summary>
+        // <see cref="IPersistence.Blocks"/>
         /// <summary>
-        /// 区块
+        /// Blocks
         /// </summary>
         /// <see cref="IPersistence.Blocks"/>
         public abstract DataCache<UInt256, BlockState> Blocks { get; }
 
+        // <summary>
+        // 交易
+        // </summary>
+        // <see cref="IPersistence.Transactions"/>
         /// <summary>
-        /// 交易
+        /// Transactions
         /// </summary>
         /// <see cref="IPersistence.Transactions"/>
         public abstract DataCache<UInt256, TransactionState> Transactions { get; }
 
+        // <summary>
+        // 账户
+        // </summary>
+        // <see cref="IPersistence.Accounts"/>
         /// <summary>
-        /// 账户
+        /// Accounts
         /// </summary>
         /// <see cref="IPersistence.Accounts"/>
         public abstract DataCache<UInt160, AccountState> Accounts { get; }
 
+        // <summary>
+        // UTXO
+        // </summary>
+        // <see cref="IPersistence.UnspentCoins"/>
         /// <summary>
         /// UTXO
         /// </summary>
         /// <see cref="IPersistence.UnspentCoins"/>
         public abstract DataCache<UInt256, UnspentCoinState> UnspentCoins { get; }
 
+        // <summary>
+        // 已花费交易
+        // </summary>
+        // <see cref="IPersistence.SpentCoins"/>
         /// <summary>
-        /// 已花费交易
+        /// SpentCoins
         /// </summary>
         /// <see cref="IPersistence.SpentCoins"/>
         public abstract DataCache<UInt256, SpentCoinState> SpentCoins { get; }
 
+        // <summary>
+        // 验证人
+        // </summary>
+        // <see cref="IPersistence.Validators"/>
         /// <summary>
-        /// 验证人
+        /// Validators
         /// </summary>
         /// <see cref="IPersistence.Validators"/>
         public abstract DataCache<ECPoint, ValidatorState> Validators { get; }
 
+        // <summary>
+        // 资产
+        // </summary>
+        // <see cref="IPersistence.Assets"/>
         /// <summary>
-        /// 资产
+        /// Assets
         /// </summary>
         /// <see cref="IPersistence.Assets"/>
         public abstract DataCache<UInt256, AssetState> Assets { get; }
 
+        // <summary>
+        // 合约
+        // </summary>
+        // <see cref="IPersistence.Contracts"/>
         /// <summary>
-        /// 合约
+        /// Contracts
         /// </summary>
         /// <see cref="IPersistence.Contracts"/>
         public abstract DataCache<UInt160, ContractState> Contracts { get; }
 
+        // <summary>
+        // 合约存储
+        // </summary>
+        // <see cref="IPersistence.Storages"/>
         /// <summary>
-        /// 合约存储
+        /// Storages of contracts
         /// </summary>
         /// <see cref="IPersistence.Storages"/>
         public abstract DataCache<StorageKey, StorageItem> Storages { get; }
 
+        // <summary>
+        // 区块头hash列表
+        // </summary>
+        // <see cref="IPersistence.HeaderHashList"/>
         /// <summary>
-        /// 区块头hash列表
+        /// Block header hash list
         /// </summary>
         /// <see cref="IPersistence.HeaderHashList"/>
         public abstract DataCache<UInt32Wrapper, HeaderHashList> HeaderHashList { get; }
 
+        // <summary>
+        // 验证人个数投票
+        // </summary>
+        // <see cref="IPersistence.ValidatorsCount"/>
         /// <summary>
-        /// 验证人个数投票
+        /// Validators Count
         /// </summary>
         /// <see cref="IPersistence.ValidatorsCount"/>
         public abstract MetaDataCache<ValidatorsCountState> ValidatorsCount { get; }
 
+        // <summary>
+        // 区块索引
+        // </summary>
+        // <see cref="IPersistence.BlockHashIndex"/>
         /// <summary>
-        /// 区块索引
+        /// The block hash index
         /// </summary>
         /// <see cref="IPersistence.BlockHashIndex"/>
         public abstract MetaDataCache<HashIndexState> BlockHashIndex { get; }
 
+        // <summary>
+        // 区块头索引
+        // </summary>
+        // <see cref="IPersistence.HeaderHashIndex"/>
         /// <summary>
-        /// 区块头索引
+        /// The block header hash index
         /// </summary>
         /// <see cref="IPersistence.HeaderHashIndex"/>
         public abstract MetaDataCache<HashIndexState> HeaderHashIndex { get; }
 
+        // <summary>
+        // 当前区块高度
+        // </summary>
         /// <summary>
-        /// 当前区块高度
+        /// Current block height
         /// </summary>
         public uint Height => BlockHashIndex.Get().Index;
-    
+
+        // <summary>
+        // 区块头高度
+        // </summary>
         /// <summary>
-        /// 区块头高度
+        /// Block header height
         /// </summary>
         public uint HeaderHeight => HeaderHashIndex.Get().Index;
 
+        // <summary>
+        // 当前区块hash
+        // </summary>
         /// <summary>
-        /// 当前区块hash
+        /// Current block hash
         /// </summary>
         public UInt256 CurrentBlockHash => BlockHashIndex.Get().Hash;
 
+        // <summary>
+        // 当前区块头hash
+        // </summary>
         /// <summary>
-        /// 当前区块头hash
+        /// Current block header hash
         /// </summary>
         public UInt256 CurrentHeaderHash => HeaderHashIndex.Get().Hash;
 
+        // <summary>
+        // 计算可以Claim的GAS奖励
+        // </summary>
+        // <param name="inputs">Claim指向的交易集合</param>
+        // <param name="ignoreClaimed">
+        // 是否忽略已经Claims的input。
+        // 当如果发现参数inputs指向的UTXO不存在或者已经被claim过了，
+        // 这时如果 ignoreClaimed 指定为 true，则忽略这个错误继续计算剩下的部分，
+        // 如果 ignoreClaimed 指定为 false，则抛出异常。
+        // </param>
+        // <returns>可以Claim的GAS数量</returns>
+        // <exception cref="System.ArgumentException">
+        // ignoreClaimed设置为false时，若出现以下一种情况：
+        // 1）claimable为null，或者其数量为零
+        // 2）发现有已经claim的input时，
+        // 抛出该异常
+        // </exception>
         /// <summary>
-        /// 计算可以Claim的GAS奖励
+        /// Calculate the GAS bonus that can Claim
         /// </summary>
-        /// <param name="inputs">Claim指向的交易集合</param>
+        /// <param name="inputs">The collection of transactions to which Claim refers</param>
         /// <param name="ignoreClaimed">
-        /// 是否忽略已经Claims的input。
-        /// 当如果发现参数inputs指向的UTXO不存在或者已经被claim过了，
-        /// 这时如果 ignoreClaimed 指定为 true，则忽略这个错误继续计算剩下的部分，
-        /// 如果 ignoreClaimed 指定为 false，则抛出异常。
+        /// Whether to ignore the input that has already been Claimed, <br/>
+        /// If the UTXO indicated by the parameter inputs does not exist or has been claimed,<br/>
+        /// If ignoreClaimed is specified as true at this point, it ignores the error and moves on to the rest of the calculation. <br/>
+        /// If ignoreClaimed specifies false, an exception is thrown.
         /// </param>
-        /// <returns>可以Claim的GAS数量</returns>
-        /// <exception cref="System.ArgumentException">
-        /// ignoreClaimed设置为false时，若出现以下一种情况：
-        /// 1）claimable为null，或者其数量为零
-        /// 2）发现有已经claim的input时，
-        /// 抛出该异常
+        /// <returns>The amount of GAS that can Claim</returns>
+        /// <exception cref="ArgumentException">
+        /// IgnoreClaimed when set to false, if one of the following situations occurs: <br/>
+        /// 1) claimable is null, or its number is zero; <br/>
+        /// 2) when the input that has claimed is found; <br/>
+        /// Throw the exception.
         /// </exception>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
         {
@@ -159,16 +246,26 @@ namespace Neo.Persistence
             return CalculateBonusInternal(unclaimed);
         }
 
+        // <summary>
+        // 计算可以Claim到的GAS奖励
+        // </summary>
+        // <param name="inputs">Claim指向的交易集合</param>
+        // <param name="height_end">花费的高度</param>
+        // <exception cref="ArgumentException">
+        // 当指向的交易不存在，或者指向交易输出序号不合法，
+        // 或者指向交易输出不是NEO输出时，抛出异常
+        // </exception>
+        // <returns>可以Claim的GAS数量</returns>
         /// <summary>
-        /// 计算可以Claim到的GAS奖励
+        /// Calculate the GAS rewards that can be claimed
         /// </summary>
-        /// <param name="inputs">Claim指向的交易集合</param>
-        /// <param name="height_end">花费的高度</param>
-        /// <exception cref="ArgumentException">
-        /// 当指向的交易不存在，或者指向交易输出序号不合法，
-        /// 或者指向交易输出不是NEO输出时，抛出异常
+        /// <param name="inputs">The transaction set pointed to by Claim</param>
+        /// <param name="height_end">The height to be spent</param>
+        /// <exception cref="System.ArgumentException">
         /// </exception>
-        /// <returns>可以Claim的GAS数量</returns>
+        /// When the pointed transaction does not exist, or the transaction output serial number is not legal, <br/>
+        /// or the transaction output is not NEO output, Throw an exception
+        /// <returns>The number of GAS that can be claimed</returns>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint height_end)
         {
             List<SpentCoin> unclaimed = new List<SpentCoin>();
@@ -228,17 +325,24 @@ namespace Neo.Persistence
             return amount_claimed;
         }
 
+        // <summary>
+        // 克隆快照
+        // </summary>
+        // <returns>快照</returns>
         /// <summary>
-        /// 克隆快照
+        /// Clone snapshot
         /// </summary>
-        /// <returns>快照</returns>
+        /// <returns>snapshot</returns>
         public Snapshot Clone()
         {
             return new CloneSnapshot(this);
         }
 
+        // <summary>
+        // 持久化到磁盘
+        // </summary>
         /// <summary>
-        /// 持久化到磁盘
+        /// Persist to disk
         /// </summary>
         public virtual void Commit()
         {
@@ -260,8 +364,11 @@ namespace Neo.Persistence
             HeaderHashIndex.Commit();
         }
 
+        // <summary>
+        // 释放资源
+        // </summary>
         /// <summary>
-        /// 释放资源
+        /// Release resources
         /// </summary>
         public virtual void Dispose()
         {
@@ -272,12 +379,18 @@ namespace Neo.Persistence
             return Contracts[new UInt160(script_hash)].Script;
         }
 
+        // <summary>
+        // 获取一笔交易尚未Claim的outputs的字典。
+        // 此字典的key为该交易的output的的序号，而value是这个output的花费状态。
+        // </summary>
+        // <param name="hash">待查询交易hash</param>
+        // <returns>返回尚未Claim的outputs字典，如果交易不存在，则返回null</returns>
         /// <summary>
-        /// 获取一笔交易尚未Claim的outputs的字典。
-        /// 此字典的key为该交易的output的的序号，而value是这个output的花费状态。
+        /// Get a dictionary for outputs of transactions that have not yet been claimed. <br/>
+        /// The key of this dictionary is the ordinal number of the output of the transaction, and the value is the cost state of the output.
         /// </summary>
-        /// <param name="hash">待查询交易hash</param>
-        /// <returns>返回尚未Claim的outputs字典，如果交易不存在，则返回null</returns>
+        /// <param name="hash">Transaction hash</param>
+        /// <returns>Return a dictionary of outputs that have not yet claimed, or null if the transaction does not exist</returns>
         public Dictionary<ushort, SpentCoin> GetUnclaimed(UInt256 hash)
         {
             TransactionState tx_state = Transactions.TryGet(hash);
@@ -300,10 +413,14 @@ namespace Neo.Persistence
 
         private ECPoint[] _validators = null;
 
+        // <summary>
+        // 获取当前参与共识的验证人
+        // </summary>
+        // <returns>参与共识的验证人列表</returns>
         /// <summary>
-        /// 获取当前参与共识的验证人
+        /// Get the Validators for the current participating consensus
         /// </summary>
-        /// <returns>参与共识的验证人列表</returns>
+        /// <returns>The list of Validators for the consensus</returns>
         public ECPoint[] GetValidators()
         {
             if (_validators == null)
@@ -313,13 +430,18 @@ namespace Neo.Persistence
             return _validators;
         }
 
+        // <summary>
+        // 获取参与共识的验证人列表。
+        // </summary>
+        // <param name="others">
+        // 打包的交易。验证人点票时，包含这些交易中的影响。
+        // </param>
+        // <returns>参与共识的验证人列表</returns>
         /// <summary>
-        /// 获取参与共识的验证人列表。
+        /// Get a list of Validators participating in the consensus
         /// </summary>
-        /// <param name="others">
-        /// 打包的交易。验证人点票时，包含这些交易中的影响。
-        /// </param>
-        /// <returns>参与共识的验证人列表</returns>
+        /// <param name="others">Packaged transaction. The impact of these transactions is included when the Validators Counting.</param>
+        /// <returns>The list of Validators for the consensus</returns>
         public IEnumerable<ECPoint> GetValidators(IEnumerable<Transaction> others)
         {
             Snapshot snapshot = Clone();
