@@ -7,24 +7,36 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 交易属性
+    // </summary>
     /// <summary>
-    /// 交易属性
+    /// The attribute of transaction
     /// </summary>
     public class TransactionAttribute : ISerializable
     {
 
+        // <summary>
+        // 属性用途
+        // </summary>
         /// <summary>
-        /// 属性用途
+        /// The usage of attribute
         /// </summary>
         public TransactionAttributeUsage Usage;
 
+        // <summary>
+        // 属性值
+        // </summary>
         /// <summary>
-        /// 属性值
+        /// The attribute data
         /// </summary>
         public byte[] Data;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of storage
         /// </summary>
         public int Size
         {
@@ -40,10 +52,14 @@ namespace Neo.Network.P2P.Payloads
                     return sizeof(TransactionAttributeUsage) + Data.GetVarSize();
             }
         }
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入</param>
         /// <summary>
-        /// 反序列化
+        /// The deserialization
         /// </summary>
-        /// <param name="reader">二进制输入</param>
+        /// <param name="reader">The binary input reader</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             Usage = (TransactionAttributeUsage)reader.ReadByte();
@@ -60,10 +76,14 @@ namespace Neo.Network.P2P.Payloads
             else
                 throw new FormatException();
         }
+        // <summary>
+        // 序列化
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
-        /// 序列化
+        /// The serialization
         /// </summary>
-        /// <param name="writer">二进制输出</param>
+        /// <param name="writer">The binaryy output writer</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write((byte)Usage);
@@ -77,10 +97,14 @@ namespace Neo.Network.P2P.Payloads
                 writer.Write(Data);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>转换的Json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Transfer to json object
         /// </summary>
-        /// <returns>转换的Json对象</returns>
+        /// <returns>The transferd json object</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();

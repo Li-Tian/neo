@@ -14,13 +14,19 @@ using System.Text;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 所有交易的父类。
+    // </summary>
     /// <summary>
-    /// 所有交易的父类。
+    /// The parent class of all the transactions
     /// </summary>
     public abstract class Transaction : IEquatable<Transaction>, IInventory
     {
+        // <summary>
+        // 交易最大存储字节数。如果收到的交易数超过这个限制将被直接抛弃。
+        // </summary>
         /// <summary>
-        /// 交易最大存储字节数。如果收到的交易数超过这个限制将被直接抛弃。
+        /// The maximum stored bytes in the transaction. If the received transaction exceeds than this limitation will be abandoned
         /// </summary>
         public const int MaxTransactionSize = 102400;
         /// <summary>
@@ -33,44 +39,62 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         private static ReflectionCache<byte> ReflectionCache = ReflectionCache<byte>.CreateFromEnum<TransactionType>();
 
+        // <summary>
+        // 交易类型
+        // </summary>
         /// <summary>
-        /// 交易类型
+        /// The type of transaction
         /// </summary>
         public readonly TransactionType Type;
 
+        // <summary>
+        // 交易版本号。在各个子类中定义。
+        // </summary>
         /// <summary>
-        /// 交易版本号。在各个子类中定义。
+        /// Tje version of transaction, which defined in every sub transaction
         /// </summary>
         public byte Version;
 
+        // <summary>
+        // 交易属性
+        // </summary>
         /// <summary>
-        /// 交易属性
+        /// The attribute of transaction
         /// </summary>
         public TransactionAttribute[] Attributes;
 
+        // <summary>
+        // 交易输入
+        // </summary>
         /// <summary>
-        /// 交易输入
+        /// The input of transaction
         /// </summary>
         public CoinReference[] Inputs;
 
+        // <summary>
+        // 交易输出
+        // </summary>
         /// <summary>
-        /// 交易输出
+        /// The output of transaction
         /// </summary>
         public TransactionOutput[] Outputs;
 
+        // <summary>
+        // 验证脚本的数组
+        // </summary>
         /// <summary>
-        /// 验证脚本的数组
+        /// The array of witness
         /// </summary>
         public Witness[] Witnesses { get; set; }
 
         private Fixed8 _feePerByte = -Fixed8.Satoshi;
         // <summary>
-        // The <c>NetworkFee</c> for the transaction divided by its <c>Size</c>.
-        // <para>Note that this property must be used with care. Getting the value of this property multiple times will return the same result. The value of this property can only be obtained after the transaction has been completely built (no longer modified).</para>
+        /// The <c>NetworkFee</c> for the transaction divided by its <c>Size</c>.
+        /// <para>Note that this property must be used with care. Getting the value of this property multiple times will return the same result. The value of this property can only be obtained after the transaction has been completely built (no longer modified).</para>
+        ///</summary>
+        // <summary>
+        // 每字节手续费
         // </summary>
-        /// <summary>
-        /// 每字节手续费
-        /// </summary>
         public Fixed8 FeePerByte
         {
             get
@@ -83,8 +107,11 @@ namespace Neo.Network.P2P.Payloads
 
         private UInt256 _hash = null;
 
+        // <summary>
+        // 获取交易的hash值。是将交易信息数据做2次Sha256运算，这个过程被称为Hash256。
+        // </summary>
         /// <summary>
-        /// 获取交易的hash值。是将交易信息数据做2次Sha256运算，这个过程被称为Hash256。
+        /// Get the hash of transactions. Use sha256 on he transaction data. This process is called Hash256
         /// </summary>
         public UInt256 Hash
         {

@@ -6,34 +6,54 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 交易输出
+    // </summary>
     /// <summary>
-    /// 交易输出
+    /// The transaction Output
     /// </summary>
     public class TransactionOutput : ISerializable
     {
+        // <summary>
+        // 资产Id
+        // </summary>
         /// <summary>
-        /// 资产Id
+        /// The asset Id
         /// </summary>
         public UInt256 AssetId;
 
+        // <summary>
+        // 转账金额
+        // </summary>
         /// <summary>
-        /// 转账金额
+        /// The transferd value
         /// </summary>
         public Fixed8 Value;
 
+        // <summary>
+        // 收款人地址脚本hash
+        // </summary>
         /// <summary>
-        /// 收款人地址脚本hash
+        /// The recipient address script hash
         /// </summary>
         public UInt160 ScriptHash;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of storage
         /// </summary>
         public int Size => AssetId.Size + Value.Size + ScriptHash.Size;
+
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入</param>
         /// <summary>
-        /// 反序列化
+        /// The deserialization
         /// </summary>
-        /// <param name="reader">二进制输入</param>
+        /// <param name="reader">The binary input outcome</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             this.AssetId = reader.ReadSerializable<UInt256>();
@@ -41,10 +61,14 @@ namespace Neo.Network.P2P.Payloads
             if (Value <= Fixed8.Zero) throw new FormatException();
             this.ScriptHash = reader.ReadSerializable<UInt160>();
         }
+        // <summary>
+        // 序列化
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
-        /// 序列化
+        /// The serialization method
         /// </summary>
-        /// <param name="writer">二进制输出</param>
+        /// <param name="writer">The binary output writer</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write(AssetId);
@@ -52,11 +76,16 @@ namespace Neo.Network.P2P.Payloads
             writer.Write(ScriptHash);
         }
 
+        // <summary>
+        // 转成json数据
+        // </summary>
+        // <param name="index">此UTXO在交易的output列表中的index。从0开始。</param>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json数据
+        /// Transfer to json object
         /// </summary>
-        /// <param name="index">此UTXO在交易的output列表中的index。从0开始。</param>
-        /// <returns>json对象</returns>
+        /// <param name="index">The index of UTXO in the transaction list, begin from 0</param>
+        /// <returns></returns>
         public JObject ToJson(ushort index)
         {
             JObject json = new JObject();

@@ -12,39 +12,60 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 资产登记交易【已弃用】
+    // </summary>
     /// <summary>
-    /// 资产登记交易【已弃用】
+    /// Asset registeration transaction
     /// </summary>
     [Obsolete]
     public class RegisterTransaction : Transaction
     {
+        // <summary>
+        // 资产类型
+        // </summary>
         /// <summary>
-        /// 资产类型
+        /// The type of asset
         /// </summary>
         public AssetType AssetType;
 
+        // <summary>
+        // 资产名字
+        // </summary>
         /// <summary>
-        /// 资产名字
+        /// The name of asset
         /// </summary>
         public string Name;
 
+        // <summary>
+        // 资产总量
+        // </summary>
         /// <summary>
-        /// 资产总量
+        /// The total amount of asset
         /// </summary>
         public Fixed8 Amount;
 
+        // <summary>
+        // 精度
+        // </summary>
         /// <summary>
-        /// 精度
+        /// The precision of asset
         /// </summary>
         public byte Precision;
 
+        // <summary>
+        // 所有者公钥
+        // </summary>
         /// <summary>
-        /// 所有者公钥
+        /// The publickey of owner
         /// </summary>
         public ECPoint Owner;
 
+        // <summary>
+        // 管理员地址脚本hash
+        // </summary>
         /// <summary>
-        /// 管理员地址脚本hash
+        /// The address hash of admin
         /// </summary>
         public UInt160 Admin;
 
@@ -61,13 +82,19 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size for storage
         /// </summary>
         public override int Size => base.Size + sizeof(AssetType) + Name.GetVarSize() + Amount.Size + sizeof(byte) + Owner.Size + Admin.Size;
 
+        // <summary>
+        // 系统手续费  若资产是NEO，GAS则费用为0
+        // </summary>
         /// <summary>
-        /// 系统手续费  若资产是NEO，GAS则费用为0
+        /// The system fee. If the asset is NEO, the gas fee is 0
         /// </summary>
         public override Fixed8 SystemFee
         {
@@ -79,21 +106,32 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        // <summary>
+        // 构造函数：创建资产登记交易
+        // </summary>
         /// <summary>
-        /// 构造函数：创建资产登记交易
+        /// The constructor function, which creat the transaction registration transaction
         /// </summary>
         public RegisterTransaction()
             : base(TransactionType.RegisterTransaction)
         {
         }
 
+        // <summary>
+        // 反序列化非data数据
+        // </summary>
+        // <param name="reader">二进制输入流</param>
+        // <exception cref="FormatException">
+        // 1. 如果版本号不为0<br/>
+        // 2. 如果资产不是NEO/GAS且未指定Owner
+        // </exception>
         /// <summary>
-        /// 反序列化非data数据
+        /// Deserialization of object 
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">The binary input reader</param>
         /// <exception cref="FormatException">
-        /// 1. 如果版本号不为0<br/>
-        /// 2. 如果资产不是NEO/GAS且未指定Owner
+        /// 1. If the version number is not 0<br/>
+        /// 2.  If the asset is not NEO/GAS and not specify owner
         /// </exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
@@ -108,19 +146,28 @@ namespace Neo.Network.P2P.Payloads
             Admin = reader.ReadSerializable<UInt160>();
         }
 
+        // <summary>
+        // 获取待验证签名的脚本hash集合
+        // </summary>
+        // <param name="snapshot">数据库快照</param>
+        // <returns>交易的其他验证脚本 和 资产所有者地址脚本hash</returns>
         /// <summary>
-        /// 获取待验证签名的脚本hash集合
+        /// The hash list which is waiting for verifying
         /// </summary>
-        /// <param name="snapshot">数据库快照</param>
-        /// <returns>交易的其他验证脚本 和 资产所有者地址脚本hash</returns>
+        /// <param name="snapshot">The snapshot of database</param>
+        /// <returns></returns>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             UInt160 owner = Contract.CreateSignatureRedeemScript(Owner).ToScriptHash();
             return base.GetScriptHashesForVerifying(snapshot).Union(new[] { owner }).OrderBy(p => p).ToArray();
         }
 
+        // <summary>
+        // 反序列化后的处理
+        // </summary>
+        // <exception cref="System.FormatException">若资产是NEO，GAS，但是hash值不对应时，抛出该异常</exception>
         /// <summary>
-        /// 反序列化后的处理
+        /// If the asset is NEO, GAS, but the hash value is not correct, throw the exception 
         /// </summary>
         /// <exception cref="System.FormatException">若资产是NEO，GAS，但是hash值不对应时，抛出该异常</exception>
         protected override void OnDeserialized()
@@ -172,10 +219,14 @@ namespace Neo.Network.P2P.Payloads
             writer.Write(Admin);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Transfer to json object 
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>Json object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -196,12 +247,18 @@ namespace Neo.Network.P2P.Payloads
             return json;
         }
 
+        // <summary>
+        // 校验交易。已经弃用。禁止注册新的资产。
+        // </summary>
+        // <param name="snapshot">数据库快照</param>
+        // <param name="mempool">内存池交易</param>
+        // <returns>固定值false，已弃用</returns>
         /// <summary>
-        /// 校验交易。已经弃用。禁止注册新的资产。
+        /// The transaction verification which is deprecated
         /// </summary>
-        /// <param name="snapshot">数据库快照</param>
-        /// <param name="mempool">内存池交易</param>
-        /// <returns>固定值false，已弃用</returns>
+        /// <param name="snapshot">The snapshot of database</param>
+        /// <param name="mempool">The memory pool</param>
+        /// <returns>The fixed valie </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             return false;

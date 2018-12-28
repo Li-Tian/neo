@@ -5,13 +5,19 @@
     /// </summary>
     public enum StateType : byte
     {
+        // <summary>
+        // 投票
+        // </summary>
         /// <summary>
-        /// 投票
+        /// The acount of votes
         /// </summary>
         Account = 0x40,
 
+        // <summary>
+        // 申请验证人
+        // </summary>
         /// <summary>
-        /// 申请验证人
+        /// The Validator applicant
         /// </summary>
         Validator = 0x48
     }

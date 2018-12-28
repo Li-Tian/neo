@@ -6,8 +6,11 @@
     public class TransactionResult
     {
         /// <summary>
-        /// 资产Id
+        /// The asset id
         /// </summary>
+        // <summary>
+        // 资产Id
+        // </summary>
         public UInt256 AssetId;
 
         /// <summary>

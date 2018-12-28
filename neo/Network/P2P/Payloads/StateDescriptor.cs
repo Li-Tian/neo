@@ -10,42 +10,66 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 投票状态描述：投票，申请
+    // </summary>
     /// <summary>
-    /// 投票状态描述：投票，申请
+    /// The description of vote state: vote and application
     /// </summary>
     public class StateDescriptor : ISerializable
     {
+        // <summary>
+        // 类型：投票或者登记成为候选人。
+        // </summary>
         /// <summary>
-        /// 类型：投票或者登记成为候选人。
+        /// The type: Vote or register as applicant
         /// </summary>
         public StateType Type;
 
+        // <summary>
+        // 当Field = "Votes"时， 存放投票人地址的脚本hash， Key代表投票人;<br/>
+        // 当Field = "Registered"时， 存放公钥， Key代表申请人
+        // </summary>
         /// <summary>
-        /// 当Field = "Votes"时， 存放投票人地址的脚本hash， Key代表投票人;<br/>
-        /// 当Field = "Registered"时， 存放公钥， Key代表申请人
+        /// If the filed is Votes, save the script hash of current voters
+        /// If the field is Registered, save the public key and the key is applicant
         /// </summary>
         public byte[] Key;
 
+        // <summary>
+        // 当Type = 0x40时， Field = "Votes";<br/>
+        // 当Type = 0x48时， Field = "Registered";
+        // </summary>
         /// <summary>
-        /// 当Type = 0x40时， Field = "Votes";<br/>
-        /// 当Type = 0x48时， Field = "Registered";
+        /// When the Type is 0x40, Field is equal to Votes;<br/>
+        /// when the Type is 0x48, Field is equal to Registered
         /// </summary>
         public string Field;
 
+        // <summary>
+        // 当Type = 0x40时， 代表投票地址列表；<br/>
+        // 当Type = 0x48时， 代表取消或申请验证人的布尔值
+        // </summary>
         /// <summary>
-        /// 当Type = 0x40时， 代表投票地址列表；<br/>
-        /// 当Type = 0x48时， 代表取消或申请验证人的布尔值
+        /// When the Type is 0x40, which stands for the vote list 
+        /// When the Type is 0x48, which stands for canceling or registers the validators
         /// </summary>
         public byte[] Value;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size of storage
         /// </summary>
         public int Size => sizeof(StateType) + Key.GetVarSize() + Field.GetVarSize() + Value.GetVarSize();
 
 
+        // <summary>
+        // 交易手续费  若是申请见证人，需要1000个GAS， 否则为0
+        // </summary>
         /// <summary>
-        /// 交易手续费  若是申请见证人，需要1000个GAS， 否则为0
+        /// The transaction fee. If apply for validators, need 1000 Gas, otherwose is 0.
         /// </summary>
         public Fixed8 SystemFee
         {
@@ -74,10 +98,14 @@ namespace Neo.Network.P2P.Payloads
             if (Field != "Registered") throw new FormatException();
         }
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialization
         /// </summary>
-        /// <param name="reader">二进制输入</param>
+        /// <param name="reader">The binary output input</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             Type = (StateType)reader.ReadByte();
@@ -110,10 +138,14 @@ namespace Neo.Network.P2P.Payloads
                     throw new InvalidOperationException();
             }
         }
+        // <summary>
+        // 序列化
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
-        /// 序列化
+        /// The serialization method
         /// </summary>
-        /// <param name="writer">二进制输出</param>
+        /// <param name="writer">The binary output writer</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             writer.Write((byte)Type);
@@ -122,10 +154,14 @@ namespace Neo.Network.P2P.Payloads
             writer.WriteVarBytes(Value);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Transfer to json object
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>Json object</returns>
         public JObject ToJson()
         {
             JObject json = new JObject();

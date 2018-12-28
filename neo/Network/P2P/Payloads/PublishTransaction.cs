@@ -9,54 +9,84 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 发布智能合约交易【已弃用】
+    // </summary>
     /// <summary>
-    /// 发布智能合约交易【已弃用】
+    ///The publication of transaction (given up)
     /// </summary>
     [Obsolete]
     public class PublishTransaction : Transaction
     {
+        // <summary>
+        // 合约脚本
+        // </summary>
         /// <summary>
-        /// 合约脚本
+        /// The transaction script
         /// </summary>
         public byte[] Script;
 
+        // <summary>
+        // 合约参数列表
+        // </summary>
         /// <summary>
-        /// 合约参数列表
+        /// The parameterList of contract
         /// </summary>
         public ContractParameterType[] ParameterList;
 
+        // <summary>
+        // 合约返回值类型
+        // </summary>
         /// <summary>
-        /// 合约返回值类型
+        /// The return value type of contract
         /// </summary>
         public ContractParameterType ReturnType;
 
+        // <summary>
+        // 是否需要存储空间
+        // </summary>
         /// <summary>
-        /// 是否需要存储空间
+        /// If the contract need the storage
         /// </summary>
         public bool NeedStorage;
 
+        // <summary>
+        // 合约名字
+        // </summary>
         /// <summary>
-        /// 合约名字
+        /// The name of contract
         /// </summary>
         public string Name;
 
+        // <summary>
+        // 代码版本号
+        // </summary>
         /// <summary>
-        /// 代码版本号
+        /// The version of code
         /// </summary>
         public string CodeVersion;
 
+        // <summary>
+        // 作者
+        // </summary>
         /// <summary>
-        /// 作者
+        /// The author
         /// </summary>
         public string Author;
 
+        // <summary>
+        // 邮箱
+        // </summary>
         /// <summary>
-        /// 邮箱
+        /// The email of authir
         /// </summary>
         public string Email;
 
+        // <summary>
+        // 描述
+        // </summary>
         /// <summary>
-        /// 描述
+        /// The description of the contract
         /// </summary>
         public string Description;
 
@@ -73,23 +103,33 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// The size for storage
         /// </summary>
         public override int Size => base.Size + Script.GetVarSize() + ParameterList.GetVarSize() + sizeof(ContractParameterType) + Name.GetVarSize() + CodeVersion.GetVarSize() + Author.GetVarSize() + Email.GetVarSize() + Description.GetVarSize();
 
+        // <summary>
+        // 创建智能合约发布交易
+        // </summary>
         /// <summary>
-        /// 创建智能合约发布交易
+        /// Construct the contract publication transaction
         /// </summary>
         public PublishTransaction()
             : base(TransactionType.PublishTransaction)
         {
         }
 
+        // <summary>
+        // 反序列化非data数据
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化非data数据
+        /// Deserialization of this transaction exclude the data
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">The binary input reader</param>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version > 1) throw new FormatException();
@@ -149,6 +189,49 @@ namespace Neo.Network.P2P.Payloads
         /// </list>
         /// </summary>
         /// <param name="writer">二进制输出流</param>
+
+        /// <summary>
+        /// Serialization
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Script</term>
+        /// <description>The smart contract script</description>
+        /// </item>
+        /// <item>
+        /// <term>ParameterList</term>
+        /// <description>The list of parameters</description>
+        /// </item>
+        /// <item>
+        /// <term>ReturnType</term>
+        /// <description>THe return value type</description>
+        /// </item> 
+        /// <item>
+        /// <term>NeedStorage</term>
+        /// <description>Is it open for storage（valid from 1.0 version）</description>
+        /// </item>
+        /// <item>
+        /// <term>Name</term>
+        /// <description>The name of contract</description>
+        /// </item>
+        /// <item>
+        /// <term>CodeVersion</term>
+        /// <description>The code of version</description>
+        /// </item>
+        /// <item>
+        /// <term>Author</term>
+        /// <description>Author</description>
+        /// </item>
+        /// <item>
+        /// <term>Email</term>
+        /// <description>Email</description>
+        /// </item>
+        /// <item>
+        /// <term>Description</term>
+        /// <description>Description</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="writer">The binary output writer</param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.WriteVarBytes(Script);
@@ -162,10 +245,14 @@ namespace Neo.Network.P2P.Payloads
             writer.WriteVarString(Description);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Transfer to json object
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>json object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();
@@ -185,12 +272,18 @@ namespace Neo.Network.P2P.Payloads
         }
 
 
+        // <summary>
+        // 校验脚本。已经弃用。不接受新的PublishTransaction
+        // </summary>
+        // <param name="snapshot">数据库快照</param>
+        // <param name="mempool">内存池交易</param>
+        // <returns>返回固定值false，已弃用</returns>
         /// <summary>
-        /// 校验脚本。已经弃用。不接受新的PublishTransaction
+        /// Verify the transaction script, which is deprecated. Not accept any new publishTransaction
         /// </summary>
-        /// <param name="snapshot">数据库快照</param>
-        /// <param name="mempool">内存池交易</param>
-        /// <returns>返回固定值false，已弃用</returns>
+        /// <param name="snapshot">The snapshot of dabase</param>
+        /// <param name="mempool">The memory pool of transactions</param>
+        /// <returns>return the fixed value false, which is deprecated</returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             return false;
