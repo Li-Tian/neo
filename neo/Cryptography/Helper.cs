@@ -92,7 +92,7 @@ namespace Neo.Cryptography
         /// Decode a Base58Check encoded string into a byte array<br/>
         /// Decode step：<br/>
         /// 1. Decode the input string acording Base58 algorithms to get a byte array data. <br/>
-        /// 2, The bytes from first byte to last four byte is called data.<br/>
+        /// 2. The bytes from first byte to last four byte is called data.<br/>
         /// 3. The first four bytes of the hash obtained by data doing twice Sha256 operation is called checksum.<br/>
         /// If checksum is same as the last four bytes of byte array data, return data.Otherwise ,the data is invalid. <br/>
         /// </summary>

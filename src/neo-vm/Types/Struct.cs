@@ -22,7 +22,7 @@ namespace Neo.VM.Types
         // </summary>
         // <param name="value">堆栈项集合</param>
         /// <summary>
-        /// constructor, Call the constructor of Array
+        /// constructor, call the constructor of Array
         /// </summary>
         /// <param name="value">Stack item collection</param>
         public Struct(IEnumerable<StackItem> value) : base(value)

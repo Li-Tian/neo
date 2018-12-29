@@ -316,7 +316,7 @@ namespace Neo
         // <summary>
         // 将这个Fixed8对象的有效值序列化写入流
         // </summary>
-        /// <param name="writer">用于写入字节流</param>
+        // <param name="writer">用于写入字节流</param>
         /// <summary>
         /// Serialize method
         /// </summary>

@@ -5,10 +5,14 @@ using System.Text;
 
 namespace Neo.Cryptography
 {
+    // <summary>
+    // Base58 is a way to encode the digits to a alphanumeric strings, which is more easier for representing the long digitis.
+    // Base58 does not contain the 0,O,l,I,+ and /
+    // Base58不含Base64中的0（数字0）、O（大写字母o）、l（小写字母 L）、I（大写字母i），以及“+”和“/”两个字符。
+    // </summary>
     /// <summary>
     /// Base58 is a way to encode the digits to a alphanumeric strings, which is more easier for representing the long digitis.
     /// Base58 does not contain the 0,O,l,I,+ and /
-    /// Base58不含Base64中的0（数字0）、O（大写字母o）、l（小写字母 L）、I（大写字母i），以及“+”和“/”两个字符。
     /// </summary>
     public static class Base58
     {
@@ -29,15 +33,15 @@ namespace Neo.Cryptography
         // <exception cref="FormatException">不是一个标准的Base58字符串</exception>
         // <returns>解码后的字节数组</returns>
         /// <summary>
-        /// Decode method.  Parse a Base58 String to a byte array.<br/>
+        /// Decode method.Parse a Base58 string to a byte array.<br/>
         /// The detail decode process is :<br/>
         /// 1. According to the Base58 alphabet, transfer the inverted order string to BigInterger. <br/>
         /// 2. Transfer the Biginteger to byte array, and reverse the order.<br/>
-        /// 3. In the original string, according to the alphabet, count which characteristics are empty and calculate them.<br/>
+        /// 3. In the original string, according to the alphabet, calculate the count of the first charactor in alphabet.<br/>
         /// 4. If the byte[] length is greater than 1, and byte[0] equals to 0, byte[1] greater than or equal to 0x80, then slice the byte array from byte[1], otherwise, slice it from byte[0]
         /// </summary>
-        /// <param name="input">The Base58 String which is going to be Decode.</param>
-        /// <returns>the byte array after Decode</returns>
+        /// <param name="input">The Base58 string which is going to be decoded.</param>
+        /// <returns>the byte array after decode the Base58 string</returns>
         public static byte[] Decode(string input)
         {
             BigInteger bi = BigInteger.Zero;
@@ -77,10 +81,10 @@ namespace Neo.Cryptography
         /// 1. Add 0x00 at the front of byte[], generate a new byte array, then sort them by order by desending.<br/>
         /// 2. Transfer the data of byte array to BigInterger<br/>
         /// 3. Transfer the BigInterger to Base58 according to the alphabet<br/>
-        /// 4  Count the number of 0x00 in the original byte[], before the Base58 string add count characteristics which is 0 at alphabet. 
+        /// 4  Count the number of 0x00 in the original byte[], before the Base58 string add charactor which index is 0 at alphabet. 
         /// </summary>
         /// <param name="input">The byte array to be encoded</param>
-        /// <returns>The Base58 String after encoding the byte array</returns>
+        /// <returns>The Base58 string after encoding the byte array</returns>
         public static string Encode(byte[] input)
         {
             BigInteger value = new BigInteger(new byte[1].Concat(input).Reverse().ToArray());

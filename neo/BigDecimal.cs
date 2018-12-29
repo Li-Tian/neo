@@ -5,7 +5,7 @@ namespace Neo
 {
     /// <summary>
     /// Immutate, arbitrary precision signed decimal numbers. A BigDecimal consists of an unscaled value which is an BigInteger, and a byte scale,
-    /// The scale is the number of digits to the right of the decimal point, and the the maxmimum scaled position of decimal point is 255.
+    /// The scale is the number of digits to the right of the decimal point, and the maxmimum scaled position of decimal point is 255.
     /// </summary>
     public struct BigDecimal
     {
@@ -25,13 +25,13 @@ namespace Neo
         public byte Decimals => decimals;
 
         /// <summary>
-        /// The Sign propertu represents the sign of the Value property. It is 1 if Value is positive, it is -1 if the Value is -1, it is 0 if the Value is 0.
+        /// The Sign property represents the sign of the Value property. It is 1 if Value is positive, it is -1 if the Value is -1, it is 0 if the Value is 0.
         /// </summary>
         /// <value>The value of Sign is obtained from the Sign field of this Big decimal object</value>
         public int Sign => value.Sign;
 
         /// <summary>
-        /// Pass a valud value and the decimal point position number to this BigDecimal object. Then the value of this BigDecimal is value × 10<sup>-decimals</sup> 
+        /// Pass a vaild value and the decimal point position number to this BigDecimal object. Then the value of this BigDecimal is value × 10<sup>-decimals</sup> 
         /// </summary>
         /// <param name="value">The valid value part of this BigDecimal object</param>
         /// <param name="decimals">The decimal point position of this BigDecimal</param>
@@ -45,7 +45,7 @@ namespace Neo
         /// Pass an decimal point position, and return a new BigDecimal Object which use this decimal point position number.
         /// </summary>
         /// <param name="decimals">Decimal point position</param>
-        /// <exception cref="ArgumentException">The lose of precistion due to the transform</exception>
+        /// <exception cref="ArgumentException">The lose of precision due to the transform</exception>
         /// <returns>A new BigDecimal Object which is represented by the new decimal point position </returns>
         public BigDecimal ChangeDecimals(byte decimals)
         {
@@ -100,7 +100,7 @@ namespace Neo
         /// Transfer this BigDecimal object to string and return
         /// </summary>
         /// <returns>
-        /// THe string which represents BigDecimal
+        /// The string which represents BigDecimal
         /// </returns>
         public override string ToString()
         {
@@ -111,11 +111,11 @@ namespace Neo
         }
 
         /// <summary>
-        /// Parse the String passed as argument to a BigDecimal object which is represented by specified decimal point position.
+        /// Parse the string passed as argument to a BigDecimal object which is represented by specified decimal point position.
         /// </summary>
-        /// <param name="s">string value to be parsed. It supports float number format.(e.g. "1.23") And it supports Scientific notation (e.g. "1.23e5")</param>
+        /// <param name="s">The string to be parsed. It supports float number format.(e.g. "1.23") And it supports Scientific notation (e.g. "1.23e5")</param>
         /// <param name="decimals">Decimal point position</param>
-        /// <param name="result">The BigDecimal object transferd from String</param>
+        /// <param name="result">The BigDecimal object transferd from string</param>
         /// <returns>If the string can be parsed then it return <c>true</c>,  if the string can not be parsed the return<c>false</c></returns>
         public static bool TryParse(string s, byte decimals, out BigDecimal result)
         {

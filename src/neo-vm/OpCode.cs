@@ -35,21 +35,21 @@ namespace Neo.VM
         // </summary>
         PUSHBYTES75 = 0x4B,
         /// <summary>
-        /// The next byte contains the number of bytes to be pushed onto the stack.
+        /// The next byte is pushed onto the stack.It represents the number of bytes to be pushed onto the stack after it.
         /// </summary>
         // <summary>
         // 向栈中压入一个字节数组，其长度由本指令后的1字节指定。
         // </summary>
         PUSHDATA1 = 0x4C,
         /// <summary>
-        /// The next two bytes contain the number of bytes to be pushed onto the stack.
+        /// The next two bytes are pushed onto the stack.They represent the number of bytes to be pushed onto the stack after it.
         /// </summary>
         // <summary>
         // 向栈中压入一个字节数组，其长度由本指令后的2字节指定。
         // </summary>
         PUSHDATA2 = 0x4D,
         /// <summary>
-        /// The next four bytes contain the number of bytes to be pushed onto the stack.
+        /// The next four bytes are pushed onto the stack.They represent the number of bytes to be pushed onto the stack after it.
         /// </summary>
         // <summary>
         // 向栈中压入一个字节数组，其长度由本指令后的4字节指定。
@@ -711,14 +711,14 @@ namespace Neo.VM
         // </summary>
         SETITEM = 0xC4,
         /// <summary>
-        /// 用作引用類型  en: A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
+        /// As a reference type en: A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
         /// </summary>
         // <summary>
         // 在栈顶新建一个大小为n的Array，其元素全部为0。
         // </summary>
         NEWARRAY = 0xC5,
         /// <summary>
-        /// 用作值類型 en: A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
+        /// As a value type en: A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
         /// </summary>
         // <summary>
         // 在栈顶新建一个大小为n的Struct，其元素全部为0.

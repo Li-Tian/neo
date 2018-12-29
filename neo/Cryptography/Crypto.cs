@@ -58,7 +58,7 @@ namespace Neo.Cryptography
         // <param name="pubkey">公钥</param>
         // <returns>数据的签名</returns>
         /// <summary>
-        /// Use ECDsa algorithm and privatekey and publickey to make signature of the message/
+        /// Use ECDsa algorithm and privatekey and publickey to make signature of the message
         /// The curve is nistP256, the hash function is SHA256
         /// </summary>
         /// <param name="message">The data to be processed</param>

@@ -22,9 +22,12 @@ namespace Neo.Consensus
     /// </remarks>
     public sealed class ConsensusService : UntypedActor
     {
+        // <summary>
+        // Start consensus activity message(custom AKKA message type)
+        // 开始共识消息（AKKA自定义消息类型）
+        // </summary>
         /// <summary>
-        /// Start consensus activity message
-        /// 开始共识消息（AKKA自定义消息类型）
+        /// Start consensus activity message(AKKA customized message type)
         /// </summary>
         public class Start { }
 
@@ -82,7 +85,7 @@ namespace Neo.Consensus
         {
         }
         /// <summary>
-        /// Construction a ConsensusService
+        /// Construct a ConsensusService
         /// </summary>
         /// <param name="localNode">local node</param>
         /// <param name="taskManager">task manager</param>

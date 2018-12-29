@@ -8,7 +8,7 @@ namespace Neo.VM.Types
     // 定义了虚拟机Map类型的相关方法
     // </summary>
     /// <summary>
-    /// Virtual machine InteropInterface type class
+    /// Virtual machine Map type class
     /// </summary>
     public class Map : StackItem, ICollection, IDictionary<StackItem, StackItem>
     {

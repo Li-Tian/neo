@@ -44,14 +44,14 @@ namespace Neo.VM
         // 调用栈，其中包含许多的运行上下文
         // </summary>
         /// <summary>
-        /// InvocationStack, Which contains a lot of execution context
+        /// InvocationStack, which contains a lot of execution context
         /// </summary>
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         // <summary>
         // 结果栈
         // </summary>
         /// <summary>
-        /// Used to store execution results
+        /// ResultStack used to store execution results
         /// </summary>
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
         // <summary>
@@ -66,7 +66,7 @@ namespace Neo.VM
         // </summary>
         /// <summary>
         /// Calling context, if the number of ExecutionContext in the InvocationStack is more than 1, 
-        /// it is the second ExecutionContext of the InvocationStack, otherwise it is empty
+        /// get the second ExecutionContext of the InvocationStack, otherwise get null.
         /// </summary>
         public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
         // <summary>
