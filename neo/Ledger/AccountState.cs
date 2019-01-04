@@ -151,7 +151,7 @@ namespace Neo.Ledger
         /// Get the balance of specified asset
         /// </summary>
         /// <param name="asset_id">The asset Id</param>
-        /// <returns>Get the balance of asset. It not record then return 0</returns>
+        /// <returns>Get the balance of asset. If it not record then return 0</returns>
         public Fixed8 GetBalance(UInt256 asset_id)
         {
             if (!Balances.TryGetValue(asset_id, out Fixed8 value))

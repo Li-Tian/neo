@@ -26,7 +26,7 @@ namespace Neo.Ledger
         // 合约参数列表
         // </summary>
         /// <summary>
-        /// The List of arguments
+        /// The list of arguments
         /// </summary>
         public ContractParameterType[] ParameterList;
 
@@ -90,7 +90,7 @@ namespace Neo.Ledger
         // 是否包含存储空间
         // </summary>
         /// <summary>
-        /// The storage
+        /// If it contains a storage
         /// </summary>
         public bool HasStorage => ContractProperties.HasFlag(ContractPropertyState.HasStorage);
 
@@ -98,7 +98,7 @@ namespace Neo.Ledger
         // 是否动态调用
         // </summary>
         /// <summary>
-        /// Is that dynamically invoked
+        /// If contract can dynamically invoke other contract
         /// </summary>
         public bool HasDynamicInvoke => ContractProperties.HasFlag(ContractPropertyState.HasDynamicInvoke);
 
@@ -145,7 +145,7 @@ namespace Neo.Ledger
         /// <summary>
         /// Clone method
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>replica of object</returns>
         ContractState ICloneable<ContractState>.Clone()
         {
             return new ContractState
@@ -167,7 +167,7 @@ namespace Neo.Ledger
         // </summary>
         // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// Deserialization
+        /// Deserialization method
         /// </summary>
         /// <param name="reader">The binary reader</param>
         public override void Deserialize(BinaryReader reader)

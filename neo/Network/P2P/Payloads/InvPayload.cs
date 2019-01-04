@@ -25,7 +25,7 @@ namespace Neo.Network.P2P.Payloads
         // Inventory数据的类型
         // </summary>
         /// <summary>
-        /// The class of inventory data
+        /// The type of inventory data
         /// </summary>
         public InventoryType Type;
         /// <summary>

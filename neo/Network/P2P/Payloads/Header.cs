@@ -30,6 +30,7 @@ namespace Neo.Network.P2P.Payloads
         /// The deserialization
         /// </summary>
         /// <param name="reader">The binary output stream</param>
+        /// <exception cref="System.FormatException">Thrown when the binary data format does not match the format of the header after serialization</exception>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -59,10 +60,10 @@ namespace Neo.Network.P2P.Payloads
         // <param name="obj">待比较对象</param>
         // <returns>等于返回true，不等于返回false</returns>
         /// <summary>
-        /// Compare the block header equals to other object
+        /// Determine if the block header is equal to other object
         /// </summary>
-        /// <param name="obj">Compare the object and the block header</param>
-        /// <returns>If the object equals to block header returns true, otherwise return false</returns>
+        /// <param name="obj">the object to be compared</param>
+        /// <returns>If it is equal to other object returns true, otherwise return false</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Header);
@@ -145,7 +146,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item>
         /// <item>
         /// <term>ConsensusData</term>
-        /// <description>The consensusData, default if block nonce</description>
+        /// <description>The consensus data, default is block nonce</description>
         /// </item>
         /// <item>
         /// <term>NextConsensus</term>
@@ -169,7 +170,7 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <returns>简化版block对象</returns>
         /// <summary>
-        /// Transfer to trimmed block. The trimmed block instance Transferd from header does not include the hash value of transactions
+        /// Transfer to trimmed block. The trimmed block instance transferd from header does not include the hash value of transactions
         /// </summary>
         /// <returns>The trimmed block</returns>
         public TrimmedBlock Trim()

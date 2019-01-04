@@ -17,7 +17,7 @@ namespace Neo.Ledger
         // 区块头hash列表，单次最多2000条
         // </summary>
         /// <summary>
-        /// THe hash list of block headers,
+        /// The hash list of block headers.Up to 2000 items at a time
         /// </summary>
         public UInt256[] Hashes;
 
@@ -35,7 +35,7 @@ namespace Neo.Ledger
         /// <summary>
         /// The clone method
         /// </summary>
-        /// <returns>The clone target</returns>
+        /// <returns>replica of object</returns>
         HeaderHashList ICloneable<HeaderHashList>.Clone()
         {
             return new HeaderHashList

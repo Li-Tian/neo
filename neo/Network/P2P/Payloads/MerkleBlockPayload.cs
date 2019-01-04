@@ -6,9 +6,13 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // SPV钱包所需的数据块的实体类
+    // BlockBase的子类
+    // </summary>
     /// <summary>
-    /// SPV钱包所需的数据块的实体类
-    /// BlockBase的子类
+    /// a class descript data required by SPV wallet
+    /// a subclass of BlockBase
     /// </summary>
     public class MerkleBlockPayload : BlockBase
     {
@@ -24,7 +28,7 @@ namespace Neo.Network.P2P.Payloads
         // 数组形式的梅克尔树
         // </summary>
         /// <summary>
-        /// The merkle tree in the array format
+        /// The merkle tree in array format
         /// </summary>
         public UInt256[] Hashes;
         // <summary>
@@ -33,7 +37,8 @@ namespace Neo.Network.P2P.Payloads
         // 的相互转换。(little endian)
         // </summary>
         /// <summary>
-        /// The flags , which stands for which nodes are ignored, and which nodes are not ignored. This flag is used for transferring to array<br/>
+        /// The flags stands for which nodes are ignored, and which nodes are not ignored.<br/> 
+        /// This flag is used for transferring merkle tree to array.(little endian)<br/>
         /// </summary>
         public byte[] Flags;
 
@@ -51,11 +56,11 @@ namespace Neo.Network.P2P.Payloads
         // <param name="flags">标志位</param>
         // <returns>所需的数据块</returns>
         /// <summary>
-        /// The data which need to verify the transaction when create SPV wallet
+        /// create the data for SPV wallet to verify the transaction
         /// </summary>
         /// <param name="block">block data</param>
         /// <param name="flags">flags</param>
-        /// <returns></returns>
+        /// <returns>MerkleBlockPayload</returns>
         public static MerkleBlockPayload Create(Block block, BitArray flags)
         {
             MerkleTree tree = new MerkleTree(block.Transactions.Select(p => p.Hash).ToArray());

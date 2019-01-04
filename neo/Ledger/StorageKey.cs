@@ -26,7 +26,7 @@ namespace Neo.Ledger
         // 具体的键
         // </summary>
         /// <summary>
-        /// The concrete key
+        /// The key
         /// </summary>
         public byte[] Key;
 
@@ -58,10 +58,10 @@ namespace Neo.Ledger
         // <returns>是否相等</returns>
         // <remarks>合约脚本相等且键值相等。</remarks>
         /// <summary>
-        /// Compare the two keys
+        /// Compare two keys
         /// </summary>
         /// <param name="other">The other key</param>
-        /// <returns>If contract script is same and the key value is equal then return true, otherwise return false</returns>
+        /// <returns>If contract scripts are same and the key values are equal then return true, otherwise return false</returns>
         public bool Equals(StorageKey other)
         {
             if (other is null)
@@ -96,7 +96,7 @@ namespace Neo.Ledger
         /// <summary>
         /// Get the hash code
         /// </summary>
-        /// <returns>Hash code of this key which is hash code of contract script hash the murmur32 of key</returns>
+        /// <returns>Hash code of this key which equals hash code of contract script plus the murmur32 value of key</returns>
         public override int GetHashCode()
         {
             return ScriptHash.GetHashCode() + (int)Key.Murmur32(0);

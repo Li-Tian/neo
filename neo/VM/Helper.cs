@@ -63,7 +63,7 @@ namespace Neo.VM
         // <param name="parameters">合约参数列表</param>
         // <returns>写入完成后的脚本生成器</returns>
         /// <summary>
-        /// Write a appcall with a parameter of the ContractParameter type to the script builder, which is specified by the script hash
+        /// Write a appcall with parameters of the ContractParameter type to the script builder, which is specified by the script hash
         /// </summary>
         /// <param name="sb">Script builder</param>
         /// <param name="scriptHash">Script hash</param>

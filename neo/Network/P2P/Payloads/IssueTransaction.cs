@@ -55,7 +55,7 @@ namespace Neo.Network.P2P.Payloads
         // <param name="reader">二进制输入流</param>
         // <exception cref="System.FormatException">若交易版本号大于1，则抛出该异常</exception>
         /// <summary>
-        /// The deserilization of 
+        /// Deserilization exclusive data 
         /// </summary>
         /// <exception cref="System.FormatException">If the version of transactions is larger than 1, then throw exceptions</exception>
         /// <param name="reader">The binary input reader</param>
@@ -73,7 +73,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// Get the script hash of the signature which is waiting for verify
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">若发行的资产不存在，则抛出该异常</exception>
+        /// <exception cref="System.InvalidOperationException">Thrown if the issued asset does not exist</exception>
         /// <param name="snapshot">Snapshot</param>
         /// <returns>The script hash of the transaction, and the address hash of the issuer </returns>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
@@ -102,14 +102,14 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// The transaction verification
         /// </summary>
-        /// <param name="snapshot">The snapshot of database</param>
-        /// <param name="mempool">The memory pool of transaction</param>
+        /// <param name="snapshot">database snapshot</param>
+        /// <param name="mempool">transactions in mempool</param>
         /// <returns>
         /// 1. verify the basic transactions, if verify failed, return false<br/>
-        /// 2. If the input which transactions references not exist, return false<br/>
+        /// 2. If the input of transactions references not exist, return false<br/>
         /// 3. If the asset issued not exist return false<br/>
         /// 4. If the asset issued is negative return false<br/>
-        /// 5. If the issue asset and other asset from the memory pool, which exceeds the total issue amount , then return false<br/>
+        /// 5. If the sum of the amount of this transaction  and other transactions in  mempool exceeds the total issue amount , then return false<br/>
         /// </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {

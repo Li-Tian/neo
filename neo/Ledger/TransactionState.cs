@@ -34,7 +34,7 @@ namespace Neo.Ledger
         // 存储大小
         // </summary>
         /// <summary>
-        /// The storage of this state object
+        /// The size of this state object
         /// </summary>
         public override int Size => base.Size + sizeof(uint) + Transaction.Size;
         // <summary>
@@ -44,7 +44,7 @@ namespace Neo.Ledger
         /// <summary>
         /// The clone method
         /// </summary>
-        /// <returns>The clone target object</returns>
+        /// <returns>replica of object</returns>
         TransactionState ICloneable<TransactionState>.Clone()
         {
             return new TransactionState

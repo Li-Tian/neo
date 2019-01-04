@@ -36,7 +36,7 @@ namespace Neo.Ledger
         /// <summary>
         /// The clone method
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>replica of object</returns>
         UnspentCoinState ICloneable<UnspentCoinState>.Clone()
         {
             return new UnspentCoinState

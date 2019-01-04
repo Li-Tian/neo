@@ -48,7 +48,7 @@ namespace Neo.Network.P2P.Payloads
         // <param name="filter">布隆过滤器</param>
         // <returns>对应的过滤器加载的传输数据包</returns>
         /// <summary>
-        /// The filtered playload which is load from the bloomfilter
+        /// create a filterpayload which is load from the bloomfilter
         /// </summary>
         /// <param name="filter">The bloomfilter</param>
         /// <returns>The payload load from filter</returns>

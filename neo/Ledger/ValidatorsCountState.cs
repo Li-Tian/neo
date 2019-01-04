@@ -44,7 +44,7 @@ namespace Neo.Ledger
         /// <summary>
         /// The clone method
         /// </summary>
-        /// <returns>The clone object</returns>
+        /// <returns>replica of object</returns>
         ValidatorsCountState ICloneable<ValidatorsCountState>.Clone()
         {
             return new ValidatorsCountState

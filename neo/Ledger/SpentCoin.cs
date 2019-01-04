@@ -6,7 +6,7 @@ namespace Neo.Ledger
     // 已花费的output状态
     // </summary>
     /// <summary>
-    /// The statet of already spent output
+    /// The state of already spent output
     /// </summary>
     public class SpentCoin
     {
@@ -14,7 +14,7 @@ namespace Neo.Ledger
         // 已经花费的output
         // </summary>
         /// <summary>
-        /// The already spent transactionOutput
+        /// The already spent transaction output
         /// </summary>
         public TransactionOutput Output;
 
@@ -30,7 +30,7 @@ namespace Neo.Ledger
         // output被花费的block高度
         // </summary>
         /// <summary>
-        /// The block height where this transactionOutput is spent
+        /// The height of block in which the transaction output is spent
         /// </summary>
         public uint EndHeight;
 

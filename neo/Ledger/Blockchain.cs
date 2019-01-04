@@ -32,7 +32,7 @@ namespace Neo.Ledger
         // 注册消息（自定义AKKA消息类型）
         // </summary>
         /// <summary>
-        /// The register message(Customized AKKA message type)
+        /// The register message(customized AKKA message type)
         /// </summary>
         public class Register { }
 
@@ -151,7 +151,7 @@ namespace Neo.Ledger
         // NEO代币定义
         // </summary>
         /// <summary>
-        /// The definition of NEO coin
+        /// The definition of NEO token
         /// </summary>
         public static readonly RegisterTransaction GoverningToken = new RegisterTransaction
         {
@@ -171,7 +171,7 @@ namespace Neo.Ledger
         // GAS代币定义
         // </summary>
         /// <summary>
-        /// The definication of GAS coin
+        /// The definication of GAS token
         /// </summary>
         public static readonly RegisterTransaction UtilityToken = new RegisterTransaction
         {
@@ -192,7 +192,7 @@ namespace Neo.Ledger
         // 创世块定义
         // </summary>
         /// <summary>
-        /// The definition of GenesisBlock
+        /// The definition of Genesis Block
         /// </summary>
         public static readonly Block GenesisBlock = new Block
         {

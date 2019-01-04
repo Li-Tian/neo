@@ -3,8 +3,11 @@ using Neo.VM;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // NVM执行结果
+    // </summary>
     /// <summary>
-    /// NVM执行结果
+    /// A class descripts the NVM execution results
     /// </summary>
     public class ApplicationExecutionResult
     {

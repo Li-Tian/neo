@@ -4,7 +4,7 @@
     // 对接受到的转发消息的处理结果描述
     // </summary>
     /// <summary>
-    /// The description of result of message rellay
+    /// The description of result of message relay
     /// </summary>
     public enum RelayResultReason : byte
     {

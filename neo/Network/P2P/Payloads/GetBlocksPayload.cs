@@ -3,8 +3,11 @@ using System.IO;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 获取区块的传输数据包
+    // </summary>
     /// <summary>
-    /// 获取区块的传输数据包
+    /// A payload for getting block
     /// </summary>
     public class GetBlocksPayload : ISerializable
     {
@@ -12,7 +15,7 @@ namespace Neo.Network.P2P.Payloads
         // 开始区块的哈希值列表。固定长度为1
         // </summary>
         /// <summary>
-        /// The hash list start blocks. The fixed length is 1
+        /// The hash list of start blocks. The fixed length is 1
         /// </summary>
         public UInt256[] HashStart;
         // <summary>
@@ -26,7 +29,7 @@ namespace Neo.Network.P2P.Payloads
         // 大小
         // </summary>
         /// <summary>
-        /// The size of this block
+        /// The size of this payload
         /// </summary>
         public int Size => HashStart.GetVarSize() + HashStop.Size;
         // <summary>
@@ -36,10 +39,10 @@ namespace Neo.Network.P2P.Payloads
         // <param name="hash_stop">结束区块的哈希值。不指定时，自动设置为0。将最多获取500个区块</param>
         // <returns>创建完成的获取区块的数据包</returns>
         /// <summary>
-        /// Create a payload of geting blocks
+        /// Create a payload for geting blocks
         /// </summary>
         /// <param name="hash_start">The hash value of the start block</param>
-        /// <param name="hash_stop">The hash value of the stop block. If not specified, set to 0 automatically. The most block is 500</param>
+        /// <param name="hash_stop">The hash value of the stop block. If not specified, set to 0 automatically. The most block number is 500</param>
         /// <returns>The playload of the complete hash blocks with the hash start and hash stop</returns>
         public static GetBlocksPayload Create(UInt256 hash_start, UInt256 hash_stop = null)
         {

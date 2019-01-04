@@ -2,8 +2,11 @@
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 智能合约属性状态
+    // </summary>
     /// <summary>
-    /// 智能合约属性状态
+    /// state of contract property
     /// </summary>
     [Flags]
     public enum ContractPropertyState : byte
@@ -28,15 +31,15 @@ namespace Neo.Ledger
         // 动态调用
         // </summary>
         /// <summary>
-        /// This contract can be dynamically invoked
+        /// This contract can dynamically invoke other contract
         /// </summary>
         HasDynamicInvoke = 1 << 1,
 
         // <summary>
-        // 可支付(保留功能)
+        // 可收款(保留功能)
         // </summary>
         /// <summary>
-        /// This contract can be paid(Developing)
+        /// Is payable(Developing)
         /// </summary>
         Payable = 1 << 2
     }
