@@ -19,7 +19,8 @@ namespace Neo.Network.P2P.Payloads
         // 比特币网络中节点类型很多，与之相比 NEO 网络目前只有一种节点。
         // </summary>
         /// <summary>
-        /// The node type constant: the normal network node
+        /// The node type constant: the normal network node.
+        /// There are many types of nodes in the Bitcoin network, compared to the NEO network, which currently has only one type of node.
         /// </summary>
         public const ulong NODE_NETWORK = 1;
         // <summary>
@@ -47,7 +48,7 @@ namespace Neo.Network.P2P.Payloads
         // 获取传输时的长度（字节）
         // </summary>
         /// <summary>
-        /// Get the length when transfer
+        /// Get the length of data when transfer
         /// </summary>
         public int Size => sizeof(uint) + sizeof(ulong) + 16 + sizeof(ushort);
         // <summary>
@@ -63,7 +64,7 @@ namespace Neo.Network.P2P.Payloads
         /// <param name="endpoint">address information</param>
         /// <param name="services">service type</param>
         /// <param name="timestamp">The recent activity time</param>
-        /// <returns>The an addressWithTime object</returns>
+        /// <returns>an addressWithTime object</returns>
         public static NetworkAddressWithTime Create(IPEndPoint endpoint, ulong services, uint timestamp)
         {
             return new NetworkAddressWithTime
@@ -78,7 +79,7 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <param name="reader">二进制输入</param>
         /// <summary>
-        /// Deserialization function
+        /// Deserialization method
         /// </summary>
         /// <param name="reader">The binary input reader</param>
         void ISerializable.Deserialize(BinaryReader reader)
@@ -98,7 +99,7 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <param name="writer">二进制输出</param>
         /// <summary>
-        /// The serialization
+        /// The serialization method
         /// </summary>
         /// <param name="writer">The binary output writer</param>
         void ISerializable.Serialize(BinaryWriter writer)

@@ -14,7 +14,7 @@ namespace Neo.Network.P2P.Payloads
     // 投票或申请验证人交易
     // </summary>
     /// <summary>
-    /// The Transaction for voting or application for validators
+    /// The transaction for voting or application for validators
     /// </summary>
     public class StateTransaction : Transaction
     {
@@ -37,8 +37,8 @@ namespace Neo.Network.P2P.Payloads
         // <summary>
         // 交易手续费
         // </summary>
-        // <summary>
-        // The tramsactopm system fee
+        /// <summary>
+        /// The transaction system fee
         /// </summary>
         public override Fixed8 SystemFee => Descriptors.Sum(p => p.SystemFee);
 
@@ -58,7 +58,7 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// Deserialization of transaction exclude the data
+        /// Deserialize exclusive data
         /// </summary>
         /// <param name="reader">The binary input reader</param>
         protected override void DeserializeExclusiveData(BinaryReader reader)
@@ -72,16 +72,16 @@ namespace Neo.Network.P2P.Payloads
         // <param name="snapshot">数据库快照</param>
         // <returns>
         // 若 StateDescriptor.Field = "Votes"时, 包含投票人地址地址<br/>
-        // 若 Field="Registered"时，包含申请人的地址脚本hash
+        // 若 StateDescriptor.Field="Registered"时，包含申请人的地址脚本hash
         // </returns>
         // <exception cref="System.InvalidOperationException">若类型不对时，抛出该异常</exception>
         /// <summary>
-        /// Get the verification transript hash
+        /// Get the script hashes for verifying
         /// </summary>
         /// <param name="snapshot">The snapshot for database</param>
         /// <returns>
-        /// If the stateDescriptor Field is Votes, then it includes the address of the votes <br/>
-        /// If the Field is "Registered", it includes the address script hash of applicant
+        /// If the stateDescriptor field is "Votes", it includes the address of the votes <br/>
+        /// If the stateDescriptor field is "Registered", it includes the address script hash of applicant
         /// </returns>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
@@ -127,16 +127,26 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        // <summary>
+        // 序列化非data数据
+        // <list type="bullet">
+        // <item>
+        // <term>Descriptors</term>
+        // <desciption>交易描述</desciption>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化非data数据
+        /// Serialize exclusive data
         /// <list type="bullet">
         /// <item>
         /// <term>Descriptors</term>
-        /// <desciption>交易描述</desciption>
+        /// <desciption>transaction description</desciption>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">BinaryWriter</param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.Write(Descriptors);
@@ -173,13 +183,12 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// The transaction verification
         /// </summary>
-        /// <param name="snapshot">The snapshot of database</param>
-        /// <param name="mempool">memory pool</param>
+        /// <param name="snapshot">database snapshot</param>
+        /// <param name="mempool">transaction in mempool</param>
         /// <returns>
         // 1. Verify each stateDescriptor <br/>
-        ///     1.1 If the descriptor.Type is StateType.Validator and if descriptor.Field is not equal to Registered, return false <br/>
-        ///     1.2 若 descriptor.Type 是 StateType.Account 时 <br/>
-        ///     1.2 if the descriptor.Type is StateType.Account:
+        ///     1.1 When the descriptor.Type is StateType.Validator:if descriptor.Field is not equal to Registered, return false <br/>
+        ///     1.2 When the descriptor.Type is StateType.Account:<br/>
         ///         1.2.1 If NEO hold by the the voting accuntis 0, or when the voting acount is frozen, return false. <br/>
         ///         1.2.2 If the voted account is in the backup list or is not registered as validators, return false.  <br/>
         /// 2. The basic transaction verification. If verified failed, return false<br/> 

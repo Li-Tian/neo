@@ -26,7 +26,7 @@ namespace Neo.Network.P2P.Payloads
         // 交易最大存储字节数。如果收到的交易数超过这个限制将被直接抛弃。
         // </summary>
         /// <summary>
-        /// The maximum stored bytes in the transaction. If the received transaction exceeds than this limitation will be abandoned
+        /// The maximum stored bytes of transaction. If the received transaction exceeds than this limitation will be abandoned
         /// </summary>
         public const int MaxTransactionSize = 102400;
         /// <summary>
@@ -51,7 +51,7 @@ namespace Neo.Network.P2P.Payloads
         // 交易版本号。在各个子类中定义。
         // </summary>
         /// <summary>
-        /// Tje version of transaction, which defined in every sub transaction
+        /// The version of transaction, which defined in the subclass
         /// </summary>
         public byte Version;
 
@@ -88,7 +88,7 @@ namespace Neo.Network.P2P.Payloads
         public Witness[] Witnesses { get; set; }
 
         private Fixed8 _feePerByte = -Fixed8.Satoshi;
-        // <summary>
+        /// <summary>
         /// The <c>NetworkFee</c> for the transaction divided by its <c>Size</c>.
         /// <para>Note that this property must be used with care. Getting the value of this property multiple times will return the same result. The value of this property can only be obtained after the transaction has been completely built (no longer modified).</para>
         ///</summary>
@@ -111,7 +111,7 @@ namespace Neo.Network.P2P.Payloads
         // 获取交易的hash值。是将交易信息数据做2次Sha256运算，这个过程被称为Hash256。
         // </summary>
         /// <summary>
-        /// Get the hash of transactions. Use sha256 on he transaction data. This process is called Hash256
+        /// Get the hash of transactions. Do twice sha256 operation  to get hash of transaction data. This process is called Hash256
         /// </summary>
         public UInt256 Hash
         {
@@ -124,8 +124,11 @@ namespace Neo.Network.P2P.Payloads
                 return _hash;
             }
         }
+        // <summary>
+        // 获取InventoryType。
+        // </summary>
         /// <summary>
-        /// 获取InventoryType。
+        /// get InventoryType
         /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.TX;
 
@@ -134,16 +137,23 @@ namespace Neo.Network.P2P.Payloads
         // 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
         // </summary>
         //public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
+        // <summary>
+        // 是否是低优先级交易。若网络费用低于阈值时，则为低优先级交易。
+        // 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
+        // </summary>
         /// <summary>
-        /// 是否是低优先级交易。若网络费用低于阈值时，则为低优先级交易。
-        /// 优先级阈值在配置文件 protocol.json 中指定，如果不指定，则使用默认值(0.001GAS)。
+        /// Is it a low priority transaction.If network free is less than low priority threshold,it is a low priority transaction.
+        /// Low priority threshold is set in protocol.json.If not config，default value is 0.001GAS。
         /// </summary>
         public bool IsLowPriority => NetworkFee < Settings.Default.LowPriorityThreshold;
 
         private Fixed8 _network_fee = -Fixed8.Satoshi;
 
+        // <summary>
+        // 网络手续费。值为交易的Input中的GAS总和减去Output中的GAS总和，再减去系统手续费。
+        // </summary>
         /// <summary>
-        /// 网络手续费。值为交易的Input中的GAS总和减去Output中的GAS总和，再减去系统手续费。
+        /// Network Fee。Its value  = the sum of the gas in input of transaction  - the sum of the gas in output of transaction -  system free。
         /// </summary>
         public virtual Fixed8 NetworkFee
         {
@@ -161,6 +171,11 @@ namespace Neo.Network.P2P.Payloads
 
         private IReadOnlyDictionary<CoinReference, TransactionOutput> _references;
 
+        // <summary>
+        // 获取当前交易所有输入(input)与其所指向的之前某个交易的一个输出(output)之间的只读关系映射(Dictionary)。<BR/>
+        // 这个关系映射的每个 key 都是当前交易的 input，而 value 则是之前某个交易的 output。<BR/>
+        // 如果当前交易的某个 input 所指向的 output 在过去的交易中不存在，那么返回 null。<BR/>
+        // </summary>
         /// <summary>
         /// 获取当前交易所有输入(input)与其所指向的之前某个交易的一个输出(output)之间的只读关系映射(Dictionary)。<BR/>
         /// 这个关系映射的每个 key 都是当前交易的 input，而 value 则是之前某个交易的 output。<BR/>
@@ -192,28 +207,42 @@ namespace Neo.Network.P2P.Payloads
             }
         }
 
+        // <summary>
+        // 存储大小。包括交易类型、版本号、属性、输入、输出和签名的总字节数。
+        // </summary>
         /// <summary>
-        /// 存储大小。包括交易类型、版本号、属性、输入、输出和签名的总字节数。
+        /// size. value=sizeof(TransactionType) + sizeof(byte) + Attributes.GetVarSize() + Inputs.GetVarSize() + Outputs.GetVarSize() + Witnesses.GetVarSize()
         /// </summary>
         public virtual int Size => sizeof(TransactionType) + sizeof(byte) + Attributes.GetVarSize() + Inputs.GetVarSize() + Outputs.GetVarSize() + Witnesses.GetVarSize();
 
+        // <summary>
+        // 系统手续费。因交易种类不同而不同。
+        // </summary>
         /// <summary>
-        /// 系统手续费。因交易种类不同而不同。
+        /// SystemFee.Depending on the type of transaction.
         /// </summary>
         public virtual Fixed8 SystemFee => Settings.Default.SystemFee.TryGetValue(Type, out Fixed8 fee) ? fee : Fixed8.Zero;
 
+        // <summary>
+        // 创建交易
+        // </summary>
+        // <param name="type">交易类型</param>
         /// <summary>
-        /// 创建交易
+        /// create a transaction
         /// </summary>
-        /// <param name="type">交易类型</param>
+        /// <param name="type">Transaction type</param>
         protected Transaction(TransactionType type)
         {
             this.Type = type;
         }
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialize method
         /// </summary>
-        /// <param name="reader">二进制输入</param>
+        /// <param name="reader">BinaryReader</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ((IVerifiable)this).DeserializeUnsigned(reader);
@@ -221,20 +250,30 @@ namespace Neo.Network.P2P.Payloads
             OnDeserialized();
         }
 
+        // <summary>
+        // 反序列化类型特定数据。因交易种类不同而不同。
+        // </summary>
+        // <param name="reader">从指定reader中读取二进制信息</param>
         /// <summary>
-        /// 反序列化类型特定数据。因交易种类不同而不同。
+        /// Deserialize exclusive data。Depending on the type of transaction.
         /// </summary>
-        /// <param name="reader">从指定reader中读取二进制信息</param>
+        /// <param name="reader">BinaryReader</param>
         protected virtual void DeserializeExclusiveData(BinaryReader reader)
         {
         }
 
+        // <summary>
+        // 从给定的byte数组中反序列化
+        // </summary>
+        // <param name="value">原数据</param>
+        // <param name="offset">偏移量</param>
+        // <returns>反序列化出来的Tx对象</returns>
         /// <summary>
-        /// 从给定的byte数组中反序列化
+        /// Deserialize from byte array
         /// </summary>
-        /// <param name="value">原数据</param>
-        /// <param name="offset">偏移量</param>
-        /// <returns>反序列化出来的Tx对象</returns>
+        /// <param name="value">init data</param>
+        /// <param name="offset">offset</param>
+        /// <returns>Transaction object</returns>
         public static Transaction DeserializeFrom(byte[] value, int offset = 0)
         {
             using (MemoryStream ms = new MemoryStream(value, offset, value.Length - offset, false))
@@ -255,10 +294,14 @@ namespace Neo.Network.P2P.Payloads
             transaction.OnDeserialized();
             return transaction;
         }
+        // <summary>
+        // 反序列化待签名数据
+        // </summary>
+        // <param name="reader">二进制输入</param>
         /// <summary>
-        /// 反序列化待签名数据
+        /// Deserialize unsigned data
         /// </summary>
-        /// <param name="reader">二进制输入</param>
+        /// <param name="reader">BinaryReader</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
         {
             if ((TransactionType)reader.ReadByte() != Type)
@@ -275,11 +318,16 @@ namespace Neo.Network.P2P.Payloads
             Outputs = reader.ReadSerializableArray<TransactionOutput>(ushort.MaxValue + 1);
         }
 
+        // <summary>
+        // 判断两笔交易是否相等
+        // </summary>
+        // <param name="other">相比较的另一个交易</param>
+        // <returns>如果参数other是null则返回false，否则按照哈希值比较。</returns>
         /// <summary>
-        /// 判断两笔交易是否相等
+        /// Determine if two transactions are equal;
         /// </summary>
-        /// <param name="other">相比较的另一个交易</param>
-        /// <returns>如果参数other是null则返回false，否则按照哈希值比较。</returns>
+        /// <param name="other">another transaction to be compared</param>
+        /// <returns>If another transaction is null,return false.Otherwise,compare hash。</returns>
         public bool Equals(Transaction other)
         {
             if (other is null) return false;
@@ -287,45 +335,69 @@ namespace Neo.Network.P2P.Payloads
             return Hash.Equals(other.Hash);
         }
 
+        // <summary>
+        // 判断交易是否等于该对象
+        // </summary>
+        // <param name="obj">待比较对象</param>
+        // <returns>如果参数 obj 是null或者不是Transaction则返回false，否则按照哈希值比较。</returns>
         /// <summary>
-        /// 判断交易是否等于该对象
+        /// Determine if it equal to another object;
         /// </summary>
-        /// <param name="obj">待比较对象</param>
-        /// <returns>如果参数 obj 是null或者不是Transaction则返回false，否则按照哈希值比较。</returns>
+        /// <param name="obj">another object to be compared</param>
+        /// <returns>If another object is null,return false.Otherwise,compare hash</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Transaction);
         }
 
 
+        // <summary>
+        // 获取交易哈希的hash code
+        // </summary>
+        // <returns>hash code</returns>
         /// <summary>
-        /// 获取交易哈希的hash code
+        /// Get hash code
         /// </summary>
         /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
         }
+        // <summary>
+        // 获取哈希数据
+        // </summary>
+        // <returns>哈希数据</returns>
         /// <summary>
-        /// 获取哈希数据
+        /// get hash data
         /// </summary>
-        /// <returns>哈希数据</returns>
+        /// <returns>hash data</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
         }
 
+        // <summary>
+        // 获取验证脚本hash
+        // </summary>
+        // <param name="snapshot">数据库快照</param>
+        // <returns>
+        // 包含：<br/>
+        // 1. 交易输入所指向的收款人地址脚本hash，<br/>
+        // 2. 交易属性为script时，包含该Data，<br/>
+        // 3. 若资产类型包含AssetType.DutyFlag时，包含收款人地址脚本hash
+        // </returns>
+        // <exception cref="System.InvalidOperationException">若输入为空或者资产不存在时，抛出该异常</exception>
         /// <summary>
-        /// 获取验证脚本hash
+        /// get script hash for verifying
         /// </summary>
-        /// <param name="snapshot">数据库快照</param>
+        /// <param name="snapshot">database snapshot</param>
         /// <returns>
-        /// 包含：<br/>
-        /// 1. 交易输入所指向的收款人地址脚本hash，<br/>
-        /// 2. 交易属性为script时，包含该Data，<br/>
-        /// 3. 若资产类型包含AssetType.DutyFlag时，包含收款人地址脚本hash
+        /// contain：<br/>
+        /// 1. The payee address script hash pointed to by the transaction input，<br/>
+        /// 2. If attribute of transaction is script，it contains data of attribute<br/>
+        /// 3. If asset type contains AssetType.DutyFlag,，it contains address script hash of payee.
         /// </returns>
-        /// <exception cref="System.InvalidOperationException">若输入为空或者资产不存在时，抛出该异常</exception>
+        /// <exception cref="System.InvalidOperationException">If input is null or asset does not exist</exception>
         public virtual UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             if (References == null) throw new InvalidOperationException();
@@ -343,8 +415,17 @@ namespace Neo.Network.P2P.Payloads
             return hashes.OrderBy(p => p).ToArray();
         }
 
+        // <summary>
+        // 获取交易的 input 与 output 的比较结果。
+        // </summary>
+        // <returns>
+        // 如果当前交易的某个 input 所指向的 output 在过去的交易中不存在，那么返回 null。<br/>
+        // 否则按照资产种类归档，返回每种资产的所有 input 之和减去对应资产的所有 output 之和。<br/>
+        // 归档以后，资产比较结果为 0 的资产会从归档列表中除去。<br/>
+        // 如果所有的资产比较结果都被除去，则返回一个长度为0的IEnumerable对象。
+        // </returns>
         /// <summary>
-        /// 获取交易的 input 与 output 的比较结果。
+        /// Get the comparison of the input and output of the transaction
         /// </summary>
         /// <returns>
         /// 如果当前交易的某个 input 所指向的 output 在过去的交易中不存在，那么返回 null。<br/>
@@ -369,32 +450,47 @@ namespace Neo.Network.P2P.Payloads
                 Amount = g.Sum(p => p.Value)
             }).Where(p => p.Amount != Fixed8.Zero);
         }
+        // <summary>
+        // 反序列化。因子类的不同而实现不同。
+        // </summary>
         /// <summary>
-        /// 反序列化。因子类的不同而实现不同。
+        /// Handling deserialized transactions.Depending on the type of transaction.
         /// </summary>
         protected virtual void OnDeserialized()
         {
         }
+        // <summary>
+        // 序列化
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
-        /// 序列化
+        /// Serialize
         /// </summary>
-        /// <param name="writer">二进制输出</param>
+        /// <param name="writer">BinaryWriter</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             ((IVerifiable)this).SerializeUnsigned(writer);
             writer.Write(Witnesses);
         }
+        // <summary>
+        // 序列化扩展数据。因子类的不同而实现不同。
+        // </summary>
+        // <param name="writer">序列化的输出对象</param>
         /// <summary>
-        /// 序列化扩展数据。因子类的不同而实现不同。
+        /// Serialize exclusive data。Depending on the type of transaction.
         /// </summary>
-        /// <param name="writer">序列化的输出对象</param>
+        /// <param name="writer">BinaryWriter</param>
         protected virtual void SerializeExclusiveData(BinaryWriter writer)
         {
         }
+        // <summary>
+        // 序列化待签名的数据
+        // </summary>
+        // <param name="writer">二进制输出</param>
         /// <summary>
-        /// 序列化待签名的数据
+        /// Serialize unsigned data
         /// </summary>
-        /// <param name="writer">二进制输出</param>
+        /// <param name="writer">BinaryWriter</param>
         void IVerifiable.SerializeUnsigned(BinaryWriter writer)
         {
             writer.Write((byte)Type);
@@ -405,10 +501,14 @@ namespace Neo.Network.P2P.Payloads
             writer.Write(Outputs);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Convert to JObject object
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>JObject object</returns>
         public virtual JObject ToJson()
         {
             JObject json = new JObject();
@@ -424,42 +524,74 @@ namespace Neo.Network.P2P.Payloads
             json["scripts"] = Witnesses.Select(p => p.ToJson()).ToArray();
             return json;
         }
+        // <summary>
+        // 通过数据库快照验证交易
+        // </summary>
+        // <param name="snapshot">数据库快照</param>
+        // <returns>验证结果</returns>
+        // <see cref="Verify(Snapshot, IEnumerable{Transaction})"/>
         /// <summary>
-        /// 通过数据库快照验证交易
+        /// Verify transaction by database snapshot
         /// </summary>
-        /// <param name="snapshot">数据库快照</param>
-        /// <returns>验证结果</returns>
+        /// <param name="snapshot">database snapshot</param>
+        /// <returns>Verification result</returns>
         /// <see cref="Verify(Snapshot, IEnumerable{Transaction})"/>
         bool IInventory.Verify(Snapshot snapshot)
         {
             return Verify(snapshot, Enumerable.Empty<Transaction>());
         }
 
+        // <summary>
+        // 校验交易
+        // </summary>
+        // <param name="snapshot">数据库快照</param>
+        // <param name="mempool">内存池交易</param>
+        // <returns>
+        // 1. 交易数据大小大于最大交易数据大小时，则返回false
+        // 2. 若Input存在重复，则返回false<br/>
+        // 3. 若内存池交易包含Input交易时，返回false<br/>
+        // 4. 若Input是已经花费的交易，则返回false<br/>
+        // 5. 若转账资产不存在，则返回false<br/>
+        // 6. 若资产是非NEO或非GAS时，且资产过期时，返回false<br/>
+        // 7. 若转账金额不能整除对应资产的最小精度时，返回false<br/>
+        // 8. 检查金额关系：<br/>
+        //    8.1 若当前交易的某个 input 所指向的 output 在过去的交易中不存在时，返回false<br/>
+        //    8.2 若 Input.Asset &gt; Output.Asset 时，且资金种类大于一种时，返回false<br/>
+        //    8.3 若 Input.Asset &gt; Output.Asset 时，资金种类不是GAS时，返回false<br/>
+        //    8.4 若 交易手续费 大于 （Input.GAS - output.GAS） 时， 返回false<br/>
+        //    8.5 若 Input.Asset &lt; Output.Asset 时：
+        //        8.5.1 若交易类型是 MinerTransaction 或 ClaimTransaction，且资产不是 GAS 时，返回false<br/>
+        //        8.5.2 若交易类型时 IssueTransaction时，且资产是GAS时，返回false<br/>
+        //        8.5.3 若是其他交易类型，且存在增发资产时，返回false<br/>
+        // 9. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false <br/>
+        // 10.若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永真）<br/>
+        // 11.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false
+        //</returns>
         /// <summary>
-        /// 校验交易
+        /// Verify transaction
         /// </summary>
-        /// <param name="snapshot">数据库快照</param>
-        /// <param name="mempool">内存池交易</param>
+        /// <param name="snapshot">database snapshot</param>
+        /// <param name="mempool">transactions in mempool</param>
         /// <returns>
-        /// 1. 交易数据大小大于最大交易数据大小时，则返回false
-        /// 2. 若Input存在重复，则返回false<br/>
-        /// 3. 若内存池交易包含Input交易时，返回false<br/>
-        /// 4. 若Input是已经花费的交易，则返回false<br/>
-        /// 5. 若转账资产不存在，则返回false<br/>
-        /// 6. 若资产是非NEO或非GAS时，且资产过期时，返回false<br/>
-        /// 7. 若转账金额不能整除对应资产的最小精度时，返回false<br/>
-        /// 8. 检查金额关系：<br/>
-        ///    8.1 若当前交易的某个 input 所指向的 output 在过去的交易中不存在时，返回false<br/>
-        ///    8.2 若 Input.Asset &gt; Output.Asset 时，且资金种类大于一种时，返回false<br/>
-        ///    8.3 若 Input.Asset &gt; Output.Asset 时，资金种类不是GAS时，返回false<br/>
-        ///    8.4 若 交易手续费 大于 （Input.GAS - output.GAS） 时， 返回false<br/>
-        ///    8.5 若 Input.Asset &lt; Output.Asset 时：
-        ///        8.5.1 若交易类型是 MinerTransaction 或 ClaimTransaction，且资产不是 GAS 时，返回false<br/>
-        ///        8.5.2 若交易类型时 IssueTransaction时，且资产是GAS时，返回false<br/>
-        ///        8.5.3 若是其他交易类型，且存在增发资产时，返回false<br/>
-        /// 9. 若交易属性，包含类型是 TransactionAttributeUsage.ECDH02 或 TransactionAttributeUsage.ECDH03 时，返回false <br/>
-        /// 10.若 VerifyReceivingScripts 验证返回false时（VerificationR触发器验证），返回false。(目前，VerifyReceivingScripts 返回永真）<br/>
-        /// 11.若 VerifyWitnesses 验证返回false时（对验证脚本进行验证），则返回false
+        /// 1. If the size of transaction is larger than maximum transaction data size,return false.
+        /// 2. If inputs of transaction duplication exists,return false.<br/>
+        /// 3. If a transaction contains the input exists in mempool,return false<br/>
+        /// 4. If input is a spent transaction output,return false<br/>
+        /// 5. If asset does not exist,return false<br/>
+        /// 6. If asset is not NEO/GAS and is expired,return false<br/>
+        /// 7. If amount can not be divided by asset precision,return false.<br/>
+        /// 8. Check amount relationship：<br/>
+        ///    8.1 If the output pointed to by an input of the current transaction does not exist，return false<br/>
+        ///    8.2 If Input.Asset &gt; Output.Asset and the number of asset type is more than one,return false<br/>
+        ///    8.3 If Input.Asset &gt; Output.Asset and asset type is not Gas,return false<br/>
+        ///    8.4 If system fee is larger than （Input.GAS - output.GAS）,return false<br/>
+        ///    8.5 When Input.Asset &lt; Output.Asset ：
+        ///        8.5.1 If transaction type is MinerTransaction or ClaimTransaction and asset type is not GAS,return false<br/>
+        ///        8.5.2 If transaction type is IssueTransaction and asset type is GAS,return false<br/>
+        ///        8.5.3 If it is other type transaction and exist additional issuances,return false<br/>
+        /// 9. If transaction attribute contains TransactionAttributeUsage.ECDH02 or TransactionAttributeUsage.ECDH03,return false <br/>
+        /// 10.If VerifyReceivingScripts() return false(VerificationR trigger），return false。(Currently，VerifyReceivingScripts() default return true）<br/>
+        /// 11.If VerifyWitnesses() return false（Verify witness），return false.
         ///</returns>
         public virtual bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {

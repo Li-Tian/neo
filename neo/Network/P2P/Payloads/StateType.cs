@@ -1,7 +1,10 @@
 ﻿namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // StateTransaction类型
+    // </summary>
     /// <summary>
-    /// StateTransaction类型
+    /// StateTransaction type
     /// </summary>
     public enum StateType : byte
     {
@@ -17,7 +20,7 @@
         // 申请验证人
         // </summary>
         /// <summary>
-        /// The Validator applicant
+        /// The validator applicant
         /// </summary>
         Validator = 0x48
     }

@@ -8,7 +8,7 @@ namespace Neo.Network.P2P.Payloads
     // 记录版本数据和区块高度的数据对象
     // </summary>
     /// <summary>
-    /// Record the data of version
+    /// Record version data and block height
     /// </summary>
     public class VersionPayload : ISerializable
     {
@@ -23,7 +23,7 @@ namespace Neo.Network.P2P.Payloads
         // 节点功能的描述符。固定值1
         // </summary>
         /// <summary>
-        /// The descriptor of the function of node. The value of it is one
+        /// The descriptor of the function of node. The fixed value is one
         /// </summary>
         public ulong Services;
         // <summary>
@@ -129,7 +129,7 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <param name="writer">2进制输出器</param>
         /// <summary>
-        /// The method of serialization
+        /// Serialization method
         /// </summary>
         /// <param name="writer">The binary output writer</param>
         void ISerializable.Serialize(BinaryWriter writer)

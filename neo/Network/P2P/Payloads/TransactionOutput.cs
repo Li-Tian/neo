@@ -85,7 +85,7 @@ namespace Neo.Network.P2P.Payloads
         /// Transfer to json object
         /// </summary>
         /// <param name="index">The index of UTXO in the transaction list, begin from 0</param>
-        /// <returns></returns>
+        /// <returns>json object</returns>
         public JObject ToJson(ushort index)
         {
             JObject json = new JObject();

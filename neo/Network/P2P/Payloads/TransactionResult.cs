@@ -1,7 +1,10 @@
 ﻿namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 封装的交易金额变化类
+    // </summary>
     /// <summary>
-    /// 封装的交易金额变化类
+    /// A class descript transaction amount change
     /// </summary>
     public class TransactionResult
     {
@@ -13,8 +16,11 @@
         // </summary>
         public UInt256 AssetId;
 
+        // <summary>
+        // 金额变化 = inputs.Asset - outputs.Asset
+        // </summary>
         /// <summary>
-        /// 金额变化 = inputs.Asset - outputs.Asset
+        /// amount change = inputs.Asset - outputs.Asset
         /// </summary>
         public Fixed8 Amount;
     }

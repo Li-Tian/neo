@@ -13,7 +13,7 @@ namespace Neo.Network.P2P.Payloads
     // 发布智能合约交易【已弃用】
     // </summary>
     /// <summary>
-    ///The publication of transaction (given up)
+    /// A transaction for publishing smart contract(given up)
     /// </summary>
     [Obsolete]
     public class PublishTransaction : Transaction
@@ -30,7 +30,7 @@ namespace Neo.Network.P2P.Payloads
         // 合约参数列表
         // </summary>
         /// <summary>
-        /// The parameterList of contract
+        /// The parameter list of contract
         /// </summary>
         public ContractParameterType[] ParameterList;
 
@@ -147,48 +147,48 @@ namespace Neo.Network.P2P.Payloads
             Description = reader.ReadVarString(65536);
         }
 
-        /// <summary>
-        /// 序列化非data数据
-        /// <list type="bullet">
-        /// <item>
-        /// <term>Script</term>
-        /// <description>合约脚本</description>
-        /// </item>
-        /// <item>
-        /// <term>ParameterList</term>
-        /// <description>参数列表</description>
-        /// </item>
-        /// <item>
-        /// <term>ReturnType</term>
-        /// <description>返回值类型</description>
-        /// </item> 
-        /// <item>
-        /// <term>NeedStorage</term>
-        /// <description>是否需要存储（版本1开始有效）</description>
-        /// </item>
-        /// <item>
-        /// <term>Name</term>
-        /// <description>合约名字</description>
-        /// </item>
-        /// <item>
-        /// <term>CodeVersion</term>
-        /// <description>代码版本号</description>
-        /// </item>
-        /// <item>
-        /// <term>Author</term>
-        /// <description>作者</description>
-        /// </item>
-        /// <item>
-        /// <term>Email</term>
-        /// <description>邮箱</description>
-        /// </item>
-        /// <item>
-        /// <term>Description</term>
-        /// <description>描述</description>
-        /// </item>
-        /// </list>
-        /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        // <summary>
+        // 序列化非data数据
+        // <list type="bullet">
+        // <item>
+        // <term>Script</term>
+        // <description>合约脚本</description>
+        // </item>
+        // <item>
+        // <term>ParameterList</term>
+        // <description>参数列表</description>
+        // </item>
+        // <item>
+        // <term>ReturnType</term>
+        // <description>返回值类型</description>
+        // </item> 
+        // <item>
+        // <term>NeedStorage</term>
+        // <description>是否需要存储（版本1开始有效）</description>
+        // </item>
+        // <item>
+        // <term>Name</term>
+        // <description>合约名字</description>
+        // </item>
+        // <item>
+        // <term>CodeVersion</term>
+        // <description>代码版本号</description>
+        // </item>
+        // <item>
+        // <term>Author</term>
+        // <description>作者</description>
+        // </item>
+        // <item>
+        // <term>Email</term>
+        // <description>邮箱</description>
+        // </item>
+        // <item>
+        // <term>Description</term>
+        // <description>描述</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
 
         /// <summary>
         /// Serialization
@@ -207,7 +207,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item> 
         /// <item>
         /// <term>NeedStorage</term>
-        /// <description>Is it open for storage（valid from 1.0 version）</description>
+        /// <description>If it need a storage（valid from 1.0 version）</description>
         /// </item>
         /// <item>
         /// <term>Name</term>

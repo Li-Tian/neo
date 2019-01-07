@@ -24,7 +24,7 @@ namespace Neo.SmartContract
         // <param name="script">需要判断的脚本</param>
         // <returns>是多签脚本则返回true，否则返回false</returns>
         /// <summary>
-        /// It is judged whether the script is a multi-sign script, and is mainly judged according to the structure of the multi-sign script.
+        /// Determine whether the script is a multi-sign script. Mainly determine according to the structure of the multi-sign script.
         /// </summary>
         /// <param name="script">Script to be judged</param>
         /// <returns>Returns true if the script is multi-sign script, otherwise returns false</returns>
@@ -82,7 +82,7 @@ namespace Neo.SmartContract
         // <param name="script">需要判断的脚本</param>
         // <returns>是签名脚本则返回true，否则返回false</returns>
         /// <summary>
-        /// Determine whether the script is a signature script, and judge according to the structure of the signature script.
+        /// Determine whether the script is a signature script. Mainly determine according to the structure of the signature script.
         /// The structure of the signature script: 0x21 (PUSH) + public key + 0xAC (CHECKSIG)
         /// </summary>
         /// <param name="script">Script to be judged</param>
@@ -104,7 +104,7 @@ namespace Neo.SmartContract
         /// If the script is a signature script or a multi-sign script, the script is a standard script.
         /// </summary>
         /// <param name="script">Script to be judged</param>
-        /// <returns>Is true for standard scripts, false otherwise</returns>
+        /// <returns>Return true for standard scripts, false otherwise</returns>
         public static bool IsStandardContract(this byte[] script)
         {
             return script.IsSignatureContract() || script.IsMultiSigContract();

@@ -12,7 +12,7 @@ namespace Neo.SmartContract
     // 合约参数类，主要包括对合约参数赋值，以及合约参数的格式转换方法
     // </summary>
     /// <summary>
-    /// Contract parameter class, mainly including assignment of contract parameters, and format conversion method of contract parameters
+    /// Contract parameter class, mainly including methods for contract parameters assignment and format conversion
     /// </summary>
     public class ContractParameter
     {
@@ -46,7 +46,7 @@ namespace Neo.SmartContract
         /// Constructor with the parameter ContractParameterType
         /// </summary>
         /// <param name="type">Contract parameter type</param>
-        /// <exception cref="System.ArgumentException">Thrown when the input type is not a parameter type that specifies the contract</exception>
+        /// <exception cref="System.ArgumentException">Thrown when the input type is not a parameter type that has been defined</exception>
         public ContractParameter(ContractParameterType type)
         {
             this.Type = type;
@@ -99,7 +99,7 @@ namespace Neo.SmartContract
         /// <param name="json">Json object containing contract parameter types and parameter values</param>
         /// <returns>Contract parameters</returns>
         /// <exception cref="System.ArgumentException">
-        /// Thrown when the type parsed from the JSON object is not the specified contract parameter type</exception>
+        /// Thrown when the type parsed from the JSON object is not a defined contract parameter type</exception>
         public static ContractParameter FromJson(JObject json)
         {
             ContractParameter parameter = new ContractParameter

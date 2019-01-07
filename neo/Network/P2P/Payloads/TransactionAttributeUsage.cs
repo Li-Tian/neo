@@ -68,7 +68,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash1 = 0xa1,
 
@@ -76,7 +76,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash2 = 0xa2,
 
@@ -84,7 +84,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash3 = 0xa3,
 
@@ -93,7 +93,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash4 = 0xa4,
 
@@ -101,7 +101,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash5 = 0xa5,
 
@@ -109,7 +109,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash6 = 0xa6,
 
@@ -117,7 +117,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash7 = 0xa7,
 
@@ -125,7 +125,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash8 = 0xa8,
 
@@ -133,7 +133,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash9 = 0xa9,
 
@@ -141,7 +141,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash10 = 0xaa,
 
@@ -149,7 +149,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash11 = 0xab,
 
@@ -157,7 +157,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash12 = 0xac,
 
@@ -165,7 +165,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash13 = 0xad,
 
@@ -173,7 +173,7 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash14 = 0xae,
 
@@ -181,135 +181,135 @@
         // 用于存放自定义的散列值
         // </summary>
         /// <summary>
-        /// Save the self defined hash value 
+        /// Save customize hash value 
         /// </summary>
         Hash15 = 0xaf,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark = 0xf0,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark1 = 0xf1,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark2 = 0xf2,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark3 = 0xf3,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark4 = 0xf4,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark5 = 0xf5,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark6 = 0xf6,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark7 = 0xf7,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark8 = 0xf8,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark9 = 0xf9,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark10 = 0xfa,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark11 = 0xfb,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark12 = 0xfc,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark13 = 0xfd,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark14 = 0xfe,
 
+        // <summary>
+        // 用于存放自定义的备注
+        // </summary>
         /// <summary>
-        /// 用于存放自定义的备注
-        /// </summary>
-        /// <summary>
-        /// Save the self defiend notes
+        /// Save customize notes
         /// </summary>
         Remark15 = 0xff
     }

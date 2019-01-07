@@ -110,7 +110,7 @@ namespace Neo.Consensus
         // </summary>
         /// <summary>
         /// The expected view number of each node is mainly used in the process of changing the view.
-        /// Each item of this array corresponds to the view number expected by each verifier node.The verifier node is numbered accordingly.        /// </summary>
+        /// Each item of this array corresponds to the view number expected by each verifier node.The verifier node is numbered accordingly.
         /// </summary>
         byte[] ExpectedView { get; set; }
         // <summary>

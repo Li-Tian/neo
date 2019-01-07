@@ -40,7 +40,7 @@ namespace Neo.Ledger
         // 克隆
         // </summary>
         // <returns>克隆的对象</returns>
-        // <summary>
+        /// <summary>
         /// Clone method
         /// </summary>
         /// <returns>replica of object</returns>

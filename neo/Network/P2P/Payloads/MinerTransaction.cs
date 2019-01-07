@@ -6,51 +6,75 @@ using System.Linq;
 
 namespace Neo.Network.P2P.Payloads
 {
+    // <summary>
+    // 挖矿交易，奖励给出块的共识节点，同时，作为每个区块的第一笔交易
+    // </summary>
     /// <summary>
-    /// 挖矿交易，奖励给出块的共识节点，同时，作为每个区块的第一笔交易
+    /// Miner Transaction，It is a reward for giving speaker consensus node.
+    /// At the same time, as the first transaction for each block
     /// </summary>
     public class MinerTransaction : Transaction
     {
         // TODO 由于 Nonce 的值是 2的32次方，因此在300万个区块中有很高的概率会使得生成的nonce相同，
         // 从而使得两个交易的哈希值完全相同。最好的解决方法是在MinerTransaction中添加区块高度。
 
+        // <summary>
+        // 交易nonce 随机值
+        // </summary>
         /// <summary>
-        /// 交易nonce 随机值
+        /// transaction nonce
         /// </summary>
         public uint Nonce;
 
+        // <summary>
+        // 交易网络手续费，默认为0
+        // </summary>
         /// <summary>
-        /// 交易网络手续费，默认为0
+        /// NetworkFee，default value is 0
         /// </summary>
         public override Fixed8 NetworkFee => Fixed8.Zero;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// size
         /// </summary>
         public override int Size => base.Size + sizeof(uint);
 
+        // <summary>
+        // 创建挖矿交易
+        // </summary>
         /// <summary>
-        /// 创建挖矿交易
+        /// make a miner transaction
         /// </summary>
         public MinerTransaction()
             : base(TransactionType.MinerTransaction)
         {
         }
 
+        // <summary>
+        // 反序列化，读取nonce值
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化，读取nonce值
+        /// Deserialize exclusive data，read nonce
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">BinaryReader</param>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
             if (Version != 0) throw new FormatException();
             this.Nonce = reader.ReadUInt32();
         }
 
+        // <summary>
+        //  交易反序列化后处理
+        // </summary>
+        // <exception cref="System.FormatException">若挖矿交易的输入不为空，或者资产不为GAS时，则抛出该异常</exception>
         /// <summary>
-        ///  交易反序列化后处理
+        ///  Handling deserialized transactions
         /// </summary>
-        /// <exception cref="System.FormatException">若挖矿交易的输入不为空，或者资产不为GAS时，则抛出该异常</exception>
+        /// <exception cref="System.FormatException">If input of miner transaction is not null or asset is not gass.</exception>
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
@@ -60,25 +84,39 @@ namespace Neo.Network.P2P.Payloads
                 throw new FormatException();
         }
 
+        // <summary>
+        // 序列化出data外的字段
+        // <list type="bullet">
+        // <item>
+        // <term>Nonce</term>
+        // <description>交易nonce值</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化出data外的字段
+        /// Serialize exclusive data
         /// <list type="bullet">
         /// <item>
         /// <term>Nonce</term>
-        /// <description>交易nonce值</description>
+        /// <description>transaction nonce</description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">BinaryWriter</param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.Write(Nonce);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Convert to JObject object
         /// </summary>
-        /// <returns>json对象</returns>
+        /// <returns>a JObject object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

@@ -92,7 +92,7 @@ namespace Neo.Persistence.LevelDB
         // <returns>区块前缀的DbCache</returns>
         // <see cref="IPersistence.Blocks"/>
         /// <summary>
-        /// Get Blocks
+        /// Get blocks
         /// </summary>
         /// <returns>DbCache with the "DATA_Block" prefix</returns>
         /// <see cref="IPersistence.Blocks"/>

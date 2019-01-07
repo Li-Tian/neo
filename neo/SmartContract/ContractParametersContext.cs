@@ -78,7 +78,7 @@ namespace Neo.SmartContract
         // </summary>
         /// <summary>
         /// Whether the contract parameter context has been completed, 
-        /// true if all ContextItems are not empty, and the value of the ContractParameter corresponding to all ContextItems is not empty.
+        /// Return true if all ContextItems are not empty, and the value of the ContractParameter corresponding to all ContextItems is not empty.
         /// </summary>
         public bool Completed
         {
@@ -158,7 +158,7 @@ namespace Neo.SmartContract
         /// <summary>
         /// Add the signature to the parameter table, first determine whether the contract script is multi-signed or single-sign,<br/>
         /// if it is multi-sign, first obtain all the address lists that need to be signed, <br/>
-        /// and then detect whether the user needs to be signed, and if so, then sign the signature Add to the list of signatures. <br/>
+        /// and then detect whether it needs to be signed by the user, and if so, then sign the signature and add to the list of signatures. <br/>
         /// Sort all signatures when all signatures are complete. If it is a single sign, <br/>
         /// find the index in which the signature parameter is located in the parameter list, <br/>
         /// and add the signature to the parameter table in the contract.
@@ -263,7 +263,7 @@ namespace Neo.SmartContract
         /// <param name="json">Json object</param>
         /// <returns>Contract parameter context</returns>
         /// <exception cref="System.FormatException">
-        /// Throws when the result of the type property converted to IVerifiable in the json object is false
+        /// Throws when the type property in the json object converted to IVerifiable object unsuccessfully.
         /// </exception>
         public static ContractParametersContext FromJson(JObject json)
         {
@@ -394,7 +394,7 @@ namespace Neo.SmartContract
         // </summary>
         // <returns>输出JObject对象转化成的json字符串</returns>
         /// <summary>
-        /// Rewrite the ToString method to convert the JObject object into a json string
+        /// Override the ToString method to convert the JObject object into a json string
         /// </summary>
         /// <returns>Json string</returns>
         public override string ToString()

@@ -15,10 +15,10 @@ namespace Neo.SmartContract
     public class Contract
     {
         // <summary>
-        // 合约脚本的字节码
+        // 合约脚本的opcode
         // </summary>
         /// <summary>
-        /// Script bytecode
+        /// Script opcode
         /// </summary>
         public byte[] Script;
         // <summary>
@@ -70,13 +70,13 @@ namespace Neo.SmartContract
         // 创建一个合约
         // </summary>
         // <param name="parameterList">合约参数类型列表</param>
-        // <param name="redeemScript">合约脚本字节码</param>
+        // <param name="redeemScript">合约脚本opcode</param>
         // <returns>构建好的合约实例</returns>
         /// <summary>
         /// Create a contract
         /// </summary>
         /// <param name="parameterList">List of parameter types for contract</param>
-        /// <param name="redeemScript">Script bytecode</param>
+        /// <param name="redeemScript">Script opcode</param>
         /// <returns>Contract instance</returns>
         public static Contract Create(ContractParameterType[] parameterList, byte[] redeemScript)
         {
@@ -113,11 +113,11 @@ namespace Neo.SmartContract
         // <param name="publicKeys">多方签名的所有公钥</param>
         // <returns>多方签名脚本对应的字节码</returns>
         /// <summary>
-        /// Create a multi-party signature script, which will in turn push into the stack, m,the public key in order, the number of public keys, CHECKMULTISIG
+        /// Create a multi-party signature script, which will in turn push into the stack, m,the public keys in order, the number of public keys, CHECKMULTISIG
         /// </summary>
         /// <param name="m">The minimum number of public keys required that multi-party signature can pass</param>
         /// <param name="publicKeys">All public keys of multi-party signature</param>
-        /// <returns>The bytecode corresponding to the multi-party signature script</returns>
+        /// <returns>The opcode corresponding to the multi-party signature script</returns>
         public static byte[] CreateMultiSigRedeemScript(int m, params ECPoint[] publicKeys)
         {
             if (!(1 <= m && m <= publicKeys.Length && publicKeys.Length <= 1024))

@@ -41,7 +41,7 @@ namespace Neo.Persistence
         // UTXO缓存。通过交易哈希快速查找该交易下所有UTXO的状态。
         // </summary>
         /// <summary>
-        /// UTXO cache. Quickly find the status of all UTXOs under the transaction by the hash of the transaction.
+        /// UTXO cache. Quickly find the status of all UTXOs of the transaction by the hash of the transaction.
         /// </summary>
         DataCache<UInt256, UnspentCoinState> UnspentCoins { get; }
 
@@ -51,7 +51,7 @@ namespace Neo.Persistence
         // </summary>
         /// <summary>
         /// The information cacahe about the UTXO that has been spent. <br/>
-        /// Quickly find information about the UTXO that has been spent by hashing the transaction. <br/>
+        /// Quickly find information about the UTXO that has been spent by hash of the transaction. <br/>
         /// This includes the block height of the transaction <br/>
         /// and the height of the block in which the UTXO that has been spent.
         /// </summary>
@@ -61,7 +61,7 @@ namespace Neo.Persistence
         // 验证人的缓存。通过公钥快速查询验证人的状态。包括公钥，是否已经注册，投票数。
         // </summary>
         /// <summary>
-        /// The Validators cache. Quickly query the status of the validator through the public key. Including the public key, whether it has been registered, and the number of votes.
+        /// The validators cache. Quickly query the status of the validator through the public key. Including the public key, whether it has been registered, and the number of votes.
         /// </summary>
         DataCache<ECPoint, ValidatorState> Validators { get; }
 
@@ -97,7 +97,7 @@ namespace Neo.Persistence
         // 这个缓存通过区块头哈希列表的编号快速查找区块头哈希列表。
         // </summary>
         /// <summary>
-        /// Block header hash lists cache. <br/>
+        /// Block header hash list cache. <br/>
         /// Each block header hash list contains the hash values of 2000 block headers. <br/>
         /// The number of the first block header hash list is 0. <br/>
         /// The number of the second block header hash list is 2000. And so on. <br/>

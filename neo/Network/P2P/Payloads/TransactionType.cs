@@ -43,7 +43,7 @@ namespace Neo.Network.P2P.Payloads
         // 注册验证人交易（已经弃用。参考StateTransaction）
         // </summary>
         /// <summary>
-        /// Validator entrollment transaction
+        /// Validator entrollment transaction(Deprecated. Reference  StateTransaction)
         /// </summary>
         [ReflectionCache(typeof(EnrollmentTransaction))]
         EnrollmentTransaction = 0x20,
@@ -79,7 +79,7 @@ namespace Neo.Network.P2P.Payloads
         // 部署智能合约到区块链。已经弃用。参考 InvocationTransaction
         // </summary>
         /// <summary>
-        /// Deploy smart contract to blockchain, which is already deprecated
+        /// Deploy smart contract to blockchain, which is already deprecated.Reference InvocationTransaction
         /// </summary>
         [ReflectionCache(typeof(PublishTransaction))]
         PublishTransaction = 0xd0,

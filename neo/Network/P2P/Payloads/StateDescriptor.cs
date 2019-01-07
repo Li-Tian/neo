@@ -22,7 +22,7 @@ namespace Neo.Network.P2P.Payloads
         // 类型：投票或者登记成为候选人。
         // </summary>
         /// <summary>
-        /// The type: Vote or register as applicant
+        /// The type: Vote or register as a applicant
         /// </summary>
         public StateType Type;
 
@@ -31,8 +31,8 @@ namespace Neo.Network.P2P.Payloads
         // 当Field = "Registered"时， 存放公钥， Key代表申请人
         // </summary>
         /// <summary>
-        /// If the filed is Votes, save the script hash of current voters
-        /// If the field is Registered, save the public key and the key is applicant
+        /// If the filed is Votes,it will save the script hash of current voters and represents voters
+        /// If the field is Registered, it will save the public key and represents applicant
         /// </summary>
         public byte[] Key;
 
@@ -41,8 +41,8 @@ namespace Neo.Network.P2P.Payloads
         // 当Type = 0x48时， Field = "Registered";
         // </summary>
         /// <summary>
-        /// When the Type is 0x40, Field is equal to Votes;<br/>
-        /// when the Type is 0x48, Field is equal to Registered
+        /// When the Type is 0x40, Field is equal to "Votes";<br/>
+        /// when the Type is 0x48, Field is equal to "Registered";
         /// </summary>
         public string Field;
 

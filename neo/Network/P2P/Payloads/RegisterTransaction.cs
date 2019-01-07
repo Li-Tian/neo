@@ -16,7 +16,7 @@ namespace Neo.Network.P2P.Payloads
     // 资产登记交易【已弃用】
     // </summary>
     /// <summary>
-    /// Asset registeration transaction
+    /// A transaction for registering asset(given up)
     /// </summary>
     [Obsolete]
     public class RegisterTransaction : Transaction
@@ -91,10 +91,10 @@ namespace Neo.Network.P2P.Payloads
         public override int Size => base.Size + sizeof(AssetType) + Name.GetVarSize() + Amount.Size + sizeof(byte) + Owner.Size + Admin.Size;
 
         // <summary>
-        // 系统手续费  若资产是NEO，GAS则费用为0
+        // 系统手续费  若资产是NEO\GAS则费用为0
         // </summary>
         /// <summary>
-        /// The system fee. If the asset is NEO, the gas fee is 0
+        /// The system fee. If the asset is NEO\Gas,the fee is 0
         /// </summary>
         public override Fixed8 SystemFee
         {
@@ -110,7 +110,7 @@ namespace Neo.Network.P2P.Payloads
         // 构造函数：创建资产登记交易
         // </summary>
         /// <summary>
-        /// The constructor function, which creat the transaction registration transaction
+        /// The constructor method.Create a registration transaction
         /// </summary>
         public RegisterTransaction()
             : base(TransactionType.RegisterTransaction)
@@ -126,12 +126,12 @@ namespace Neo.Network.P2P.Payloads
         // 2. 如果资产不是NEO/GAS且未指定Owner
         // </exception>
         /// <summary>
-        /// Deserialization of object 
+        /// Deserialization exclusive data 
         /// </summary>
         /// <param name="reader">The binary input reader</param>
         /// <exception cref="FormatException">
         /// 1. If the version number is not 0<br/>
-        /// 2.  If the asset is not NEO/GAS and not specify owner
+        /// 2. If the asset is not NEO/GAS and not specify owner
         /// </exception>
         protected override void DeserializeExclusiveData(BinaryReader reader)
         {
@@ -152,10 +152,10 @@ namespace Neo.Network.P2P.Payloads
         // <param name="snapshot">数据库快照</param>
         // <returns>交易的其他验证脚本 和 资产所有者地址脚本hash</returns>
         /// <summary>
-        /// The hash list which is waiting for verifying
+        /// get a hash list which is waiting for verifying
         /// </summary>
-        /// <param name="snapshot">The snapshot of database</param>
-        /// <returns></returns>
+        /// <param name="snapshot">database snapshot</param>
+        /// <returns>transaction verification script hash and asset owner address script hash</returns>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             UInt160 owner = Contract.CreateSignatureRedeemScript(Owner).ToScriptHash();
@@ -167,9 +167,9 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <exception cref="System.FormatException">若资产是NEO，GAS，但是hash值不对应时，抛出该异常</exception>
         /// <summary>
-        /// If the asset is NEO, GAS, but the hash value is not correct, throw the exception 
+        /// Handling deserialized transactions
         /// </summary>
-        /// <exception cref="System.FormatException">若资产是NEO，GAS，但是hash值不对应时，抛出该异常</exception>
+        /// <exception cref="System.FormatException">If the asset is NEO/GAS, but the hash value does not correspond</exception>
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
@@ -179,36 +179,66 @@ namespace Neo.Network.P2P.Payloads
                 throw new FormatException();
         }
 
+        // <summary>
+        // 序列化非data数据
+        // <list type="bullet">
+        // <item>
+        // <term>AssetType</term>
+        // <description>资产类型</description>
+        // </item>
+        // <item>
+        // <term>Name</term>
+        // <description>名字</description>
+        // </item>
+        // <item>
+        // <term>Amount</term>
+        // <description>总量</description>
+        // </item> 
+        // <item>
+        // <term>Precision</term>
+        // <description>精度</description>
+        // </item>
+        // <item>
+        // <term>Owner</term>
+        // <description>所有者</description>
+        // </item>
+        // <item>
+        // <term>Admin</term>
+        // <description>管理员</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化非data数据
+        /// Serialize exclusive data
         /// <list type="bullet">
         /// <item>
         /// <term>AssetType</term>
-        /// <description>资产类型</description>
+        /// <description>type of asset</description>
         /// </item>
         /// <item>
         /// <term>Name</term>
-        /// <description>名字</description>
+        /// <description>name of asset</description>
         /// </item>
         /// <item>
         /// <term>Amount</term>
-        /// <description>总量</description>
+        /// <description>total amount of asset</description>
         /// </item> 
         /// <item>
         /// <term>Precision</term>
-        /// <description>精度</description>
+        /// <description>precision of asset</description>
         /// </item>
         /// <item>
         /// <term>Owner</term>
-        /// <description>所有者</description>
+        /// <description>asset owner</description>
         /// </item>
         /// <item>
         /// <term>Admin</term>
-        /// <description>管理员</description>
+        /// <description>asset admin</description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">BinaryWriter</param>
         protected override void SerializeExclusiveData(BinaryWriter writer)
         {
             writer.Write((byte)AssetType);
@@ -257,8 +287,8 @@ namespace Neo.Network.P2P.Payloads
         /// The transaction verification which is deprecated
         /// </summary>
         /// <param name="snapshot">The snapshot of database</param>
-        /// <param name="mempool">The memory pool</param>
-        /// <returns>The fixed valie </returns>
+        /// <param name="mempool">transactions in mempool</param>
+        /// <returns>The fixed value is false. </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
             return false;
