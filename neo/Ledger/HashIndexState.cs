@@ -4,29 +4,45 @@ using System.IO;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 区块索引
+    // </summary>
     /// <summary>
-    /// 区块索引
+    /// Block index
     /// </summary>
     public class HashIndexState : StateBase, ICloneable<HashIndexState>
     {
+        // <summary>
+        // 区块hash
+        // </summary>
         /// <summary>
-        /// 区块hash
+        /// Block hash
         /// </summary>
         public UInt256 Hash = UInt256.Zero;
 
+        // <summary>
+        // 区块高度
+        // </summary>
         /// <summary>
-        /// 区块高度
+        /// Block height
         /// </summary>
         public uint Index = uint.MaxValue;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// size
         /// </summary>
         public override int Size => base.Size + Hash.Size + sizeof(uint);
+        // <summary>
+        // 克隆
+        // </summary>
+        // <returns>克隆对象</returns>
         /// <summary>
-        /// 克隆
+        /// clone method
         /// </summary>
-        /// <returns>克隆对象</returns>
+        /// <returns>replica of object</returns>
         HashIndexState ICloneable<HashIndexState>.Clone()
         {
             return new HashIndexState
@@ -36,44 +52,70 @@ namespace Neo.Ledger
             };
         }
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输入流</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialize method
         /// </summary>
-        /// <param name="reader">二进制输入流</param>
+        /// <param name="reader">BinaryReader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
             Hash = reader.ReadSerializable<UInt256>();
             Index = reader.ReadUInt32();
         }
+        // <summary>
+        // 从副本复制
+        ///</summary>
+        // <param name="replica">副本对象</param>
         /// <summary>
-        /// 从副本复制
+        /// copy a object from a replica
         /// </summary>
-        /// <param name="replica">副本对象</param>
+        /// <param name="replica">replica</param>
         void ICloneable<HashIndexState>.FromReplica(HashIndexState replica)
         {
             Hash = replica.Hash;
             Index = replica.Index;
         }
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>StateVersion</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>Hash</term>
+        // <description>区块hash</description>
+        // </item>
+        // <item>
+        // <term>Index</term>
+        // <description>区块高度</description>
+        // </item>
+        // </list> 
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化
+        /// Serialize method
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
-        /// <description>状态版本号</description>
+        /// <description>the version of state</description>
         /// </item>
         /// <item>
         /// <term>Hash</term>
-        /// <description>区块hash</description>
+        /// <description>block hash</description>
         /// </item>
         /// <item>
         /// <term>Index</term>
-        /// <description>区块高度</description>
+        /// <description>block height</description>
         /// </item>
         /// </list> 
         /// </summary>
-        /// <param name="writer">二进制输出流</param>
+        /// <param name="writer">BinaryWriter</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
@@ -81,10 +123,14 @@ namespace Neo.Ledger
             writer.Write(Index);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>返回一个包含了Hash和Index的json对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Convert to a JObject object
         /// </summary>
-        /// <returns>返回一个包含了Hash和Index的json对象</returns>
+        /// <returns>a JObject object contains hash and index</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

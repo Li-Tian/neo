@@ -19,7 +19,7 @@ namespace Neo.Network.P2P.Payloads
         // 脚本
         // </summary>
         /// <summary>
-        /// The hashscript 
+        /// The hash script 
         /// </summary>
         public byte[] Script;
 
@@ -79,15 +79,12 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="reader">The binary input reader</param>
         /// <exception cref="System.FormatException">
-        /// 1. 若交易版本大于1，则抛出该异常<br/>
-        /// 2. 反序列化的脚本数组长度为0.<br/>
-        /// 3. 指定的执行智能合约的GAS额度小于0.<br/>
         /// 1. If the transaction version is larger than 1 then throw this exception<br/>
         /// 2. The transction script's length is equal to 0<br/>
         /// 3. The gas consumption of smart contract invocation is smaller than 0. 
         /// </exception>
         /// <remarks>
-        /// When the version if 0， do not need gas. The default value is 0<br/>
+        /// When the version is 0， do not need gas. The default value is 0<br/>
         /// When the version is 1, need set the gas <br/>
         /// </remarks>
         protected override void DeserializeExclusiveData(BinaryReader reader)
@@ -157,7 +154,7 @@ namespace Neo.Network.P2P.Payloads
         /// </item>
         /// <item>
         /// <term>Gas</term>
-        /// <description>If the version of transaction is larger than 1, then serializw this gas</description>
+        /// <description>If the version of transaction is larger than 1, then serialize this data</description>
         /// </item>
         /// </list>
         /// </summary>
@@ -202,7 +199,7 @@ namespace Neo.Network.P2P.Payloads
         /// <param name="snapshot">Snapshot of database</param>
         /// <param name="mempool">Memory pool of transactions</param>
         /// <returns>
-        /// 1. If the consuming gas can not be divide by 10^8 e.g. The gas must be the integer format of Fixed8, which means there is not decimal Gas.<br/>
+        /// 1. If the consuming gas can not be divide by 10^8 ,return false.(e.g. The gas must be the integer format of Fixed8, which means there is not decimal Gas.)<br/>
         /// 2. The basic verification of the transaction invocation. If not verified, return false.
         /// </returns>
         public override bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)

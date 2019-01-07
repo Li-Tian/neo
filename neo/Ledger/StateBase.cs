@@ -17,7 +17,7 @@ namespace Neo.Ledger
         // 状态版本号，固定为0
         // </summary>
         /// <summary>
-        /// The version of state, which is 0
+        /// The version of state. Fixed value is 0
         /// </summary>
         public const byte StateVersion = 0;
 
@@ -25,7 +25,7 @@ namespace Neo.Ledger
         // 存储大小
         // </summary>
         /// <summary>
-        /// The storage of this object
+        /// Size
         /// </summary>
         public virtual int Size => sizeof(byte);
 

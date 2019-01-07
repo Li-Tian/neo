@@ -103,7 +103,7 @@ namespace Neo.Ledger
         /// <summary>
         /// Deserialization
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">BinaryReader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);

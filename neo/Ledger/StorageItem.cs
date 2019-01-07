@@ -8,7 +8,7 @@ namespace Neo.Ledger
     // 合约存储项目的数据结构
     // </summary>
     /// <summary>
-    /// The data structure of contract item
+    /// The data structure of contract storage item
     /// </summary>
     public class StorageItem : StateBase, ICloneable<StorageItem>
     {
@@ -43,7 +43,7 @@ namespace Neo.Ledger
         /// <summary>
         /// The clone method
         /// </summary>
-        /// <returns>The clone target</returns>
+        /// <returns>replica of object</returns>
         StorageItem ICloneable<StorageItem>.Clone()
         {
             return new StorageItem

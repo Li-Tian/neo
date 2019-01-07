@@ -4,30 +4,46 @@ using System.IO;
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 区块状态
+    // </summary>
     /// <summary>
-    /// 区块状态
+    /// Block state
     /// </summary>
     public class BlockState : StateBase, ICloneable<BlockState>
     {
+        // <summary>
+        // 截止当前块（包括当前块）所有系统手续费总和
+        // </summary>
         /// <summary>
-        /// 截止当前块（包括当前块）所有系统手续费总和
+        /// The sum of system fees of all block (including the current block)
         /// </summary>
         public long SystemFeeAmount;
 
+        // <summary>
+        // 简化版的block
+        // </summary>
         /// <summary>
-        /// 简化版的block
+        /// Trimmed Block
         /// </summary>
         public TrimmedBlock TrimmedBlock;
 
+        // <summary>
+        // 存储大小
+        // </summary>
         /// <summary>
-        /// 存储大小
+        /// size
         /// </summary>
         public override int Size => base.Size + sizeof(long) + TrimmedBlock.Size;
 
-        /// <summary>
-        /// 克隆
+        // <summary>
+        // 克隆
+        // </summary>
+        // <returns>克隆的对象</returns>
+        // <summary>
+        /// Clone method
         /// </summary>
-        /// <returns>克隆的对象</returns>
+        /// <returns>replica of object</returns>
         BlockState ICloneable<BlockState>.Clone()
         {
             return new BlockState
@@ -37,10 +53,14 @@ namespace Neo.Ledger
             };
         }
 
+        // <summary>
+        // 反序列化
+        // </summary>
+        // <param name="reader">二进制输出流</param>
         /// <summary>
-        /// 反序列化
+        /// Deserialize method
         /// </summary>
-        /// <param name="reader">二进制输出流</param>
+        /// <param name="reader">BinaryReader</param>
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
@@ -54,24 +74,42 @@ namespace Neo.Ledger
             TrimmedBlock = replica.TrimmedBlock;
         }
 
+        // <summary>
+        // 序列化
+        // <list type="bullet">
+        // <item>
+        // <term>StateVersion</term>
+        // <description>状态版本号</description>
+        // </item>
+        // <item>
+        // <term>SystemFeeAmount</term>
+        // <description>系统所有手续费</description>
+        // </item>
+        // <item>
+        // <term>TrimmedBlock</term>
+        // <description>简化版block</description>
+        // </item>
+        // </list>
+        // </summary>
+        // <param name="writer">二进制输出流</param>
         /// <summary>
-        /// 序列化
+        /// Serialize method
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
-        /// <description>状态版本号</description>
+        /// <description>the version of state</description>
         /// </item>
         /// <item>
         /// <term>SystemFeeAmount</term>
-        /// <description>系统所有手续费</description>
+        /// <description>system fee amount</description>
         /// </item>
         /// <item>
         /// <term>TrimmedBlock</term>
-        /// <description>简化版block</description>
+        /// <description>trimmed block</description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">BinaryWriter</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);
@@ -79,10 +117,14 @@ namespace Neo.Ledger
             writer.Write(TrimmedBlock);
         }
 
+        // <summary>
+        // 转成json对象
+        // </summary>
+        // <returns>json数据对象</returns>
         /// <summary>
-        /// 转成json对象
+        /// Convert to a JObject object
         /// </summary>
-        /// <returns>json数据对象</returns>
+        /// <returns>JObject object</returns>
         public override JObject ToJson()
         {
             JObject json = base.ToJson();

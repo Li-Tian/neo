@@ -7,6 +7,9 @@ namespace Neo.Ledger
     // <summary>
     // 验证人状态
     // </summary>
+    /// <summary>
+    /// the state of validator
+    /// </summary>
     public class ValidatorState : StateBase, ICloneable<ValidatorState>
     {
         // <summary>
@@ -26,7 +29,7 @@ namespace Neo.Ledger
         // 投票数
         // </summary>
         /// <summary>
-        /// The vots on it
+        /// The votes on it
         /// </summary>
         public Fixed8 Votes;
 
@@ -68,7 +71,7 @@ namespace Neo.Ledger
         /// <summary>
         /// The clone method
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>replica of object</returns>
         ValidatorState ICloneable<ValidatorState>.Clone()
         {
             return new ValidatorState
@@ -133,7 +136,7 @@ namespace Neo.Ledger
         // </list>
         // </summary>
         // <param name="writer">二进制输出流</param>
-     
+
         /// <summary>
         /// Serialization
         /// <list type="bullet">
@@ -143,11 +146,11 @@ namespace Neo.Ledger
         /// </item>
         /// <item>
         /// <term>PublicKey</term>
-        /// <description>The public key of </description>
+        /// <description>The public key of validator</description>
         /// </item>
         /// <item>
         /// <term>Registered</term>
-        /// <description>Is thi registerd</description>
+        /// <description>Is it registerd</description>
         /// </item>
         /// <item>
         /// <term>Votes</term>
@@ -155,7 +158,7 @@ namespace Neo.Ledger
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="writer">The output strean writer</param>
+        /// <param name="writer">The binary output stream writer</param>
         public override void Serialize(BinaryWriter writer)
         {
             base.Serialize(writer);

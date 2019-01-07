@@ -2,8 +2,11 @@
 
 namespace Neo.Ledger
 {
+    // <summary>
+    // 一个代表了当前NEO状态的enum类
+    // </summary>
     /// <summary>
-    /// 一个代表了当前NEO状态的enum类
+    /// An enum class that represents the current NEO state
     /// </summary>
     [Flags]
     public enum CoinState : byte

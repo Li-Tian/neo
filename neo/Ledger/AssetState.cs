@@ -90,7 +90,7 @@ namespace Neo.Ledger
         // 收费地址
         // </summary>
         /// <summary>
-        /// The address fee
+        /// Fee address
         /// </summary>
         public UInt160 FeeAddress;
 
@@ -236,7 +236,7 @@ namespace Neo.Ledger
         /// <summary>
         /// Get the name of this asset
         /// </summary>
-        /// <param name="culture">locale environment</param>
+        /// <param name="culture">local environment</param>
         /// <returns>The name of asset</returns>
         public string GetName(CultureInfo culture = null)
         {
@@ -403,7 +403,7 @@ namespace Neo.Ledger
         /// </item>
         /// <item>
         /// <term>IsFrozen</term>
-        /// <description>If this assset if Frozen</description>
+        /// <description>If this assset is frozen</description>
         /// </item>
         /// </list>
         /// </summary>

@@ -16,7 +16,7 @@ namespace Neo.Ledger
         // 交易hash
         // </summary>
         /// <summary>
-        /// The Transaction Hash
+        /// The Transcation Hash
         /// </summary>
         public UInt256 TransactionHash;
 
@@ -53,7 +53,7 @@ namespace Neo.Ledger
         /// <summary>
         /// The clone method
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>replica of object</returns>
         SpentCoinState ICloneable<SpentCoinState>.Clone()
         {
             return new SpentCoinState
@@ -127,7 +127,7 @@ namespace Neo.Ledger
         // <param name="writer">二进制输出流</param>
         // 
         /// <summary>
-        /// The serialization
+        /// Serialization method
         /// <list type="bullet">
         /// <item>
         /// <term>StateVersion</term>
