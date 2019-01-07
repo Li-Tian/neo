@@ -38,7 +38,7 @@ namespace Neo.Persistence
         // UTXO缓存。通过交易哈希快速查找该交易下所有UTXO的状态。
         // </summary>
         /// <summary>
-        /// UTXO cache. Quickly find the status of all UTXOs under the transaction by the hash of the transaction.
+        /// UTXO cache. Quickly find the status of all UTXOs of the transaction by the hash of the transaction.
         /// </summary>
         DataCache<UInt256, UnspentCoinState> IPersistence.UnspentCoins => GetUnspentCoins();
         // <summary>
@@ -47,7 +47,7 @@ namespace Neo.Persistence
         // </summary>
         /// <summary>
         /// The information cacahe about the UTXO that has been spent. <br/>
-        /// Quickly find information about the UTXO that has been spent by hashing the transaction. <br/>
+        /// Quickly find information about the UTXO that has been spent by hash of the transaction. <br/>
         /// This includes the block height of the transaction <br/>
         /// and the height of the block in which the UTXO that has been spent.
         /// </summary>

@@ -7,7 +7,7 @@ namespace Neo.SmartContract
     // 自定义事件数据类，用于互操作服务的通知功能等
     // </summary>
     /// <summary>
-    /// Custom data class, notification function for interoperable services, etc.
+    /// Custom event class, notification function for interoperable services, etc.
     /// </summary>
     public class NotifyEventArgs : EventArgs
     {

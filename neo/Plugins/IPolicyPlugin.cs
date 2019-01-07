@@ -22,7 +22,7 @@ namespace Neo.Plugins
         /// Legal filtering of transactions
         /// </summary>
         /// <param name="tx">Transaction</param>
-        /// <returns>A return of true adds the transaction to the memory pool and forwards it to other nodes, while a return of false discards it</returns>
+        /// <returns>A return of true adds the transaction to the memory pool and relay it to other nodes, while a return of false discards it</returns>
         bool FilterForMemoryPool(Transaction tx);
 
         // <summary>

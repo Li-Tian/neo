@@ -206,20 +206,20 @@ namespace Neo.Persistence
         // 抛出该异常
         // </exception>
         /// <summary>
-        /// Calculate the GAS bonus that can Claim
+        /// Calculate the GAS bonus that can be claimed
         /// </summary>
         /// <param name="inputs">The collection of transactions to which Claim refers</param>
         /// <param name="ignoreClaimed">
-        /// Whether to ignore the input that has already been Claimed, <br/>
+        /// Whether to ignore the input that has already been claimed, <br/>
         /// If the UTXO indicated by the parameter inputs does not exist or has been claimed,<br/>
         /// If ignoreClaimed is specified as true at this point, it ignores the error and moves on to the rest of the calculation. <br/>
         /// If ignoreClaimed specifies false, an exception is thrown.
         /// </param>
-        /// <returns>The amount of GAS that can Claim</returns>
+        /// <returns>The amount of GAS that can be claimed</returns>
         /// <exception cref="ArgumentException">
         /// IgnoreClaimed when set to false, if one of the following situations occurs: <br/>
         /// 1) claimable is null, or its number is zero; <br/>
-        /// 2) when the input that has claimed is found; <br/>
+        /// 2) the input that has been claimed is found; <br/>
         /// Throw the exception.
         /// </exception>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
@@ -264,8 +264,8 @@ namespace Neo.Persistence
         /// <exception cref="System.ArgumentException">
         /// </exception>
         /// When the pointed transaction does not exist, or the transaction output serial number is not legal, <br/>
-        /// or the transaction output is not NEO output, Throw an exception
-        /// <returns>The number of GAS that can be claimed</returns>
+        /// or the transaction output is not NEO asset, Throw an exception
+        /// <returns>The amount of GAS that can be claimed</returns>
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint height_end)
         {
             List<SpentCoin> unclaimed = new List<SpentCoin>();
@@ -387,10 +387,10 @@ namespace Neo.Persistence
         // <returns>返回尚未Claim的outputs字典，如果交易不存在，则返回null</returns>
         /// <summary>
         /// Get a dictionary for outputs of transactions that have not yet been claimed. <br/>
-        /// The key of this dictionary is the ordinal number of the output of the transaction, and the value is the cost state of the output.
+        /// The key of this dictionary is the ordinal number of the output of the transaction, and the value is the spent state of the output.
         /// </summary>
         /// <param name="hash">Transaction hash</param>
-        /// <returns>Return a dictionary of outputs that have not yet claimed, or null if the transaction does not exist</returns>
+        /// <returns>Return a dictionary of outputs that have not been claimed, or null if the transaction does not exist</returns>
         public Dictionary<ushort, SpentCoin> GetUnclaimed(UInt256 hash)
         {
             TransactionState tx_state = Transactions.TryGet(hash);
@@ -418,7 +418,7 @@ namespace Neo.Persistence
         // </summary>
         // <returns>参与共识的验证人列表</returns>
         /// <summary>
-        /// Get the Validators for the current participating consensus
+        /// Get the current Validators participating in consensus
         /// </summary>
         /// <returns>The list of Validators for the consensus</returns>
         public ECPoint[] GetValidators()
@@ -441,7 +441,7 @@ namespace Neo.Persistence
         /// Get a list of Validators participating in the consensus
         /// </summary>
         /// <param name="others">Packaged transaction. The impact of these transactions is included when the Validators Counting.</param>
-        /// <returns>The list of Validators for the consensus</returns>
+        /// <returns>The list of Validators participating in the consensus</returns>
         public IEnumerable<ECPoint> GetValidators(IEnumerable<Transaction> others)
         {
             Snapshot snapshot = Clone();

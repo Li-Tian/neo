@@ -100,7 +100,7 @@ namespace Neo.Persistence
         /// <summary>
         /// get a validator candidate list。
         /// Includes a list of verified candidates who had registered and a list of stand validator.
-        /// Does not include information on whether or not to be elected as a validator
+        /// Does not include information on whether to be elected as a validator
         /// </summary>
         /// <param name="persistence">persistence</param>
         /// <returns>ValidatorState collection</returns>
@@ -172,7 +172,7 @@ namespace Neo.Persistence
         // <param name="height">区块高度</param>
         // <returns>总的系统手续费金额</returns>
         /// <summary>
-        /// Query total system fee of specified block
+        /// Query total system fee from the block 0 to the specified block
         /// </summary>
         /// <param name="persistence">persistence</param>
         /// <param name="height">specified block height</param>
@@ -256,7 +256,7 @@ namespace Neo.Persistence
         /// </summary>
         /// <param name="persistence">persistence</param>
         /// <param name="hash">transcation hash</param>
-        /// <returns>unspent transcation outputs</returns>
+        /// <returns>all unspent transcation outputs of the transaction</returns>
         public static IEnumerable<TransactionOutput> GetUnspent(this IPersistence persistence, UInt256 hash)
         {
             List<TransactionOutput> outputs = new List<TransactionOutput>();
