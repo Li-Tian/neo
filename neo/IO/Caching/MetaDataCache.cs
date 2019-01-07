@@ -23,7 +23,7 @@ namespace Neo.IO.Caching
         /// <summary>
         /// Add items internally
         /// </summary>
-        /// <param name="item">Item that need to be added</param>
+        /// <param name="item">Item that needs to be added</param>
         protected abstract void AddInternal(T item);
         // <summary>
         // 尝试从内部获取

@@ -15,7 +15,7 @@ namespace Neo.Cryptography
     // Cryptography中的帮助类, 主要是一些交易和验证中用到的一些hash算法和编码解码算法
     // </summary>
     /// <summary>
-    /// A helper class for cryptography,mainly contain some hash algorithms and codec algorithms used in transaction and verification. 
+    /// A helper class for cryptography,mainly contains some hash algorithms and codec algorithms used in transaction and verification. 
     /// </summary>
     public static class Helper
     {
@@ -91,10 +91,10 @@ namespace Neo.Cryptography
         /// <summary>
         /// Decode a Base58Check encoded string into a byte array<br/>
         /// Decode step：<br/>
-        /// 1. Decode the input string acording Base58 algorithms to get a byte array data. <br/>
-        /// 2. The bytes from first byte to last four byte is called data.<br/>
+        /// 1. Decode the input string according to Base58 algorithms to get a byte array data. <br/>
+        /// 2. The bytes from first byte to last four byte are called data.<br/>
         /// 3. The first four bytes of the hash obtained by data doing twice Sha256 operation is called checksum.<br/>
-        /// If checksum is same as the last four bytes of byte array data, return data.Otherwise ,the data is invalid. <br/>
+        /// If checksum is same as the last four bytes of byte array data, return data. Otherwise ,the data is invalid. <br/>
         /// </summary>
         /// <param name="input">string to be decoded</param>
         /// <returns>byte array after decoded</returns>
@@ -162,7 +162,7 @@ namespace Neo.Cryptography
         // <param name="seed"> Murmur3中用到的一个随机的种子数， 用来防止HashDos攻击</param>
         // <returns>Murmur3函数处理过后的字节数组</returns>  
         /// <summary>
-        /// Get a 32-bit hash of data by doing a Murmur2 operation
+        /// Get a 32-bit hash of data by doing a Murmur3 operation
         /// </summary>
         /// <param name="value">data</param>
         /// <param name="seed">a random seeds to prevent HashDos attacks</param>
@@ -200,8 +200,8 @@ namespace Neo.Cryptography
         /// Get hash of the part of data by doing a Sha256 operation
         /// </summary>
         /// <param name="value">data</param>
-        /// <param name="offset">offset</param>
-        /// <param name="count">count</param>
+        /// <param name="offset">offset of the beginning byte of the byte arras</param>
+        /// <param name="count">count of the bytes which is going to be computed the hash</param>
         /// <returns>hash</returns>
         public static byte[] Sha256(this byte[] value, int offset, int count)
         {

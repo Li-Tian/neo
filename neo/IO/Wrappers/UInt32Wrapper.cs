@@ -9,7 +9,7 @@ namespace Neo.IO.Wrappers
     // </summary>
     /// <summary>
     ///a subclass of SerializableWrapper,
-    /// used to encapsulate data objects of type uint
+    /// used to encapsulate data objects of  uint type
     /// </summary>
     public sealed class UInt32Wrapper : SerializableWrapper<uint>, IEquatable<UInt32Wrapper>
     {

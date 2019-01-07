@@ -9,7 +9,7 @@ namespace Neo.IO.Wrappers
     // </summary>
     // <typeparam name="T">指定的数据类型</typeparam>
     /// <summary>
-    /// A wrapper class for serializable objects, implementing extended functions such as Equal
+    /// A encapsulized class for serializable objects, implementing extended functions such as Equal
     /// This is a abstract class
     /// </summary>
     /// <typeparam name="T">specified type</typeparam>
@@ -20,7 +20,7 @@ namespace Neo.IO.Wrappers
         // 封装的对象
         // </summary>
         /// <summary>
-        /// package object
+        /// encapsulized object
         /// </summary>
         protected T value;
         // <summary>
@@ -61,7 +61,7 @@ namespace Neo.IO.Wrappers
         /// <summary>
         /// Determines whether the current SerializableWrapper object is equal to another SerializableWrapper object
         /// </summary>
-        /// <param name="other">another SerializableWrapper object</param>
+        /// <param name="other">another Serializable Wrapper object</param>
         /// <returns>Compare results, equality returns true, otherwise returns false</returns>
         public bool Equals(SerializableWrapper<T> other)
         {

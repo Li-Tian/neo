@@ -6,7 +6,7 @@ namespace Neo.IO.Data.LevelDB
     // 封装的LeveldbException
     // </summary>
     /// <summary>
-    /// Encapsulation LeveldbException
+    /// Encapsulated Leveldb Exception
     /// </summary>
     public class LevelDBException : DbException
     {

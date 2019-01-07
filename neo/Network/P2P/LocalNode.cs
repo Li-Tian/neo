@@ -163,7 +163,7 @@ namespace Neo.Network.P2P
         /// <summary>
         /// Read a specified number of spare nodes from the seed node list
         /// </summary>
-        /// <param name="seedsToTake">specified number</param>
+        /// <param name="seedsToTake">specified number to read</param>
         /// <returns>spare nodes set</returns>
         private static IEnumerable<IPEndPoint> GetIPEndPointsFromSeedList(int seedsToTake)
         {

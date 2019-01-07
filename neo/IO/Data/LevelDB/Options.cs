@@ -116,7 +116,7 @@ namespace Neo.IO.Data.LevelDB
         // 这就是重启点（restartpoint）) 
         // </summary>
         /// <summary>
-        /// a restartpoint key is stored directly every few keys
+        /// a restart point key is stored directly every few keys
         /// </summary>
         public int BlockRestartInterval
         {

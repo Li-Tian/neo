@@ -31,7 +31,7 @@ namespace Neo.Cryptography
         // 默认构造函数, 设置初始值, 初始化数组.
         // </summary>
         /// <summary>
-        /// Constructor, initialize.
+        /// Constructor, initialization the initial value and the array.
         /// </summary>
         public RIPEMD160Managed()
         {
@@ -63,7 +63,7 @@ namespace Neo.Cryptography
         // <param name="ibStart">计算哈希值时的数据开始偏移量</param>
         // <param name="cbSize">计算哈希值时的数据长度</param>
         /// <summary>
-        /// Core method。This method should not be called directly
+        /// Core method of hash function. This method should not be called directly
         /// </summary>
         /// <param name="rgb">original data</param>
         /// <param name="ibStart">offset</param>

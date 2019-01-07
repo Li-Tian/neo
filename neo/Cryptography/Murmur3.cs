@@ -88,7 +88,7 @@ namespace Neo.Cryptography
         // </summary>
         // <returns>计算过后的哈希值</returns>
         /// <summary>
-        /// Calculate the hash  of the current object data
+        /// Calculate the hash of the current object data
         /// </summary>
         /// <returns>hash</returns>
         protected override byte[] HashFinal()
@@ -105,7 +105,7 @@ namespace Neo.Cryptography
         // 初始化。将hash设置为seed的值，将length设置为0
         // </summary>
         /// <summary>
-        /// Initialization.hash is set to seed,length is set to 0
+        /// Initialization. Set the hash value to seed value, and the length is set to 0
         /// </summary>
         public override void Initialize()
         {

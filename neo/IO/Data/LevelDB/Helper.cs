@@ -40,7 +40,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// Query the element that the prefix matches
         /// </summary>
-        /// <typeparam name="T">T</typeparam>
+        /// <typeparam name="T">Generic Type</typeparam>
         /// <param name="db">Db to be queried</param>
         /// <param name="options">Read Options</param>
         /// <param name="prefix">Prefix to be queried</param>
@@ -62,7 +62,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// Query the element that the prefix matches
         /// </summary>
-        /// <typeparam name="T">T</typeparam>
+        /// <typeparam name="T">Generic Type</typeparam>
         /// <param name="db">Db to be queried</param>
         /// <param name="options">Read Options</param>
         /// <param name="prefix">Prefix to be queried</param>
@@ -96,7 +96,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// Query a Key
         /// </summary>
-        /// <typeparam name="T">T</typeparam>
+        /// <typeparam name="T">Generic Type</typeparam>
         /// <param name="db">Db to be queried</param>
         /// <param name="options">Read Options</param>
         /// <param name="prefix">Prefix to be queried</param>
@@ -121,7 +121,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// Query a Key
         /// </summary>
-        /// <typeparam name="T">T</typeparam>
+        /// <typeparam name="T">Generic Type</typeparam>
         /// <param name="db">Db to be queried</param>
         /// <param name="options">Read Options</param>
         /// <param name="prefix">Prefix to be queried</param>

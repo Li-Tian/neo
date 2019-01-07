@@ -28,7 +28,7 @@ namespace Neo.IO.Data.LevelDB
         // 释放资源，包括Leveldbd迭代器以及句柄释放
         // </summary>
         /// <summary>
-        /// Release resources, including Leveldbd iterators and release handle
+        /// Release resources, including Leveldbd iterators and releasing handle
         /// </summary>
         public void Dispose()
         {
@@ -61,7 +61,7 @@ namespace Neo.IO.Data.LevelDB
         // 游标下移一位
         // </summary>
         /// <summary>
-        /// Cursor down one bit
+        /// Cursor move to next bit
         /// </summary>
         public void Next()
         {
@@ -73,7 +73,7 @@ namespace Neo.IO.Data.LevelDB
         // 游标上移一位
         // </summary>
         /// <summary>
-        /// Cursor up one bit
+        /// Cursor move to previous bit
         /// </summary>
         public void Prev()
         {
@@ -86,7 +86,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="target">目标key</param>
         /// <summary>
-        /// Move the cursor to a key
+        /// Move the cursor to a target key
         /// </summary>
         /// <param name="target">target key</param>
         public void Seek(Slice target)

@@ -198,7 +198,7 @@ namespace Neo.IO.Data.LevelDB
         /// Create an iterator
         /// </summary>
         /// <param name="db">Database</param>
-        /// <param name="options">ReadOption</param>
+        /// <param name="options">Read Option</param>
         /// <returns>iterator pointer</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_create_iterator(IntPtr /* DB */ db, IntPtr /* ReadOption */ options);
@@ -236,9 +236,9 @@ namespace Neo.IO.Data.LevelDB
         // <param name="propname">属性名</param>
         // <returns></returns>
         /// <summary>
-        /// Get attribute value (reserved)
+        /// Get attribute's value (reserved)
         /// </summary>
-        /// <param name="db"></param>
+        /// <param name="db">database</param>
         /// <param name="propname"></param>
         /// <returns></returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -309,7 +309,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="cache"></param>
         /// <summary>
-        /// Destory a default environment variable (reserved)
+        /// Destroy a default environment variable (reserved)
         /// </summary>
         /// <param name="cache"></param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -322,7 +322,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="iterator">待销毁的迭代器</param>
         /// <summary>
-        /// Destory a iterator
+        /// Destroy a iterator
         /// </summary>
         /// <param name="iterator">Iterator to be destroyed</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -337,7 +337,7 @@ namespace Neo.IO.Data.LevelDB
         /// Check if the iterator is legal
         /// </summary>
         /// <param name="iterator">Iterator to be checked</param>
-        /// <returns>Return true if it is legal, false otherwise</returns>
+        /// <returns>Return true if it is legal, otherwise return false</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool leveldb_iter_valid(IntPtr /*Iterator*/ iterator);
@@ -711,7 +711,7 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// Handle to create a batch object
         /// </summary>
-        /// <returns>WriteBatch handle</returns>
+        /// <returns>Batch write handle</returns>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr leveldb_writebatch_create();
 
@@ -720,9 +720,9 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="batch">批量写句柄</param>
         /// <summary>
-        /// Destroys the WriteBatch handle
+        /// Destroys the Batch write handle
         /// </summary>
-        /// <param name="batch">WriteBatch handle</param>
+        /// <param name="batch">Batch Write handle</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writebatch_destroy(IntPtr /* WriteBatch */ batch);
 
@@ -731,9 +731,9 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="batch">批量写句柄</param>
         /// <summary>
-        /// Clear the WriteBatch handle
+        /// Clear the Write Batch handle
         /// </summary>
-        /// <param name="batch">WriteBatch handle</param>
+        /// <param name="batch">Write Batch handle</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void leveldb_writebatch_clear(IntPtr /* WriteBatch */ batch);
 
@@ -746,9 +746,9 @@ namespace Neo.IO.Data.LevelDB
         // <param name="val">值</param>
         // <param name="vallen">值长度</param>
         /// <summary>
-        /// Adds key-value pairs to WriteBatch
+        /// Add key-value pairs to Write Batch
         /// </summary>
-        /// <param name="batch">WriteBatch handle</param>
+        /// <param name="batch">Batch Write handle</param>
         /// <param name="key">key</param>
         /// <param name="keylen">key length</param>
         /// <param name="val">value</param>
@@ -763,9 +763,9 @@ namespace Neo.IO.Data.LevelDB
         // <param name="key">键</param>
         // <param name="keylen">键长度</param>
         /// <summary>
-        /// Delete key from WriteBatch
+        /// Delete key from Write Batch
         /// </summary>
-        /// <param name="batch">WriteBatch handle</param>
+        /// <param name="batch">Write Batch handle</param>
         /// <param name="key">key</param>
         /// <param name="keylen">key length</param>
         [DllImport("libleveldb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]

@@ -26,6 +26,7 @@ namespace Neo.IO.Caching
         /// Constructor
         /// </summary>
         /// <typeparam name="EnumType">Enum type</typeparam>
+        /// <returns>The cache of reflection</returns>
         /// <exception cref="System.ArgumentException">Thrown when EnumType is not an enumerated type</exception>
         /// <exception cref="System.FormatException">Thrown if each attribute in EnumType is unavailable</exception>
         // <summary>

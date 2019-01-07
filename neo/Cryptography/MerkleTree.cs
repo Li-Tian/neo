@@ -9,7 +9,7 @@ namespace Neo.Cryptography
     // 梅克尔树的实现类
     // </summary>
     /// <summary>
-    /// MerkleTree implement class
+    /// MerkleTree implementation class
     /// </summary>
     public class MerkleTree
     {
@@ -105,7 +105,6 @@ namespace Neo.Cryptography
             return hashes.ToArray();
         }
 
-<<<<<<< HEAD
         // <summary> 
         // 根据标志位修剪梅克尔树。flags为所有叶节点的标志位。从叶子节点向上检测。<br/> 
         // 1.对所有高度为2的节点，如果其左子节点和右子节点的标志位都为false,将该节点的左子节点和右子节点置为null。检测完成后进入第二步；<br/> 
@@ -115,10 +114,10 @@ namespace Neo.Cryptography
         // </summary> 
         // <param name="flags">BitArray标志位</param>
         /// <summary>     
-        /// Trim the Merkel tree according to flags. Dlags is the flag set of all leaf nodes. Detect from the leaf node up.
-        /// 1.For all nodes with deepth of 2, if the flags of their left and right children are both false, the left and right children of the node are set to null. After that, the second step is entered;<br/> 
+        /// Trim the Merkel tree according to flags. Flags is the flag set of all leaf nodes. Detect from the leaf node up.
+        /// 1.For all nodes with deepth of 2, if the flags of their left and right children are both false, the left and right children of the node are set to null. After that, enter the second step. <br/> 
         /// 2.For all nodes with a height of 3, if the left child of its left child and the right child of its right child are both null, the left and right children of the node are both set to Null;<br/>
-        /// 3.Continue to step 2 for nodes with deepth of 4, and so on, up to the root node;<br/> 
+        /// 3.Continue to step 2 for nodes with deepth of 4, and go on, until the root node;<br/> 
         /// 4.Upon completion, the trimmed Merkel tree is obtained.
         /// </summary> 
         /// <param name="flags">BitArray flags</param>

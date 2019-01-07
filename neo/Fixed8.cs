@@ -81,7 +81,7 @@ namespace Neo
         /// If the value is positive or 0, it returns value directly. 
         /// If it is negative, return its negative value.
         /// </summary>
-        /// <returns>Returns the absolute value of this object</returns>
+        /// <returns>Returns the absolute value of this Fixed8 object</returns>
         public Fixed8 Abs()
         {
             if (value >= 0) return this;
@@ -169,7 +169,7 @@ namespace Neo
         // </summary>
         // <param name="reader">用于读取字节流</param>
         /// <summary>
-        /// Read the data in the binary reader and stores it in the Fixed8 object.
+        /// Read the data from the binary reader and stores it in the Fixed8 object.
         /// </summary>
         /// <param name="reader">BinaryReader</param>
         void ISerializable.Deserialize(BinaryReader reader)
@@ -186,7 +186,7 @@ namespace Neo
         /// Determine if two Fixed8 object are equal
         /// </summary>
         /// <param name="other">another Fixed8 object</param>
-        /// <returns>Returns<c>true</c> if the values of two object ​​are equal, otherwise returns<c>false</c></returns>
+        /// <returns>Returns<c>true</c> if the values of two objects ​​are equal, otherwise returns<c>false</c></returns>
         public bool Equals(Fixed8 other)
         {
             return value.Equals(other.value);
@@ -263,7 +263,7 @@ namespace Neo
         /// <summary>
         /// Returns the maximum of a Fixed8 object set
         /// </summary>
-        /// <param name="first">the first compared Fixed8 object</param>
+        /// <param name="first">the first to be compared Fixed8 object</param>
         /// <param name="others">other compared Fixed8 objects</param>
         /// <returns>the maximum of a Fixed8 object set</returns>
         public static Fixed8 Max(Fixed8 first, params Fixed8[] others)
@@ -463,7 +463,7 @@ namespace Neo
         /// </summary>
         /// <param name="x">a Fixed8 object</param>
         /// <param name="y">another Fixed8 object</param>
-        /// <returns>Return true if two Fixed8 objects are not equal.Otherwise,return false</returns>
+        /// <returns>Return true if two Fixed8 objects are not equal. Otherwise,return false</returns>
         public static bool operator !=(Fixed8 x, Fixed8 y)
         {
             return !x.Equals(y);
@@ -659,10 +659,10 @@ namespace Neo
         // <param name="value">被取反的Fixed8对象</param>
         // <returns>取反后的Fixed8对象</returns>
         /// <summary>
-        /// <c>-</c> operator, taking the opposite of a Fixed8 object
+        /// <c>-</c> operator, taking the opposite value of a Fixed8 object
         /// </summary>
         /// <param name="value">a Fixed8 object</param>
-        /// <returns>the opposite of a Fixed8 object</returns>
+        /// <returns>the opposite value of a Fixed8 object</returns>
         public static Fixed8 operator -(Fixed8 value)
         {
             value.value = -value.value;

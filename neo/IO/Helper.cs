@@ -11,7 +11,7 @@ namespace Neo.IO
     /// IO读写的辅助方法类
     /// </summary>
     /// <summary>
-    /// IO read and write tool class
+    /// IO read and write helper class
     /// </summary>
     public static class Helper
     {

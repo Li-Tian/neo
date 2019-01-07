@@ -49,8 +49,8 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// Delete Key
         /// </summary>
-        /// <param name="options">WriteOptions</param>
-        /// <param name="key">The key to delete</param>
+        /// <param name="options">Write Options</param>
+        /// <param name="key">The key to be deleted</param>
         /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">This type of exception is thrown when an error is encountered</exception>
         public void Delete(WriteOptions options, Slice key)
         {
@@ -69,10 +69,10 @@ namespace Neo.IO.Data.LevelDB
         /// <summary>
         /// Query a key
         /// </summary>
-        /// <param name="options">ReadOptions</param>
+        /// <param name="options">Read Options</param>
         /// <param name="key">Key to be queried</param>
         /// <returns>Slice of value</returns>
-        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">The query is not present, or an error is encountered, throw the exception</exception>
+        /// <exception cref="Neo.IO.Data.LevelDB.LevelDBException">The query is not presented, or an error is occured, throw the exception</exception>
         public Slice Get(ReadOptions options, Slice key)
         {
             UIntPtr length;
@@ -191,7 +191,7 @@ namespace Neo.IO.Data.LevelDB
         /// <param name="options">Read Options</param>
         /// <param name="key">key</param>
         /// <param name="value">value</param>
-        /// <returns>Returns true and value if queried, false otherwise</returns>
+        /// <returns>Returns true and value if queried, otherwise return false</returns>
         public bool TryGet(ReadOptions options, Slice key, out Slice value)
         {
             UIntPtr length;
