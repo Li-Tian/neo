@@ -118,7 +118,7 @@
 [2] [共识机制图解](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
 [3] [一种用于区块链的拜占庭容错算法](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
-[5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)
+[5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)<br/>
 [6] [Optimized Delegated Byzantine Fault Tolerance](https://github.com/neo-project/neo/pull/426)
 
 
