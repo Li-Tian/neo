@@ -230,9 +230,9 @@
 
     1. 若节点已经处于`COMMIT-WAITING`阶段时，则忽略该消息
 
-    2. 检查消息体重中的`ResponseSignature`签名
+    2. 检查消息体中的`ResponseSignature`签名
 
-    3. 若`ResponseSignature`签名合格率不少于`2f+1`时，重置共识上下文，将合格的`ResponseSignature`签名收下，并视图编号为`Regeneration`中的视图编号，最后通过`Regeneration`消息附带的 `PrepareRequest`消息触发内部对该消息的处理。
+    3. 若`ResponseSignature`签名合格率不少于`2f+1`时，重置共识上下文，将合格的`ResponseSignature`签名收下，将视图编号为`Regeneration`中的视图编号，最后通过`Regeneration`消息附带的 `PrepareRequest`消息触发内部对该消息的处理。
 
 
 
