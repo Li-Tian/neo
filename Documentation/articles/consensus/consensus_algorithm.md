@@ -1,6 +1,6 @@
 ﻿<center><h2> ODBFT算法介绍 </h2></center>
 
-&emsp;&emsp;PBFT(Practical Byzantine Fault Tolerance)[1]算法能够有效解决分布式可信共识问题，但是当投票节点越来越多时，性能下降越厉害，其算法时间复杂度为 O(n<sup>2</sup>), n是节点个数。 NEO在PBFT算法的基础上改良，提出结合POS模式特点的ODBFT(Optimized Delegated Byzantine Fault Tolerant)[3]算法，利用区块链实时投票，决定下一轮共识节点，即授权少数节点出块，其他节点作为普通节点验证和接收区块信息。
+&emsp;&emsp;PBFT(Practical Byzantine Fault Tolerance)[1]算法能够有效解决分布式可信共识问题，但是当投票节点越来越多时，性能下降越厉害，其算法时间复杂度为 O(n<sup>2</sup>), n是节点个数。 NEO在PBFT算法的基础上改良，提出结合POS模式特点的ODBFT(Optimized Delegated Byzantine Fault Tolerant)[3, 6]算法(目前2.9.3版本使用的是DBFT算法，尚未更新到ODBFT算法)，利用区块链实时投票，决定下一轮共识节点，即授权少数节点出块，其他节点作为普通节点验证和接收区块信息。
 
 
 ## 基本概念
@@ -119,6 +119,7 @@
 [3] [一种用于区块链的拜占庭容错算法](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
 [5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)
+[6] [Optimized Delegated Byzantine Fault Tolerance](https://github.com/neo-project/neo/pull/426)
 
 
 
