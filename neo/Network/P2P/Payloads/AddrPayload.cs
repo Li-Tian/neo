@@ -10,6 +10,7 @@ namespace Neo.Network.P2P.Payloads
     // </summary>
     /// <summary>
     /// This class describing a transport packet when replying to the addr message after the node receives the getaddr message from other nodes
+    /// The addr meesage contains the other nodes' IP address
     /// </summary>
     public class AddrPayload : ISerializable
     {
@@ -24,7 +25,7 @@ namespace Neo.Network.P2P.Payloads
         // 已知的其它节点地址信息。包括这些节点的IP地址，监听端口，上次活动时间。
         // </summary>
         /// <summary>
-        /// other node address information known. 
+        /// other known node address information . 
         /// Includes the IP address of these nodes, the listening port, and the last active time.
         /// </summary>
         public NetworkAddressWithTime[] AddressList;

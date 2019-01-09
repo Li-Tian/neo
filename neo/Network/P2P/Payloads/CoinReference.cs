@@ -25,7 +25,7 @@ namespace Neo.Network.P2P.Payloads
         // 指向的UTXO所在的交易的output的位置。从0开始。
         // </summary>
         /// <summary>
-        /// The transaction output index in which UTXO point to.Starting from 0
+        /// The transaction output index in which UTXO point to. Starting from 0
         /// </summary>
         public ushort PrevIndex;
 
@@ -33,7 +33,7 @@ namespace Neo.Network.P2P.Payloads
         // 存储大小
         // </summary>
         /// <summary>
-        /// size
+        /// size for storage
         /// </summary>
         public int Size => PrevHash.Size + sizeof(ushort);
         // <summary>
@@ -62,9 +62,9 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// Determine if two CoinReference object are equal
         /// </summary>
-        /// <param name="other">CoinReference object</param>
+        /// <param name="other">CoinReference object to be compared</param>
         /// <returns>
-        /// If the parameter is null, it returns false.
+        /// If the other CoinReference object is null, it returns false.
         /// Otherwise compare the transaction hash  and the output index of the transaction in which UTXO point to
         /// </returns>
         public bool Equals(CoinReference other)
@@ -85,7 +85,7 @@ namespace Neo.Network.P2P.Payloads
         /// <summary>
         /// Determine if the CoinReference object is equal to another object
         /// </summary>
-        /// <param name="obj">another object</param>
+        /// <param name="obj">another CoinReference object</param>
         /// <returns>
         /// returns false if the object to be compared is null or not a CoinReference object
         /// Otherwise, follow the public bool Equals(CoinReference other) method

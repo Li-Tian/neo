@@ -302,7 +302,7 @@ namespace Neo.Network.P2P.Payloads
         /// 2) Verify the witness script
         /// </remarks>
         /// <param name="snapshot">database snapshot</param>
-        /// <returns>Returns true if the validation is passed, false otherwise</returns>
+        /// <returns>Returns true if the validation is passed,  otherwise return false</returns>
         public bool Verify(Snapshot snapshot)
         {
             if (BlockIndex <= snapshot.Height)

@@ -21,7 +21,7 @@ namespace Neo.Wallets.SQLite
         // 鉴权合约的大小，其大小是20+参数列表大小+合约脚本的大小
         // </summary>
         /// <summary>
-        /// the size of verification contract.its value = 20+ size of parameter list + size of script
+        /// the size of verification contract.its value = 20 + size of parameter list + size of script
         /// </summary>
         public int Size => 20 + ParameterList.GetVarSize() + Script.GetVarSize();
         // <summary>
@@ -44,12 +44,11 @@ namespace Neo.Wallets.SQLite
         // <param name="other">另一个鉴权合约对象</param>
         // <returns>相等则返回true,否则返回false</returns>
         /// <summary>
-        /// If two VerificationContract objects  are equal,return true<br/>
-        /// Otherwise，return false<br/>
+        /// Compare if this vetification contract equals to other verification contract.
         /// </summary>
         /// <param name="other">another VerificationContract object</param>
         /// <returns>
-        /// If two VerificationContract objects  are equal,return true<br/>
+        /// If two VerificationContract objects are equal,return true<br/>
         /// Otherwise，return false<br/>
         /// </returns>
         public bool Equals(VerificationContract other)
@@ -64,7 +63,7 @@ namespace Neo.Wallets.SQLite
         // <param name="obj">待比较对象</param>
         // <returns>等于返回true,否则返回false</returns>
         /// <summary>
-        /// If VerificationContract object and another object are equal,return true<br/>
+        /// Compare if this object is equal to the other object.
         /// Otherwise，return false<br/>
         /// </summary>
         /// <param name="obj">another object</param>
@@ -83,7 +82,7 @@ namespace Neo.Wallets.SQLite
         /// <summary>
         /// get hashcode of script hash(the first four bytes of script hash)
         /// </summary>
-        /// <returns>hashcode</returns>
+        /// <returns>hashcode of scripthash</returns>
         public override int GetHashCode()
         {
             return ScriptHash.GetHashCode();

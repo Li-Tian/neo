@@ -12,7 +12,7 @@
         // 带有信任类型资产
         // </summary>
         /// <summary>
-        /// Credit type asset
+        /// Asset with Credit type 
         /// </summary>
         CreditFlag = 0x40,
 
@@ -28,7 +28,7 @@
         // NEO 资产
         // </summary>
         /// <summary>
-        /// NEO
+        /// NEO asset
         /// </summary>
         GoverningToken = 0x00,
 
@@ -36,7 +36,7 @@
         // GAS 资产
         // </summary>
         /// <summary>
-        /// GAS
+        /// GAS asset
         /// </summary>
         UtilityToken = 0x01,
         // <summary>

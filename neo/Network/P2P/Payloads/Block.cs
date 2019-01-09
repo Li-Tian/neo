@@ -21,7 +21,7 @@ namespace Neo.Network.P2P.Payloads
         // 交易集合
         // </summary>
         /// <summary>
-        /// a transactions array
+        /// Array of transactions 
         /// </summary>
         public Transaction[] Transactions;
 
@@ -76,7 +76,7 @@ namespace Neo.Network.P2P.Payloads
         // <param name="transactions">待计算的交易列表</param>
         // <returns>交易的网络手续费</returns>
         /// <summary>
-        /// Calculate the network fee for a batch of transactions,, network_fee = input.GAS - output.GAS - input.systemfee
+        /// Calculate the network fee for a batch of transactions. network_fee = input.GAS - output.GAS - input.systemfee
         /// </summary>
         /// <param name="transactions">transaction list</param>
         /// <returns>network fee</returns>
@@ -148,7 +148,7 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="other">pending block</param>
         /// <returns>If the block to be compared is null, it returns false directly.
-        /// Otherwise reference and hash value comparison</returns>
+        /// Otherwise use reference and hash value comparison</returns>
         public bool Equals(Block other)
         {
             if (ReferenceEquals(this, other)) return true;
@@ -298,7 +298,7 @@ namespace Neo.Network.P2P.Payloads
         // </summary>
         // <returns>简化版的block</returns>
         /// <summary>
-        /// Convert to trimmed block.Discard the transaction, leaving only the hash of the transaction
+        /// Convert to trimmed block. Discard the transaction, leaving only the hash of the transaction
         /// </summary>
         /// <returns>TrimmedBlock object</returns>
         public TrimmedBlock Trim()

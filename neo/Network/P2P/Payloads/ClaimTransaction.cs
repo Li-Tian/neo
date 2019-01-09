@@ -37,7 +37,7 @@ namespace Neo.Network.P2P.Payloads
         // 存储大小
         // </summary>
         /// <summary>
-        /// size
+        /// size for storage
         /// </summary>
         public override int Size => base.Size + Claims.GetVarSize();
 
@@ -58,7 +58,7 @@ namespace Neo.Network.P2P.Payloads
         // <param name="reader">二进制输入流</param>
         // <exception cref="FormatException">当交易版本号不为0，或者Claims长度为0时，抛出异常</exception>
         /// <summary>
-        /// Deserialize method.Read the claims data in binary reader, other data is not extracted
+        /// Deserialize method. Read the claims data in binary reader, other data is not extracted
         /// </summary>
         /// <param name="reader">BinaryReader</param>
         /// <exception cref="FormatException">Throws an exception when the transaction version number is not 0, or the length of claim data is 0.</exception>
@@ -80,7 +80,7 @@ namespace Neo.Network.P2P.Payloads
         /// </summary>
         /// <param name="snapshot">database snapshot</param>
         /// <returns>verify script hashes list.Includes the payee address pointed to by output.Sort by hash value.</returns>
-        /// <exception cref="System.InvalidOperationException">若引用的output不存在时，抛出该异常</exception>
+        /// <exception cref="System.InvalidOperationException">If the referenced output doe not exist, throw this exception</exception>
         public override UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             HashSet<UInt160> hashes = new HashSet<UInt160>(base.GetScriptHashesForVerifying(snapshot));
