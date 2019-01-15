@@ -185,7 +185,7 @@ namespace Neo
         /// <typeparam name="TSource">generic TSource type</typeparam>
         /// <param name="source">a collection of generic TSource objects that implement the IEnumerable interface</param>
         /// <param name="selector">a conversion function that converts a TSource object to a Fixed8 object</param>
-        /// <returns>The outcome of sum after conversion <returns>
+        /// <returns>The outcome of sum after conversion </returns>
         public static Fixed8 Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, Fixed8> selector)
         {
             return source.Select(selector).Sum();

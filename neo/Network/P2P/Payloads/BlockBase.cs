@@ -127,7 +127,7 @@ namespace Neo.Network.P2P.Payloads
         // 存储大小
         // </summary>
         /// <summary>
-        /// size
+        /// size for storage
         /// </summary>
         public virtual int Size => sizeof(uint) + PrevHash.Size + MerkleRoot.Size + sizeof(uint) + sizeof(uint) + sizeof(ulong) + NextConsensus.Size + 1 + Witness.Size;
 
@@ -332,7 +332,7 @@ namespace Neo.Network.P2P.Payloads
         /// 1) If the previous block does not exist<br />
         /// 2) If the previous block height plus 1 is not equal to the current block height<br/>
         /// 3) If the previous block timestamp is greater than or equal to the current block timestamp<br/>
-        /// 4) If witness witness verification fails<br/>
+        /// 4) If witness verification fails<br/>
         /// </remark>
         public virtual bool Verify(Snapshot snapshot)
         {

@@ -31,7 +31,7 @@ namespace Neo.Wallets
         // 这个TransferOutput的账户地址
         // </summary>
         /// <summary>
-        /// account address of this transfer output
+        /// account address of this transferoutput
         /// </summary>
         public UInt160 ScriptHash;
 
@@ -50,7 +50,7 @@ namespace Neo.Wallets
         // </summary>
         // <returns>返回转化后的TransactionOutput</returns>
         /// <summary>
-        /// Convert a transfer output to a transaction output
+        /// Convert a transferoutput to a transaction output
         /// </summary>
         /// <returns>TransactionOutput object</returns>
         public TransactionOutput ToTxOutput()

@@ -33,7 +33,7 @@ namespace Neo.IO.Data.LevelDB
         /// Compare size, compare by single byte (note, when it is a prefix relationship, the longest length is large)
         /// </summary>
         /// <param name="other">Slice to be compared</param>
-        /// <returns>Returns 1 if it is larger, 0 if it is equal, and returns -1 if it is less than</returns>
+        /// <returns>Returns 1 if it is larger, 0 if it is equal, and returns -1 if it is smaller</returns>
         public int CompareTo(Slice other)
         {
             for (int i = 0; i < buffer.Length && i < other.buffer.Length; i++)
@@ -53,7 +53,7 @@ namespace Neo.IO.Data.LevelDB
         /// Is it equal to the slice
         /// </summary>
         /// <param name="other">Slice to be compared</param>
-        /// <returns>Return true if it is equal, false otherwise</returns>
+        /// <returns>Return true if it is equal, otherwise return  false</returns>
         public bool Equals(Slice other)
         {
             if (buffer.Length != other.buffer.Length) return false;
@@ -319,7 +319,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">字节数组数据</param>
         /// <summary>
-        /// Convert from byte array type to Slice implicitly
+        /// Convert from byte array type to Slice
         /// </summary>
         /// <param name="data">Byte array data</param>
         public static implicit operator Slice(byte[] data)
@@ -332,7 +332,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">bool数据</param>
         /// <summary>
-        /// Convert from bool type to array slice implicitly
+        /// Convert from bool type to array slice
         /// </summary>
         /// <param name="data">bool data</param>
         public static implicit operator Slice(bool data)
@@ -346,7 +346,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">字节数据</param>
         /// <summary>
-        /// Convert from byte type to Slice implicitly
+        /// Convert from byte type to Slice
         /// </summary>
         /// <param name="data">byte data</param>
         public static implicit operator Slice(byte data)
@@ -359,7 +359,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">double数据</param>
         /// <summary>
-        /// Convert from double type to Slice implicitly
+        /// Convert from double type to Slice
         /// </summary>
         /// <param name="data">double data</param>
         public static implicit operator Slice(double data)
@@ -372,7 +372,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">short数据</param>
         /// <summary>
-        /// Convert from short type to slice implicitly
+        /// Convert from short type to slice
         /// </summary>
         /// <param name="data">short data</param>
         public static implicit operator Slice(short data)
@@ -385,7 +385,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">int数据</param>
         /// <summary>
-        /// Convert from int type to Slice implicitly
+        /// Convert from int type to Slice 
         /// </summary>
         /// <param name="data">int data</param>
         public static implicit operator Slice(int data)
@@ -398,7 +398,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">long数据</param>
         /// <summary>
-        /// Convert from long type to Slice implicitly
+        /// Convert from long type to Slice 
         /// </summary>
         /// <param name="data">long data</param>
         public static implicit operator Slice(long data)
@@ -424,7 +424,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">string数据</param>
         /// <summary>
-        /// Convert from string type to Slice implicitly
+        /// Convert from string type to Slice
         /// </summary>
         /// <param name="data">string data</param>
         public static implicit operator Slice(string data)
@@ -437,7 +437,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">ushort数据</param>
         /// <summary>
-        /// Convert from ushort type to Slice implicitly
+        /// Convert from ushort type to Slice 
         /// </summary>
         /// <param name="data">ushort data</param>
         public static implicit operator Slice(ushort data)
@@ -450,7 +450,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">uint数据</param>
         /// <summary>
-        /// Convert from uint type to Slice implicitly
+        /// Convert from uint type to Slice 
         /// </summary>
         /// <param name="data">uint data</param>
         public static implicit operator Slice(uint data)
@@ -463,7 +463,7 @@ namespace Neo.IO.Data.LevelDB
         // </summary>
         // <param name="data">ulong数据</param>
         /// <summary>
-        /// Convert from ulong type to Slice implicitly
+        /// Convert from ulong type to Slice 
         /// </summary>
         /// <param name="data">ulong data</param>
         public static implicit operator Slice(ulong data)

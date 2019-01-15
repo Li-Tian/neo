@@ -143,7 +143,7 @@ namespace Neo.IO
         // <returns>恢复后的数据</returns>
         // <exception cref="System.FormatException">数据无法按分组规则恢复时抛出</exception>
         /// <summary>
-        /// Read the packetized data from the binary reader and restore the pre-packet data according to the grouping rule and output it.
+        /// Read the grouped data from the binary reader and restore the pre-packet data according to the grouping rule and output it.
         /// Grouping rules:<br/>
         /// 1, read 16 bytes of data, and then read one byte of data to represent the amount of additional 0x00.
         /// 2, remove the 0x00s added to the 16-byte data.

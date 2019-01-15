@@ -69,7 +69,7 @@ namespace Neo.Wallets
         // <param name="scriptHash">待查询的脚本哈希</param>
         // <returns>存在，返回true,否则返回false</returns>
         /// <summary>
-        /// Determine if there is a specified account in the wallet account list
+        /// Determine if there is a specified account in the wallet account list according to the script hash
         /// </summary>
         /// <param name="scriptHash">script hash of specified account</param>
         /// <returns>if exist,return true .Otherwise,return false</returns>
@@ -81,7 +81,7 @@ namespace Neo.Wallets
         // <param name="privateKey">私钥</param>
         // <returns>生成的钱包账户对象</returns>
         /// <summary>
-        /// create wallet account by privatekey
+        /// create wallet account by privatekey. It is a abstract method
         /// </summary>
         /// <param name="privateKey">privatekey</param>
         /// <returns>WalletAccount object</returns>
@@ -96,7 +96,7 @@ namespace Neo.Wallets
         /// create wallet account by Contract object and KeyPair object
         /// </summary>
         /// <param name="contract">Contract object</param>
-        /// <param name="key">KeyPair object。When not specified, it means read-only address (monitor address)</param>
+        /// <param name="key">KeyPair object。When not specified, it produces read-only address (monitor address)</param>
         /// <returns>WalletAccount object</returns>
         public abstract WalletAccount CreateAccount(Contract contract, KeyPair key = null);
         // <summary>

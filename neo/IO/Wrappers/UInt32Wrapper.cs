@@ -24,7 +24,7 @@ namespace Neo.IO.Wrappers
         // 无参构造方法
         // </summary>
         /// <summary>
-        /// Constructor
+        /// Constructor without arguments
         /// </summary>
         public UInt32Wrapper()
         {

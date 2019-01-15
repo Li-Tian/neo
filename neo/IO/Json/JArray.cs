@@ -49,7 +49,7 @@ namespace Neo.IO.Json
         /// making it easy for external methods to manipulate their internal elements
         /// </summary>
         /// <param name="index">item index</param>
-        /// <returns>item</returns>
+        /// <returns>corresponding item</returns>
         public JObject this[int index]
         {
             get
