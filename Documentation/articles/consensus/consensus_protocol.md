@@ -43,7 +43,7 @@
 | 1 | Type | ConsensusMessageType |  `0x20` |
 | 1 | ViewNumber | byte | Current view number |
 | 8 | Nonce | ulong |  block nonce |
-| 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-party signature contract  |
+| 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-signature contract  |
 | 4 + 32 * length   | TransactionHashes | UInt256[] |  The proposal block's transaction hashes |
 | 78  | MinerTransaction | MinerTransaction |  It is used to sum all the transaction fees of the current block as a reward for the speaker. |
 |  64 | Signature | byte[] |  Block signature |
@@ -150,7 +150,7 @@ When consensus message enters the P2P network, it's broadcasted and transmitted 
 
    8. If there is a lack of transactions in `block`, send the `getdata` message with the hashes of those transactions. 
 
-   9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-party signature contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
+   9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-signature contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
 
 
 2. **PrepareResponse** is the Delegates' answer to the `PrepareRequest` message sent by the Speaker attached with block signture.

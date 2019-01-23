@@ -13,7 +13,7 @@
 | 4 | Timestamp  | uint |   |
 | 4 | Index | uint |  Block height, and the Genesis Block's index is 0 |
 | 8 | ConsensusData | Nonce | ulong | It's random value |
-|20 | NextConsensus  | UInt160 |  The script hash of consensus nodes' multi-party signature contract in the next round. |
+|20 | NextConsensus  | UInt160 |  The script hash of consensus nodes' multi-signature contract in the next round. |
 | 1 | - | uint8 | it's fixed 1   |
 | ? | Witness | |  Witness | The executable verification scripts|
 | 1 | - | uint8 | it's fixed 1   |
@@ -33,7 +33,7 @@
 
 &emsp;&emsp;`Timestamp` is the bock's time stamp, must bigger than the previous block's.The invternal between two block is about 15 seconds, set by the variable `SecondsPerBlock` in configuration file `protocol.json`.   
 
-&emsp;&emsp;`NextConsensus` is a hash of mulit-signature contract, which needs more than two-thirds of the signatures of the consensus nodes as parameters. The example script as below. Each block, with the `NextConsensus` field, locks the nodes participating in the next round of consensus activity. In the previous round of consensus activity, the Speaker calcualted the consensus nodes of the next round based on the voting at that time, generated the multi-party signature contract, and assigned the hash value of the contract to the block's `NextConsensus` field. 
+&emsp;&emsp;`NextConsensus` is a hash of mulit-signature contract, which needs more than two-thirds of the signatures of the consensus nodes as parameters. The example script as below. Each block, with the `NextConsensus` field, locks the nodes participating in the next round of consensus activity. In the previous round of consensus activity, the Speaker calcualted the consensus nodes of the next round based on the voting at that time, generated the multi-signature contract, and assigned the hash value of the contract to the block's `NextConsensus` field. 
 
 &emsp;&emsp;`Witness` is the verification script of the block, it contains `InvocationScript` and `VerificationScript`. The `InvocationScript` provides the parameters for the `VerificationScript` to execute. 
 

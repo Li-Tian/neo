@@ -59,7 +59,7 @@ Assume the total number of active consensus nodes is `N`, up to `f` fault tolera
    
    3. Calculate the network fee (`= inputs.GAS - outputs.GAS - transactions_system_fee `), and take it as the reward for the current Speaker in `MinerTransaction`.
 
-   4. Combining the above transactions and the previous validators votes, calculate the next round consensus nodes, and assign the hash of multi-party signature script to `block.NextConsensus`, locking the consensus nodes of the next round.
+   4. Combining the above transactions and the previous validators votes, calculate the next round consensus nodes, and assign the hash of multi-signature script to `block.NextConsensus`, locking the consensus nodes of the next round.
 
    5.  Set the timestamp of block to the current time and calculate the signature of the Speaker.
    
