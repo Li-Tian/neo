@@ -99,13 +99,13 @@ Message's basic format is as follows:
 | receive | version | Receive version to perform 1st handshake |
 | send | verack | Send verack to perform 2nd handshake |
 | receive | verack | Receive verack to perform 2nd handshake |
-| send | getheaders | Send getheaders to retrive block head |
+| send | getheaders | Send getheaders to retrieve block head |
 | receive | headers | Receive block headers |
 | send | getblocks | Send getblocks to get blocks |
 | receive | inv(blocks) | Receive inv hash of some blocks |
-| send | getdata(blocks) | Send getdata to retrive complete block |
+| send | getdata(blocks) | Send getdata to retrieve complete block |
 | receive | inv(consensus) | Receive inv hash of consensus data |
-| send | getdata(consensus) | Send getdata to retrive consensus data of specified hash |
+| send | getdata(consensus) | Send getdata to retrieve consensus data of specified hash |
 | receive | consensus | Receive complete consensus data |
 | send | inv(consensus) | Relay received consensus data's hash to other nodes |
 | receive | block | Receive a complete block |
