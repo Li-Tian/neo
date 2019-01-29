@@ -1,59 +1,59 @@
 <center> <h2> Neo Virtual Machine</h2> </center>
 
-&emsp;&emsp;NeoVM is a lightweight, general-purpose virtual machine which executes NEO smart contract code. The concept of virtual machine described in narrow sense in this paper, it's not a simulation of physical machine by operating system. Unlike VMware or Hyper-V, it's mainly aimed at specific language.
+&emsp;&emsp;NeoVM is a lightweighted, general-purpose virtual machine that executes NEO smart contract code. The concept of virtual machine described in this paper is in narrow sense, it's not a simulation of physical machine by operating system. Unlike VMware or Hyper-V, it's mainly aimed at specific usage.
 
-&emsp;&emsp;For example, in JVM or CLR of .Net, source code will be compiled into relevant bytecodes, and be executed on the corrresponding virtual machine. JVM or CLR will read instructions, decode, execute and write results back. Those steps are very similar to the concepts on real physical machines. However, the binary instructions are still running on the physical machine. It takes instructions from memory and transmits them to the CPU through the bus, then decodes, executes and stores the results.
+&emsp;&emsp;For example, in JVM or CLR of .Net, source code will be compiled into relevant bytecodes, and be executed on the corresponding virtual machine. JVM or CLR will read instructions, decode, execute and write results back. Those steps are very similar to the concepts on real physical machines. The binary instructions are still running on the physical machine. It takes instructions from memory and transmits them to the CPU through the bus, then decodes, executes and stores the results.
 
 # Virtual Device
 [![../images/neo_vm/nvm.jpg](../images/neo_vm/nvm.jpg)](../images/neo_vm/nvm.jpg)
 
-The above figure is the system architecture of NeoVM, which includes execution engine, memory, interoperable services.
+The graph above is the system architecture of NeoVM, which includes execution engine, memory, interoperable services.
 
 A complete operation process is as follows:
 
-1. Compile the samrt contract source codes into bytecodes.
+1. Compile the smart contract source codes into bytecodes.
 
 2. Push the bytecodes and related parameters as a running context into the `InvocationStack`.
 
-3. Each time, the execution engine will the take the current context instruction, executes it, and stores the data in the evaluation stack (`EvaluationStack`) and temporary stack (`AltStack`) of the current context.
+3. Each time the execution engine takes a instruction from the current context, it executes the instruction, and stores the data in the evaluation stack (`EvaluationStack`) and temporary stack (`AltStack`) of current context.
 
-4. If need to access external data, call the interoperable service.
+4. It uses the interoperable service if it needs to access external data.
 
-5. After all scripts executed, the results will be saved in the `ResultStack`. 
+5. After all scripts are executed, the results will be saved in the `ResultStack`.
 
 ## Execution Engine
 
-The left part is the virtual machine execution engine(equivalent to CPU), which can execute common instructions such as flow control, stack operation, bit operation, arithmetic operation, logical operation, cryptography, etc. It can also interact with the interoperable services through system call. NeoVM has four states: `NONE`, `HALT`, `FAULT`, `BREAK`.
+The left part of the graph above is the virtual machine's execution engine(equivalent to CPU). It can execute common instructions such as flow control, stack operation, bit operation, arithmetic operation, logical operation, cryptography, etc. It can also interact with the interoperable services through system call. NeoVM has four states: `NONE`, `HALT`, `FAULT`, `BREAK`.
 
 * `NONE` is a normal state.
 
-* `HALT` is a stop state. When the `InvocationStack` is empty, namely all scripts are executed, the virtual machine state will be set to `HALT`.
+* `HALT` is a stopped state. When the `InvocationStack` is empty, it means all scripts are executed, the virtual machine's state will be set to `HALT`.
 
-* `FAULT` is an error state. When the operation is wrong, the virtual machine state will be set to `FAULT`.
+* `FAULT` is an error state. When something goes wrong with an operation, the virtual machine's state will be set to `FAULT`.
 
-* `BREAK` is an interrupt state and used in the debugging process of smart contract generally.
+* `BREAK` is an interrupted state and is used in the debugging process of smart contract generally.
 
-Each time before the virtual machine start, the execution engine will detect the virtual machine state, and only when the state is `NONE`, can it start running.
+Each time before the virtual machine starts, the execution engine will detect the virtual machine's state, and only when the state is `NONE`, can it start running.
 
 
-## Memory
+## Temporary Storage
 
-NeoVM has four memorys: `InvocationStack`, `EvaluationStack`, `AltStack` and `ResultStack`.
+NeoVM uses stacks as its temporary storage. NeoVM has four types of stacks: `InvocationStack`, `EvaluationStack`, `AltStack` and `ResultStack`.
 
 * `InvocationStack` is mainly used to store the running context data. Each running context has its own scripts, `EvaluationStack` and `AltStack`. Stacks are isolated from each other between different running contexts. Context switching is completed by relying on the `CurrentContext`, `CallingContext` and `EntryContext`. The `CurrentContext` points to the top element of the `InvocationStack`, which is `ExecutionContext_1` in the system architecture diagram. The `CallingContext` points to the second element of the `InvocationStack`, which is `ExecutionContext_2`. And the `EntryContext` points to the tail element of the `InvocationStack`, which is `ExecutionContext_3`.
 
 * Each running context has its own `EvaluationStack` and `AltStack`. `EvaluationStack` is mainly used to execute corresponding operations according to instructions, and `AltStack` is used to save temporary data in computing process.
 
-* After all scripts executed, the results will be saved in the `ResultStack`. 
+* After all scripts executed, the results will be saved in the `ResultStack`.
 
 
 # Interoperable service layer
 
-The right part is the virtual machine interoperable service layer, which provides some APIs for smart contract accessing the blockchain. Using these APIs block information, transaction information, contract information, and asset information and so on can be accessed.
+The right part of the graph above is the virtual machine's interoperable service layer, which provides API for smart contract to access data on the blockchain. By using these API, smart contract can access information in a block , information in a transaction, and information of an asset.
 
-In addition, the interoperable service layer provides a persistent storage for each contract.  Each NEO contract can set a private storage in form of key-value optionally when the contract created. The NEO contract's persistent storage is determined by the callee of the contract, not the caller. However, the caller needs to pass its own storage context to the callee (authorization) before the callee can perform the read-write operation.
+In addition, the interoperable service layer provides a persistent storage for each contract. Each NEO contract can declare to have a private storage to save information in form of key-value pair optionally when the contract is created. When a smart contract invocate another smart contract, the storage are separated. The smart contract being invoked has it's own persistent storage. If the caller contract needs the contract being invoked to access data of the caller contract, it needs to pass its own storage context to the callee (authorization) before the callee can perform the read-write operation.
 
-The interoperable services are describled in detail in the "Smart Contract" section.
+The detail of interoperable services are describled in the "Smart Contract" section.
 
 # Built-in data types
 
@@ -65,9 +65,9 @@ NeoVM has seven built-in data types:
 | Integer | Implemented as a `BigInteger` value.  |
 | ByteArray |Implemented as a byte array.  |
 | Array |  Implemented as a `List<StackItem>`, the `StackItem` is an abstract class, and all the built-in data types are inherited from it. |
-| Struct |  Inherited from Array, but the `Clone` method is added and `Equals` method is rewritten. |
+| Struct |  Inherited from Array, a `Clone` method is added and `Equals` method is overridden. |
 | Map | Implemented as a key-value pair `Dictionary<StackItem, StackItem>`.  |
-| InteropInterface |  Interoperability interface |
+| InteropInterface |  Interoperable interface |
 
 
 ```c#
@@ -915,4 +915,4 @@ It has implemented common operations for array, map, struct, etc.
 | Function:   | Read a boolean value from the top of the stack, and if it's False, then set the virtual machine state to `FAULT`. |
 
 
-Note: The operation code with \* indicates that the result of the operation is not put back to the `EvaluationStack` by using `PUSH` method.
+Note: The operation code with \* indicates that the result of the operation is not pushed back to the `EvaluationStack`.

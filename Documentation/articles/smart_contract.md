@@ -8,18 +8,18 @@
 The basic type limitation of the smart contract can be referred to the link: <http://docs.neo.org/zh-cn/sc/quickstart/limitation.html>
 
 
-Meanwhile, due to security considerations, to prevent different nodes from obtaining different data from the outside, NEO does not support the smart contract access the Internet and the other blockchain data currently.
+Meanwhile, due to security considerations, to prevent different nodes from obtaining different data from the outside, NEO currently does not provide support for smart contract to access the Internet and data of other blockchain.
 
 # Price Mechanism
 
-Each instruction of the smart contract needs to pay fee (Gas). In the procedure of deploying or invokeing the smart contract, the NEO-GUI will try to run the smart contract's bytecodes in test mode, and calculate the gas consumed. 
+Each instruction of the smart contract needs to pay fee (Gas). In the procedure of deploying or invoking the smart contract, the NEO-GUI will try to run the smart contract's bytecodes in test mode, and calculate the gas consumed.
 
-The initial 10 GAS during each execution of every smart contract is always free, including smart contract deployment and invoking. That is, fees that sum up to 10 GAS or less will not require a service fee.
+The initial 10 GAS during each execution of every smart contract is always free, including smart contract deployment and invoking. That means, fee that sum up to 10 GAS or less will not cost any service fee.
 
-All Smart Contract fees are considered as Service fee to be put in a pool for re-distribution to all NEO holders. The distribution is proportional to amount of NEO.
+All Smart Contract fee are considered as system fee to be put in a pool for re-distribution to all NEO holders. The distribution is proportional to amount of NEO.
 
 
-## Fees for Instructions
+## Fee for Instructions
 
 | Instruction                           | Fee(Gas) |
 | -------------------------------- | ----------- |
@@ -33,9 +33,9 @@ All Smart Contract fees are considered as Service fee to be put in a pool for re
 | OpCode.HASH256                   | 0.02        |
 | OpCode.CHECKSIG                  | 0.1         |
 | OpCode.CHECKMULTISIG（per public-key） | 0.1         |
-| (Default)         | 0.001       |
+| Others codes(each step)         | 0.001       |
 
-## Fees for System Calls
+## Fee for System Calls
 
 | SysCall                                | Fee(Gas) |
 | ------------------------------------------- | ------------ |
@@ -53,30 +53,30 @@ All Smart Contract fees are considered as Service fee to be put in a pool for re
 | Transaction.GetWitnesses                    | 0.2          |
 | Witness.GetVerificationScript               | 0.1          |
 | Account.IsStandard                          | 0.1          |
-| Asset.Create(system asset)               | 5000         |
-| Asset.Renew(system asset) [per year]     | 5000         |
+| Asset.Create(system asset)                  | 5000         |
+| Asset.Renew(system asset) [per year]        | 5000         |
 | Contract.Create*                            | 100~1000     |
 | Contract.Migrate*                           | 100~1000     |
 | Storage.Get                                 | 0.1          |
-| Storage.Put, Storage.PutEx [per KB]       | 1            |
+| Storage.Put, Storage.PutEx [per KB]         | 1            |
 | Storage.Delete                              | 0.1          |
-| (Default)                                  | 0.001        |
+| Others(Default)                             | 0.001        |
 
-* The cost of creating or migrating a smart contract is the basic 100 GAS plus fees of functions the contract requires. If the storage area is required, the function fee is 400 GAS, and if the dynamic call is needed, the function fee is 500 GAS.
+* The cost of creating or migrating a smart contract includes the base cost 100 GAS plus optional function fee the contract requires. The function fee for storage is 400 GAS. The function fee for dynamic invocation is another 500 GAS.
 
-* When deploy the contract which requires storage, dynamic invocation, etc., be sure to check the corresponding options. In the future, we will consider detection mechanism.
+* When deploy a contract that requires storage, dynamic invocation, etc., be sure to check the corresponding options in NEO-GUI.
 
 # Trigger
 
 A smart contract trigger is a mechanism that triggers the execution of smart contracts. There are four triggers introduced in the NEO smart contract, `Verification`, `Application`, `VerificationR` and `ApplicationR`, the `VerificationR` and `ApplicationR` are added in version 2.9.
 
-A blockchain that provides smart contract system should provide multiple triggers for the smart contracts running on it, makes them to function in different contexts.
+A blockchain that provides smart contract system should provide multiple triggers for the smart contracts running on it, to make them functional in different contexts.
 
 `Verification` and `Application` enable smart contract to verify transiaction and change the state of the blockchain.
 
-`VerificationR` and `ApplicationR` enable smart contract to reject a transfer or change the state of the blockchain when a transfer received.
+`VerificationR` and `ApplicationR` enable smart contract to reject a transfer or change the state of the blockchain when a transfer is received.
 
-For more information, please read: <http://docs.neo.org/zh-cn/sc/trigger.html>
+For more information, please refer to: <http://docs.neo.org/zh-cn/sc/trigger.html>
 
 
 ## VerificationR
@@ -99,7 +99,7 @@ the `receiving` function will be invoked automatically when a contract is receiv
 
 ## ApplicationR
 
-The `ApplicationR` trigger indicates that the default function `received` of the contract is being invoked because it is specified as a target of an output of the transaction. The `received` function accepts no parameter, changes the states of the blockchain, and returns any type of value.
+The `ApplicationR` trigger indicates that the default function `received` of the contract is invoked because it is specified as a target of an output of the transaction. The `received` function accepts no parameter, changes the states of the blockchain, and returns any type of value.
 
 The entry point of the contract will be invoked if the contract is triggered by `ApplicationR`:
 
@@ -119,7 +119,7 @@ The `received` function will be invoked automatically when a contract is receivi
 # Interoperable service layer
 
 
-The interoperable service layer provides some APIs for accessing the blockchain data of the smart contract. It can access block information, transaction information, contract information, asset information, and so on.
+The interoperable service layer provides some API for accessing the blockchain data of the smart contract. It can access block information, transaction information, contract information, asset information, and other information.
 
 ## Runtime
 ### System.Runtime.GetTrigger
