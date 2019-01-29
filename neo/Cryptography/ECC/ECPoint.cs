@@ -267,7 +267,7 @@ namespace Neo.Cryptography.ECC
         /// <returns>
         /// 根据不同类型的公钥解码后的ECPoint对象
         /// </returns>
-        /// <exception cref="System.FormatException">(*)</exception>
+        /// <exception cref="System.FormatException">上述格式以外将抛出 FormatException</exception>
         public static ECPoint FromBytes(byte[] pubkey, ECCurve curve)
         {
             switch (pubkey.Length)
