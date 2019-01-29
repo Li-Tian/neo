@@ -1,6 +1,6 @@
-﻿<center><h2> ODBFT算法介绍 </h2></center>
+﻿<center><h2> dBFT算法介绍 </h2></center>
 
-&emsp;&emsp;PBFT(Practical Byzantine Fault Tolerance)[1]算法能够有效解决分布式可信共识问题，但是当投票节点越来越多时，性能下降越厉害，其算法时间复杂度为 O(n<sup>2</sup>), n是节点个数。 NEO在PBFT算法的基础上改良，提出结合POS模式特点的ODBFT(Optimized Delegated Byzantine Fault Tolerant)[3, 6]算法(目前2.9.3版本使用的是DBFT算法，尚未更新到ODBFT算法)，利用区块链实时投票，决定下一轮共识节点，即授权少数节点出块，其他节点作为普通节点验证和接收区块信息。
+&emsp;&emsp;PBFT(Practical Byzantine Fault Tolerance)[1]算法能够有效解决分布式可信共识问题，但是当投票节点越来越多时，性能下降越厉害，其算法时间复杂度为 O(n<sup>2</sup>), n是节点个数。 NEO在PBFT算法的基础上改良，提出结合POS模式特点的DBFT(Delegated Byzantine Fault Tolerant)[3]算法，利用区块链实时投票，决定下一轮共识节点，即授权少数节点出块，其他节点作为普通节点验证和接收区块信息。
 
 
 ## 基本概念
@@ -57,20 +57,18 @@
 
    7. 广播`inv`消息，附带上除`MinerTransaction`外的交易hash。（通知其他节点，同步要打包的交易数据）
 
-5. 议员，在收到该提案与验证后，广播 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡〉<sub>𝜎𝑖</sub>〉 投票消息
+5. 议员，在收到该提案与验证后，广播 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒,ℎ,𝑣,𝑖,〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>〉 投票消息
 
-6. 当一个议员（包括议长），在收到至少 N-𝑓 个〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡〉<sub>𝜎𝑖</sub>签名（包括自己的签名）后， 则向外广播 <CommitAgree, 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>> 消息。
+6. 当任意一个议员（包括议长），在收到 𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡 和 𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑠𝑝𝑜𝑛𝑠𝑒 至少 N-𝑓 个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名（包括自己的签名）后，即达成共识，开始发布新块，并广播；
 
-7. 当任意一个议员（包括议长），在收到 N-𝑓 个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名（包括自己的签名）后，即达成识，开始发布新块，并广播；
+7. 任意一个节点收到该新块后，将上面交易从内存池中删除，并记录该区块内容。 若是共识节点收到新区块后，则进入下一轮共识。
 
-8. 任意一个节点收到该新块后，将上面交易从内存池中删除，并记录该区块内容。 若是共识节点收到新区块后，则进入下一轮共识。
-
-[![odbft_three_phase](../../images/consensus/odbft_three_phase.jpg)](../../images/consensus/odbft_three_phase.jpg)
+[![dbft_two_phase](../../images/consensus/dbft_two_phase.jpg)](../../images/consensus/dbft_two_phase.jpg)
 
 算法可以划分为三阶段。<BR/>
-1）`PREPARE-REQUST` 阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。<BR/>
-2）`PREPARE-RESPONSE` 阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个共识节点收到不少于`2f+1`个〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。<BR/>
-3）`COMMIT-WAITING` 阶段， 向外广播 `Commit-Agree`消息，并附带上 〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>，并一直等待，直到节点收到不少于`2f+1`个  〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>时（此过程不可以更改试图，锁定状态），则达成共识，出新块。<BR/>
+1）`PRE-PREPARE`预准备阶段，本轮的议长负责向其他议员广播`Prepare-Request`消息， 发起提案。<BR/>
+2）`PREPARE`准备阶段，议员向外广播`Prepare-Response`消息，发起投票，当一个共识节点收到不少于`2f+1`个〈𝑏𝑙𝑜𝑐𝑘〉<sub>𝜎𝑖</sub>签名, 则进入第三阶段。<BR/>
+3）`PERSIST`出块阶段， 负责向外广播新块，并进入下一轮共识。<BR/>
 
 
 > [!Note]
@@ -86,13 +84,13 @@
 
 [![dbft_state_graph](../../images/consensus/dbft_state_graph.jpg)](../../images/consensus/dbft_state_graph.jpg)
 
-当节点 𝑖 未进入`COMMIT-WAITING`阶段前，若经过 2<sup>𝑣+1</sup> ⋅ 𝑡 的时间间隔后仍未达成共识，或接收到包含非法交易的提案后，开始进入视图更换流程： 
+当节点 𝑖 在经过 2<sup>𝑣+1</sup> ⋅ 𝑡 的时间间隔后仍未达成共识，或接收到包含非法交易的提案后，开始进入视图更换流程： 
 
 1. 令 𝑘 = 1，𝑣<sub>𝑘 </sub>= 𝑣 + 𝑘； 
 
 2. 节点 𝑖 发出视图更换请求 〈𝐶ℎ𝑎𝑛𝑔𝑒𝑉𝑖𝑒𝑤,ℎ,𝑣,𝑖,𝑣<sub>𝑘</sub>〉； 
 
-3. 不在`COMMIT-WAITING`阶段的节点收到至少 2𝑓+1 个来自不同 𝑖 的相同 𝑣<sub>𝑘</sub> 后，视图更换达成，令 𝑣 = 𝑣<sub>𝑘</sub> 并开始新的共识；
+3. 任意节点收到至少 2𝑓+1 个来自不同 𝑖 的相同 𝑣<sub>𝑘</sub> 后，视图更换达成，令 𝑣 = 𝑣<sub>𝑘</sub> 并开始共识；
 
 4. 若经过 2<sup>𝑣<sub>𝑘 </sub>+1</sup> ⋅ 𝑡 的时间间隔后，视图更换仍未达成，则 𝑘 递增并回到第 2 步； 
 
@@ -100,31 +98,15 @@
 
 
 
-### 再生策略
-
-由于在ODBFT算法的`COMMIT-WAITING`阶段，节点的状态处于锁定等待状态，不可以再发起更改视图，而在开放的网络上存在部分节点掉线，延迟，重新加入共识的过程等情况，再生策略可以很好地解决这些问题。 策略规则如下：
-
-1. 处于`COMMIT-WAITING`阶段的节点，若遇到超时，或收到改变视图消息时, 则发送 `Regeneration`消息，附带本轮议长发送的`Preparerequest`和该节点收到的 〈𝑃𝑟𝑒𝑝𝑎𝑟𝑒𝑅𝑒𝑞𝑢𝑒𝑠𝑡〉<sub>𝜎𝑖</sub>签名列表。
-
-2. 重新加入的节点，或处于`PREPARE-REQUST`, `PREPARE-RESPONSE` 阶段的节点，收到 `Regeneration`消息时，则进行签名校验， 若签名通过，则发送`CommitAgree`消息，也进入`COMMIT-WAITING`阶段。
-
-通过上述策略，可以有效的解决共识过程中节点的掉线，重加入等问题。
-
-
-
-
-
 [1] [Practical Byzantine Fault Tolerance](http://pmg.csail.mit.edu/papers/osdi99.pdf)<br/>
 [2] [共识机制图解](http://docs.neo.org/zh-cn/basic/consensus/consensus.html)<br/>
 [3] [一种用于区块链的拜占庭容错算法](http://docs.neo.org/zh-cn/basic/consensus/whitepaper.html)<br/>
 [4] [The Byzantine Generals Problem](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)<br/>
-[5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)<br/>
-[6] [Optimized Delegated Byzantine Fault Tolerance](https://github.com/neo-project/neo/pull/426)
+[5] [Consensus Plugin](https://github.com/neo-project/neo-plugins)
 
 
 
 > [!NOTE]
 > 如果发现有死链接，请联系 <feedback@neo.org>
-
 
 
