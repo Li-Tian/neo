@@ -141,58 +141,61 @@ When a consensus message enters the P2P network, it's broadcasted and transmitte
 
    4. Ignore if the signature of the message is incorrect.
 
-   5. If transantions in the received message are already in the blockchain, or it failed to pass verification provided by plugins, the transaction data will be considered incorrect and the current node will initiate `ChangeView`.
+   5. Clear signatures saved in the context that does not match the received proposal message.
 
-   6. Check the first transaction in block -- `MinerTransaction`, like step 5). If validation fails, then ignore
+   6. Save the signature of the speaker into current context.
 
-   7. Reserve the signature in the `PrepareRequest` message.
+   7. Collect and verify transactions in the proposal block from memory pool.
 
-   8. If there is a lack of transactions in `block`, send the `getdata` message with the hashes of those transactions. 
+      1. If the transaction failed to pass verification or policy check provided by plugin, it will stop the process and request ChangeView.
 
-   9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-signature contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
+      2. Otherwise the transaction will be saved into current context.
 
+   8. Collect and verify transactions in the proposal block from unverified memory pool.
 
-2. **PrepareResponse** is the Delegates' answer to the `PrepareRequest` message sent by the Speaker attached with block signture.
+   9. Verify the MinerTransaction and add it into current context.
 
-   1. If the current node has published the new full block, then ignore.
-
-   2. If the block signature has collected already, then ignore.
-
-   3. Check the signature is correct. If not, then ingore, else reserve.
-
-   4. If there are at least `N+f` signatures, then publish the new full block.
+   10. If all transactions are collected verified, it will request PrepareResponse. Otherwise it will broadcast a getdata message to retrieve transactions from other nodes.
 
 
-3. **Changeview** was send by consensus node, when timeout occured or received illegal data
+2. On receiving a **PrepareResponse** sent by consensus nodes with their signture.
 
-   1. If the view number less than the  sender view number, then ignore.
-   
-   2. If the new view number less than current node view number, then ignore.
+   1. Ignore it if current node has already saved the sender's signature.
 
-   3. If received at least `N-f` `ChangeView` messages with the same new view number, then the View Change completed. The current node reset the consensus process with the new view number.
+   2. Save it temporarily if current node does not have information of corresponding PrepareRequest of the received PrepareResponse yet.
 
+   3. Otherwise verify the signature. Save the signature if it pass the verification. Ignore it if not.
 
-4. **onTimeout** 
-
-   1. If the Speaker timeout, the `PrepareRequeset` message will be sent for the first time, and the `ChangeView` message will be luanched subsequently.
-
-   2. If Delegates timeout, then broadcast `ChangeView` message directly.
+   4. If there are at least `N-f` signatures, accept the new block and broadcast it.
 
 
-5. **New Block** 
+3. On receiving a **Changeview** sent by consensus nodes.
+
+   1. Ignore it if the view number in the message is less than the view number in current context.
+
+   2. If current node received at least `N-f` `ChangeView` messages with the same new view number, then ViewChange will happen. The current node reset the consensus process with the new view number.
+
+
+4. On **Timeout** happens
+
+   1. If the process above timeout, the consensus node will broadcast `ChangeView` message directly.
+
+   2. Timeout time starts from 30 seconds. Timeout interval doubles when each timeout happens.
+
+5. On receiving a **New Block**
  
    1. resetting consensus process
 
-6. **New Transaction** 
+6. On receiving a **New Transaction** for consensus
 
-    1. If the transaction is the `MinerTransaction`, then ignore. As the `PrepareRequest` contains the `MinerTransaction`.
+    1. Ignore if the transaction is a `MinerTransaction`. (A `MinerTransaction` should not be broadcasted).
 
-    2. If the current node is the Speaker, or the node has sent `PrepareRequest` or `PrepareResponse` messages, or in switching view process, then ignore.
+    2. Ignore if current node is speaker, or the node has sent `PrepareRequest` or `PrepareResponse` message, or in process of change view.
 
-    3. If the transaction has received before, then ignore.
+    3. Ignore if the transaction has been received before.
 
-    4. If the transacion isn't in the propoal block, then ignore.
+    4. Ignore if the received transacion isn't in the propoal block.
 
-    5. Reserve the transaction.
+    5. Save the transaction into current context.
 
 <a name="6_tx_handler"/>
