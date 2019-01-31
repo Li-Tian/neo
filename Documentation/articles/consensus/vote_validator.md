@@ -95,8 +95,9 @@ There are 2 steps in voting for consensus nodes : One is to calculate the number
 
 ### The number of consensus nodes
 
+<!--
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-
+-->
 
 According to the voting described above, we may get a diagram of votes for the number of consensus nodes.
 
@@ -104,18 +105,23 @@ According to the voting described above, we may get a diagram of votes for the n
 
 The following formula is to demenstrate the probability distribution funnction F(discrete function), in which the probability of the `i`th consensus node equals its proportion of votes.
 
+<!--
 $$
 F_i = \frac{\sum_{j = 1}^i Vote_j }{\sum_{k = 1}^N Vote_k}
 $$
-
+-->
+[![formula_vote](../../images/consensus/formula_vote.jpg)](../../images/consensus/formula_vote.jpg)
 
 [![calculate_consensus_count_1](../../images/consensus/calculate_consensus_count_1.jpg)](../../images/consensus/calculate_consensus_count_1.jpg)
 
 On the probability distribution function, take the portion F ∈ [0.25, 0.75] that covers consensus nodes. Then take the expected value for these points. Compare it with the count of backup validators. Take the larger as the final number of consensus nodes.
 
+<!--
 $$
 Count = max( \sum_{i = \lceil A \rceil}^{\lceil B \rceil} i *  \frac{ min(0.75, F_i) - max( F_{i - 1}, 0.25 ) }{ 0.5 }, StandbyValidators.Length)
 $$
+-->
+[![formula_vote_count](../../images/consensus/formula_vote_count.jpg)](../../images/consensus/formula_vote_count.jpg)
 
 - `⌈A⌉` represents the first F<sub>i</sub> >= 0.25 point. 
 - `⌈B⌉` represents the first  F<sub>i</sub> >= 0.75 point.

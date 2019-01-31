@@ -1,4 +1,4 @@
-<center><h2>Consensus Protocol</center></h2>
+<center><h2>Consensus Protocol</h2></center>
 
 ## Consensus Message Format
 

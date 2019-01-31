@@ -474,11 +474,15 @@ Here, **the amount of GAS of an NEO tx.output**
 
 [![tx_claim_gas](../images/tx_execution/tx_claim_gas.jpg)](../images/tx_execution/tx_claim_gas.jpg)
 
+<!--
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 
 $$
 Gas = \sum_{h=M+1}^{N} (BlockBonus(h) + SystemFee(h)) * \frac{tx.output.NEO}{10^8}
 $$
+-->
+
+[![formula_gas](../images/tx_execution/formula_gas.jpg)](../images/tx_execution/formula_gas.jpg)
 
 - Gas: An NEO transaction's claimable GAS amount.
 - M: input transaction's block height, or start height.
