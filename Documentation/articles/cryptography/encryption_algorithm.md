@@ -66,6 +66,7 @@ Example:
 
 推导原理如下：
 
+<!--
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 
 $$
@@ -75,7 +76,8 @@ h·G/s + x·K/s           \\\\
 = r(h+x·k)G / (h+k·x)   \\\\
 = r·G                                  
 $$
-
+-->
+[![formula_ecdsa](../../images/blockchain_paradigm/formula_ecdsa.jpg)](../../images/blockchain_paradigm/formula_ecdsa.jpg)
 
 Example:
 

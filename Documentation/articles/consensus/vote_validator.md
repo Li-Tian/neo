@@ -102,9 +102,9 @@
 
 ### 共识节点个数
 
-
+<!--
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-
+-->
 
 
 根据用户的投票情况，共识节点个数的投票得到类似如下图形式：
@@ -114,19 +114,22 @@
 
 
 按照如下公式，转化成概率分布函数 F（离散函数）， 其中投票数的占比即为共识个数 i 的概率。
-
+<!--
 $$
 F_i = \frac{\sum_{j = 1}^i Vote_j }{\sum_{k = 1}^N Vote_k}
 $$
-
+-->
+[![formula_vote](../../images/consensus/formula_vote.jpg)](../../images/consensus/formula_vote.jpg)
 
 [![calculate_consensus_count_1](../../images/consensus/calculate_consensus_count_1.jpg)](../../images/consensus/calculate_consensus_count_1.jpg)
 
 在概率分布函数上，截取F ∈ [0.25, 0.75]覆盖到的共识节点个数，再对这些点求取期望值，最后与备用共识节点个数比较取最大值，得到最终的共识节点个数。公式如下：
-
+<!--
 $$
 Count = max( \sum_{i = \lceil A \rceil}^{\lceil B \rceil} i *  \frac{ min(0.75, F_i) - max( F_{i - 1}, 0.25 ) }{ 0.5 }, StandbyValidators.Length)
 $$
+-->
+[![formula_vote_count](../../images/consensus/formula_vote_count.jpg)](../../images/consensus/formula_vote_count.jpg)
 
 - 其中，⌈A⌉ 代表第一个 F<sub>i</sub> >= 0.25 的点， 
 - ⌈B⌉ 代表第一个  F<sub>i</sub> >= 0.75 的点。

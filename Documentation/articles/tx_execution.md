@@ -482,11 +482,15 @@ Amount 为发行总量，共有2种模式：
 
 [![tx_claim_gas](../images/tx_execution/tx_claim_gas.jpg)](../images/tx_execution/tx_claim_gas.jpg)
 
+<!--
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 
 $$
 Gas = \sum_{h=M+1}^{N} (BlockBonus(h) + SystemFee(h)) * \frac{tx.output.NEO}{10^8}
 $$
+-->
+
+[![formula_gas](../images/tx_execution/formula_gas.jpg)](../images/tx_execution/formula_gas.jpg)
 
 - Gas： 一笔持有NEO的tx.output能提取到的Gas数量
 - M: 交易的块高度， 起始高度

@@ -1,4 +1,4 @@
-﻿<center><h2>共识协议</center></h2>
+﻿<center><h2>共识协议</h2></center>
 
 ## 共识消息格式
 
