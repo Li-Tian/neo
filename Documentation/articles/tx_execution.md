@@ -616,7 +616,6 @@ $$
 | 发布合约 | Neo.Contract.Create  |   空  |   | 
 | 资产注册 | Neo.Asset.Create |  非空 | TransactionAttributeUsage.Script,资产所有者的地址脚本hash，数目 1 |
 | GUI 转账 | NEP-5资产时，调用合约transfer方法；<br/>全局资产时，为空  |  非空 | TransactionAttributeUsage.Script，转账账户地址，数目若干 <br/> TransactionAttributeUsage.Remark，备注数据，数目 1 |
-| CLI 非“sendall”转账 | 同上  |  非空 |  TransactionAttributeUsage.Script, 转账账户地址，数目 若干 |  
 
 
 
