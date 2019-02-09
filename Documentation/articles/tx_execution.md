@@ -606,8 +606,10 @@ Special transaction for smart contract invocation. With `invoke/invokefunction/i
 | Publishing smart contract | Neo.Contract.Create  | null |   | 
 | Asset Registration | Neo.Asset.Create | not null | TransactionAttributeUsage.Script, Asset holder's address scripthash. |
 | GUI transferring | NEP-5 asset: transaferring script <br/>Global asset: null  | not null | TransactionAttributeUsage.Script，transferring payee address(es) <br/> TransactionAttributeUsage.Remark, remark data |
+<!--
+Deleted according to the modification in Chinese version commit ca7a5ee2d523ffe0c4a61eb507c456e748b05679
 | CLI transferring except `sendall` | same as above | not null |  TransactionAttributeUsage.Script, transferring account address(es) |
-
+-->
 
 
 **Transaction creating**
