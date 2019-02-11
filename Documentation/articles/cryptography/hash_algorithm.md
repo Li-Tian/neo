@@ -14,7 +14,7 @@ Example:
 
 | 字符串      | 哈希值                                   |
 | ----------- | ---------------------------------------- |
-| Hello World | 98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f |
+| hello world | 98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f |
 
 
 应用场景：
