@@ -14,7 +14,7 @@ Example:
 
 | String value | Hash value                                   |
 | ----------- | ---------------------------------------- |
-| Hello World | 98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f |
+| hello world | 98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f |
 
 
 Scenarios：
