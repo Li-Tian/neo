@@ -1,4 +1,4 @@
-<center><h2>Consensus Protocol</center></h2>
+<center><h2>Consensus Protocol</h2></center>
 
 ## Consensus Message Format
 
@@ -8,9 +8,9 @@
 |------|------|-------|------|
 |  4    | Magic |  uint | Protocol ID, defined in the configuration file `protocol.json`, mainnet is `7630401`, testnet is `1953787457`   |
 | 12   | Command | string | Command, all consensus messages' command is `consensus`  |
-| 4     | length    | uint32 | Length of payload|
+| 4     | Length    | uint32 | Length of payload|
 | 4     | Checksum | uint | Checksum |
-| length  | Payload | byte[] | Content of message, all consensus messages' payload is `ConsensusPayload`  |
+| Length  | Payload | byte[] | Content of message, all consensus messages' payload is `ConsensusPayload`  |
 
 
 ### ConsensusPayload
@@ -21,13 +21,13 @@
 | 32  | PrevHash | UInt256 | Previous block's hash |
 | 4 | BlockIndex |uint | Height of the block |
 | 2 | ValidatorIndex | ushort | The index of the current consensus node in validators array |
-| 4  | Timestamp | uint | Time-stamp |
+| 4  | Timestamp | uint | Timestamp |
 | ?  |  Data | byte[] | Includes `ChangeView`, `PrepareRequest` and `PrepareResponse` |
 | 1 |  - | uint8 | It's fixed to 1 |
-| ? | Witness | Witness | Witness contains invokecation script and verificatioin script |
+| ? | Witness | Witness | Witness contains invocation script and verificatioin script |
 
 
-### Changeview
+### ChangeView
 
 | Size | Field | Type  | Description |
 |----|------|-----|-------|
@@ -43,25 +43,24 @@
 | 1 | Type | ConsensusMessageType |  `0x20` |
 | 1 | ViewNumber | byte | Current view number |
 | 8 | Nonce | ulong |  block nonce |
-| 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-party signature contract  |
+| 20  | NextConsensus | UInt160 |  The script hash of the next round consensus nodes' multi-signature contract  |
 | 4 + 32 * length   | TransactionHashes | UInt256[] |  The proposal block's transaction hashes |
 | 78  | MinerTransaction | MinerTransaction |  It is used to sum all the transaction fees of the current block as a reward for the speaker. |
 |  64 | Signature | byte[] |  Block signature |
 
 ### PrepareResponse
 
-| Size | Field | Type  | Description |
+| Size | Field | Type | Description |
 |----|------|-----|-------|
-|  1  | Type | ConsensusMessageType |  `0x21` |
-|  1  | ViewNumber | byte | Current view number |
-|  64  | Signature | byte[] | Block signature |
-
+| 1 | Type | ConsensusMessageType | `0x21` |
+| 1 | ViewNumber | byte | Current view number |
+| 64 | Signature | byte[] | Block signature |
 
 
 ## Transport Protocol
 
 
-When consensus message enters the P2P network, it's broadcasted and transmitted like other data packets, becuase consensus nodes do not know each other's IP address. That is to say, ordinary nodes can receive consensus message. The broadcast flow of consensus messages is as follows.
+When a consensus message enters the P2P network, it's broadcasted and transmitted like other messages. That is because consensus nodes do not have IP address of other consensus nodes. Consensus nodes are not directly connected. That is to say, ordinary nodes can receive consensus message. The broadcast flow of consensus messages is as follows.
 
 [![consensus_msg_seq](../../images/consensus/consensus_msg_seq.jpg)](../../images/consensus/consensus_msg_seq.jpg)
 
@@ -70,11 +69,11 @@ When consensus message enters the P2P network, it's broadcasted and transmitted 
 
   2. After receiving the `consensus` message, node B firstly process the received consensus message and then forwards it. Before forwarding the consensus message, it sends an `inv` message which carries the hash data of the `payload` of the `consensus` message (to node C).
 
-  3. If the node C has already received the data corresponding to the hash, or has repeatedly obtained the same `inv` message within a short period of time, it does not process the message; otherwise, it proceeds to step 4.
+  3. If the node C has already known the data corresponding to the hash, it does not process the inv message. Otherwise, it proceeds to step 4.
 
-  4. C broadcasts the `getdata` message to the outside, with the hash data in the `inv` message.
+  4. Node C sends a `getdata` message to node B, with the hash data in the `inv` message.
 
-  5. After receiving the `getdata` message, node B sends a `consenus` message to node C.
+  5. After receiving the `getdata` message, node B sends a `consensus` message to node C.
 
   6. After receiving the `consensus` message, the node C triggers the consensus module to process the message, and forwards the consensus message, and then returns to step 2.
 
@@ -84,11 +83,11 @@ When consensus message enters the P2P network, it's broadcasted and transmitted 
 
 | Size | Field | Type  | Description |
 |------|------|-------|------|
-|  4    | Magic |  uint | Protocol ID |
+| 4    | Magic |  uint | Protocol ID |
 | 12   | Command | string | `inv`  |
-| 4     | length    | uint32 | Length of payload|
-| 4     | Checksum | uint | Checksum |
-| length   | Payload | byte[] | Format: `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
+| 4    | Length    | uint32 | Length of payload|
+| 4    | Checksum | uint | Checksum |
+| Length | Payload | byte[] | Format: `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
 
 > [!Note] 
 > Payload's format： `inv.type + inv.payloads.length + inv.payload`
@@ -102,13 +101,13 @@ When consensus message enters the P2P network, it's broadcasted and transmitted 
 
 | Size | Field | Type  | Description |
 |------|------|-------|------|
-|  4    | Magic |  uint | Protocol ID|
-| 12   | Command | string | `getdata`  |
-| 4     | length    | uint32 |  Length of payload|
-| 4     | Checksum | uint | Checksum |
-| length   | Payload | byte[] | Format: `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
+| 4    | Magic |  uint | Protocol ID |
+| 12   | Command | string | `getdata` |
+| 4    | Length | uint32 | Length of payload |
+| 4    | Checksum | uint | Checksum |
+| Length | Payload | byte[] | Format: `0xe0` + `0x00000001` + `ConsensusPayload.Hash` |
 
-> [!Note] 
+> [!Note]
 > The `getdata` message is mainly used to get the specific content in `inv` message.
 
 
@@ -116,84 +115,87 @@ When consensus message enters the P2P network, it's broadcasted and transmitted 
 
 ###  Verification
 
-1. If the `ConsensusPayload.BlockIndex` no more than current block height, then ignore.
+1. Ignore the message if the `ConsensusPayload.BlockIndex` is no more than current block height.
 
-2. If the verification script executed failed or the script hash not equal to `ConsensusPayload.ValidatorIndex` address's script hash, then ignore.
+2. Ignore the message if the verification script failed or the script hash does not equal to `ConsensusPayload.ValidatorIndex` address's script hash.
 
-3. If the `ConsensusPayload.ValidatorIndex` equal to current node index, then ignore.
+3. Ignore the message if the `ConsensusPayload.ValidatorIndex` equals to current node index.
 
-4. If the `ConsensusPayload.Version` not equal to current consensus version, then ignore.
+4. Ignore the message if the `ConsensusPayload.Version` does not equal to current consensus version.
 
-5. If the `ConsensusPayload.PreHash` and `ConsensusPayload.BlockIndex` are not equal to the current node context's, then ignore.
+5. Ignore the message if the `ConsensusPayload.PrevHash` and `ConsensusPayload.BlockIndex` do not equal to the values in current node's context.
 
-6. If the `ConsensusPayload.ValidatorIndex` more than the length of the current consensus nodes array, then ignore.
+6. Ignore the message if the `ConsensusPayload.ValidatorIndex` is out of index of the current consensus nodes array.
 
-7. If the `ConsensusMessage.ViewNumber` not equal to the current node context's `ViewNumber` and the consensus message is not `ChangeView`, then ignore.
+7. Ignore the message if the `ConsensusMessage.ViewNumber` does not equal to the value in current node's context except that the consensus message is a `ChangeView`.
 
 ### Process
 
-1. **PrepareRequest** was send by the speaker, attached with proposal block data.
+1. On receiving a **PrepareRequest** sent by speaker, attached with proposal block data.
 
-   1. If the current node is not delegates in the consensus round, or the `PrepareRequest` received already, then ignore.
+   1. Ignore if the `PrepareRequest` has already been received.
 
-   2. If the `ConsensusPayload.ValidatorIndex` is not the index of the current round speaker, then ignore.
+   2. Ignore if the `ConsensusPayload.ValidatorIndex` is not the index of the current round speaker.
 
-   3. If the `ConsensusPayload.Timestamp` no more than the time stamp of the previous block, or more than 10 minutes above the current time, then ignore.
+   3. Ignore if the `ConsensusPayload.Timestamp` is not more than the timestamp of the previous block, or is more than 10 minutes above current time.
 
-   4. If the block signature is incorrent, then ingore.
+   4. Ignore if the signature of the message is incorrect.
 
-   5. If the block's transantions in the memory pool, are in the blockchain already, or verified failure by the plugin-in, then the transaction data is considered incorrent and initiate the `ChangeView` message.
+   5. Clear signatures saved in the context that does not match the received proposal message.
 
-   6. Check the first transaction in block -- `MinerTransaction`, like step 5). If validation fails, then ignore
+   6. Save the signature of the speaker into current context.
 
-   7. Reserve the signature in the `PrepareRequest` message.
+   7. Collect and verify transactions in the proposal block from memory pool.
 
-   8. If there is a lack of transactions in `block`, send the `getdata` message with the hashes of those transactions. 
+      1. If the transaction failed to pass verification or policy check provided by plugin, it will stop the process and request ChangeView.
 
-   9. If the block's transactions all received, then check the `PrepareRequest.NextConsensus` is equal to the script hash of the next round consensus nodes' multi-party signature contract. If it is, then broadcast `PrepareResponse` with block signature. If not, then initiate `ChangeView` message.
+      2. Otherwise the transaction will be saved into current context.
 
+   8. Collect and verify transactions in the proposal block from unverified memory pool.
 
-2. **PrepareResponse** is the Delegates' answer to the `PrepareRequest` message sent by the Speaker attached with block signture.
+   9. Verify the MinerTransaction and add it into current context.
 
-   1. If the current node has published the new full block, then ignore.
-
-   2. If the block signature has collected already, then ignore.
-
-   3. Check the signature is correct. If not, then ingore, else reserve.
-
-   4. If there are at least `N+f` signatures, then publish the new full block.
+   10. If all transactions are collected verified, it will request PrepareResponse. Otherwise it will broadcast a getdata message to retrieve transactions from other nodes.
 
 
-3. **Changeview** was send by consensus node, when timeout occured or received illegal data
+2. On receiving a **PrepareResponse** sent by consensus nodes with their signture.
 
-   1. If the view number less than the  sender view number, then ignore.
-   
-   2. If the new view number less than current node view number, then ignore.
+   1. Ignore it if current node has already saved the sender's signature.
 
-   3. If received at least `N-f` `ChangeView` messages with the same new view number, then the View Change completed. The current node reset the consensus process with the new view number.
+   2. Save it temporarily if current node does not have information of corresponding PrepareRequest of the received PrepareResponse yet.
 
+   3. Otherwise verify the signature. Save the signature if it pass the verification. Ignore it if not.
 
-4. **onTimeout** 
-
-   1. If the Speaker timeout, the `PrepareRequeset` message will be sent for the first time, and the `ChangeView` message will be luanched subsequently.
-
-   2. If Delegates timeout, then broadcast `ChangeView` message directly.
+   4. If there are at least `N-f` signatures, accept the new block and broadcast it.
 
 
-5. **New Block** 
+3. On receiving a **Changeview** sent by consensus nodes.
+
+   1. Ignore it if the view number in the message is less than the view number in current context.
+
+   2. If current node received at least `N-f` `ChangeView` messages with the same new view number, then ViewChange will happen. The current node reset the consensus process with the new view number.
+
+
+4. On **Timeout** happens
+
+   1. If the process above timeout, the consensus node will broadcast `ChangeView` message directly.
+
+   2. Timeout time starts from 30 seconds. Timeout interval doubles when each timeout happens.
+
+5. On receiving a **New Block**
  
    1. resetting consensus process
 
-6. **New Transaction** 
+6. On receiving a **New Transaction** for consensus
 
-    1. If the transaction is the `MinerTransaction`, then ignore. As the `PrepareRequest` contains the `MinerTransaction`.
+    1. Ignore if the transaction is a `MinerTransaction`. (A `MinerTransaction` should not be broadcasted).
 
-    2. If the current node is the Speaker, or the node has sent `PrepareRequest` or `PrepareResponse` messages, or in switching view process, then ignore.
+    2. Ignore if current node is speaker, or the node has sent `PrepareRequest` or `PrepareResponse` message, or in process of change view.
 
-    3. If the transaction has received before, then ignore.
+    3. Ignore if the transaction has been received before.
 
-    4. If the transacion isn't in the propoal block, then ignore.
+    4. Ignore if the received transacion isn't in the propoal block.
 
-    5. Reserve the transaction.
+    5. Save the transaction into current context.
 
 <a name="6_tx_handler"/>

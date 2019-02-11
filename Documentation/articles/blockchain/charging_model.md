@@ -1,28 +1,28 @@
 ﻿<center><h2>Charging Model</h2></center>
 
-&emsp;&emsp;Participants in NEO ecology need to pay network fee and system fee by GAS when using NEO network. Network fee is paid to consensus node as new block excitation. System fee and UTXO, which can be claimed by corresponding account with `ClaimTransaction`, are shares of NEO holders. Fee distribution rule is as follows:
+&emsp;&emsp;Participants in NEO ecology need to pay network fee and system fee by GAS when using NEO network. Network fee is paid to consensus node as new block incentive. System fee and new GAS generated in each block belongs to NEO holders. NEO holders can claim gas with `ClaimTransaction`. Fee distribution rule is as follows:
 
 [![economic model](../../images/blockchain/economic_model.jpg)](../../images/blockchain/economic_model.jpg)
 
-&emsp;&emsp;According to "Transaction" chapter, inputs and outputs data of a transaction reveals GAS amount change before & after transaction. Total fee can be calculated from GAS change:
+&emsp;&emsp;According to contents in sector "Transaction", the GAS sum of inputs and outputs of a transaction can be easily calculated separately. Total fee can be calculated from GAS change:
 
 &emsp;&emsp;&emsp;&emsp;Total fee = Network fee + System fee = sum(GAS in inputs) - sum(GAS in outputs)
 
 ### **Network Fee**
 
-&emsp;&emsp;Network fee is the fee for transaction encapsultion. User can define the amount of network fee. Theoretically the higher network fee per byte is, corresponding transaction is easier to be encapsulated. A block supports at most 500 transactions, in which at most 20 free ones, in current main net.
+&emsp;&emsp;Network fee is the fee to package transactions into a block. User can define the amount of network fee. Theoretically the higher network fee per byte is, the easier corresponding transaction is to be put into a block. On the current main network, a block supports up to 500 transactions, including up to 20 free transactions.
 
 ### **System Fee**
 &emsp;&emsp;System fee is the fee for consumed network resources in NEO network. It can be divided in 2 parts. Firstly, system fee of special transactions can be set in configuration file `protocol.json`, including: 
 
-| Transaction Type          |  System Fee |
+| Transaction Type      |  System Fee   |
 |-----------------------|---------------|
 | EnrollmentTransaction |      1000     |
 | IssueTransaction      |       500     |
 | PublishTransaction    |       500     |
 | RegisterTransaction   |     10000     | 
 
-&emsp;&emsp;Besides, system invoking / VM command execution occured in smart contract execution produce fee. Such fee is also sorted as system fee. About detailed fee standard please refer to "Smart Contract" chapter.
+&emsp;&emsp;Secondly, when a smart contract is run, the resulting system call or virtual machine execution of instructions will incur a fee. Such fee is also system fee. About detailed fee standard please refer to "Smart Contract" chapter.
 
 
 

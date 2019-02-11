@@ -4,11 +4,11 @@
 
 &emsp;&emsp;There are 2 kinds of native token defined in Neo system: NEO and NeoGas (GAS).
 
-&emsp;&emsp;NEO is Governing Token. Neo holders can take part in NEO network management, including voting for consensus nodes, network parameter modification, etc. NEO's total amount is 100 million. Its minimum unit is 1 and cannt be divided. It's registered in Genisis block, and stored in standby validators' muti-signature addresses.
+&emsp;&emsp;NEO is Governing Token. Neo holders can take part in NEO network management, including voting for consensus nodes, network parameter modification, etc. NEO's total amount is 100 million. Its minimum unit is 1 and can not be divided. It's registered in Genesis block, and stored in standby validators' muti-signature addresses.
 
-&emsp;&emsp;GAS is utility token, or network fuel token. Operations and consensus node excitation in NEO network is paid in GAS. GAS's total amount is also 100 million and can be divided to 0.00000001 unit. Gas is registered in Genisis block and issued afterwards as block excitation.
+&emsp;&emsp;GAS is utility token, or network fuel token. Operation costs and incentive for consensus node in NEO network are paid in GAS. GAS's total amount is also 100 million and can be divided to 0.00000001 unit. Gas is registered in Genesis block and issued afterwards as block incentive for NEO holders.
 
-&emsp;&emsp;A new block is certified about every 15 seconds according to system design. Thus 2 million new blocks are created every year. 100 million GAS is issued gradually in 22 years according to a attenuation algorithm. No block exitation is issued afterwards.
+&emsp;&emsp;A new block is generated about every 15 seconds according to system design. Thus approximately 2 million new blocks are created every year. 100 million GAS is issued gradually in 22 years according to a attenuation algorithm. No GAS is issued afterwards.
 
 | Cycle |  Block Height Range | Block excitation GAS  |
 |-----|-------------     |---------------|
@@ -27,4 +27,4 @@
 
 ### **NEP5 Asset (Token)**
 
-&emsp;&emsp;NEP5 token needs to be issued & managed through smart contract. It's information is stored in smart contract's storage. Account model is used. Detailed inforamtion please refer to `NEP5` part in chapter `Smart Contract`.
+&emsp;&emsp;NEP5 token needs to be issued and managed through smart contract. It's information is stored in smart contract's storage. Account model is used. Detailed inforamtion please refer to `NEP5` part in chapter `Smart Contract`.
