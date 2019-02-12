@@ -1,7 +1,7 @@
 NEO Developer Guide
 ================
 
-[开发指南中文版(Chinese)](nocheck:../zh/index.html)
+[开发指南中文版(Chinese)](https://docs.neo.org/developerguide/zh/index.html)
 
-[Developer Guide in English(英文版)](nocheck:../en/index.html)
+[Developer Guide in English(英文版)](https://docs.neo.org/developerguide/en/index.html)
 
