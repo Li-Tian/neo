@@ -20,6 +20,16 @@
 		else
 			location.href = lang;
     }
+	function url_jump(url)
+    {
+		// only 2 characters are allowed to specify a language or it will be a bug.
+		var rgExp = /developerguide\/../;
+		var prefix_index = location.href.search(rgExp);
+		if (prefix_index >= 0)
+			location.href = location.href.substr(0, prefix_index + 18) + url;
+		else
+			location.href = url;
+    }
 </script>
 <script>
 var _hmt = _hmt || [];
