@@ -4,3 +4,5 @@
 
 1. 可以从[开发指南](articles/introduction.md)开始阅读。
 2. 先浏览一下 [API文档](api/index.md)。
+
+To change language click [here](language.md).
