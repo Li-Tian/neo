@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Neo.IO
 {
-    /// <summary>
-    /// IO读写的辅助方法类
-    /// </summary>
+    // <summary>
+    // IO读写的辅助方法类
+    // </summary>
     /// <summary>
     /// IO read and write helper class
     /// </summary>

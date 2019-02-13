@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,17 +9,17 @@ using System.Xml;
 namespace Neo.Network
 {
     // <summary>
-    // UPnP£¨Universal Plug and Play£©¼´²å¼´ÓÃĞ­ÒéµÄÊµÏÖ
+    // UPnPï¼ˆUniversal Plug and Playï¼‰å³æ’å³ç”¨åè®®çš„å®ç°
     // </summary>
     /// <summary>
-    /// UPnP£¨Universal Plug and Play£©implementation
+    /// UPnP (Universal Plug and Play) implementation
     /// </summary>
     public class UPnP
     {
         private static string _serviceUrl;
 
         // <summary>
-        // TimeoutµÄÊ±¼ä, Ä¬ÈÏÎª3Ãë
+        // Timeoutçš„æ—¶é—´, é»˜è®¤ä¸º3ç§’
         // </summary>
         /// <summary>
         /// Timeout time, default value is 3 second
@@ -27,10 +27,10 @@ namespace Neo.Network
         public static TimeSpan TimeOut { get; set; } = TimeSpan.FromSeconds(3);
 
         // <summary>
-        // ·¢ËÍ²éÕÒÏûÏ¢. ¸ù¾İUpnpĞ­Òé¶à²¥ÏûÏ¢À´Í¨Öª¿ØÖÆµã, È»ºóÍ¨¹ıÏìÓ¦µÄÏûÏ¢ÕÒ³ö¸ùÉè±¸µÄurl 
-        // Í¨¹ı´ËURL¾Í¿ÉÒÔÕÒµ½¸ùÉè±¸µÄÃèÊöĞÅÏ¢£¬´Ó¸ùÉè±¸µÄÃèÊöĞÅÏ¢ÖĞÓÖ¿ÉÒÔµÃµ½Éè±¸µÄ¿ØÖÆURL
+        // å‘é€æŸ¥æ‰¾æ¶ˆæ¯. æ ¹æ®Upnpåè®®å¤šæ’­æ¶ˆæ¯æ¥é€šçŸ¥æ§åˆ¶ç‚¹, ç„¶åé€šè¿‡å“åº”çš„æ¶ˆæ¯æ‰¾å‡ºæ ¹è®¾å¤‡çš„url 
+        // é€šè¿‡æ­¤URLå°±å¯ä»¥æ‰¾åˆ°æ ¹è®¾å¤‡çš„æè¿°ä¿¡æ¯ï¼Œä»æ ¹è®¾å¤‡çš„æè¿°ä¿¡æ¯ä¸­åˆå¯ä»¥å¾—åˆ°è®¾å¤‡çš„æ§åˆ¶URL
         // </summary>
-        // <returns>ÕÒµ½Éè±¸µÄ¿ØÖÆURLÔò·µ»Ø<c>true</c>, Èç¹û³¬Ê±Ã»ÕÒµ½¾Í·µ»Ø<c>false</c></returns>
+        // <returns>æ‰¾åˆ°è®¾å¤‡çš„æ§åˆ¶URLåˆ™è¿”å›<c>true</c>, å¦‚æœè¶…æ—¶æ²¡æ‰¾åˆ°å°±è¿”å›<c>false</c></returns>
         /// <summary>
         /// Send a lookup message. Notify the control point according to the Upnp protocol multicast message, 
         /// and then find the url of the root device by responding to the message.
@@ -129,11 +129,11 @@ namespace Neo.Network
         }
 
         // <summary>
-        //Í¨¹ıSOAPĞ­Òé·¢ËÍÖ¸Áî½øĞĞ¶Ë¿ÚÓ³Éä
+        //é€šè¿‡SOAPåè®®å‘é€æŒ‡ä»¤è¿›è¡Œç«¯å£æ˜ å°„
         // </summary>
-        // <param name="port">¶Ë¿ÚºÅ</param>
-        // <param name="protocol">Ğ­ÒéÀàĞÍ</param>
-        // <param name="description">¶Ô¸ÃÉè±¸¶Ë¿ÚÓ³ÉäµÄÃèÊö</param>
+        // <param name="port">ç«¯å£å·</param>
+        // <param name="protocol">åè®®ç±»å‹</param>
+        // <param name="description">å¯¹è¯¥è®¾å¤‡ç«¯å£æ˜ å°„çš„æè¿°</param>
         /// <summary>
         /// Sending instructions through the SOAP protocol for port mapping
         /// </summary>
@@ -152,10 +152,10 @@ namespace Neo.Network
         }
 
         // <summary>
-        // Í¨¹ıSOAPĞ­Òé·¢ËÍÖ¸ÁîÉ¾³ı¶Ë¿ÚÓ³Éä
+        // é€šè¿‡SOAPåè®®å‘é€æŒ‡ä»¤åˆ é™¤ç«¯å£æ˜ å°„
         // </summary>
-        // <param name="port">¶Ë¿ÚºÅ</param>
-        // <param name="protocol">Ğ­ÒéÀàĞÍ</param>
+        // <param name="port">ç«¯å£å·</param>
+        // <param name="protocol">åè®®ç±»å‹</param>
         /// <summary>
         /// Sending instructions through the SOAP protocol to delete port mapping
         /// </summary>
@@ -175,9 +175,9 @@ namespace Neo.Network
         }
 
         // <summary>
-        // »ñÈ¡µ½Ó³ÉäµÄ¹«ÍøµØÖ·
+        // è·å–åˆ°æ˜ å°„çš„å…¬ç½‘åœ°å€
         // </summary>
-        // <returns>»ñÈ¡µ½µÄ¹«ÍøµØÖ·</returns>
+        // <returns>è·å–åˆ°çš„å…¬ç½‘åœ°å€</returns>
         /// <summary>
         /// Get the mapped public network address
         /// </summary>

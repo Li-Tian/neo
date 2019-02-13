@@ -1,19 +1,28 @@
-using System;
+ï»¿using System;
 
 namespace Neo
 {
+    // <summary>
+    // æ—¶é—´è®¿é—®åŠŸèƒ½æä¾›å·¥å…·ç±»
+    // </summary>
     /// <summary>
-    /// Ê±¼ä·ÃÎÊ¹¦ÄÜÌá¹©¹¤¾ßÀà
+	/// A helper class that provides accessing current time.
     /// </summary>
     public class TimeProvider
     {
         private static readonly TimeProvider Default = new TimeProvider();
+        // <summary>
+        // TimeProvider å®ä¾‹çš„é™æ€å¼•ç”¨ã€‚
+        // </summary>
         /// <summary>
-        /// TimeProvider ÊµÀıµÄ¾²Ì¬ÒıÓÃ¡£
+        /// A static reference to an instance of TimeProvider.
         /// </summary>
         public static TimeProvider Current { get; internal set; } = Default;
+        // <summary>
+        // è·å–UTCå½“å‰æ—¶é—´
+        // </summary>
         /// <summary>
-        /// »ñÈ¡UTCµ±Ç°Ê±¼ä
+        /// Get UTC current time.
         /// </summary>
         public virtual DateTime UtcNow => DateTime.UtcNow;
 

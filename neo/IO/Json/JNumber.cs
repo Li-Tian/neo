@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Neo.IO.Json
 {
-    /// <summary>
-    /// JObject类的子类，重写了JObject中的一部分方法，用于与json字符串中数值的相互转换
-    /// </summary>
+    // <summary>
+    // JObject类的子类，重写了JObject中的一部分方法，用于与json字符串中数值的相互转换
+    // </summary>
     /// <summary>
     /// A subclass of the JObject class that overrides some of the methods in JObject .
     /// It is used to convert to and from number data in json strings
