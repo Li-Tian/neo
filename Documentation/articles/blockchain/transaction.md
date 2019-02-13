@@ -62,7 +62,7 @@ TransactionAttributeUsage，交易属性使用表数据结构如下：
 | Remark-Remark15 | 0xf0-0xff | 备注 |
 
 
-&emsp;&emsp;ContractHash、ECDH02-03、Vote和Hash1-15的数据长度固定为 32 字节，所以省略length字段。Script必须明确给出数据长度，且长度不能超过 65535。而DescriptionUrl、Description和Remark1-15必须明确给出数据长度，且长度不能超过 255。
+&emsp;&emsp;ContractHash、ECDH02-03、Vote和Hash1-15的数据长度固定为 32 字节，所以省略length字段。Script固定20字节，存放地址。而DescriptionUrl必须明确给出数据长度，且长度不能超过 255字节。Description和Remark1-15，也必须明确给出数据长度， 且最大存储不超过 65535字节。
 
 ### Witness
 
