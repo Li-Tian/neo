@@ -1,4 +1,4 @@
-using Neo.Cryptography;
+ï»¿using Neo.Cryptography;
 using Neo.IO;
 using Neo.IO.Caching;
 using Neo.IO.Json;
@@ -15,12 +15,12 @@ using System.Text;
 namespace Neo.Network.P2P.Payloads
 {
     /// <summary>
-    /// ËùÓĞ½»Ò×µÄ¸¸Àà¡£
+    /// æ‰€æœ‰äº¤æ˜“çš„çˆ¶ç±»ã€‚
     /// </summary>
     public abstract class Transaction : IEquatable<Transaction>, IInventory
     {
         /// <summary>
-        /// ½»Ò××î´ó´æ´¢×Ö½ÚÊı¡£Èç¹ûÊÕµ½µÄ½»Ò×Êı³¬¹ıÕâ¸öÏŞÖÆ½«±»Ö±½ÓÅ×Æú¡£
+        /// äº¤æ˜“æœ€å¤§å­˜å‚¨å­—èŠ‚æ•°ã€‚å¦‚æœæ”¶åˆ°çš„äº¤æ˜“æ•°è¶…è¿‡è¿™ä¸ªé™åˆ¶å°†è¢«ç›´æ¥æŠ›å¼ƒã€‚
         /// </summary>
         public const int MaxTransactionSize = 102400;
         /// <summary>
@@ -34,32 +34,32 @@ namespace Neo.Network.P2P.Payloads
         private static ReflectionCache<byte> ReflectionCache = ReflectionCache<byte>.CreateFromEnum<TransactionType>();
 
         /// <summary>
-        /// ½»Ò×ÀàĞÍ
+        /// äº¤æ˜“ç±»å‹
         /// </summary>
         public readonly TransactionType Type;
 
         /// <summary>
-        /// ½»Ò×°æ±¾ºÅ¡£ÔÚ¸÷¸ö×ÓÀàÖĞ¶¨Òå¡£
+        /// äº¤æ˜“ç‰ˆæœ¬å·ã€‚åœ¨å„ä¸ªå­ç±»ä¸­å®šä¹‰ã€‚
         /// </summary>
         public byte Version;
 
         /// <summary>
-        /// ½»Ò×ÊôĞÔ
+        /// äº¤æ˜“å±æ€§
         /// </summary>
         public TransactionAttribute[] Attributes;
 
         /// <summary>
-        /// ½»Ò×ÊäÈë
+        /// äº¤æ˜“è¾“å…¥
         /// </summary>
         public CoinReference[] Inputs;
 
         /// <summary>
-        /// ½»Ò×Êä³ö
+        /// äº¤æ˜“è¾“å‡º
         /// </summary>
         public TransactionOutput[] Outputs;
 
         /// <summary>
-        /// ÑéÖ¤½Å±¾µÄÊı×é
+        /// éªŒè¯è„šæœ¬çš„æ•°ç»„
         /// </summary>
         public Witness[] Witnesses { get; set; }
 
@@ -69,7 +69,7 @@ namespace Neo.Network.P2P.Payloads
         // <para>Note that this property must be used with care. Getting the value of this property multiple times will return the same result. The value of this property can only be obtained after the transaction has been completely built (no longer modified).</para>
         // </summary>
         /// <summary>
-        /// Ã¿×Ö½ÚÊÖĞø·Ñ
+        /// æ¯å­—èŠ‚æ‰‹ç»­è´¹
         /// </summary>
         public Fixed8 FeePerByte
         {
@@ -84,7 +84,7 @@ namespace Neo.Network.P2P.Payloads
         private UInt256 _hash = null;
 
         /// <summary>
-        /// »ñÈ¡½»Ò×µÄhashÖµ¡£ÊÇ½«½»Ò×ĞÅÏ¢Êı¾İ×ö2´ÎSha256ÔËËã£¬Õâ¸ö¹ı³Ì±»³ÆÎªHash256¡£
+        /// è·å–äº¤æ˜“çš„hashå€¼ã€‚æ˜¯å°†äº¤æ˜“ä¿¡æ¯æ•°æ®åš2æ¬¡Sha256è¿ç®—ï¼Œè¿™ä¸ªè¿‡ç¨‹è¢«ç§°ä¸ºHash256ã€‚
         /// </summary>
         public UInt256 Hash
         {
@@ -98,25 +98,25 @@ namespace Neo.Network.P2P.Payloads
             }
         }
         /// <summary>
-        /// »ñÈ¡InventoryType¡£
+        /// è·å–InventoryTypeã€‚
         /// </summary>
         InventoryType IInventory.InventoryType => InventoryType.TX;
 
         // <summary>
-        // ÊÇ·ñÊÇµÍÓÅÏÈ¼¶½»Ò×¡£ÈôÊÇclaim½»Ò×»òÍøÂç·ÑÓÃµÍÓÚãĞÖµÊ±£¬ÔòÎªµÍÓÅÏÈ¼¶½»Ò×¡£
-        // ÓÅÏÈ¼¶ãĞÖµÔÚÅäÖÃÎÄ¼ş protocol.json ÖĞÖ¸¶¨£¬Èç¹û²»Ö¸¶¨£¬ÔòÊ¹ÓÃÄ¬ÈÏÖµ(0.001GAS)¡£
+        // æ˜¯å¦æ˜¯ä½ä¼˜å…ˆçº§äº¤æ˜“ã€‚è‹¥æ˜¯claimäº¤æ˜“æˆ–ç½‘ç»œè´¹ç”¨ä½äºé˜ˆå€¼æ—¶ï¼Œåˆ™ä¸ºä½ä¼˜å…ˆçº§äº¤æ˜“ã€‚
+        // ä¼˜å…ˆçº§é˜ˆå€¼åœ¨é…ç½®æ–‡ä»¶ protocol.json ä¸­æŒ‡å®šï¼Œå¦‚æœä¸æŒ‡å®šï¼Œåˆ™ä½¿ç”¨é»˜è®¤å€¼(0.001GAS)ã€‚
         // </summary>
         //public bool IsLowPriority => Type == TransactionType.ClaimTransaction || NetworkFee < Settings.Default.LowPriorityThreshold;
         /// <summary>
-        /// ÊÇ·ñÊÇµÍÓÅÏÈ¼¶½»Ò×¡£ÈôÍøÂç·ÑÓÃµÍÓÚãĞÖµÊ±£¬ÔòÎªµÍÓÅÏÈ¼¶½»Ò×¡£
-        /// ÓÅÏÈ¼¶ãĞÖµÔÚÅäÖÃÎÄ¼ş protocol.json ÖĞÖ¸¶¨£¬Èç¹û²»Ö¸¶¨£¬ÔòÊ¹ÓÃÄ¬ÈÏÖµ(0.001GAS)¡£
+        /// æ˜¯å¦æ˜¯ä½ä¼˜å…ˆçº§äº¤æ˜“ã€‚è‹¥ç½‘ç»œè´¹ç”¨ä½äºé˜ˆå€¼æ—¶ï¼Œåˆ™ä¸ºä½ä¼˜å…ˆçº§äº¤æ˜“ã€‚
+        /// ä¼˜å…ˆçº§é˜ˆå€¼åœ¨é…ç½®æ–‡ä»¶ protocol.json ä¸­æŒ‡å®šï¼Œå¦‚æœä¸æŒ‡å®šï¼Œåˆ™ä½¿ç”¨é»˜è®¤å€¼(0.001GAS)ã€‚
         /// </summary>
         public bool IsLowPriority => NetworkFee < Settings.Default.LowPriorityThreshold;
 
         private Fixed8 _network_fee = -Fixed8.Satoshi;
 
         /// <summary>
-        /// ÍøÂçÊÖĞø·Ñ¡£ÖµÎª½»Ò×µÄInputÖĞµÄGAS×ÜºÍ¼õÈ¥OutputÖĞµÄGAS×ÜºÍ£¬ÔÙ¼õÈ¥ÏµÍ³ÊÖĞø·Ñ¡£
+        /// ç½‘ç»œæ‰‹ç»­è´¹ã€‚å€¼ä¸ºäº¤æ˜“çš„Inputä¸­çš„GASæ€»å’Œå‡å»Outputä¸­çš„GASæ€»å’Œï¼Œå†å‡å»ç³»ç»Ÿæ‰‹ç»­è´¹ã€‚
         /// </summary>
         public virtual Fixed8 NetworkFee
         {
@@ -135,9 +135,9 @@ namespace Neo.Network.P2P.Payloads
         private IReadOnlyDictionary<CoinReference, TransactionOutput> _references;
 
         /// <summary>
-        /// »ñÈ¡µ±Ç°½»Ò×ËùÓĞÊäÈë(input)ÓëÆäËùÖ¸ÏòµÄÖ®Ç°Ä³¸ö½»Ò×µÄÒ»¸öÊä³ö(output)Ö®¼äµÄÖ»¶Á¹ØÏµÓ³Éä(Dictionary)¡£<BR/>
-        /// Õâ¸ö¹ØÏµÓ³ÉäµÄÃ¿¸ö key ¶¼ÊÇµ±Ç°½»Ò×µÄ input£¬¶ø value ÔòÊÇÖ®Ç°Ä³¸ö½»Ò×µÄ output¡£<BR/>
-        /// Èç¹ûµ±Ç°½»Ò×µÄÄ³¸ö input ËùÖ¸ÏòµÄ output ÔÚ¹ıÈ¥µÄ½»Ò×ÖĞ²»´æÔÚ£¬ÄÇÃ´·µ»Ø null¡£<BR/>
+        /// è·å–å½“å‰äº¤æ˜“æ‰€æœ‰è¾“å…¥(input)ä¸å…¶æ‰€æŒ‡å‘çš„ä¹‹å‰æŸä¸ªäº¤æ˜“çš„ä¸€ä¸ªè¾“å‡º(output)ä¹‹é—´çš„åªè¯»å…³ç³»æ˜ å°„(Dictionary)ã€‚<BR/>
+        /// è¿™ä¸ªå…³ç³»æ˜ å°„çš„æ¯ä¸ª key éƒ½æ˜¯å½“å‰äº¤æ˜“çš„ inputï¼Œè€Œ value åˆ™æ˜¯ä¹‹å‰æŸä¸ªäº¤æ˜“çš„ outputã€‚<BR/>
+        /// å¦‚æœå½“å‰äº¤æ˜“çš„æŸä¸ª input æ‰€æŒ‡å‘çš„ output åœ¨è¿‡å»çš„äº¤æ˜“ä¸­ä¸å­˜åœ¨ï¼Œé‚£ä¹ˆè¿”å› nullã€‚<BR/>
         /// </summary>
         public IReadOnlyDictionary<CoinReference, TransactionOutput> References
         {
@@ -166,27 +166,27 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// ´æ´¢´óĞ¡¡£°üÀ¨½»Ò×ÀàĞÍ¡¢°æ±¾ºÅ¡¢ÊôĞÔ¡¢ÊäÈë¡¢Êä³öºÍÇ©ÃûµÄ×Ü×Ö½ÚÊı¡£
+        /// å­˜å‚¨å¤§å°ã€‚åŒ…æ‹¬äº¤æ˜“ç±»å‹ã€ç‰ˆæœ¬å·ã€å±æ€§ã€è¾“å…¥ã€è¾“å‡ºå’Œç­¾åçš„æ€»å­—èŠ‚æ•°ã€‚
         /// </summary>
         public virtual int Size => sizeof(TransactionType) + sizeof(byte) + Attributes.GetVarSize() + Inputs.GetVarSize() + Outputs.GetVarSize() + Witnesses.GetVarSize();
 
         /// <summary>
-        /// ÏµÍ³ÊÖĞø·Ñ¡£Òò½»Ò×ÖÖÀà²»Í¬¶ø²»Í¬¡£
+        /// ç³»ç»Ÿæ‰‹ç»­è´¹ã€‚å› äº¤æ˜“ç§ç±»ä¸åŒè€Œä¸åŒã€‚
         /// </summary>
         public virtual Fixed8 SystemFee => Settings.Default.SystemFee.TryGetValue(Type, out Fixed8 fee) ? fee : Fixed8.Zero;
 
         /// <summary>
-        /// ´´½¨½»Ò×
+        /// åˆ›å»ºäº¤æ˜“
         /// </summary>
-        /// <param name="type">½»Ò×ÀàĞÍ</param>
+        /// <param name="type">äº¤æ˜“ç±»å‹</param>
         protected Transaction(TransactionType type)
         {
             this.Type = type;
         }
         /// <summary>
-        /// ·´ĞòÁĞ»¯
+        /// ååºåˆ—åŒ–
         /// </summary>
-        /// <param name="reader">¶ş½øÖÆÊäÈë</param>
+        /// <param name="reader">äºŒè¿›åˆ¶è¾“å…¥</param>
         void ISerializable.Deserialize(BinaryReader reader)
         {
             ((IVerifiable)this).DeserializeUnsigned(reader);
@@ -195,19 +195,19 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// ·´ĞòÁĞ»¯ÀàĞÍÌØ¶¨Êı¾İ¡£Òò½»Ò×ÖÖÀà²»Í¬¶ø²»Í¬¡£
+        /// ååºåˆ—åŒ–ç±»å‹ç‰¹å®šæ•°æ®ã€‚å› äº¤æ˜“ç§ç±»ä¸åŒè€Œä¸åŒã€‚
         /// </summary>
-        /// <param name="reader">´ÓÖ¸¶¨readerÖĞ¶ÁÈ¡¶ş½øÖÆĞÅÏ¢</param>
+        /// <param name="reader">ä»æŒ‡å®šreaderä¸­è¯»å–äºŒè¿›åˆ¶ä¿¡æ¯</param>
         protected virtual void DeserializeExclusiveData(BinaryReader reader)
         {
         }
 
         /// <summary>
-        /// ´Ó¸ø¶¨µÄbyteÊı×éÖĞ·´ĞòÁĞ»¯
+        /// ä»ç»™å®šçš„byteæ•°ç»„ä¸­ååºåˆ—åŒ–
         /// </summary>
-        /// <param name="value">Ô­Êı¾İ</param>
-        /// <param name="offset">Æ«ÒÆÁ¿</param>
-        /// <returns>·´ĞòÁĞ»¯³öÀ´µÄTx¶ÔÏó</returns>
+        /// <param name="value">åŸæ•°æ®</param>
+        /// <param name="offset">åç§»é‡</param>
+        /// <returns>ååºåˆ—åŒ–å‡ºæ¥çš„Txå¯¹è±¡</returns>
         public static Transaction DeserializeFrom(byte[] value, int offset = 0)
         {
             using (MemoryStream ms = new MemoryStream(value, offset, value.Length - offset, false))
@@ -229,9 +229,9 @@ namespace Neo.Network.P2P.Payloads
             return transaction;
         }
         /// <summary>
-        /// ·´ĞòÁĞ»¯´ıÇ©ÃûÊı¾İ
+        /// ååºåˆ—åŒ–å¾…ç­¾åæ•°æ®
         /// </summary>
-        /// <param name="reader">¶ş½øÖÆÊäÈë</param>
+        /// <param name="reader">äºŒè¿›åˆ¶è¾“å…¥</param>
         void IVerifiable.DeserializeUnsigned(BinaryReader reader)
         {
             if ((TransactionType)reader.ReadByte() != Type)
@@ -249,10 +249,10 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// ÅĞ¶ÏÁ½±Ê½»Ò×ÊÇ·ñÏàµÈ
+        /// åˆ¤æ–­ä¸¤ç¬”äº¤æ˜“æ˜¯å¦ç›¸ç­‰
         /// </summary>
-        /// <param name="other">Ïà±È½ÏµÄÁíÒ»¸ö½»Ò×</param>
-        /// <returns>Èç¹û²ÎÊıotherÊÇnullÔò·µ»Øfalse£¬·ñÔò°´ÕÕ¹şÏ£Öµ±È½Ï¡£</returns>
+        /// <param name="other">ç›¸æ¯”è¾ƒçš„å¦ä¸€ä¸ªäº¤æ˜“</param>
+        /// <returns>å¦‚æœå‚æ•°otheræ˜¯nullåˆ™è¿”å›falseï¼Œå¦åˆ™æŒ‰ç…§å“ˆå¸Œå€¼æ¯”è¾ƒã€‚</returns>
         public bool Equals(Transaction other)
         {
             if (other is null) return false;
@@ -261,10 +261,10 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// ÅĞ¶Ï½»Ò×ÊÇ·ñµÈÓÚ¸Ã¶ÔÏó
+        /// åˆ¤æ–­äº¤æ˜“æ˜¯å¦ç­‰äºè¯¥å¯¹è±¡
         /// </summary>
-        /// <param name="obj">´ı±È½Ï¶ÔÏó</param>
-        /// <returns>Èç¹û²ÎÊı obj ÊÇnull»òÕß²»ÊÇTransactionÔò·µ»Øfalse£¬·ñÔò°´ÕÕ¹şÏ£Öµ±È½Ï¡£</returns>
+        /// <param name="obj">å¾…æ¯”è¾ƒå¯¹è±¡</param>
+        /// <returns>å¦‚æœå‚æ•° obj æ˜¯nullæˆ–è€…ä¸æ˜¯Transactionåˆ™è¿”å›falseï¼Œå¦åˆ™æŒ‰ç…§å“ˆå¸Œå€¼æ¯”è¾ƒã€‚</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as Transaction);
@@ -272,7 +272,7 @@ namespace Neo.Network.P2P.Payloads
 
 
         /// <summary>
-        /// »ñÈ¡½»Ò×¹şÏ£µÄhash code
+        /// è·å–äº¤æ˜“å“ˆå¸Œçš„hash code
         /// </summary>
         /// <returns>hash code</returns>
         public override int GetHashCode()
@@ -280,25 +280,25 @@ namespace Neo.Network.P2P.Payloads
             return Hash.GetHashCode();
         }
         /// <summary>
-        /// »ñÈ¡¹şÏ£Êı¾İ
+        /// è·å–å“ˆå¸Œæ•°æ®
         /// </summary>
-        /// <returns>¹şÏ£Êı¾İ</returns>
+        /// <returns>å“ˆå¸Œæ•°æ®</returns>
         byte[] IScriptContainer.GetMessage()
         {
             return this.GetHashData();
         }
 
         /// <summary>
-        /// »ñÈ¡ÑéÖ¤½Å±¾hash
+        /// è·å–éªŒè¯è„šæœ¬hash
         /// </summary>
-        /// <param name="snapshot">Êı¾İ¿â¿ìÕÕ</param>
+        /// <param name="snapshot">æ•°æ®åº“å¿«ç…§</param>
         /// <returns>
-        /// °üº¬£º<br/>
-        /// 1. ½»Ò×ÊäÈëËùÖ¸ÏòµÄÊÕ¿îÈËµØÖ·½Å±¾hash£¬<br/>
-        /// 2. ½»Ò×ÊôĞÔÎªscriptÊ±£¬°üº¬¸ÃData£¬<br/>
-        /// 3. Èô×Ê²úÀàĞÍ°üº¬AssetType.DutyFlagÊ±£¬°üº¬ÊÕ¿îÈËµØÖ·½Å±¾hash
+        /// åŒ…å«ï¼š<br/>
+        /// 1. äº¤æ˜“è¾“å…¥æ‰€æŒ‡å‘çš„æ”¶æ¬¾äººåœ°å€è„šæœ¬hashï¼Œ<br/>
+        /// 2. äº¤æ˜“å±æ€§ä¸ºscriptæ—¶ï¼ŒåŒ…å«è¯¥Dataï¼Œ<br/>
+        /// 3. è‹¥èµ„äº§ç±»å‹åŒ…å«AssetType.DutyFlagæ—¶ï¼ŒåŒ…å«æ”¶æ¬¾äººåœ°å€è„šæœ¬hash
         /// </returns>
-        /// <exception cref="System.InvalidOperationException">ÈôÊäÈëÎª¿Õ»òÕß×Ê²ú²»´æÔÚÊ±£¬Å×³ö¸ÃÒì³£</exception>
+        /// <exception cref="System.InvalidOperationException">è‹¥è¾“å…¥ä¸ºç©ºæˆ–è€…èµ„äº§ä¸å­˜åœ¨æ—¶ï¼ŒæŠ›å‡ºè¯¥å¼‚å¸¸</exception>
         public virtual UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
         {
             if (References == null) throw new InvalidOperationException();
@@ -317,13 +317,13 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// »ñÈ¡½»Ò×µÄ input Óë output µÄ±È½Ï½á¹û¡£
+        /// è·å–äº¤æ˜“çš„ input ä¸ output çš„æ¯”è¾ƒç»“æœã€‚
         /// </summary>
         /// <returns>
-        /// Èç¹ûµ±Ç°½»Ò×µÄÄ³¸ö input ËùÖ¸ÏòµÄ output ÔÚ¹ıÈ¥µÄ½»Ò×ÖĞ²»´æÔÚ£¬ÄÇÃ´·µ»Ø null¡£<br/>
-        /// ·ñÔò°´ÕÕ×Ê²úÖÖÀà¹éµµ£¬·µ»ØÃ¿ÖÖ×Ê²úµÄËùÓĞ input Ö®ºÍ¼õÈ¥¶ÔÓ¦×Ê²úµÄËùÓĞ output Ö®ºÍ¡£<br/>
-        /// ¹éµµÒÔºó£¬×Ê²ú±È½Ï½á¹ûÎª 0 µÄ×Ê²ú»á´Ó¹éµµÁĞ±íÖĞ³ıÈ¥¡£<br/>
-        /// Èç¹ûËùÓĞµÄ×Ê²ú±È½Ï½á¹û¶¼±»³ıÈ¥£¬Ôò·µ»ØÒ»¸ö³¤¶ÈÎª0µÄIEnumerable¶ÔÏó¡£
+        /// å¦‚æœå½“å‰äº¤æ˜“çš„æŸä¸ª input æ‰€æŒ‡å‘çš„ output åœ¨è¿‡å»çš„äº¤æ˜“ä¸­ä¸å­˜åœ¨ï¼Œé‚£ä¹ˆè¿”å› nullã€‚<br/>
+        /// å¦åˆ™æŒ‰ç…§èµ„äº§ç§ç±»å½’æ¡£ï¼Œè¿”å›æ¯ç§èµ„äº§çš„æ‰€æœ‰ input ä¹‹å’Œå‡å»å¯¹åº”èµ„äº§çš„æ‰€æœ‰ output ä¹‹å’Œã€‚<br/>
+        /// å½’æ¡£ä»¥åï¼Œèµ„äº§æ¯”è¾ƒç»“æœä¸º 0 çš„èµ„äº§ä¼šä»å½’æ¡£åˆ—è¡¨ä¸­é™¤å»ã€‚<br/>
+        /// å¦‚æœæ‰€æœ‰çš„èµ„äº§æ¯”è¾ƒç»“æœéƒ½è¢«é™¤å»ï¼Œåˆ™è¿”å›ä¸€ä¸ªé•¿åº¦ä¸º0çš„IEnumerableå¯¹è±¡ã€‚
         /// </returns>
         public IEnumerable<TransactionResult> GetTransactionResults()
         {
@@ -343,31 +343,31 @@ namespace Neo.Network.P2P.Payloads
             }).Where(p => p.Amount != Fixed8.Zero);
         }
         /// <summary>
-        /// ·´ĞòÁĞ»¯¡£Òò×ÓÀàµÄ²»Í¬¶øÊµÏÖ²»Í¬¡£
+        /// ååºåˆ—åŒ–ã€‚å› å­ç±»çš„ä¸åŒè€Œå®ç°ä¸åŒã€‚
         /// </summary>
         protected virtual void OnDeserialized()
         {
         }
         /// <summary>
-        /// ĞòÁĞ»¯
+        /// åºåˆ—åŒ–
         /// </summary>
-        /// <param name="writer">¶ş½øÖÆÊä³ö</param>
+        /// <param name="writer">äºŒè¿›åˆ¶è¾“å‡º</param>
         void ISerializable.Serialize(BinaryWriter writer)
         {
             ((IVerifiable)this).SerializeUnsigned(writer);
             writer.Write(Witnesses);
         }
         /// <summary>
-        /// ĞòÁĞ»¯À©Õ¹Êı¾İ¡£Òò×ÓÀàµÄ²»Í¬¶øÊµÏÖ²»Í¬¡£
+        /// åºåˆ—åŒ–æ‰©å±•æ•°æ®ã€‚å› å­ç±»çš„ä¸åŒè€Œå®ç°ä¸åŒã€‚
         /// </summary>
-        /// <param name="writer">ĞòÁĞ»¯µÄÊä³ö¶ÔÏó</param>
+        /// <param name="writer">åºåˆ—åŒ–çš„è¾“å‡ºå¯¹è±¡</param>
         protected virtual void SerializeExclusiveData(BinaryWriter writer)
         {
         }
         /// <summary>
-        /// ĞòÁĞ»¯´ıÇ©ÃûµÄÊı¾İ
+        /// åºåˆ—åŒ–å¾…ç­¾åçš„æ•°æ®
         /// </summary>
-        /// <param name="writer">¶ş½øÖÆÊä³ö</param>
+        /// <param name="writer">äºŒè¿›åˆ¶è¾“å‡º</param>
         void IVerifiable.SerializeUnsigned(BinaryWriter writer)
         {
             writer.Write((byte)Type);
@@ -379,9 +379,9 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// ×ª³Éjson¶ÔÏó
+        /// è½¬æˆjsonå¯¹è±¡
         /// </summary>
-        /// <returns>json¶ÔÏó</returns>
+        /// <returns>jsonå¯¹è±¡</returns>
         public virtual JObject ToJson()
         {
             JObject json = new JObject();
@@ -398,10 +398,10 @@ namespace Neo.Network.P2P.Payloads
             return json;
         }
         /// <summary>
-        /// Í¨¹ıÊı¾İ¿â¿ìÕÕÑéÖ¤½»Ò×
+        /// é€šè¿‡æ•°æ®åº“å¿«ç…§éªŒè¯äº¤æ˜“
         /// </summary>
-        /// <param name="snapshot">Êı¾İ¿â¿ìÕÕ</param>
-        /// <returns>ÑéÖ¤½á¹û</returns>
+        /// <param name="snapshot">æ•°æ®åº“å¿«ç…§</param>
+        /// <returns>éªŒè¯ç»“æœ</returns>
         /// <see cref="Verify(Snapshot, IEnumerable{Transaction})"/>
         bool IInventory.Verify(Snapshot snapshot)
         {
@@ -409,30 +409,30 @@ namespace Neo.Network.P2P.Payloads
         }
 
         /// <summary>
-        /// Ğ£Ñé½»Ò×
+        /// æ ¡éªŒäº¤æ˜“
         /// </summary>
-        /// <param name="snapshot">Êı¾İ¿â¿ìÕÕ</param>
-        /// <param name="mempool">ÄÚ´æ³Ø½»Ò×</param>
+        /// <param name="snapshot">æ•°æ®åº“å¿«ç…§</param>
+        /// <param name="mempool">å†…å­˜æ± äº¤æ˜“</param>
         /// <returns>
-        /// 1. ½»Ò×Êı¾İ´óĞ¡´óÓÚ×î´ó½»Ò×Êı¾İ´óĞ¡Ê±£¬Ôò·µ»Øfalse
-        /// 2. ÈôInput´æÔÚÖØ¸´£¬Ôò·µ»Øfalse<br/>
-        /// 3. ÈôÄÚ´æ³Ø½»Ò×°üº¬Input½»Ò×Ê±£¬·µ»Øfalse<br/>
-        /// 4. ÈôInputÊÇÒÑ¾­»¨·ÑµÄ½»Ò×£¬Ôò·µ»Øfalse<br/>
-        /// 5. Èô×ªÕË×Ê²ú²»´æÔÚ£¬Ôò·µ»Øfalse<br/>
-        /// 6. Èô×Ê²úÊÇ·ÇNEO»ò·ÇGASÊ±£¬ÇÒ×Ê²ú¹ıÆÚÊ±£¬·µ»Øfalse<br/>
-        /// 7. Èô×ªÕË½ğ¶î²»ÄÜÕû³ı¶ÔÓ¦×Ê²úµÄ×îĞ¡¾«¶ÈÊ±£¬·µ»Øfalse<br/>
-        /// 8. ¼ì²é½ğ¶î¹ØÏµ£º<br/>
-        ///    8.1 Èôµ±Ç°½»Ò×µÄÄ³¸ö input ËùÖ¸ÏòµÄ output ÔÚ¹ıÈ¥µÄ½»Ò×ÖĞ²»´æÔÚÊ±£¬·µ»Øfalse<br/>
-        ///    8.2 Èô Input.Asset &gt; Output.Asset Ê±£¬ÇÒ×Ê½ğÖÖÀà´óÓÚÒ»ÖÖÊ±£¬·µ»Øfalse<br/>
-        ///    8.3 Èô Input.Asset &gt; Output.Asset Ê±£¬×Ê½ğÖÖÀà²»ÊÇGASÊ±£¬·µ»Øfalse<br/>
-        ///    8.4 Èô ½»Ò×ÊÖĞø·Ñ ´óÓÚ £¨Input.GAS - output.GAS£© Ê±£¬ ·µ»Øfalse<br/>
-        ///    8.5 Èô Input.Asset &lt; Output.Asset Ê±£º
-        ///        8.5.1 Èô½»Ò×ÀàĞÍÊÇ MinerTransaction »ò ClaimTransaction£¬ÇÒ×Ê²ú²»ÊÇ GAS Ê±£¬·µ»Øfalse<br/>
-        ///        8.5.2 Èô½»Ò×ÀàĞÍÊ± IssueTransactionÊ±£¬ÇÒ×Ê²úÊÇGASÊ±£¬·µ»Øfalse<br/>
-        ///        8.5.3 ÈôÊÇÆäËû½»Ò×ÀàĞÍ£¬ÇÒ´æÔÚÔö·¢×Ê²úÊ±£¬·µ»Øfalse<br/>
-        /// 9. Èô½»Ò×ÊôĞÔ£¬°üº¬ÀàĞÍÊÇ TransactionAttributeUsage.ECDH02 »ò TransactionAttributeUsage.ECDH03 Ê±£¬·µ»Øfalse <br/>
-        /// 10.Èô VerifyReceivingScripts ÑéÖ¤·µ»ØfalseÊ±£¨VerificationR´¥·¢Æ÷ÑéÖ¤£©£¬·µ»Øfalse¡£(Ä¿Ç°£¬VerifyReceivingScripts ·µ»ØÓÀÕæ£©<br/>
-        /// 11.Èô VerifyWitnesses ÑéÖ¤·µ»ØfalseÊ±£¨¶ÔÑéÖ¤½Å±¾½øĞĞÑéÖ¤£©£¬Ôò·µ»Øfalse
+        /// 1. äº¤æ˜“æ•°æ®å¤§å°å¤§äºæœ€å¤§äº¤æ˜“æ•°æ®å¤§å°æ—¶ï¼Œåˆ™è¿”å›false
+        /// 2. è‹¥Inputå­˜åœ¨é‡å¤ï¼Œåˆ™è¿”å›false<br/>
+        /// 3. è‹¥å†…å­˜æ± äº¤æ˜“åŒ…å«Inputäº¤æ˜“æ—¶ï¼Œè¿”å›false<br/>
+        /// 4. è‹¥Inputæ˜¯å·²ç»èŠ±è´¹çš„äº¤æ˜“ï¼Œåˆ™è¿”å›false<br/>
+        /// 5. è‹¥è½¬è´¦èµ„äº§ä¸å­˜åœ¨ï¼Œåˆ™è¿”å›false<br/>
+        /// 6. è‹¥èµ„äº§æ˜¯éNEOæˆ–éGASæ—¶ï¼Œä¸”èµ„äº§è¿‡æœŸæ—¶ï¼Œè¿”å›false<br/>
+        /// 7. è‹¥è½¬è´¦é‡‘é¢ä¸èƒ½æ•´é™¤å¯¹åº”èµ„äº§çš„æœ€å°ç²¾åº¦æ—¶ï¼Œè¿”å›false<br/>
+        /// 8. æ£€æŸ¥é‡‘é¢å…³ç³»ï¼š<br/>
+        ///    8.1 è‹¥å½“å‰äº¤æ˜“çš„æŸä¸ª input æ‰€æŒ‡å‘çš„ output åœ¨è¿‡å»çš„äº¤æ˜“ä¸­ä¸å­˜åœ¨æ—¶ï¼Œè¿”å›false<br/>
+        ///    8.2 è‹¥ Input.Asset &gt; Output.Asset æ—¶ï¼Œä¸”èµ„é‡‘ç§ç±»å¤§äºä¸€ç§æ—¶ï¼Œè¿”å›false<br/>
+        ///    8.3 è‹¥ Input.Asset &gt; Output.Asset æ—¶ï¼Œèµ„é‡‘ç§ç±»ä¸æ˜¯GASæ—¶ï¼Œè¿”å›false<br/>
+        ///    8.4 è‹¥ äº¤æ˜“æ‰‹ç»­è´¹ å¤§äº ï¼ˆInput.GAS - output.GASï¼‰ æ—¶ï¼Œ è¿”å›false<br/>
+        ///    8.5 è‹¥ Input.Asset &lt; Output.Asset æ—¶ï¼š
+        ///        8.5.1 è‹¥äº¤æ˜“ç±»å‹æ˜¯ MinerTransaction æˆ– ClaimTransactionï¼Œä¸”èµ„äº§ä¸æ˜¯ GAS æ—¶ï¼Œè¿”å›false<br/>
+        ///        8.5.2 è‹¥äº¤æ˜“ç±»å‹æ—¶ IssueTransactionæ—¶ï¼Œä¸”èµ„äº§æ˜¯GASæ—¶ï¼Œè¿”å›false<br/>
+        ///        8.5.3 è‹¥æ˜¯å…¶ä»–äº¤æ˜“ç±»å‹ï¼Œä¸”å­˜åœ¨å¢å‘èµ„äº§æ—¶ï¼Œè¿”å›false<br/>
+        /// 9. è‹¥äº¤æ˜“å±æ€§ï¼ŒåŒ…å«ç±»å‹æ˜¯ TransactionAttributeUsage.ECDH02 æˆ– TransactionAttributeUsage.ECDH03 æ—¶ï¼Œè¿”å›false <br/>
+        /// 10.è‹¥ VerifyReceivingScripts éªŒè¯è¿”å›falseæ—¶ï¼ˆVerificationRè§¦å‘å™¨éªŒè¯ï¼‰ï¼Œè¿”å›falseã€‚(ç›®å‰ï¼ŒVerifyReceivingScripts è¿”å›æ°¸çœŸï¼‰<br/>
+        /// 11.è‹¥ VerifyWitnesses éªŒè¯è¿”å›falseæ—¶ï¼ˆå¯¹éªŒè¯è„šæœ¬è¿›è¡ŒéªŒè¯ï¼‰ï¼Œåˆ™è¿”å›false
         ///</returns>
         public virtual bool Verify(Snapshot snapshot, IEnumerable<Transaction> mempool)
         {
@@ -466,7 +466,7 @@ namespace Neo.Network.P2P.Payloads
             TransactionResult[] results_issue = results.Where(p => p.Amount < Fixed8.Zero).ToArray();
             switch (Type)
             {
-                // TODO ÒÆÖ²µ½ java Ê±×ĞÏ¸¼ì²éÕâ¶ÎÂß¼­ÊÇ·ñÕıÈ·
+                // TODO ç§»æ¤åˆ° java æ—¶ä»”ç»†æ£€æŸ¥è¿™æ®µé€»è¾‘æ˜¯å¦æ­£ç¡®
                 case TransactionType.MinerTransaction:
                 case TransactionType.ClaimTransaction:
                     if (results_issue.Any(p => p.AssetId != Blockchain.UtilityToken.Hash))

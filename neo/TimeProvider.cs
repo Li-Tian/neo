@@ -1,19 +1,19 @@
-using System;
+ï»¿using System;
 
 namespace Neo
 {
     /// <summary>
-    /// Ê±¼ä·ÃÎÊ¹¦ÄÜÌá¹©¹¤¾ßÀà
+    /// æ—¶é—´è®¿é—®åŠŸèƒ½æä¾›å·¥å…·ç±»
     /// </summary>
     public class TimeProvider
     {
         private static readonly TimeProvider Default = new TimeProvider();
         /// <summary>
-        /// TimeProvider ÊµÀıµÄ¾²Ì¬ÒıÓÃ¡£
+        /// TimeProvider å®ä¾‹çš„é™æ€å¼•ç”¨ã€‚
         /// </summary>
         public static TimeProvider Current { get; internal set; } = Default;
         /// <summary>
-        /// »ñÈ¡UTCµ±Ç°Ê±¼ä
+        /// è·å–UTCå½“å‰æ—¶é—´
         /// </summary>
         public virtual DateTime UtcNow => DateTime.UtcNow;
 

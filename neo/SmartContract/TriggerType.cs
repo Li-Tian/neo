@@ -1,7 +1,7 @@
-namespace Neo.SmartContract
+ï»¿namespace Neo.SmartContract
 {
     /// <summary>
-    /// ´¥·¢Æ÷ÀàÐÍ
+    /// è§¦å‘å™¨ç±»åž‹
     /// </summary>
     public enum TriggerType : byte
     {
@@ -13,11 +13,11 @@ namespace Neo.SmartContract
         // The entry point of the contract must be able to handle this type of invocation.
         // </summary>
         /// <summary>
-        /// ÑéÖ¤´¥·¢Æ÷µÄÄ¿µÄÔÚÓÚ½«¸ÃºÏÔ¼×÷ÎªÑéÖ¤º¯Êý£¨verification function£©½øÐÐµ÷ÓÃ£¬
-        /// ÑéÖ¤º¯Êý¿ÉÒÔ½ÓÊÜ¶à¸ö²ÎÊý£¨parameters£©£¬²¢ÇÒÓ¦·µ»ØÓÐÐ§µÄ²¼¶ûÖµ£¬±êÖ¾×Å½»Ò×»òÇø¿éµÄÓÐÐ§ÐÔ¡£
-        /// Èç¹ûÖÇÄÜºÏÔ¼±»ÑéÖ¤´¥·¢Æ÷´¥·¢ÁË£¬Ôòµ÷ÓÃÖÇÄÜºÏÔ¼Èë¿Úµã:
+        /// éªŒè¯è§¦å‘å™¨çš„ç›®çš„åœ¨äºŽå°†è¯¥åˆçº¦ä½œä¸ºéªŒè¯å‡½æ•°ï¼ˆverification functionï¼‰è¿›è¡Œè°ƒç”¨ï¼Œ
+        /// éªŒè¯å‡½æ•°å¯ä»¥æŽ¥å—å¤šä¸ªå‚æ•°ï¼ˆparametersï¼‰ï¼Œå¹¶ä¸”åº”è¿”å›žæœ‰æ•ˆçš„å¸ƒå°”å€¼ï¼Œæ ‡å¿—ç€äº¤æ˜“æˆ–åŒºå—çš„æœ‰æ•ˆæ€§ã€‚
+        /// å¦‚æžœæ™ºèƒ½åˆçº¦è¢«éªŒè¯è§¦å‘å™¨è§¦å‘äº†ï¼Œåˆ™è°ƒç”¨æ™ºèƒ½åˆçº¦å…¥å£ç‚¹:
         ///     main(...);
-        /// ÖÇÄÜºÏÔ¼µÄÈë¿Úµã±ØÐëÄÜ¹»´¦ÀíÕâÖÖÀàÐÍµÄµ÷ÓÃ¡£
+        /// æ™ºèƒ½åˆçº¦çš„å…¥å£ç‚¹å¿…é¡»èƒ½å¤Ÿå¤„ç†è¿™ç§ç±»åž‹çš„è°ƒç”¨ã€‚
         /// </summary>
         Verification = 0x00,
         // <summary>
@@ -30,13 +30,13 @@ namespace Neo.SmartContract
         // the receiving function will be invoked automatically when a contract is receiving assets from a transfer.
         // </summary>
         /// <summary>
-        /// ÑéÖ¤´¥·¢Æ÷RµÄÄ¿µÄÔÚÓÚ½«¸ÃºÏÔ¼×÷ÎªÑéÖ¤º¯Êý½øÐÐµ÷ÓÃ£¬ÒòÎªËü±»Ö¸¶¨Îª½»Ò×Êä³öµÄÄ¿±ê¡£
-        /// ÑéÖ¤º¯Êý²»½ÓÊÜ²ÎÊý£¬²¢ÇÒÓ¦·µ»ØÓÐÐ§µÄ²¼¶ûÖµ£¬±êÖ¾×Å½»Ò×µÄÓÐÐ§ÐÔ¡£
-        /// Èç¹ûÖÇÄÜºÏÔ¼±»ÑéÖ¤´¥·¢Æ÷R´¥·¢ÁË£¬Ôòµ÷ÓÃÖÇÄÜºÏÔ¼Èë¿Úµã:
+        /// éªŒè¯è§¦å‘å™¨Rçš„ç›®çš„åœ¨äºŽå°†è¯¥åˆçº¦ä½œä¸ºéªŒè¯å‡½æ•°è¿›è¡Œè°ƒç”¨ï¼Œå› ä¸ºå®ƒè¢«æŒ‡å®šä¸ºäº¤æ˜“è¾“å‡ºçš„ç›®æ ‡ã€‚
+        /// éªŒè¯å‡½æ•°ä¸æŽ¥å—å‚æ•°ï¼Œå¹¶ä¸”åº”è¿”å›žæœ‰æ•ˆçš„å¸ƒå°”å€¼ï¼Œæ ‡å¿—ç€äº¤æ˜“çš„æœ‰æ•ˆæ€§ã€‚
+        /// å¦‚æžœæ™ºèƒ½åˆçº¦è¢«éªŒè¯è§¦å‘å™¨Rè§¦å‘äº†ï¼Œåˆ™è°ƒç”¨æ™ºèƒ½åˆçº¦å…¥å£ç‚¹:
         ///     main("receiving", new object[0]);
-        /// receivingº¯ÊýÓ¦¾ßÓÐÒÔÏÂ±à³Ì½Ó¿Ú:
+        /// receivingå‡½æ•°åº”å…·æœ‰ä»¥ä¸‹ç¼–ç¨‹æŽ¥å£:
         ///     public bool receiving()
-        /// µ±ÖÇÄÜºÏÔ¼´Ó×ªÕËÖÐÊÕµ½Ò»±Ê×Ê²úÊ±£¬receivingº¯Êý½«»á×Ô¶¯±»µ÷ÓÃ¡£
+        /// å½“æ™ºèƒ½åˆçº¦ä»Žè½¬è´¦ä¸­æ”¶åˆ°ä¸€ç¬”èµ„äº§æ—¶ï¼Œreceivingå‡½æ•°å°†ä¼šè‡ªåŠ¨è¢«è°ƒç”¨ã€‚
         /// </summary>
         VerificationR = 0x01,
         // <summary>
@@ -47,11 +47,11 @@ namespace Neo.SmartContract
         // The functions can be invoked by creating an InvocationTransaction.
         // </summary>
         /// <summary>
-        /// Ó¦ÓÃ´¥·¢Æ÷µÄÄ¿µÄÔÚÓÚ½«¸ÃºÏÔ¼×÷ÎªÓ¦ÓÃº¯Êý£¨verification function£©½øÐÐµ÷ÓÃ£¬
-        /// Ó¦ÓÃº¯Êý¿ÉÒÔ½ÓÊÜ¶à¸ö²ÎÊý£¨parameters£©£¬¶ÔÇø¿éÁ´µÄ×´Ì¬½øÐÐ¸ü¸Ä£¬²¢·µ»ØÈÎÒâÀàÐÍµÄ·µ»ØÖµ¡£
-        /// ÀíÂÛÉÏÖÇÄÜºÏÔ¼¿ÉÒÔÓÐÈÎÒâµÄÈë¿Úµã£¬µ«ÎÒÃÇÍÆ¼öÖÇÄÜºÏÔ¼Ê¹ÓÃ main º¯Êý×÷ÎªÈë¿ÚµãÒÔ·½±ãµ÷ÓÃ:
+        /// åº”ç”¨è§¦å‘å™¨çš„ç›®çš„åœ¨äºŽå°†è¯¥åˆçº¦ä½œä¸ºåº”ç”¨å‡½æ•°ï¼ˆverification functionï¼‰è¿›è¡Œè°ƒç”¨ï¼Œ
+        /// åº”ç”¨å‡½æ•°å¯ä»¥æŽ¥å—å¤šä¸ªå‚æ•°ï¼ˆparametersï¼‰ï¼Œå¯¹åŒºå—é“¾çš„çŠ¶æ€è¿›è¡Œæ›´æ”¹ï¼Œå¹¶è¿”å›žä»»æ„ç±»åž‹çš„è¿”å›žå€¼ã€‚
+        /// ç†è®ºä¸Šæ™ºèƒ½åˆçº¦å¯ä»¥æœ‰ä»»æ„çš„å…¥å£ç‚¹ï¼Œä½†æˆ‘ä»¬æŽ¨èæ™ºèƒ½åˆçº¦ä½¿ç”¨ main å‡½æ•°ä½œä¸ºå…¥å£ç‚¹ä»¥æ–¹ä¾¿è°ƒç”¨:
         ///    public byte[] main(string operation, params object[] args)
-        /// µ±´´½¨Ò»¸öInvocationTransactionÊ±Õâ¸öº¯Êý¿ÉÒÔ±»µ÷ÓÃ¡£
+        /// å½“åˆ›å»ºä¸€ä¸ªInvocationTransactionæ—¶è¿™ä¸ªå‡½æ•°å¯ä»¥è¢«è°ƒç”¨ã€‚
         /// </summary>
         Application = 0x10,
         // <summary>
@@ -64,13 +64,13 @@ namespace Neo.SmartContract
         // The received function will be invoked automatically when a contract is receiving assets from a transfer.
         // </summary>
         /// <summary>
-        /// Ó¦ÓÃ´¥·¢Æ÷RÖ¸Ã÷ÁËµ±ÖÇÄÜºÏÔ¼±»µ÷ÓÃÊ±µÄÄ¬ÈÏº¯Êýreceived£¬ÒòÎªËü±»Ö¸¶¨Îª½»Ò×Êä³öµÄÄ¿±ê¡£
-        /// receivedº¯Êý²»½ÓÊÜ²ÎÊý£¬¶ÔÇø¿éÁ´µÄ×´Ì¬½øÐÐ¸ü¸Ä£¬²¢·µ»ØÈÎÒâÀàÐÍµÄ·µ»ØÖµ¡£
-        /// Èç¹ûÖÇÄÜºÏÔ¼±»Ó¦ÓÃ´¥·¢Æ÷R´¥·¢ÁË£¬Ôòµ÷ÓÃÖÇÄÜºÏÔ¼Èë¿Úµã:
+        /// åº”ç”¨è§¦å‘å™¨RæŒ‡æ˜Žäº†å½“æ™ºèƒ½åˆçº¦è¢«è°ƒç”¨æ—¶çš„é»˜è®¤å‡½æ•°receivedï¼Œå› ä¸ºå®ƒè¢«æŒ‡å®šä¸ºäº¤æ˜“è¾“å‡ºçš„ç›®æ ‡ã€‚
+        /// receivedå‡½æ•°ä¸æŽ¥å—å‚æ•°ï¼Œå¯¹åŒºå—é“¾çš„çŠ¶æ€è¿›è¡Œæ›´æ”¹ï¼Œå¹¶è¿”å›žä»»æ„ç±»åž‹çš„è¿”å›žå€¼ã€‚
+        /// å¦‚æžœæ™ºèƒ½åˆçº¦è¢«åº”ç”¨è§¦å‘å™¨Rè§¦å‘äº†ï¼Œåˆ™è°ƒç”¨æ™ºèƒ½åˆçº¦å…¥å£ç‚¹:
         ///     main("received", new object[0]);
-        /// receivedº¯ÊýÓ¦¾ßÓÐÒÔÏÂ±à³Ì½Ó¿Ú:
+        /// receivedå‡½æ•°åº”å…·æœ‰ä»¥ä¸‹ç¼–ç¨‹æŽ¥å£:
         ///     public byte[] received()
-        /// µ±ÖÇÄÜºÏÔ¼´Ó×ªÕËÖÐÊÕµ½Ò»±Ê×Ê²úÊ±£¬receivingº¯Êý½«»á×Ô¶¯±»µ÷ÓÃ¡£   
+        /// å½“æ™ºèƒ½åˆçº¦ä»Žè½¬è´¦ä¸­æ”¶åˆ°ä¸€ç¬”èµ„äº§æ—¶ï¼Œreceivingå‡½æ•°å°†ä¼šè‡ªåŠ¨è¢«è°ƒç”¨ã€‚   
         /// </summary>
         ApplicationR = 0x11
     }

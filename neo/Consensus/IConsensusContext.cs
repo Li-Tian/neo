@@ -1,4 +1,4 @@
-using Neo.Cryptography.ECC;
+ï»¿using Neo.Cryptography.ECC;
 using Neo.Network.P2P.Payloads;
 using System;
 using System.Collections.Generic;
@@ -6,148 +6,148 @@ using System.Collections.Generic;
 namespace Neo.Consensus
 {
     /// <summary>
-    /// ¹²Ê¶¹ı³ÌÉÏÏÂÎÄ£¬¼ÇÂ¼µ±Ç°¹²Ê¶»î¶¯ĞÅÏ¢
+    /// å…±è¯†è¿‡ç¨‹ä¸Šä¸‹æ–‡ï¼Œè®°å½•å½“å‰å…±è¯†æ´»åŠ¨ä¿¡æ¯
     /// </summary>
     public interface IConsensusContext : IDisposable
     {
         //public const uint Version = 0;
         /// <summary>
-        /// Ëù´¦¹²Ê¶¹ı³Ì×´Ì¬
+        /// æ‰€å¤„å…±è¯†è¿‡ç¨‹çŠ¶æ€
         /// </summary>
         ConsensusState State { get; set; }
         /// <summary>
-        /// ÉÏÒ»¸öblockµÄhash
+        /// ä¸Šä¸€ä¸ªblockçš„hash
         /// </summary>
         UInt256 PrevHash { get; }
         /// <summary>
-        /// Ìá°¸blockµÄÇø¿é¸ß¶È
+        /// ææ¡ˆblockçš„åŒºå—é«˜åº¦
         /// </summary>
         uint BlockIndex { get; }
         /// <summary>
-        /// µ±Ç°ÊÓÍ¼µÄ±àºÅ
+        /// å½“å‰è§†å›¾çš„ç¼–å·
         /// </summary>
         byte ViewNumber { get; }
         /// <summary>
-        /// ±¾ÂÖ¹²Ê¶½ÚµãµÄ¹«Ô¿ÁĞ±í
+        /// æœ¬è½®å…±è¯†èŠ‚ç‚¹çš„å…¬é’¥åˆ—è¡¨
         /// </summary>
         ECPoint[] Validators { get; }
         /// <summary>
-        /// µ±Ç°½Úµã±àºÅ£¬ÔÚValidatorsÊı×éÖĞĞòºÅ
+        /// å½“å‰èŠ‚ç‚¹ç¼–å·ï¼Œåœ¨Validatorsæ•°ç»„ä¸­åºå·
         /// </summary>
         int MyIndex { get; }
         /// <summary>
-        /// ±¾ÂÖ¹²Ê¶µÄÒé³¤±àºÅ
+        /// æœ¬è½®å…±è¯†çš„è®®é•¿ç¼–å·
         /// </summary>
         uint PrimaryIndex { get; }
         /// <summary>
-        /// µ±Ç°Ìá°¸blockÊ±¼ä´Á
+        /// å½“å‰ææ¡ˆblockæ—¶é—´æˆ³
         /// </summary>
         uint Timestamp { get; set; }
         /// <summary>
-        /// µ±Ç°Ìá°¸blockµÄnonce
+        /// å½“å‰ææ¡ˆblockçš„nonce
         /// </summary>
         ulong Nonce { get; set; }
         /// <summary>
-        /// µ±Ç°Ìá°¸blockµÄNextConsensus, Ö¸¶¨ÏÂÒ»ÂÖ¹²Ê¶½Úµã
+        /// å½“å‰ææ¡ˆblockçš„NextConsensus, æŒ‡å®šä¸‹ä¸€è½®å…±è¯†èŠ‚ç‚¹
         /// </summary>
         UInt160 NextConsensus { get; set; }
         /// <summary>
-        /// µ±Ç°Ìá°¸blockµÄ½»Ò×hashÁĞ±í
+        /// å½“å‰ææ¡ˆblockçš„äº¤æ˜“hashåˆ—è¡¨
         /// </summary>
         UInt256[] TransactionHashes { get; set; }
         /// <summary>
-        /// µ±Ç°Ìá°¸blockµÄ½»Ò×
+        /// å½“å‰ææ¡ˆblockçš„äº¤æ˜“
         /// </summary>
         Dictionary<UInt256, Transaction> Transactions { get; set; }
         /// <summary>
-        /// ´æ·ÅÊÕµ½µÄÌá°¸blockµÄÇ©ÃûÊı×é
+        /// å­˜æ”¾æ”¶åˆ°çš„ææ¡ˆblockçš„ç­¾åæ•°ç»„
         /// </summary>
         byte[][] Signatures { get; set; }
         /// <summary>
-        /// ÊÕµ½µÄ¸÷½ÚµãÆÚÍûÊÓÍ¼±àºÅ£¬Ö÷ÒªÓÃÔÚ¸Ä±äÊÓÍ¼¹ı³ÌÖĞ¡£Õâ¸öÊı×éµÄÃ¿Ò»Î»¶ÔÓ¦Ã¿¸öÑéÖ¤ÈË½ÚµãÆÚ´ıµÄÊÓÍ¼±àºÅ¡£¶øÑéÖ¤ÈËÊÇÓĞÏàÓ¦±àºÅµÄ¡£
+        /// æ”¶åˆ°çš„å„èŠ‚ç‚¹æœŸæœ›è§†å›¾ç¼–å·ï¼Œä¸»è¦ç”¨åœ¨æ”¹å˜è§†å›¾è¿‡ç¨‹ä¸­ã€‚è¿™ä¸ªæ•°ç»„çš„æ¯ä¸€ä½å¯¹åº”æ¯ä¸ªéªŒè¯äººèŠ‚ç‚¹æœŸå¾…çš„è§†å›¾ç¼–å·ã€‚è€ŒéªŒè¯äººæ˜¯æœ‰ç›¸åº”ç¼–å·çš„ã€‚
         /// </summary>
         byte[] ExpectedView { get; set; }
         /// <summary>
-        /// ×îµÍ¹²Ê¶½Úµã°²È«ãĞÖµ¸öÊı£¬µÍÓÚ¸ÃãĞÖµ£¬¹²Ê¶¹ı³Ì½«»á³ö´í
+        /// æœ€ä½å…±è¯†èŠ‚ç‚¹å®‰å…¨é˜ˆå€¼ä¸ªæ•°ï¼Œä½äºè¯¥é˜ˆå€¼ï¼Œå…±è¯†è¿‡ç¨‹å°†ä¼šå‡ºé”™
         /// </summary>
         int M { get; }
         /// <summary>
-        /// Ç°Çø¿éµÄÇø¿éÍ·
+        /// å‰åŒºå—çš„åŒºå—å¤´
         /// </summary>
         Header PrevHeader { get; }
         // <summary>
-        // ÅĞ¶¨ÊÇ·ñ°üº¬Ö¸¶¨¹şÏ£ÖµµÄ½»Ò×
+        // åˆ¤å®šæ˜¯å¦åŒ…å«æŒ‡å®šå“ˆå¸Œå€¼çš„äº¤æ˜“
         // </summary>
-        // <param name="hash">½»Ò×µÄ¹şÏ£Öµ</param>
-        // <returns>ÅĞ¶¨ÊÇ·ñ°üº¬</returns>
+        // <param name="hash">äº¤æ˜“çš„å“ˆå¸Œå€¼</param>
+        // <returns>åˆ¤å®šæ˜¯å¦åŒ…å«</returns>
         //bool ContainsTransaction(UInt256 hash);
         /// <summary>
-        /// ÅĞ¶¨Ö¸¶¨¹şÏ£ÖµµÄ½»Ò×ÊÇ·ñ´æÔÚ
+        /// åˆ¤å®šæŒ‡å®šå“ˆå¸Œå€¼çš„äº¤æ˜“æ˜¯å¦å­˜åœ¨
         /// </summary>
-        /// <param name="hash">½»Ò×µÄ¹şÏ£Öµ</param>
-        /// <returns>ÅĞ¶¨ÊÇ·ñ´æÔÚ</returns>
+        /// <param name="hash">äº¤æ˜“çš„å“ˆå¸Œå€¼</param>
+        /// <returns>åˆ¤å®šæ˜¯å¦å­˜åœ¨</returns>
         bool TransactionExists(UInt256 hash);
         /// <summary>
-        /// ÑéÖ¤Ö¸¶¨µÄ½»Ò×ÊÇ·ñºÏ·¨
+        /// éªŒè¯æŒ‡å®šçš„äº¤æ˜“æ˜¯å¦åˆæ³•
         /// </summary>
-        /// <param name="tx">Ö¸¶¨µÄ½»Ò×</param>
-        /// <returns>ºÏ·¨½»Ò×·µ»Øtrue</returns>
+        /// <param name="tx">æŒ‡å®šçš„äº¤æ˜“</param>
+        /// <returns>åˆæ³•äº¤æ˜“è¿”å›true</returns>
         bool VerifyTransaction(Transaction tx);
         /// <summary>
-        /// ¸ü»»ÊÓÍ¼
+        /// æ›´æ¢è§†å›¾
         /// </summary>
-        /// <param name="view_number">ĞÂµÄÊÓÍ¼±àºÅ</param>
+        /// <param name="view_number">æ–°çš„è§†å›¾ç¼–å·</param>
         void ChangeView(byte view_number);
         /// <summary>
-        /// ´´½¨Çø¿é
+        /// åˆ›å»ºåŒºå—
         /// </summary>
-        /// <returns>ĞÂ´´½¨µÄÇø¿é</returns>
+        /// <returns>æ–°åˆ›å»ºçš„åŒºå—</returns>
         Block CreateBlock();
 
         //void Dispose();
         /// <summary>
-        /// ¼ÆËãÒé³¤±àºÅ
+        /// è®¡ç®—è®®é•¿ç¼–å·
         /// </summary>
-        /// <param name="view_number">µ±Ç°ÊÓÍ¼±àºÅ</param>
-        /// <returns>ĞÂµÄÒé³¤±àºÅ</returns>
+        /// <param name="view_number">å½“å‰è§†å›¾ç¼–å·</param>
+        /// <returns>æ–°çš„è®®é•¿ç¼–å·</returns>
         uint GetPrimaryIndex(byte view_number);
         /// <summary>
-        /// ¹¹½¨ChangeViewÏûÏ¢
+        /// æ„å»ºChangeViewæ¶ˆæ¯
         /// </summary>
-        /// <returns>¹²Ê¶ÏûÏ¢(ChangeView)</returns>
+        /// <returns>å…±è¯†æ¶ˆæ¯(ChangeView)</returns>
         ConsensusPayload MakeChangeView();
         /// <summary>
-        /// ¹¹½¨Ò»¸öÖ»º¬ÓĞÇø¿éÍ·£¬²»º¬ÓĞ½»Ò×ÄÚÈİµÄ¿ÕÇø¿é
+        /// æ„å»ºä¸€ä¸ªåªå«æœ‰åŒºå—å¤´ï¼Œä¸å«æœ‰äº¤æ˜“å†…å®¹çš„ç©ºåŒºå—
         /// </summary>
-        /// <returns>Ö»º¬ÓĞÇø¿éÍ·µÄÇø¿é</returns>
+        /// <returns>åªå«æœ‰åŒºå—å¤´çš„åŒºå—</returns>
         Block MakeHeader();
         /// <summary>
-        /// Ç©ÃûÇø¿éÍ·
+        /// ç­¾ååŒºå—å¤´
         /// </summary>
         void SignHeader();
         /// <summary>
-        /// ¹¹½¨PrepareRequsetµÄ¹²Ê¶ÏûÏ¢ConsensusPayloadÀà
+        /// æ„å»ºPrepareRequsetçš„å…±è¯†æ¶ˆæ¯ConsensusPayloadç±»
         /// </summary>
-        /// <returns>PrepareRequsetÏûÏ¢</returns>
+        /// <returns>PrepareRequsetæ¶ˆæ¯</returns>
         ConsensusPayload MakePrepareRequest();
         /// <summary>
-        /// ¹¹½¨PrepareResponseµÄ¹²Ê¶ÏûÏ¢ConsensusPayloadÀà
+        /// æ„å»ºPrepareResponseçš„å…±è¯†æ¶ˆæ¯ConsensusPayloadç±»
         /// </summary>
-        /// <param name="signature">¶ÔÌá°¸blockµÄÇ©Ãû</param>
-        /// <returns>¹²Ê¶ÏûÏ¢</returns>
+        /// <param name="signature">å¯¹ææ¡ˆblockçš„ç­¾å</param>
+        /// <returns>å…±è¯†æ¶ˆæ¯</returns>
         ConsensusPayload MakePrepareResponse(byte[] signature);
         /// <summary>
-        /// ÖØÖÃÉÏÏÂÎÄÊı¾İ
+        /// é‡ç½®ä¸Šä¸‹æ–‡æ•°æ®
         /// </summary>
         void Reset();
         /// <summary>
-        /// Ìî³äÌá°¸blockµÄÊı¾İ
+        /// å¡«å……ææ¡ˆblockçš„æ•°æ®
         /// </summary>
         void Fill();
         /// <summary>
-        /// ÊÕµ½PrepareRequest°üºó£¬Ğ£ÑéPrepareRequestËù´øµÄÌá°¸blockÊı¾İ
+        /// æ”¶åˆ°PrepareRequeståŒ…åï¼Œæ ¡éªŒPrepareRequestæ‰€å¸¦çš„ææ¡ˆblockæ•°æ®
         /// </summary>
-        /// <returns>ÑéÖ¤ºÏ·¨ÒÔºó·µ»Øtrue</returns>
+        /// <returns>éªŒè¯åˆæ³•ä»¥åè¿”å›true</returns>
         bool VerifyRequest();
     }
 }
