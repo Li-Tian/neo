@@ -26,7 +26,7 @@
         {{#items}}
           <li class="{{#active}}active{{/active}}">
             {{#href}}
-            <a onclick="url_jump('{{href}}')" title="{{name}}" class="{{#active}}active{{/active}}">{{name}}</a>
+            <a href="{{href}}" title="{{name}}" class="{{#active}}active{{/active}}">{{name}}</a>
             {{/href}}
             {{^href}}
             <a class="{{#active}}active{{/active}}">{{{name}}}</a>
