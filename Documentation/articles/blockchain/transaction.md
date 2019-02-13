@@ -63,8 +63,9 @@ TransactionAttributeUsage, each transaction attribute has different usages:
 
 
 &emsp;&emsp;For ContractHash, ECDH series, Hash series, data length is fixed to 32 bytes and length field is omitted; <br/>
-&emsp;&emsp;For DescriptionUrl, Description, Remark series, the data length must be clearly defined, and the length should not exceed 255;
-
+&emsp;&emsp;For Script, data length is fixed to 20 bytes and length field is omitted; <br/>
+&emsp;&emsp;For DescriptionUrl, the data length must be clearly defined, and the length should not exceed 255;<br/>
+&emsp;&emsp;For Description, Remark series, the data length must be clearly defined, and the length should not exceed 65535;
 
 ### Witness
 
