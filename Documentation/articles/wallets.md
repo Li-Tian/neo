@@ -1,4 +1,4 @@
-<center><h2> Wallets </h2></center>
+﻿<center><h2> Wallets </h2></center>
 
 &emsp;&emsp;Wallets is a basic component of NEO and the bridge for users to access NEO network. It's responsible for transaction operations such as transfer, contract deployment, asset registration, etc.
 
@@ -28,7 +28,7 @@ There are two main encoding formats for private keys in NEO.
 |---|---|
 | byte[] | [0xc7,0x13,0x4d,0x6f,0xd8,0xe7,0x3d,0x81,0x9e,0x82,0x75,<br>0x5c,0x64,0xc9,0x37,0x88,0xd8,0xdb,0x09,0x61,0x92,0x9e,<br>0x02,0x5a,0x53,0x36,0x3c,0x4c,0xc0,0x2a,0x69,0x62] |
 | hexstring | c7134d6fd8e73d819e82755c64c93788d8db0961929e025a53363c4cc02a6962 |
-| wif | L3tgppXLgdaeqSGSFw1Go3skBiy8vQAM7YMXvTHsKQtE16Dw58cV |
+| wif | L3tgppXLgdaeqSGSFw1Go3skBiy8vQAM7YMXvTHsKQtE16PBncSU |
 
 ### 2. Public Key
 
