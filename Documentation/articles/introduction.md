@@ -18,5 +18,6 @@ This document is mainly used to describe the design of NEO network nodes, but do
 
 > [!NOTE]
 > - The documentation is constantly being updated. If you find errors or omissions, problems with links 404, or you have suggestions for improvement, or you are willing to translate it into other languages, please write to <feedback@neo.org>.
+> - Special thanks to Robert Kofler, Johann Loy and Marcin Behrens for helping us point out a mistake in the guide.
 > - The Developer Guide is based on NEO 2.9.3.0. Although we intended to make it less dependent on a specific programming language, there is still a small amount of C# language habits referenced in type definitions and so on.
 > - The API documentation is the C# programming interface documentation for NEO 2.9.3.0.
