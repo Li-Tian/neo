@@ -115,7 +115,7 @@ When a consensus message enters the P2P network, it's broadcasted and transmitte
 
 ###  Verification
 
-1. Ignore the message if the `ConsensusPayload.BlockIndex` is no more than current block height.
+1. Ignore the message if the `ConsensusPayload.BlockIndex` is lower than current block height.
 
 2. Ignore the message if the verification script failed or the script hash does not equal to `ConsensusPayload.ValidatorIndex` address's script hash.
 

@@ -83,12 +83,12 @@ private bool value;
 
 NeoVM has implemented 113 instructions (and four unrealized instructions). The categories are as follows:
 
-| Contrant | Flow Control | Stack Operation | String Operation | Logical Operation | Arithmetic Operation | Cryptography | Advanced Data Structure |Stack Isolation| Exception Processing |
+| Constant | Flow Control | Stack Operation | String Operation | Logical Operation | Arithmetic Operation | Cryptography | Advanced Data Structure |Stack Isolation| Exception Processing |
 | ---- | -------- | ------ | ------ | -------- | -------- | ------ | -------- | ------ | ---- |
 | 25 | 9| 16| 5 | 5 | 25 | 7  | 14 | 5 | 2 |
 
 
-## 1. Contrant
+## 1. Constant
 
 The constant instructions mainly complete the function of pushing constants or arrays into the `EvaluationStack`.
 
