@@ -149,7 +149,7 @@ NEP6 wallet file meets the NEP6 standard, and the file suffix is `.json`. The JS
 }
 ```
 
-- `name` is a label that the user has made to the wallet file.
+- `name` is a label that the user has given to the wallet file.
 
 - `version` is currently fixed at 1.0 and will be used for functional upgrades in the future.
 

@@ -6,7 +6,7 @@
 
 [![neo p2p network](../images/neo_cli_structure/neo-p2p-network.png)](../images/neo_cli_structure/neo-p2p-network.png)
 
-　Each node in the network runs a neo-cli program or a protocol-compatible program. Among them, the consensus nodes involve in the consensus. Non-consensus nodes are not involved in the consensus. The consensus will be described in subsequent chapters.
+　Each node in the network runs a neo-cli program or a protocol-compatible program. Among them, the consensus nodes involved in the consensus. Non-consensus nodes are not involved in the consensus. The consensus will be described in subsequent chapters.
 
 ## neo-cli
 
@@ -30,7 +30,7 @@
 
 ### LevelDBStore / Blockchain
 
-　Blockchain data management module based on leveldb. Provide storage and query services of blockchain data for other parts.
+　Blockchain data management module based on leveldb. Provides storage and query services of blockchain data to the other parts.
 
 ### LocalNode
 
@@ -171,7 +171,7 @@ Property Description:
 
 Property Description:
 
- - Magic : Magic Number. Mainnet: 7630401 (0x00746E41) Testnet: 1953787457 (0x74746E41) When building a private chain network, the magic number can be changed to any integer, but the magic number of the nodes in the same network must be the same.
+ - Magic : Magic Number. Mainnet: 7630401 (0x00746E41) Testnet: 1953787457 (0x74746E41) When building a private chain network, the magic number can be changed to any integer, but the magic number used by all the nodes in the same network must be the same.
  - AddressVersion : The address version. Fixed value 23
  - SecondsPerBlock : The block interval. The consensus nodes in the same network must have the same value.
  - StandbyValidators: A list of public keys of the alternate consensus node.
@@ -181,8 +181,8 @@ Property Description:
 protocol.mainnet.json and protocol.testnet.json are two backup files that store the configuration for the mainnet and the testnet.
 
 > [!NOTE]
-> 1. In neo-cli 2.7.6 it used a temporary file peers.dat to save IP addresses of known nodes, neo-cli 2.9.0+ no longer use the file.
-> 2. If the neo-cli meets an exception during execution and terminated, the error content will be written to a file(error.log) to debug.
+> 1. In neo-cli 2.7.6 a temporary file peers.dat was used to save IP addresses of known nodes, neo-cli 2.9.0+ no longer uses the file.
+> 2. If neo-cli meets an exception during execution and is terminated, the error's content will be written to a file (error.log) for debugging.
 
 ---
 
@@ -220,7 +220,7 @@ protocol.mainnet.json and protocol.testnet.json are two backup files that store 
 
 2. Start a background loop and check the number of connections to other peers every 5 seconds. If it is less than the maximum number of connections (10), it will try to connect to more peers. If the information of other peers are unknown, it will connect to the seed nodes and then ask for the addresses and port number of other peers.
 
-3. If the device is in a LAN and does not have an IP address on the internet, it will try to discover the UPnp external IP address for the device, and then start listening on port for TCP/IP connections and start listening on port for websocket connections on the external IP address.
+3. If the device is in a LAN behind a NAT and does not have an IP address on the internet, it will try to discover the external IP address and set up a new port mapping using the Internet Gateway Device Protocol(IGD) implemented as part of UPnp. Then it'll start listening on port for TCP/IP connections and start listening on port for websocket connections on the external IP address.
 
 4. Start listening on port locally and accept TCP/IP connections from other peers.
 

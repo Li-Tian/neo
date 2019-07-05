@@ -1,14 +1,14 @@
 ﻿<center><h2> Transaction Execution </h2></center>
 
 &emsp;&emsp;Transaction is the only designed method for interaction process within block chain network. Actions like asset registration, transferring, deploying and invoking smart contract, etc, are all proceesed based on transaction in NEO.
-NEO transaction, similiar to the designing in Bitcoin, includes 3 important parts: input, output and scripts. These items stand for asset income, outflow and verification for UTXO (Unspent Transaction Output). The input-output combinition is the basis of asset flow's chain structure.
+NEO transaction, similiar to the designing in Bitcoin, includes 3 important parts: input, output and scripts. These items stand for asset income, outflow and verification for UTXO (Unspent Transaction Output). The input-output combination is the basis of asset flow's chain structure.
 
 
 ## General Process
 
 [![tx_flow_graph](../images/tx_execution/tx_flow_graph.jpg)](../images/tx_execution/tx_flow_graph.jpg)
 A transaction is created using NEO-Cli, Neo-RPC, or NEO-GUI. Fulfilled transaction data is signed, and then broadcasted over the whole network.
-Consensus nodes will verify this new transaction and put it into memory pool upon receiving. A specified speaker node will pack the transaction into a new block. Finally, this transaction is processed over the whole network after new block is broadcasted. Over process is breifly shown as follows:
+Consensus nodes will verify this new transaction and put it into memory pool upon receiving. A specified speaker node will pack the transaction into a new block. Finally, this transaction is processed over the whole network after new block is broadcasted. Over process is briefly shown as follows:
 
 [![tx_process_flow](../images/tx_execution/tx_process_flow_en.jpg)](../images/tx_execution/tx_process_flow_en.jpg)
 
@@ -203,7 +203,7 @@ The node where the wallet is located, will broadcast the transaction through the
 **Broadcasting Steps**：
 
 
-1. If consensus module is started by local node, it runs [New tranasction event in consensus module](./consensus/consensus_protocol.md#6_tx_handler).
+1. If consensus module is started by local node, it runs [New transaction event in consensus module](./consensus/consensus_protocol.md#6_tx_handler).
 
 2. Node will verify the transaction and add it into memory pool before broadcasting.
 
@@ -303,15 +303,15 @@ NEO transanction is defined as follows：
 | RegisterTransaction | 10000/0 | (Deprecated) used for asset registration |
 | IssueTransaction | 500/0 | used for asset distribution |
 | ClaimTransaction | 0 | used for NeoGas distribution |
-| EnrollmentTransaction | 1000 | (Deprecated) used for consensus candidate enrollmment |
+| EnrollmentTransaction | 1000 | (Deprecated) used for consensus candidate enrollment |
 | StateTransaction | 1000/0 | used for validator enrollment or consensus node voting |
 | ContractTransaction | 0 | used for contract transaction, a most common transaction category |
-| PublishTransaction | 500*n | (Deprecated) used for smart contract publishing |
+| PublishTransaction | 100~1000 | (Deprecated) used for smart contract publishing |
 | InvocationTransaction | GAS consumption varies | used for invocating smart contract |
 
 
 > [!NOTE]
-> **Transaction system fee**: Different transactions have different system fees. The detail is defined in configuration file `protocol.json`. Collected system fee is distributed to NEO holders.
+> **Transaction system fee**: Different transactions have different system fees. The detail is defined in configuration file `protocol.json`. Collected system fee is distributed to NEO holders, how this is done will be explained later in the guide.
 >
 > **Transaction network fee**: `NetworkFee = tx.inputs.GAS - tx.outputs.GAS - tx.SystemFee`. In consensus activity, the network fee will be the reward for the Speaker, who packages transactions into a block. The network fee is stored in the first transaction (`MinerTransaction`) of the block. The higher the network fee is, the easier the transaction will be packaged into the new created block.
 
@@ -525,7 +525,7 @@ $$
 
    5. Verification fails if the sum of the input GAS of this claim transaction is greater than or equal to the sum of the output GAS.
 
-   6. Verification fails if the amount of GAS calculated by the claim transcation reference is not equal to the amount of GAS declared by the claim transcation.
+   6. Verification fails if the amount of GAS calculated by the claim transaction reference is not equal to the amount of GAS declared by the claim transaction.
 
 2. **Script Verification**
 
@@ -557,7 +557,7 @@ Descriptor type contains following information:
 | Size | Name | Caption | Type | Description |
 |---|-------|-------|------|------|
 | 1 | Type  | Type | byte  | `0x40` represents voting, `0x48` represents application or cancellation of becoming a validator |
-| ? | Key   | key value | byte[] | When Field = 'Votes' : The hash of the voter address script<br/>When Feild = 'Registered' : Store the applicant's public key |
+| ? | Key   | key value | byte[] | When Field = 'Votes' : The hash of the voter address script<br/>When Field = 'Registered' : Store the applicant's public key |
 | ? | Field | field value | byte[] | When Type = `0x40`, Field is 'Votes'<br/>When Type = `0x48`, Field is 'Registered` |
 | ? | Value | The value | byte[] | When Type = 0x40, Value stores the list of voting addresses<br/> When Type = 0x48, Store the Boolean value of the validator |
 
@@ -634,7 +634,7 @@ Other processing steps are the same as a basic transaction.
 
 
 
-NEO smart contract requires certain system fee upon publishing and execution. Publishing fee is the amount of system fee needed to publish a smart contract onto block chain (Currently 500 Gas). Execution fee is the amount of system fee needed every time a smart contract is executed. Detailed information please refer to [Smart Contract System Fee](http://docs.neo.org/en-us/sc/systemfees.html).
+NEO smart contract requires certain system fee upon publishing and execution. Publishing fee is the amount of system fee needed to publish a smart contract onto block chain (See [System Fees](https://docs.neo.org/en-us/sc/systemfees.html) for current value). Execution fee is the amount of system fee needed every time a smart contract is executed. Detailed information please refer to [Smart Contract System Fee](http://docs.neo.org/en-us/sc/systemfees.html).
 
 
 > [!NOTE]

@@ -1,6 +1,6 @@
 ﻿<center><h2>Charging Model</h2></center>
 
-&emsp;&emsp;Participants in NEO ecology need to pay network fee and system fee by GAS when using NEO network. Network fee is paid to consensus node as new block incentive. System fee and new GAS generated in each block belongs to NEO holders. NEO holders can claim gas with `ClaimTransaction`. Fee distribution rule is as follows:
+&emsp;&emsp;Participants in NEO economy need to pay network fees and system fees with GAS when using the NEO network. Network fee is paid to consensus node as new block incentive. System fee and new GAS generated in each block belongs to NEO holders. NEO holders can claim gas with `ClaimTransaction`. Fee distribution rule is as follows:
 
 [![economic model](../../images/blockchain/economic_model.jpg)](../../images/blockchain/economic_model.jpg)
 

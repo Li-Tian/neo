@@ -54,7 +54,7 @@ In NEO, the account model and UTXO model coexist. Accounts record the UTXO-type 
 | Size | Field | Type | Descriptoin |
 |------|-------|------|------|
 | 20 | ScriptHash | UInt160 | The hash of account's script contract. |
-| 1  | IsFrozen   | bool    | Fronzen accounts cannot transfer. |
+| 1  | IsFrozen   | bool    | Fronzen accounts cannot transfer. This field is not currently used. |
 | ? * ? | Votes  | ECPoint[] | the voted address list |
 | ? | Balances  |Dict<UInt256, Fixed8> | UTXO assets, mapping from assetId to amount.  |
 

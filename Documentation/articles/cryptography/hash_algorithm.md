@@ -1,6 +1,6 @@
 ﻿<center><h2> Hash Algorithm </h2></center>
 
-　Hash function, or hash algorithm, is a method creating digital finger print from any kind of data. Hash function compresses message or data into a digested version to shrink the data into a fixed data size. This function disorgnizes and remixes data, rebuilding a finger print data and name it as hash-value. Hash value is always represented by a short string consisted of random letters and digits.
+　Hash function, or hash algorithm, is a method creating digital finger print from any kind of data. Hash function compresses message or data into a digested version to shrink the data into a fixed data size. This function disorganizes and remixes data, rebuilding a data fingerprint as a hash-value. Hash value is always represented by a short string consisting of random letters and digits.
 
 ### RIPEMD160 
 
@@ -77,15 +77,15 @@ Scenarios：
 　  Scrypt is a kind of secure-cryptographic algorithm based on PBKDF2-HMAC-SHA-256 algorithm. It's developed by Colin Percival, a famous FreeBSD hacker, for his backup service Tarsnap.
 The original design was to reduce CPU load, minimize CPU reliance, and use CPU idle time for calculations.
 Therefore, scrypt not only takes a long time to calculate, but also consumes a lot of memory, making it difficult to calculate multiple digests in parallel.
-Therefore it is more difficult to use the rainbow table for brutal-force-attacks.
+Therefore it is more difficult to use the rainbow table for brute-force-attacks.
 
-​　Neo mainly use SCRYPT algorithm to generate encryption secret key satisfying NEP-2 standard. Parameters are defined as follows:
+​　Neo mainly uses SCRYPT algorithm to generate encryption secret key satisfying NEP-2 standard. Parameters are defined as follows:
 
-　　N: CPU/RAM cost. Generally take a number of powers of 2. Default value is 16384.
+　　N: CPU/RAM cost. Generally is a power of 2. Default value is 16384.
 
-　　p: Parallelization parameter, a positive integer ranges from 1 to 255. Bigger value represents heavier rely upon concurrent computation. Default value is 8.
+　　p: Parallelization parameter, a positive integer that ranges from 1 to 255. Bigger value represents a heavier reliance upon concurrent computation. Default value is 8.
 
-　　r: Block size，theoretically ranges from 1 to 255. Bigger value represents heavier rely upon RAM & bandwidth. Default value is 8.
+　　r: Block size，theoretically ranges from 1 to 255. Bigger value represents a heavier reliance upon RAM & bandwidth. Default value is 8.
 
 Example:
 

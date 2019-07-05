@@ -1,7 +1,7 @@
 <center><h2>Block</h2></center>
 
 <!-- &emsp;&emsp;在比特币系统中，可以存在多条链并存，即暂时分叉，但经过足够长的时间后最长的链条（提供了最多的工作量证明）成为确认的区块链。 Neo因为采用了dBFT共识算法，在系统正常运行时，不会同时出现一条以上的链。请参见`共识`部分。 -->
-&emsp;&emsp; The Blockchain is a data structure. The block is composed of block header and block body. As each block has a crpytographic hash of the previous block, a timestamp, and transaction data (generally represented as a merkle tree root hash), and a chain structure is formed.
+&emsp;&emsp; The Blockchain is a data structure. The block is composed of block header and block body. As each block has a crpytographic hash of the previous block, a timestamp, and transaction data (generally represented as a merkle tree root hash), a chain structure is formed.
 
 &emsp;&emsp; The data structure of block as following:
 
@@ -27,7 +27,7 @@
 
 &emsp;&emsp; The block header contains the basic information of a block and provide verification of a block.  The first 10 attributes of the block constitute the header.
 
-&emsp;&emsp;Block `hash` and `index` can be used to identify a block. The hash value is obtained by concating the first seven attributes of the block header and performing SHA256 operation twice. Normally, NEO has only one chain, and each block will be added to the blockchain after it is confirmed by more than two-thirds of all the consensus nodes. Therefore, the height of the each block is unique. Block height must be equal to the previous block height plus 1, and the Genesis Block's height is 0.
+&emsp;&emsp;Block `hash` and `index` can be used to identify a block. The hash value is obtained by concatenating the first seven attributes of the block header and performing SHA256 operation twice. Normally, NEO has only one chain, and each block will be added to the blockchain after it is confirmed by more than two-thirds of all the consensus nodes. Therefore, the height of the each block is unique. Block height must be equal to the previous block height plus 1, and the Genesis Block's height is 0.
 
 
 &emsp;&emsp;`Timestamp` is the block's timestamp, must be bigger than the previous block's timestamp. The interval between two blocks is about 15 seconds, which is defined by the variable `SecondsPerBlock` in configuration file `protocol.json`.
@@ -41,7 +41,7 @@
 
 ### **Block Body**
 
-&emsp;&emsp; The block body is a transaction list. In one round of consensus activity, the Speaker selects all the transactions in memeory pool, have them sorted and filtered by plugins, and then package them into a new proposal block. For more details about consensus, please read "Consensus Mechanism" section.
+&emsp;&emsp; The block body is a transaction list. In one round of consensus activity, the Speaker selects all the transactions in the memory pool, have them sorted and filtered by plugins, and then package them into a new proposal block. For more details about consensus, please read "Consensus Mechanism" section.
 
 &emsp;&emsp; The first transaction of each block must be a `MinerTransaction`, which is used to record all transaction's network fee in the block. At present, a block can hold up to 500 transactions in total, including up to 20 free transactions and a MinerTransaction as the first transaction in the block.
 

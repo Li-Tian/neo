@@ -5,7 +5,7 @@
 
 # Restrictive Condition
 
-The basic type limitation of the smart contract can be referred to the link: <http://docs.neo.org/zh-cn/sc/quickstart/limitation.html>
+The basic type limitation of the smart contract can be referred to the link: <http://docs.neo.org/en-us/sc/quickstart/limitation.html>
 
 
 Meanwhile, due to security considerations, to prevent different nodes from obtaining different data from the outside, NEO currently does not provide support for smart contract to access the Internet and data of other blockchain.
@@ -76,7 +76,7 @@ A blockchain that provides smart contract system should provide multiple trigger
 
 `VerificationR` and `ApplicationR` enable smart contract to reject a transfer or change the state of the blockchain when a transfer is received.
 
-For more information, please refer to: <http://docs.neo.org/zh-cn/sc/trigger.html>
+For more information, please refer to: <http://docs.neo.org/en-us/sc/trigger.html>
 
 
 ## VerificationR
@@ -692,7 +692,7 @@ The interoperable service layer provides some API for accessing the blockchain d
 | old api：  | "Neo.Contract.Destroy", "AntShares.Contract.Destroy" |
 |------------|------------------------------------------------------|
 | Binding Method: | Contract_Destroy                                |
-|  Function Description: | Destory contract                         |
+|  Function Description: | Destroy contract                         |
 | C\# Method：  | void Destroy();                                   |
 | Remark:     | The storage will be destory also.                   |
 
@@ -897,7 +897,7 @@ Contract Migrate(byte[] script, byte[] parameter_list, byte return_type, Contrac
 
 When the upgrade interface invoked in the old contract, it will create a new contract based on the parameters passed in. If the old contract has a storage area, it will move to the new contract. After upgrade, the old contract and storage will be deleted. 
 
-## Contract Destory
+## Contract Destroy
 
 Smart contract support destruction operations after release, but need to reserve the destruction interfaces in the old contract.
 
@@ -908,7 +908,7 @@ The contract destruction mainly calls the `Neo.Contract.Destroy` method:
 void Destroy();
 ```
 
-The `Destory` method accepts no parameters, and it will delete contract and the storage area.
+The `Destroy` method accepts no parameters, and it will delete contract and the storage area.
 
 > [!NOTE]
 > In case of dead links, please contact <feedback@neo.org>

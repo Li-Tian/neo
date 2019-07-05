@@ -5,8 +5,8 @@ There are 2 types of node in the network, ordinary node and consensus node. The 
 Neo's network protocol standard is similiar to that of Bitcoin, but varies a lot in block / transaction data structure.
 
 > [!NOTE]
-> * In NEO network, seed node is not equal to consensus node. It's a kind of ordinary node which providse node list query service to other nodes.
-> * NEO network also supports WebSocket connection and supports constructing node in a LAN by UPnP protocol(Optional).
+> * In NEO network, seed node is not equal to consensus node. It's a kind of ordinary node which provides node list query service to other nodes.
+> * NEO network also supports WebSocket connection and supports constructing node in a LAN by UPnP protocol using IGD (Optional).
 
 ## Transmission Protocol and Port:
 
@@ -34,27 +34,27 @@ Message's basic format is as follows:
 
 | <nobr>Name</nobr> | <nobr>Uniqueness</nobr> | <nobr>High priority</nobr> | <nobr>Reserved</nobr> | Description |
 | --- | --- | --- | --- | --- |
+| getaddr | 〇 | 〇 |  | Queries address and port numer of other nodes. |
 | addr | 〇 |  |  | Answers getaddr message with at most 200 records of succesfully connected node addresses and port numbers. |
-| block |  |  |  | Answers getdata message with Block of specified hash. |
-| consensus |  | 〇 |  | Answers getdata message with consensus data of specified hash. |
 | filteradd |  | 〇 |  | Adds data to bloom_filter for SPV wallet. |
 | filterclear |  | 〇 |  | Remove bloom_filter for SPV wallet. |
 | filterload |  | 〇 |  | Initialize bloom_filter for SPV wallet. |
-| getaddr | 〇 | 〇 |  | Queries address and port numer of other nodes. |
 | getblocks | 〇 |  |  | Specify the start and end hash values ​​to get the details of several consecutive blocks. |
 | getdata |  |  |  | Queries other nodes for Inventory objects of specified type and hash. <br>Current usage: <br>1)Sending get-transaction query during consensus process. <br>2)Sending getdata message upon receiving inv message. |
+| block |  |  |  | Answers getdata message with Block of specified hash. |
+| consensus |  | 〇 |  | Answers getdata message with consensus data of specified hash. |
+| tx |  |  |  | Answering getdata message for a transaction with specified hash. |
 | getheaders | 〇 |  |  | Node with fewer information queries for block head after two nodes establish connection. |
 | headers |  |  |  | Answers getheaders message with at most 2000 block header items. |
 | inv |  |  |  | Send Inventory hash array of specified type and hash (only hash value rather than complete information). Inventory types include Block, Transaction, and Consensus). Currently inv message is used in these scenarios: <br>1)Sending transaction in consensus process. <br>2)Replying getblocks message with no more than 500 blocks. <br>3) Replying mempool message with all transactions in memory pool. <br>4) Relaying an Inventory. <br>5) Relaying a batch of transactions. |
 | mempool | 〇 | 〇 |  | Query for all transactions in the memory pool of the connected node. |
-| tx |  |  |  | Answering getdata message for a transaction with specified hash. |
-| verack | - | 〇 | - | Sencond instruction: handshake Version |
 | version | - | 〇 | - | First instruction: with information like block header height, etc. |
+| verack | - | 〇 | - | Sencond instruction: handshake Version |
+| merkleblock |  |  | 〇 | Sending process is implemented while receiving is not. It's for SPV wallet. |
+| ping |  |  |  | Standard ping message |
+| pong |  |  |  | Response to ping message |
 | alert |  | 〇 | 〇 | Unimplemented |
-| merkleblock |  |  | 〇 | Sending process is implemented while receiving not. It's for SPV wallet. |
 | notfound |  |  | 〇 | Unimplemented |
-| ping |  |  | 〇 | Unimplemented |
-| pong |  |  | 〇 | Unimplemented |
 | reject |  |  | 〇 | Unimplemented |
 | others |  |  | 〇 | Neglected |
 
@@ -96,8 +96,6 @@ Message's basic format is as follows:
 | Message direction | Message type | Description |
 | --- | --- | --- |
 | send | version | Send version to perform 1st handshake |
-| receive | version | Receive version to perform 1st handshake |
-| send | verack | Send verack to perform 2nd handshake |
 | receive | verack | Receive verack to perform 2nd handshake |
 | send | getheaders | Send getheaders to retrieve block head |
 | receive | headers | Receive block headers |
