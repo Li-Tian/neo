@@ -74,46 +74,9 @@ A blockchain that provides smart contract system should provide multiple trigger
 
 `Verification` and `Application` enable smart contract to verify transiaction and change the state of the blockchain.
 
-`VerificationR` and `ApplicationR` enable smart contract to reject a transfer or change the state of the blockchain when a transfer is received.
+`VerificationR` and `ApplicationR`, which have been deprecated, enabled smart contract to reject a transfer or change the state of the blockchain when a transfer is received. If you'd like to learn more about these two types of triggers, check [NEP-7](https://github.com/neo-project/proposals/blob/master/nep-7.mediawiki). 
 
 For more information, please refer to: <http://docs.neo.org/en-us/sc/trigger.html>
-
-
-## VerificationR
-
-The purpose of the `VerificationR` trigger is to call the contract as a verification function, which accepts no parameter, and should return a valid Boolean value, indicating the validity of the transaction or block, as it is specified as a target of an output of the transaction. 
-
-If the smart contract is triggered by `VerificationR`, the smart contract entry point will be invoked:
-
-```c#
-main("receiving", new object[0])
-```
-
-The `receiving` function should have the following signature:
-
-```c#
-public bool receiving()
-```
-
-the `receiving` function will be invoked automatically when a contract is receiving assets from a transfer.
-
-## ApplicationR
-
-The `ApplicationR` trigger indicates that the default function `received` of the contract is invoked because it is specified as a target of an output of the transaction. The `received` function accepts no parameter, changes the states of the blockchain, and returns any type of value.
-
-The entry point of the contract will be invoked if the contract is triggered by `ApplicationR`:
-
-```c#
-main("received", new object[0])
-```
-
-The `received` function should have the following signature:
-
-```c#
-public byte[] received()
-```
-
-The `received` function will be invoked automatically when a contract is receiving assets from a transfer.
 
 
 # Interoperable service layer
